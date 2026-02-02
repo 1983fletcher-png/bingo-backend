@@ -17,6 +17,9 @@ const io = new Server(httpServer, {
 app.use(cors());
 app.use(express.json());
 
+// Root: so opening the backend URL in a browser shows something friendly
+app.get('/', (_, res) => res.redirect(302, '/health'));
+
 // Health check for Railway/Render
 app.get('/health', (_, res) => res.json({ ok: true }));
 
@@ -66,13 +69,14 @@ function getGame(code) {
   return id ? games.get(id) : null;
 }
 
-function createGame() {
+function createGame(opts = {}) {
   let code;
   do { code = nanoidCode(); } while (games.has(code));
+  const gameType = opts.gameType === 'trivia' ? 'trivia' : 'music-bingo';
   const game = {
     code,
     hostId: null,
-    eventConfig: { gameTitle: 'Playroom', venueName: '', accentColor: '#e94560' },
+    eventConfig: opts.eventConfig || { gameTitle: gameType === 'trivia' ? 'Trivia' : 'Playroom', venueName: '', accentColor: '#e94560' },
     players: new Map(),
     songPool: [],
     revealed: [],
@@ -80,20 +84,49 @@ function createGame() {
     started: false,
     freeSpace: true,
     winCondition: 'line',
-    gameType: 'music-bingo'
+    gameType,
+    // Trivia state (when gameType === 'trivia')
+    trivia: gameType === 'trivia' ? {
+      packId: opts.packId || '',
+      questions: Array.isArray(opts.questions) ? opts.questions : [],
+      currentIndex: 0,
+      revealed: false,
+      scores: {},
+      answers: {} // playerId -> { questionIndex -> answer }
+    } : null
   };
   games.set(code, game);
   return game;
 }
 
+function getTriviaPayload(game) {
+  if (!game?.trivia) return null;
+  const t = game.trivia;
+  const q = t.questions[t.currentIndex] || null;
+  return {
+    packId: t.packId,
+    questions: t.questions,
+    currentIndex: t.currentIndex,
+    revealed: t.revealed,
+    scores: t.scores,
+    currentQuestion: q
+  };
+}
+
 io.on('connection', (socket) => {
-  socket.on('host:create', ({ baseUrl } = {}) => {
-    const game = createGame();
+  socket.on('host:create', ({ baseUrl, gameType, packId, questions, eventConfig } = {}) => {
+    const isTrivia = gameType === 'trivia';
+    const game = createGame({
+      gameType: isTrivia ? 'trivia' : 'music-bingo',
+      packId: isTrivia ? (packId || '') : undefined,
+      questions: isTrivia ? (Array.isArray(questions) ? questions : []) : undefined,
+      eventConfig: eventConfig && typeof eventConfig === 'object' ? eventConfig : undefined
+    });
     game.hostId = socket.id;
     socket.join(`game:${game.code}`);
     socket.gameCode = game.code;
     const origin = baseUrl || getBaseUrl(socket);
-    socket.emit('game:created', {
+    const payload = {
       code: game.code,
       joinUrl: `${origin}/join/${game.code}`,
       songPool: game.songPool,
@@ -101,7 +134,9 @@ io.on('connection', (socket) => {
       winCondition: game.winCondition,
       eventConfig: game.eventConfig,
       gameType: game.gameType
-    });
+    };
+    if (game.trivia) payload.trivia = getTriviaPayload(game);
+    socket.emit('game:created', payload);
   });
 
   socket.on('event:preview', ({ code }) => {
@@ -110,11 +145,13 @@ io.on('connection', (socket) => {
       socket.emit('event:preview-error', { message: 'Event not found' });
       return;
     }
-    socket.emit('event:preview-ok', {
+    const payload = {
       eventConfig: game.eventConfig,
       gameType: game.gameType,
       gameTitle: game.eventConfig?.gameTitle || 'Playroom'
-    });
+    };
+    if (game.trivia) payload.trivia = getTriviaPayload(game);
+    socket.emit('event:preview-ok', payload);
   });
 
   socket.on('host:set-win-condition', ({ code, winCondition }) => {
@@ -172,7 +209,7 @@ io.on('connection', (socket) => {
     game.players.set(playerId, { id: playerId, name: name || 'Player', card: null });
     socket.join(`game:${game.code}`);
     socket.gameCode = game.code;
-    socket.emit('join:ok', {
+    const joinPayload = {
       code: game.code,
       songPool: game.songPool,
       revealed: game.revealed,
@@ -181,7 +218,9 @@ io.on('connection', (socket) => {
       winCondition: game.winCondition,
       eventConfig: game.eventConfig,
       gameType: game.gameType
-    });
+    };
+    if (game.trivia) joinPayload.trivia = getTriviaPayload(game);
+    socket.emit('join:ok', joinPayload);
     socket.to(`game:${game.code}`).emit('player:joined', {
       id: playerId,
       name: game.players.get(playerId).name,
@@ -213,14 +252,71 @@ io.on('connection', (socket) => {
     }
     socket.join(`game:${game.code}`);
     socket.gameCode = game.code;
-    socket.emit('display:ok', {
+    const displayPayload = {
       code: game.code,
       songPool: game.songPool,
       revealed: game.revealed,
       eventConfig: game.eventConfig,
       winner: game.winner,
       gameType: game.gameType
+    };
+    if (game.trivia) displayPayload.trivia = getTriviaPayload(game);
+    socket.emit('display:ok', displayPayload);
+  });
+
+  // --- Trivia ---
+  socket.on('host:trivia-start', ({ code }) => {
+    const game = getGame(code);
+    if (!game || game.hostId !== socket.id || !game.trivia) return;
+    game.trivia.currentIndex = 0;
+    game.trivia.revealed = false;
+    const payload = getTriviaPayload(game);
+    io.to(`game:${game.code}`).emit('game:trivia-state', payload);
+  });
+
+  socket.on('host:trivia-next', ({ code }) => {
+    const game = getGame(code);
+    if (!game || game.hostId !== socket.id || !game.trivia) return;
+    const t = game.trivia;
+    if (t.currentIndex < t.questions.length - 1) {
+      t.currentIndex += 1;
+      t.revealed = false;
+    }
+    const payload = getTriviaPayload(game);
+    io.to(`game:${game.code}`).emit('game:trivia-state', payload);
+  });
+
+  socket.on('host:trivia-reveal', ({ code }) => {
+    const game = getGame(code);
+    if (!game || game.hostId !== socket.id || !game.trivia) return;
+    const t = game.trivia;
+    const q = t.questions[t.currentIndex];
+    if (!q) return;
+    t.revealed = true;
+    const correct = (q.correctAnswer || '').trim().toLowerCase();
+    const scores = { ...t.scores };
+    const pointsPerCorrect = (typeof q.points === 'number' && q.points >= 0) ? q.points : 1;
+    for (const [playerId, answers] of Object.entries(t.answers)) {
+      const ans = (answers[t.currentIndex] || '').trim().toLowerCase();
+      if (ans === correct) {
+        scores[playerId] = (scores[playerId] || 0) + pointsPerCorrect;
+      }
+    }
+    t.scores = scores;
+    io.to(`game:${game.code}`).emit('game:trivia-reveal', {
+      questionIndex: t.currentIndex,
+      correctAnswer: q.correctAnswer,
+      scores: t.scores
     });
+  });
+
+  socket.on('player:trivia-answer', ({ code, questionIndex, answer }) => {
+    const game = getGame(code);
+    if (!game || !game.trivia) return;
+    const t = game.trivia;
+    if (t.revealed || questionIndex !== t.currentIndex) return;
+    if (!t.answers[socket.id]) t.answers[socket.id] = {};
+    t.answers[socket.id][questionIndex] = answer;
   });
 
   socket.on('disconnect', () => {
