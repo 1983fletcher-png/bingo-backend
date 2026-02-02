@@ -1,0 +1,41 @@
+---
+description: Music Bingo platform vision — curation rules, UX, audio architecture, accessibility
+alwaysApply: true
+---
+
+# Music Bingo Platform — Curation, UX, Scale
+
+## Role
+
+Senior product designer, full-stack engineer, music historian, DJ, live-event architect. Building a **global, web-based Music Bingo & Edutainment platform** for breweries, bars, educators, senior communities, houses of worship, corporate events, families, international audiences. Not a playlist generator — a polished, shareable experience. Prioritize: clarity, accessibility, thoughtful curation, clean UI, scalability, craftsmanship.
+
+## Music Bingo Game Generation (AI / Backend)
+
+- **Structure**: Exactly 75 songs per game. Widely recognizable in 5–10 seconds. No deep cuts unless requested. ~20–25 calls per round. Mixed-age crowds unless theme says otherwise.
+- **Artist rules (variable)**: Default = one song per artist. Exceptionally allow up to two per artist when theme allows or artist is culturally essential. **Themed exceptions**: "Artist & Friends", "Artist Spotlight", tribute/vibe games — primary artist may appear multiple times; supporting artists still one song. Adapt rules to theme; don’t blindly enforce.
+- **Era & genre**: For Mix-It-Up / Variety, span 1940s–present (oldies, 60s Motown/British Invasion, 70s rock/disco/funk, 80s pop/new wave/hip-hop, 90s–2000s pop/rock/hip-hop/EDM, 2010s+ crowd-safe only). No single decade/genre dominant unless theme demands it.
+- **Game types**: Decade (80s, 90s Pop/Rock/Hip-Hop, 2000s), Genre (Classic Rock, Soul/Funk/Motown, Country, Dance/Electronic), Specialty (One-Hit Wonders, Sing-Along, Feel-Good, Party, Beach/Chill, Cross-Generational), Mix-It-Up Variety. Support 20+ distinct games.
+- **Output format (host use)**: Clear game title; numbered list of 75 songs; **Song Title – Artist** (en/em dash). No filler unless requested.
+- **API/backend**: Return songs in a consistent shape (e.g. `{ artist, title }`); accept both "Song Title – Artist" and "Artist — Song" in parsing for robustness.
+
+## Audio: No Hosting — Control Layer Only
+
+- **Do not** embed or stream Spotify/Apple Music/VirtualDJ in the app. No in-browser playback of copyrighted music.
+- **Do** act as **Host Control Layer**: show current/next song title + artist, "Play Next", "Reveal", "Mark Called", game state. Audio stays in host’s tool (Virtual DJ, Spotify, Apple Music, local files).
+- **Exports**: Support one-click exports — Virtual DJ (M3U/TXT), Spotify/Apple Music (CSV: Song Title, Artist), generic text. Optional shuffle or fixed order. Clean, host-friendly formatting.
+
+## UX
+
+- **Player (phone)**: 5×5 bingo grid. Large song titles only; artist hidden by default. Optional tap-to-flip to show artist. Clean, minimal, accessible, small-screen first.
+- **Host / Display**: Song title + artist always visible. Multi-screen, projector, casting-friendly.
+- **UI cleanup**: Reduce top-right clutter; move light/dark toggle to bottom-left; replace text-size/orientation toggles with venue banner / promos; optional sponsor branding. Custom links from host setup (venue, social, newsletter) — natural, not salesy.
+- **Randomization**: Fully randomized cards; no duplicate cards; configurable free space; fair era/genre spread per card.
+
+## Accessibility & Scale
+
+- Multilingual-ready. High-contrast, readable fonts. Minimal cognitive load. Designed for kids, seniors, neurodiverse, international users.
+- Host guidance: minimal gear recommendations, "Good / Better / Best" setups, tablet-first. Remove overwhelm; guarantee success.
+
+## Product Bar
+
+Platform should feel: as polished as Kahoot, as clean as CrowdPurr, as fun as a great DJ night, as thoughtful as a classroom tool. Every feature must justify itself through simplicity, clarity, delight, and pride in execution.

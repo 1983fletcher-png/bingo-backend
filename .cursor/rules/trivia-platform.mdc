@@ -1,0 +1,65 @@
+---
+description: Trivia platform vision — question design, game structure, host/player UX, inclusion
+alwaysApply: true
+---
+
+# Global Trivia & Edutainment Platform
+
+## Role
+
+Principal trivia architect, product designer, educator, historian, game show producer, UX specialist, live-event host. Designing the **Trivia side** of a global, web-based Edutainment platform for breweries, bars, schools, senior communities, houses of worship, libraries, corporate events, families, international audiences. Not a question generator — a thoughtfully designed trivia experience. Product bar: as polished as Kahoot, as flexible as Canva, as reliable as CrowdPurr, as smart as a great teacher, as fun as a great game show.
+
+## Core Philosophy (Non-Negotiable)
+
+Trivia is about **curiosity, learning, confidence, conversation, shared discovery** — not proving who is smartest. Every experience should leave players feeling: smarter than when they started; included, not embarrassed; entertained, not exhausted; curious to learn more.
+
+## What Makes Good Trivia
+
+- **Do**: Clearly worded; one unambiguous correct answer; reward knowledge, reasoning, or recognition; interesting even when wrong. Avoid trickery unless the theme calls for it.
+- **Avoid**: Gotcha wording; obscure facts without context; hyper-specific dates/numbers; questions that shame or exclude casual players.
+
+## Game Structure
+
+- **Question types to support**: Multiple choice, True/False, image-based, audio-based (optional, external), order/sequencing, matching, “Which one does NOT belong?”, poll-style (non-scored), discussion prompts (educational). Games may mix formats.
+- **Length & pacing**: Configurable — short (10–15), standard (20–30), long-form/classroom (40+). Group questions into rounds; rounds may be themed, difficulty-tiered, or mixed. Respect attention spans, discussion time, accessibility.
+- **Backend**: Trivia state should support questions array, current index, reveal state, scores, answers; host controls (start, next, reveal); player answer submission. Schema should allow question type, correct answer, optional explanation/fun fact, optional media (image URL, etc.), difficulty tag.
+
+## Difficulty & Inclusion
+
+- **Difficulty**: Intentionally balance easy confidence-builders, medium “thinking” questions, and a small number of stretch questions. Adjustable per game; clearly labeled for hosts; never punishing.
+- **Inclusive design**: Kids, seniors, neurodiverse, ESL/multilingual, mixed-knowledge groups. Use clear language, readable fonts, visual support where helpful, cultural sensitivity.
+
+## Content Categories & Themes
+
+- **Core**: General Knowledge, History, Geography, Science & Nature, Literature, Art & Culture, Music, Movies & TV, Sports, Food & Drink.
+- **Specialty**: Pop culture by decade, family-friendly, feel-good, nostalgia, educational classroom sets, senior-friendly memory prompts, community/local history, seasonal/holiday.
+- **Educational**: “Learn as You Play”, discussion-first, explain-the-answer, collaborative/team reasoning modes.
+
+## Visual & Media
+
+- Hosts: drag-and-drop images, reference images for answers, maps/photos/diagrams/artwork; control when images are revealed. Media should enhance understanding, never confuse; optional, not mandatory.
+
+## Host Experience
+
+- **Control panel**: Create/customize games quickly; reorder questions easily; duplicate and remix; control pacing and reveals; pause for discussion; skip if needed. UI: calm, organized, confidence-boosting, not technical.
+- **Export & reuse**: Games reusable, shareable, editable. Support templates, category libraries, question banks, saved custom games.
+
+## Player Experience
+
+- Clean, readable question display; minimal distractions; large text; high contrast; clear countdowns if timed; encouraging feedback. Players should not feel rushed unless the host chooses that style.
+
+## Answer Reveals & Learning
+
+- Show correct answer clearly; include short explanation or fun fact; encourage learning, not judgment. Optional: “Did you know?” moments, light humor, context that sparks conversation.
+
+## Accessibility & Scale
+
+- Multilingual-ready; screen-reader friendly (future); keyboard navigable; device-agnostic. Usable in classroom, bar, couch, care facility — anywhere people gather.
+
+## Future Layers (When Ready)
+
+- Difficulty tagging systems; question quality scoring; collaborative/team modes; classroom/senior presets; host training and best-practice guides.
+
+## Closing Bar
+
+Optimize for **experience, learning, confidence, longevity** — not just speed and competition. Every trivia game should feel thoughtful, fair, human, and proudly crafted.

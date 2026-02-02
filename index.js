@@ -2,8 +2,8 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import os from 'os';
 import { customAlphabet } from 'nanoid';
+import { generateSongs } from './lib/ai.js';
 
 const nanoidCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 6);
 
@@ -55,6 +55,27 @@ app.get('/api/scrape-site', async (req, res) => {
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message || 'Failed to fetch URL' });
+  }
+});
+
+// Music Bingo: AI-generated song list (75 songs, one per artist, theme-aware)
+app.post('/api/generate-songs', async (req, res) => {
+  const { prompt = '', familyFriendly = false, count = 75 } = req.body || {};
+  const apiKey = req.body?.apiKey ?? req.headers?.['x-openai-api-key'] ?? process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return res.status(400).json({ error: 'OpenAI API key required. Send apiKey in body or x-openai-api-key header, or set OPENAI_API_KEY.' });
+  }
+  try {
+    const { songs, raw } = await generateSongs({
+      prompt: typeof prompt === 'string' ? prompt : '',
+      familyFriendly: Boolean(familyFriendly),
+      count: typeof count === 'number' ? count : 75,
+      apiKey: String(apiKey)
+    });
+    res.json({ songs, raw });
+  } catch (err) {
+    const status = err.message?.includes('API key') ? 401 : err.message?.includes('OpenAI') ? 502 : 500;
+    res.status(status).json({ error: err.message || 'Failed to generate songs' });
   }
 });
 

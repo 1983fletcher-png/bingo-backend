@@ -1,6 +1,21 @@
 # Music Bingo Backend
 
-Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handles room codes, host/player/display connections, song reveals, and bingo wins.
+Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handles room codes, host/player/display connections, song reveals, bingo wins, trivia, and AI song generation.
+
+---
+
+## What you need to do
+
+| Goal | What to do |
+|------|------------|
+| **Run locally** | `npm install` then `npm start` (server on port 3001). |
+| **Deploy** | Push this repo, then either: **Railway** — `railway login`, `railway init`, `railway up`; or **Render** — connect repo, build `npm install`, start `npm start`. |
+| **Connect frontend** | In Netlify: add env var `VITE_SOCKET_URL` = your backend URL (no trailing slash), then redeploy. |
+| **AI song generation** | Frontend sends `POST /api/generate-songs` with body `{ prompt, apiKey }` or you set `OPENAI_API_KEY` on the backend. |
+
+*I can’t change your frontend repo from here — only this backend. If your frontend lives elsewhere, point it at this backend and call the endpoints above.*
+
+---
 
 ## Run locally
 
@@ -87,5 +102,6 @@ The frontend uses `VITE_SOCKET_URL` in production to connect to this backend. Wi
 - `GET /health` — Health check (e.g. for Railway/Render).
 - `GET /api/public-url` — Returns `PUBLIC_ORIGIN` if set.
 - `GET /api/scrape-site?url=...` — Scrapes a URL for logo/theme (optional).
+- **`POST /api/generate-songs`** — AI Music Bingo song list (75 songs, theme-aware). Body: `{ prompt?, familyFriendly?, count?, apiKey? }`. API key can also be sent as header `x-openai-api-key` or set as env `OPENAI_API_KEY`. Returns `{ songs: [{ artist, title }], raw }`.
 
-Socket.io path: `/socket.io`. Events include `host:create`, `player:join`, `host:reveal`, `host:start`, etc., matching the existing Playroom frontend.
+Socket.io path: `/socket.io`. Events include `host:create`, `player:join`, `host:reveal`, `host:start`, trivia events, etc., matching the existing Playroom frontend.
