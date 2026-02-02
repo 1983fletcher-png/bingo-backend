@@ -1,0 +1,91 @@
+# Music Bingo Backend
+
+Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handles room codes, host/player/display connections, song reveals, and bingo wins.
+
+## Run locally
+
+```bash
+npm install
+npm start
+```
+
+Server runs on `http://localhost:3001`. The frontend (Vite) should proxy `/socket.io` and `/api` to this port when developing.
+
+## Deploy backend (Railway or Render)
+
+Your frontend is on **Netlify**. Deploy this backend to **Railway** or **Render** so Host and Join work in production.
+
+### Railway (no GitHub — deploy from your computer)
+
+You don’t need to choose “Database”, “Template”, or “Docker” in the Railway UI. You can do everything from your computer with the CLI. Railway will ask you to **sign in** (Google, GitHub, or email) when you run `railway login`; that’s how your project gets saved.
+
+**1. Open Terminal** and go to this backend folder:
+
+```bash
+cd "/Users/jasonfletcher/Documents/Cursor AI /Music Bingo Backend"
+```
+
+**2. Install the Railway CLI** (one-time):
+
+```bash
+npm install -g @railway/cli
+```
+
+**3. Log in** (a browser window will open; sign in there so the CLI is tied to your account):
+
+```bash
+railway login
+```
+
+**4. Create a new project** and link this folder to it:
+
+```bash
+railway init
+```
+
+- When it asks for a **name**, type something like `music-bingo-backend` and press Enter.
+- If it asks for a team, pick your account.
+
+**5. Deploy this folder:**
+
+```bash
+railway up
+```
+
+Wait until the build and deploy finish.
+
+**6. Get your backend URL:**
+
+- Go to [railway.app](https://railway.app) and open your project (e.g. `music-bingo-backend`).
+- Click the **service** (the box for your app).
+- Go to **Settings** → **Networking** → **Generate Domain** (or **Public Networking**). Copy the URL (e.g. `https://music-bingo-backend-production-xxxx.up.railway.app`).
+- Use that URL in Netlify as `VITE_SOCKET_URL` (see “Connect Netlify frontend” below).
+
+### Render
+
+1. Push this folder to a Git repo.
+2. In [Render](https://render.com): **New** → **Web Service**, connect the repo.
+3. **Build command:** `npm install`
+4. **Start command:** `npm start`
+5. **Instance type:** Free (or paid). Render sets `PORT` for you.
+6. Deploy. You’ll get a URL like `https://your-app.onrender.com`.
+
+## Connect Netlify frontend to the backend
+
+After the backend is deployed, your Netlify site must connect to it:
+
+1. In **Netlify** → your site → **Site settings** → **Environment variables**.
+2. Add:
+   - **Key:** `VITE_SOCKET_URL`
+   - **Value:** your backend URL, e.g. `https://your-app.up.railway.app` or `https://your-app.onrender.com` (no trailing slash).
+3. **Redeploy** the site so the new env var is baked into the build.
+
+The frontend uses `VITE_SOCKET_URL` in production to connect to this backend. Without it, “Host” will stay on “Connect” because the app would try to connect to Netlify (which has no Socket.io server).
+
+## Endpoints
+
+- `GET /health` — Health check (e.g. for Railway/Render).
+- `GET /api/public-url` — Returns `PUBLIC_ORIGIN` if set.
+- `GET /api/scrape-site?url=...` — Scrapes a URL for logo/theme (optional).
+
+Socket.io path: `/socket.io`. Events include `host:create`, `player:join`, `host:reveal`, `host:start`, etc., matching the existing Playroom frontend.
