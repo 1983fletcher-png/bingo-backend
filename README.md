@@ -10,10 +10,8 @@ Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handl
 |------|------------|
 | **Run locally** | `npm install` then `npm start` (server on port 3001). |
 | **Deploy** | Push this repo, then either: **Railway** — `railway login`, `railway init`, `railway up`; or **Render** — connect repo, build `npm install`, start `npm start`. |
-| **Connect frontend** | In Netlify: add env var `VITE_SOCKET_URL` = your backend URL (no trailing slash), then redeploy. |
+| **Connect frontend** | The frontend lives in **`frontend/`** in this repo. Build with `cd frontend && npm ci && npm run build`. In Netlify: set `VITE_SOCKET_URL` to your backend URL, build command `cd frontend && npm ci && npm run build`, publish directory `frontend/dist`. |
 | **AI song generation** | Frontend sends `POST /api/generate-songs` with body `{ prompt, apiKey }` or you set `OPENAI_API_KEY` on the backend. |
-
-*I can’t change your frontend repo from here — only this backend. If your frontend lives elsewhere, point it at this backend and call the endpoints above.*
 
 ---
 
@@ -105,3 +103,13 @@ The frontend uses `VITE_SOCKET_URL` in production to connect to this backend. Wi
 - **`POST /api/generate-songs`** — AI Music Bingo song list (75 songs, theme-aware). Body: `{ prompt?, familyFriendly?, count?, apiKey? }`. API key can also be sent as header `x-openai-api-key` or set as env `OPENAI_API_KEY`. Returns `{ songs: [{ artist, title }], raw }`.
 
 Socket.io path: `/socket.io`. Events include `host:create`, `player:join`, `host:reveal`, `host:start`, trivia events, etc., matching the existing Playroom frontend.
+
+### Waiting room (Roll Call)
+
+When the main event has not started (`started === false`), the frontend can show a **waiting room** with an optional mini-game (e.g. Roll Call marble tilt).
+
+- **Game state:** Each game has `waitingRoom: { game: 'roll-call' | null, theme: string, hostMessage: string }`. Defaults: `game: null`, `theme: 'default'`, `hostMessage: 'Starting soon'`.
+- **Host:** Emit `host:set-waiting-room` with `{ code, game?, theme?, hostMessage? }` to enable/change the waiting room. Listen for `game:waiting-room-updated` with `{ waitingRoom }`.
+- **Player join:** `join:ok` includes `started`, `waitingRoom`, and `rollCallLeaderboard`. If `!started && waitingRoom.game === 'roll-call'`, show the Roll Call game.
+- **Start event:** Host emits `host:start`; server sets `started = true` and broadcasts `game:started`. Clients should leave the waiting room and show the main session.
+- **Roll Call leaderboard:** Player emits `player:roll-call-score` with `{ code, timeMs }` when they finish a run. Server keeps best time per player and broadcasts `game:roll-call-leaderboard` with `{ leaderboard: [{ playerId, displayName, bestTimeMs }] }` (sorted by time ascending). `join:ok` and `display:ok` include `rollCallLeaderboard`.

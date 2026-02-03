@@ -106,6 +106,14 @@ function createGame(opts = {}) {
     freeSpace: true,
     winCondition: 'line',
     gameType,
+    // Waiting room: mini-game and theme before host starts main event (default ON so players get a welcome screen)
+    waitingRoom: {
+      game: 'roll-call',    // default ON: players see welcome + marble game until host starts
+      theme: 'default',
+      hostMessage: 'Starting soon'
+    },
+    // Roll Call leaderboard (stubbed): playerId -> { bestTimeMs, displayName }
+    rollCallScores: new Map(),
     // Trivia state (when gameType === 'trivia')
     trivia: gameType === 'trivia' ? {
       packId: opts.packId || '',
@@ -134,6 +142,21 @@ function getTriviaPayload(game) {
   };
 }
 
+/** Roll Call leaderboard: sorted by bestTimeMs (asc), for waiting room UI */
+function getRollCallLeaderboard(game) {
+  if (!game?.rollCallScores) return [];
+  const list = [];
+  for (const [playerId, data] of game.rollCallScores) {
+    const p = game.players.get(playerId);
+    list.push({
+      playerId,
+      displayName: p?.name || 'Player',
+      bestTimeMs: data.bestTimeMs
+    });
+  }
+  return list.sort((a, b) => a.bestTimeMs - b.bestTimeMs);
+}
+
 io.on('connection', (socket) => {
   socket.on('host:create', ({ baseUrl, gameType, packId, questions, eventConfig } = {}) => {
     const isTrivia = gameType === 'trivia';
@@ -154,7 +177,8 @@ io.on('connection', (socket) => {
       freeSpace: game.freeSpace,
       winCondition: game.winCondition,
       eventConfig: game.eventConfig,
-      gameType: game.gameType
+      gameType: game.gameType,
+      waitingRoom: game.waitingRoom
     };
     if (game.trivia) payload.trivia = getTriviaPayload(game);
     socket.emit('game:created', payload);
@@ -189,6 +213,16 @@ io.on('connection', (socket) => {
     io.to(`game:${game.code}`).emit('game:event-config-updated', { eventConfig: game.eventConfig });
   });
 
+  // Waiting room: host sets mini-game (e.g. roll-call), theme, and message
+  socket.on('host:set-waiting-room', ({ code, game: wrGame, theme, hostMessage }) => {
+    const game = getGame(code);
+    if (!game || game.hostId !== socket.id) return;
+    if (wrGame !== undefined) game.waitingRoom.game = wrGame === 'roll-call' ? 'roll-call' : null;
+    if (theme !== undefined && typeof theme === 'string') game.waitingRoom.theme = theme;
+    if (hostMessage !== undefined && typeof hostMessage === 'string') game.waitingRoom.hostMessage = hostMessage;
+    io.to(`game:${game.code}`).emit('game:waiting-room-updated', { waitingRoom: game.waitingRoom });
+  });
+
   socket.on('host:set-songs', ({ code, songs }) => {
     const game = getGame(code);
     if (!game || game.hostId !== socket.id) return;
@@ -217,6 +251,7 @@ io.on('connection', (socket) => {
     game.revealed = [];
     game.winner = null;
     game.started = false;
+    game.rollCallScores.clear();
     io.to(`game:${game.code}`).emit('game:reset', {});
   });
 
@@ -238,9 +273,12 @@ io.on('connection', (socket) => {
       freeSpace: game.freeSpace,
       winCondition: game.winCondition,
       eventConfig: game.eventConfig,
-      gameType: game.gameType
+      gameType: game.gameType,
+      waitingRoom: game.waitingRoom
     };
     if (game.trivia) joinPayload.trivia = getTriviaPayload(game);
+    // Stubbed Roll Call leaderboard for waiting room
+    joinPayload.rollCallLeaderboard = getRollCallLeaderboard(game);
     socket.emit('join:ok', joinPayload);
     socket.to(`game:${game.code}`).emit('player:joined', {
       id: playerId,
@@ -254,6 +292,23 @@ io.on('connection', (socket) => {
     if (!game) return;
     const p = game.players.get(socket.id);
     if (p) p.card = card;
+  });
+
+  // Roll Call (waiting room): player submits finish time; leaderboard is stubbed here
+  socket.on('player:roll-call-score', ({ code, timeMs }) => {
+    const game = getGame(code);
+    if (!game) return;
+    const p = game.players.get(socket.id);
+    if (!p || typeof timeMs !== 'number' || timeMs <= 0) return;
+    let data = game.rollCallScores.get(socket.id);
+    if (!data) {
+      data = { bestTimeMs: timeMs };
+      game.rollCallScores.set(socket.id, data);
+    } else {
+      data.bestTimeMs = Math.min(data.bestTimeMs, timeMs);
+    }
+    const leaderboard = getRollCallLeaderboard(game);
+    io.to(`game:${game.code}`).emit('game:roll-call-leaderboard', { leaderboard });
   });
 
   socket.on('player:bingo', ({ code }) => {
@@ -279,7 +334,10 @@ io.on('connection', (socket) => {
       revealed: game.revealed,
       eventConfig: game.eventConfig,
       winner: game.winner,
-      gameType: game.gameType
+      gameType: game.gameType,
+      started: game.started,
+      waitingRoom: game.waitingRoom,
+      rollCallLeaderboard: getRollCallLeaderboard(game)
     };
     if (game.trivia) displayPayload.trivia = getTriviaPayload(game);
     socket.emit('display:ok', displayPayload);
@@ -289,8 +347,10 @@ io.on('connection', (socket) => {
   socket.on('host:trivia-start', ({ code }) => {
     const game = getGame(code);
     if (!game || game.hostId !== socket.id || !game.trivia) return;
+    game.started = true;
     game.trivia.currentIndex = 0;
     game.trivia.revealed = false;
+    io.to(`game:${game.code}`).emit('game:started', {});
     const payload = getTriviaPayload(game);
     io.to(`game:${game.code}`).emit('game:trivia-state', payload);
   });
