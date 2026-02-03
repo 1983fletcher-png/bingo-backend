@@ -4,21 +4,31 @@
 #
 # Usage:
 #   ./scripts/sync-and-push-roll-call.sh /path/to/music-bingo-app
+#   MUSIC_BINGO_APP_PATH=/path ./scripts/sync-and-push-roll-call.sh   # no args
 #
 # Example if music-bingo-app is next to Music Bingo Backend:
 #   ./scripts/sync-and-push-roll-call.sh "../music-bingo-app"
-#
-# Example if your Playroom repo is the parent "Cursor AI" folder (git remote = music-bingo-app):
-#   ./scripts/sync-and-push-roll-call.sh ".."
 
 set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 FRONTEND_SRC="$BACKEND_ROOT/frontend/src"
-TARGET="${1:?Usage: $0 /path/to/music-bingo-app}"
 
-# Resolve target (e.g. ".." = parent of backend = Cursor AI)
-TARGET="$(cd "$BACKEND_ROOT" && cd "$TARGET" && pwd)"
+# Load .env or env so GITHUB_TOKEN is set (paste your token in one of those files once)
+if [[ -f "$BACKEND_ROOT/.env" ]]; then
+  set -a; source "$BACKEND_ROOT/.env"; set +a
+elif [[ -f "$BACKEND_ROOT/env" ]]; then
+  set -a; source "$BACKEND_ROOT/env"; set +a
+fi
+
+if [[ -n "$MUSIC_BINGO_APP_PATH" ]]; then
+  TARGET="$(cd "$BACKEND_ROOT" && cd "$MUSIC_BINGO_APP_PATH" && pwd)"
+elif [[ -n "$1" ]]; then
+  TARGET="$(cd "$BACKEND_ROOT" && cd "$1" && pwd)"
+else
+  echo "Usage: $0 /path/to/music-bingo-app   or   MUSIC_BINGO_APP_PATH=/path $0"
+  exit 1
+fi
 TARGET_SRC="$TARGET/src"
 
 if [ ! -d "$TARGET_SRC" ]; then
@@ -56,7 +66,7 @@ fi
 
 echo ""
 echo "▶ Pushing to origin main (Netlify will deploy)..."
-git push origin main
+(cd "$TARGET" && "$BACKEND_ROOT/scripts/git-push-with-token.sh")
 
 echo ""
 echo "✅ Done. The Playroom will update after Netlify finishes building."

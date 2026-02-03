@@ -10,7 +10,8 @@ Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handl
 |------|------------|
 | **Run locally** | `npm install` then `npm start` (server on port 3001). |
 | **Deploy** | Push this repo, then either: **Railway** — `railway login`, `railway init`, `railway up`; or **Render** — connect repo, build `npm install`, start `npm start`. |
-| **Connect frontend** | Netlify builds the **music-bingo-app** repo → theplayroom.netlify.app. To push the **fixed Roll Call** (playable maps, no stuck ball, vibration off) to the live site, run `./scripts/sync-and-push-roll-call.sh /path/to/music-bingo-app`. See **docs/ROLL-CALL-LIVE-SITE.md**. |
+| **Connect frontend** | Netlify builds the **music-bingo-app** repo. To sync this repo’s frontend (Roll Call, Host, Play, Print, trivia) to the live app: `./scripts/sync-full-frontend-and-push.sh` or `./scripts/sync-and-push-roll-call.sh /path/to/music-bingo-app`. See **docs/ROLL-CALL-LIVE-SITE.md**. |
+| **Push from Cursor / CI** | Set **GITHUB_TOKEN** (GitHub PAT with `repo`) and optionally **MUSIC_BINGO_APP_PATH**. Then `./scripts/deploy-playroom.sh` and `./scripts/sync-full-frontend-and-push.sh` can push without interactive auth. See **docs/GITHUB-PUSH-AND-SYNC-SETUP.md**. |
 | **AI song generation** | Frontend sends `POST /api/generate-songs` with body `{ prompt, apiKey }` or you set `OPENAI_API_KEY` on the backend. |
 
 ---

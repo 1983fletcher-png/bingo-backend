@@ -6,6 +6,13 @@ set -e
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
+# Load .env or env so GITHUB_TOKEN is set (paste your token in one of those files once)
+if [[ -f "$REPO_ROOT/.env" ]]; then
+  set -a; source "$REPO_ROOT/.env"; set +a
+elif [[ -f "$REPO_ROOT/env" ]]; then
+  set -a; source "$REPO_ROOT/env"; set +a
+fi
+
 echo "▶ Playroom deploy"
 echo "  $REPO_ROOT"
 echo ""
@@ -18,7 +25,7 @@ if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; th
 fi
 
 echo "▶ Pushing to origin main..."
-git push origin main
+"$REPO_ROOT/scripts/git-push-with-token.sh"
 
 # 2) Build frontend
 echo ""
