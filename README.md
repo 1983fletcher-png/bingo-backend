@@ -15,6 +15,18 @@ Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handl
 
 ---
 
+## One-command deploy (push + build + deploy frontend)
+
+Paste in terminal (run from anywhere):
+
+```bash
+cd "/Users/jasonfletcher/Documents/Cursor AI /Music Bingo Backend" && ./scripts/deploy-playroom.sh
+```
+
+Commits any uncommitted changes, pushes to `main`, builds the frontend, and deploys to Netlify. First time: run `npx netlify-cli login` and `npx netlify-cli link` in that folder so the script can deploy.
+
+---
+
 ## Run locally
 
 ```bash
