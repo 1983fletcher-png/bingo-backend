@@ -1,0 +1,123 @@
+/**
+ * TV, Movies, and Decades trivia packs.
+ */
+import type { TriviaPack } from '../types/trivia';
+
+export const tvTrivia: TriviaPack = {
+  id: 'tv-general',
+  title: 'TV Trivia',
+  description: 'Shows, theme songs, and eras',
+  questions: [
+    { question: 'What sitcom featured a coffee shop called Central Perk?', correctAnswer: 'Friends', points: 1 },
+    { question: 'Which show had "How you doin\'?" as a catchphrase?', correctAnswer: 'Friends', points: 1 },
+    { question: 'What is the name of the bar in Cheers?', correctAnswer: 'Cheers', points: 1 },
+    { question: 'Which TV show had Walter White as a chemistry teacher?', correctAnswer: 'Breaking Bad', points: 1 },
+    { question: 'What fantasy show had dragons and the Iron Throne?', correctAnswer: 'Game of Thrones', points: 1 },
+    { question: 'Which show featured the Dunder Mifflin paper company?', correctAnswer: 'The Office', points: 1 },
+    { question: 'What show had "Winter is coming" as a tagline?', correctAnswer: 'Game of Thrones', points: 1 },
+    { question: 'Which sitcom had Jerry, George, Elaine, and Kramer?', correctAnswer: 'Seinfeld', points: 1 },
+    { question: 'What show featured the Upside Down and Eleven?', correctAnswer: 'Stranger Things', points: 1 },
+    { question: 'Which medical drama had House as a diagnostic genius?', correctAnswer: 'House', points: 1 },
+    { question: 'What comedy had "Bazinga!" as a catchphrase?', correctAnswer: 'The Big Bang Theory', points: 1 },
+    { question: 'Which show had Mulder and Scully investigating the X-Files?', correctAnswer: 'The X-Files', points: 1 },
+    { question: 'What show featured the Bada Bing strip club?', correctAnswer: 'The Sopranos', points: 1 },
+    { question: 'Which sitcom had "Did I do that?"?', correctAnswer: 'Family Matters', points: 1 },
+    { question: 'What show had a theme song that said "Where everybody knows your name"?', correctAnswer: 'Cheers', points: 1 },
+    { question: 'Which drama had Don Draper in an ad agency?', correctAnswer: 'Mad Men', points: 1 },
+    { question: 'What show had "Yada yada yada"?', correctAnswer: 'Seinfeld', points: 1 },
+    { question: 'Which show featured the Bluth family?', correctAnswer: 'Arrested Development', points: 1 },
+    { question: 'What sitcom had Rachel, Monica, Phoebe, Joey, Chandler, and Ross?', correctAnswer: 'Friends', points: 1 },
+    { question: 'Which show had "That\'s what she said"?', correctAnswer: 'The Office', points: 1 },
+  ],
+};
+
+export const moviesTrivia: TriviaPack = {
+  id: 'movies-general',
+  title: 'Movies Trivia',
+  description: 'Blockbusters, franchises, and classics',
+  questions: [
+    { question: 'What movie had "May the Force be with you"?', correctAnswer: 'Star Wars', points: 1 },
+    { question: 'Which film had a shark attacking a beach town?', correctAnswer: 'Jaws', points: 1 },
+    { question: 'What is the name of the wizard school in Harry Potter?', correctAnswer: 'Hogwarts', points: 1 },
+    { question: 'Which movie had "Here\'s looking at you, kid"?', correctAnswer: 'Casablanca', points: 1 },
+    { question: 'What franchise had Tony Stark as Iron Man?', correctAnswer: 'Marvel Cinematic Universe', points: 1 },
+    { question: 'Which movie had "I\'ll be back"?', correctAnswer: 'The Terminator', points: 1 },
+    { question: 'What film had a boy who lived under the stairs?', correctAnswer: 'Harry Potter', points: 1 },
+    { question: 'Which movie had "You\'re gonna need a bigger boat"?', correctAnswer: 'Jaws', points: 1 },
+    { question: 'What franchise had Luke Skywalker and Darth Vader?', correctAnswer: 'Star Wars', points: 1 },
+    { question: 'Which movie had "Life is like a box of chocolates"?', correctAnswer: 'Forrest Gump', points: 1 },
+    { question: 'What film had a DeLorean time machine?', correctAnswer: 'Back to the Future', points: 1 },
+    { question: 'Which movie had "I see dead people"?', correctAnswer: 'The Sixth Sense', points: 1 },
+    { question: 'What franchise had Captain Jack Sparrow?', correctAnswer: 'Pirates of the Caribbean', points: 1 },
+    { question: 'Which film had "There\'s no place like home"?', correctAnswer: 'The Wizard of Oz', points: 1 },
+    { question: 'What movie had a lion cub named Simba?', correctAnswer: 'The Lion King', points: 1 },
+    { question: 'Which film had "You had me at hello"?', correctAnswer: 'Jerry Maguire', points: 2 },
+    { question: 'What franchise had Shrek and Donkey?', correctAnswer: 'Shrek', points: 1 },
+    { question: 'Which movie had "I\'m the king of the world!"?', correctAnswer: 'Titanic', points: 1 },
+    { question: 'What film had a ring that had to be destroyed in Mordor?', correctAnswer: 'The Lord of the Rings', points: 1 },
+    { question: 'Which movie had "Go ahead, make my day"?', correctAnswer: 'Sudden Impact', points: 2 },
+  ],
+};
+
+export const decades80sTrivia: TriviaPack = {
+  id: 'decades-80s',
+  title: '80s Pop Culture',
+  description: 'Music, movies, TV, and trends of the 1980s',
+  questions: [
+    { question: 'What band had a hit with "Take On Me" in the 80s?', correctAnswer: 'a-ha', points: 1 },
+    { question: 'Which 80s movie had a teenager going back in time in a DeLorean?', correctAnswer: 'Back to the Future', points: 1 },
+    { question: 'What TV show had the A-Team?', correctAnswer: 'The A-Team', points: 1 },
+    { question: 'Which 80s singer was known as the "Material Girl"?', correctAnswer: 'Madonna', points: 1 },
+    { question: 'What toy was a craze in the 80s with colorful rubber bands?', correctAnswer: 'Rubik\'s Cube', points: 1 },
+    { question: 'Which band sang "Sweet Child O\' Mine" in 1987?', correctAnswer: 'Guns N\' Roses', points: 1 },
+    { question: 'What movie had "Nobody puts Baby in a corner"?', correctAnswer: 'Dirty Dancing', points: 1 },
+    { question: 'Which 80s show had the Huxtable family?', correctAnswer: 'The Cosby Show', points: 1 },
+    { question: 'What was the name of the mall in Stranger Things (set in the 80s)?', correctAnswer: 'Starcourt Mall', points: 2 },
+    { question: 'Which band had "Don\'t Stop Believin\'"?', correctAnswer: 'Journey', points: 1 },
+    { question: 'What 80s film had a boy and an alien named E.T.?', correctAnswer: 'E.T. the Extra-Terrestrial', points: 1 },
+    { question: 'Which singer had a red leather jacket in "Thriller"?', correctAnswer: 'Michael Jackson', points: 1 },
+    { question: 'What cartoon had "I have the power!"?', correctAnswer: 'He-Man', points: 1 },
+    { question: 'Which 80s band had "Every Breath You Take"?', correctAnswer: 'The Police', points: 1 },
+    { question: 'What movie had "I\'ll be back" from a robot?', correctAnswer: 'The Terminator', points: 1 },
+    { question: 'Which TV show had a talking car named KITT?', correctAnswer: 'Knight Rider', points: 1 },
+    { question: 'What 80s film had a breakfast club of students in detention?', correctAnswer: 'The Breakfast Club', points: 1 },
+    { question: 'Which band had "Livin\' on a Prayer"?', correctAnswer: 'Bon Jovi', points: 1 },
+    { question: 'What handheld game was a craze in the 80s?', correctAnswer: 'Game Boy / Nintendo', points: 2 },
+    { question: 'Which 80s movie had a dance in a warehouse?', correctAnswer: 'Footloose', points: 1 },
+  ],
+};
+
+export const decades90sTrivia: TriviaPack = {
+  id: 'decades-90s',
+  title: '90s Pop Culture',
+  description: 'Music, movies, TV, and trends of the 1990s',
+  questions: [
+    { question: 'What sitcom had "How you doin\'?" and Central Perk?', correctAnswer: 'Friends', points: 1 },
+    { question: 'Which band had "Smells Like Teen Spirit"?', correctAnswer: 'Nirvana', points: 1 },
+    { question: 'What TV show had Jerry, George, Elaine, and Kramer?', correctAnswer: 'Seinfeld', points: 1 },
+    { question: 'Which 90s movie had a ship hitting an iceberg?', correctAnswer: 'Titanic', points: 1 },
+    { question: 'What toy was a collectible craze in the 90s?', correctAnswer: 'Beanie Babies', points: 1 },
+    { question: 'Which show had "Did I do that?" from Steve Urkel?', correctAnswer: 'Family Matters', points: 1 },
+    { question: 'What movie had "I see dead people"?', correctAnswer: 'The Sixth Sense', points: 1 },
+    { question: 'Which band had "Wonderwall"?', correctAnswer: 'Oasis', points: 1 },
+    { question: 'What 90s show had Mulder and Scully?', correctAnswer: 'The X-Files', points: 1 },
+    { question: 'Which movie had a lion cub named Simba?', correctAnswer: 'The Lion King', points: 1 },
+    { question: 'What game had you catching creatures in balls?', correctAnswer: 'Pokémon', points: 1 },
+    { question: 'Which band had "Losing My Religion"?', correctAnswer: 'R.E.M.', points: 1 },
+    { question: 'What sitcom had "Yada yada yada"?', correctAnswer: 'Seinfeld', points: 1 },
+    { question: 'Which 90s movie had "You had me at hello"?', correctAnswer: 'Jerry Maguire', points: 1 },
+    { question: 'What show had the Fonz in the 70s but was still iconic in the 90s?', correctAnswer: 'Happy Days', points: 2 },
+    { question: 'Which singer had "Baby One More Time" in the late 90s?', correctAnswer: 'Britney Spears', points: 1 },
+    { question: 'What movie had a talking toy named Buzz?', correctAnswer: 'Toy Story', points: 1 },
+    { question: 'Which band had "Under the Bridge"?', correctAnswer: 'Red Hot Chili Peppers', points: 1 },
+    { question: 'What 90s show had "I\'ll be there for you" as the theme?', correctAnswer: 'Friends', points: 1 },
+    { question: 'Which movie had a green ogre named Shrek?', correctAnswer: 'Shrek', points: 1 },
+  ],
+};
+
+export const allTVMoviesDecadesPacks: TriviaPack[] = [
+  tvTrivia,
+  moviesTrivia,
+  decades80sTrivia,
+  decades90sTrivia,
+];

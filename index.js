@@ -79,6 +79,25 @@ app.post('/api/generate-songs', async (req, res) => {
   }
 });
 
+// Song fact / trivia tidbit for "pop-up video" style when host reveals a song (Music Bingo)
+// Optional: frontend calls GET /api/song-fact?artist=...&title=... and shows the fact below the grid.
+// Extend with DB or external API later; for now returns placeholder or static entries.
+const SONG_FACTS = new Map([
+  ['Hey Jude|The Beatles', 'Recorded at Trident Studios in London; the "na na na" coda was partly improvised.'],
+  ['Bohemian Rhapsody|Queen', 'Freddie Mercury wrote the song in the 1970s; the operatic section has no chorus.'],
+]);
+function getSongFact(artist, title) {
+  if (!artist || !title) return null;
+  const key = `${String(title).trim()}|${String(artist).trim()}`;
+  return SONG_FACTS.get(key) || null;
+}
+app.get('/api/song-fact', (req, res) => {
+  const artist = req.query.artist;
+  const title = req.query.title;
+  const fact = getSongFact(artist, title);
+  res.json({ fact: fact || null });
+});
+
 // =============================================================================
 // Game sessions — room code, host, players, songs, bingo
 // =============================================================================
@@ -174,6 +193,7 @@ io.on('connection', (socket) => {
       code: game.code,
       joinUrl: `${origin}/join/${game.code}`,
       songPool: game.songPool,
+      revealed: game.revealed,
       freeSpace: game.freeSpace,
       winCondition: game.winCondition,
       eventConfig: game.eventConfig,
@@ -228,6 +248,14 @@ io.on('connection', (socket) => {
     if (!game || game.hostId !== socket.id) return;
     game.songPool = Array.isArray(songs) ? songs : [];
     io.to(`game:${game.code}`).emit('game:songs-updated', { songPool: game.songPool });
+  });
+
+  socket.on('host:set-trivia-questions', ({ code, questions }) => {
+    const game = getGame(code);
+    if (!game || game.hostId !== socket.id || !game.trivia) return;
+    game.trivia.questions = Array.isArray(questions) ? questions : [];
+    const payload = getTriviaPayload(game);
+    io.to(`game:${game.code}`).emit('game:trivia-state', payload);
   });
 
   socket.on('host:reveal', ({ code, song }) => {

@@ -1,0 +1,212 @@
+import { useState, useCallback } from 'react';
+import type { BingoCard as BingoCardType, Song } from '../types/game';
+import { songKey } from '../types/game';
+
+const TILE_MIN_HEIGHT = 64;
+const TILE_GAP = 8;
+
+interface PlayerBingoCardProps {
+  card: BingoCardType;
+  revealed: Song[];
+  onBingo?: () => void;
+  winCondition?: string;
+  eventTitle?: string;
+}
+
+function useFlipped() {
+  const [flipped, setFlipped] = useState<Set<number>>(() => new Set());
+  const toggle = useCallback((index: number) => {
+    setFlipped((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }, []);
+  return { flipped, toggle };
+}
+
+/** Two solid faces: front = title (or FREE), back = artist. Opaque flip, no transparency. */
+function TileSolid({
+  item,
+  isRevealed,
+  isFlipped,
+  onFlip,
+}: {
+  item: Song | 'FREE';
+  isRevealed: boolean;
+  isFlipped: boolean;
+  onFlip: () => void;
+}) {
+  const isFree = item === 'FREE';
+  const song = isFree ? null : (item as Song);
+
+  return (
+    <button
+      type="button"
+      onClick={onFlip}
+      style={{
+        position: 'relative',
+        width: '100%',
+        minHeight: TILE_MIN_HEIGHT,
+        margin: 0,
+        padding: 8,
+        border: `2px solid ${isRevealed ? '#48bb78' : '#4a5568'}`,
+        borderRadius: 8,
+        background: '#2d3748',
+        color: '#e2e8f0',
+        fontSize: 12,
+        fontWeight: 600,
+        textAlign: 'center',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        perspective: 600,
+      }}
+      aria-label={isFree ? 'Free space' : isFlipped ? song!.artist : song!.title}
+    >
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          minHeight: TILE_MIN_HEIGHT - 20,
+          transformStyle: 'preserve-3d',
+        }}
+      >
+        {/* Front face: title (or FREE) — solid */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backfaceVisibility: 'hidden',
+            background: '#2d3748',
+            borderRadius: 6,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 6,
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            transition: 'transform 0.35s ease',
+            border: 'none',
+          }}
+        >
+          <span
+            style={{
+              display: 'block',
+              width: '100%',
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              whiteSpace: 'nowrap',
+              WebkitOverflowScrolling: 'touch',
+            }}
+            title={isFree ? undefined : song!.title}
+          >
+            {isFree ? 'FREE' : song!.title}
+          </span>
+          {isRevealed && (
+            <span style={{ position: 'absolute', top: 4, right: 6, color: '#48bb78', fontSize: 14 }}>✓</span>
+          )}
+        </div>
+        {/* Back face: artist only — solid */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backfaceVisibility: 'hidden',
+            background: '#1a202c',
+            borderRadius: 6,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 6,
+            transform: isFlipped ? 'rotateY(0deg)' : 'rotateY(-180deg)',
+            transition: 'transform 0.35s ease',
+          }}
+        >
+          {!isFree && (
+            <span
+              style={{
+                overflowX: 'auto',
+                overflowY: 'hidden',
+                whiteSpace: 'nowrap',
+                WebkitOverflowScrolling: 'touch',
+              }}
+              title={song!.artist}
+            >
+              {song!.artist}
+            </span>
+          )}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+export default function PlayerBingoCard({
+  card,
+  revealed,
+  onBingo,
+  eventTitle,
+}: PlayerBingoCardProps) {
+  const { flipped, toggle } = useFlipped();
+  const revealedSet = new Set(revealed.map(songKey));
+
+  if (!card || card.length !== 25) {
+    return (
+      <div style={{ padding: 24, textAlign: 'center' }}>
+        <p>No card yet. Waiting for host to add songs.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: 12, maxWidth: 480, margin: '0 auto' }}>
+      {eventTitle && (
+        <h2 style={{ margin: '0 0 8px 0', fontSize: 18 }}>{eventTitle}</h2>
+      )}
+      <p style={{ fontSize: 12, color: '#a0aec0', marginBottom: 12 }}>
+        Tap a square to flip: title → artist. Get 5 in a row to win.
+      </p>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gap: TILE_GAP,
+          width: '100%',
+        }}
+      >
+        {card.map((item, index) => (
+          <TileSolid
+            key={index}
+            item={item}
+            isRevealed={item !== 'FREE' && revealedSet.has(songKey(item))}
+            isFlipped={flipped.has(index)}
+            onFlip={() => toggle(index)}
+          />
+        ))}
+      </div>
+      {onBingo && (
+        <div style={{ marginTop: 16 }}>
+          <button
+            type="button"
+            onClick={onBingo}
+            style={{
+              padding: '12px 24px',
+              fontSize: 16,
+              fontWeight: 600,
+              background: '#48bb78',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              width: '100%',
+            }}
+          >
+            BINGO!
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

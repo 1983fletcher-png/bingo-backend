@@ -52,6 +52,11 @@ export default function RollCallGame({ map, theme: themeOverrides, onWin, disabl
   const theme = { ...defaultTheme, ...themeOverrides };
   const [won, setWon] = useState(false);
   const [shake, setShake] = useState(0);
+
+  // Disable device vibration (waiting room should not vibrate)
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(0);
+  }, []);
   const stateRef = useRef({
     x: map.start.x,
     y: map.start.y,

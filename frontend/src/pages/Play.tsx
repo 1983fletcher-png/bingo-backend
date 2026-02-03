@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import WaitingRoomView from '../components/WaitingRoomView';
+import PlayerBingoCard from '../components/PlayerBingoCard';
+import SongFactPopUp from '../components/SongFactPopUp';
+import { buildCardFromPool } from '../types/game';
+import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
 
 interface JoinState {
@@ -10,6 +14,11 @@ interface JoinState {
   eventConfig: { gameTitle?: string };
   waitingRoom: { game: 'roll-call' | null; theme: string; hostMessage: string };
   rollCallLeaderboard: { playerId: string; displayName: string; bestTimeMs: number }[];
+  songPool?: Song[];
+  revealed?: Song[];
+  gameType?: string;
+  freeSpace?: boolean;
+  winCondition?: string;
 }
 
 export default function Play() {
@@ -19,6 +28,8 @@ export default function Play() {
   const [joined, setJoined] = useState(false);
   const [joinState, setJoinState] = useState<JoinState | null>(null);
   const [error, setError] = useState('');
+  const [factSong, setFactSong] = useState<Song | null>(null);
+  const [showFact, setShowFact] = useState(false);
 
   useEffect(() => {
     const s = getSocket();
@@ -42,11 +53,21 @@ export default function Play() {
       setJoinState((prev) => (prev ? { ...prev, rollCallLeaderboard: leaderboard } : null));
     });
 
+    s.on('game:songs-updated', ({ songPool }: { songPool: Song[] }) => {
+      setJoinState((prev) => (prev ? { ...prev, songPool } : null));
+    });
+
+    s.on('game:revealed', ({ revealed: rev }: { revealed: Song[] }) => {
+      setJoinState((prev) => (prev ? { ...prev, revealed: rev } : null));
+    });
+
     return () => {
       s.off('join:ok');
       s.off('game:started');
       s.off('game:waiting-room-updated');
       s.off('game:roll-call-leaderboard');
+      s.off('game:songs-updated');
+      s.off('game:revealed');
     };
   }, []);
 
@@ -108,11 +129,57 @@ export default function Play() {
     );
   }
 
-  // Main event started (placeholder for bingo/trivia UI)
+  // Music Bingo: show card and fact pop-up
+  const gameType = joinState?.gameType || 'music-bingo';
+  const songPool = joinState?.songPool || [];
+  const revealed = joinState?.revealed || [];
+  const card = useMemo(() => {
+    if (!joinState?.started || gameType !== 'music-bingo' || songPool.length < 24 || !name) return null;
+    return buildCardFromPool(songPool, joinState.code + name);
+  }, [joinState?.started, joinState?.code, gameType, songPool, name]);
+
+  useEffect(() => {
+    if (socket && code && card) {
+      socket.emit('player:card', { code: code.toUpperCase(), card });
+    }
+  }, [socket, code, card]);
+
+  useEffect(() => {
+    if (revealed.length > 0) {
+      const last = revealed[revealed.length - 1];
+      setFactSong(last);
+      setShowFact(true);
+    }
+  }, [revealed]);
+
+  const handleBingo = () => {
+    if (socket && code) socket.emit('player:bingo', { code: code.toUpperCase() });
+  };
+
+  if (gameType === 'music-bingo' && joinState?.started) {
+    return (
+      <>
+        <PlayerBingoCard
+          card={card || []}
+          revealed={revealed}
+          onBingo={handleBingo}
+          winCondition={joinState.winCondition}
+          eventTitle={joinState?.eventConfig?.gameTitle}
+        />
+        <SongFactPopUp
+          song={factSong}
+          show={showFact}
+          onDismiss={() => setShowFact(false)}
+        />
+      </>
+    );
+  }
+
+  // Trivia or other: placeholder
   return (
     <div style={{ padding: 24 }}>
       <h2>{joinState?.eventConfig?.gameTitle || 'Game'}</h2>
-      <p>The game has started. (Bingo / Trivia UI would go here.)</p>
+      <p>The game has started. (Trivia UI would go here.)</p>
     </div>
   );
 }

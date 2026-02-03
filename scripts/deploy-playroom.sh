@@ -27,18 +27,12 @@ cd "$REPO_ROOT/frontend"
 npm ci --silent
 npm run build
 
-# 3) Deploy to Netlify
+# 3) Netlify deploy skipped by default — full Playroom UI lives in music-bingo-app; this repo's frontend is minimal.
+#    To deploy this frontend anyway: DEPLOY_NETLIFY=1 ./scripts/deploy-playroom.sh
 echo ""
-echo "▶ Deploying to Netlify..."
-cd "$REPO_ROOT"
-if npx netlify-cli deploy --prod --dir=frontend/dist 2>/dev/null; then
-  echo ""
-  echo "✅ Done. Backend pushed. Frontend deployed."
-else
-  echo ""
-  echo "⚠ Netlify CLI deploy skipped. To enable:"
-  echo "   npx netlify-cli login"
-  echo "   npx netlify-cli link   # in this repo, pick your Playroom site"
-  echo "  Then re-run this script. Or link repo bingo-backend in Netlify UI for auto-deploy on push."
-  echo "✅ Backend pushed. Frontend built at frontend/dist."
+if [[ -n "$DEPLOY_NETLIFY" ]]; then
+  echo "▶ Deploying to Netlify..."
+  cd "$REPO_ROOT"
+  npx netlify-cli deploy --prod --dir=frontend/dist 2>/dev/null && echo "✅ Frontend deployed." || echo "  (Netlify deploy skipped or failed)"
 fi
+echo "✅ Done. Backend pushed. Frontend built at frontend/dist."
