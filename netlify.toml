@@ -1,0 +1,13 @@
+# The Playroom — frontend deploy (Netlify)
+# Connect Netlify to this repo; one push updates the live site.
+# Set env var VITE_SOCKET_URL = your Railway backend URL (no trailing slash).
+
+[build]
+  base    = "frontend"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200

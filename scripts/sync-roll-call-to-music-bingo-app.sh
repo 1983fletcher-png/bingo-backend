@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
+# OPTIONAL: Only needed if you still deploy the Playroom from music-bingo-app.
+# Recommended: point Netlify at bingo-backend and build frontend/ (one repo, one push).
+# See docs/PLAYROOM-REPOS.md.
+#
 # Copy Roll Call and waiting room frontend files from bingo-backend/frontend
-# into the music-bingo-app repo so Netlify deploys the latest.
+# into the music-bingo-app repo.
 #
 # Usage:
 #   ./scripts/sync-roll-call-to-music-bingo-app.sh [TARGET_DIR]
