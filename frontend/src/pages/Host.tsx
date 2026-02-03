@@ -22,7 +22,7 @@ interface GameCreated {
   trivia?: { questions: TriviaQuestion[] };
 }
 
-type HostTab = 'waiting' | 'call' | 'questions' | 'print';
+type HostTab = 'waiting' | 'call' | 'questions';
 
 export default function Host() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -243,13 +243,13 @@ export default function Host() {
     ? [
         { id: 'waiting', label: 'Waiting room' },
         { id: 'questions', label: 'Questions' },
-        { id: 'print', label: 'Print' },
       ]
     : [
         { id: 'waiting', label: 'Waiting room' },
         { id: 'call', label: 'Call sheet' },
-        { id: 'print', label: 'Print' },
       ];
+
+  const displayUrl = `${window.location.origin}/display/${game.code}`;
 
   return (
     <>
@@ -286,16 +286,7 @@ export default function Host() {
               </a>
             </p>
             <p style={{ fontSize: 14 }}>Room code: <strong>{game.code}</strong></p>
-
-            <div style={{ marginTop: 24 }}>
-              <label style={{ display: 'block', marginBottom: 4 }}>Welcome message</label>
-              <input
-                type="text"
-                value={hostMessage}
-                onChange={(e) => setHostMessage(e.target.value)}
-                style={{ width: '100%', maxWidth: 400, padding: 8 }}
-              />
-            </div>
+            <p style={{ fontSize: 13, color: '#a0aec0' }}>Edit welcome message in Event & venue details below.</p>
 
             <div style={{ marginTop: 24 }}>
               <button onClick={startEvent} style={{ padding: '12px 24px' }}>
@@ -412,10 +403,39 @@ export default function Host() {
           </>
         )}
 
-        {activeTab === 'print' && (
-          <div style={{ padding: '16px 0' }}>
-            <h3 style={{ marginTop: 0 }}>Printable materials</h3>
-            <p style={{ color: '#a0aec0', fontSize: 14 }}>
+        {/* Event & venue details — dropdown */}
+        <details style={{ marginTop: 24, border: '1px solid #4a5568', borderRadius: 8, overflow: 'hidden' }}>
+          <summary style={{ padding: '12px 16px', cursor: 'pointer', background: '#2d3748', fontWeight: 600 }}>
+            Event & venue details
+          </summary>
+          <div style={{ padding: 16, borderTop: '1px solid #4a5568' }}>
+            <p style={{ margin: '0 0 8px 0', fontSize: 14, color: '#a0aec0' }}>Share this link with players. Open the display link on your TV or projector.</p>
+            <p style={{ fontSize: 18, wordBreak: 'break-all', marginBottom: 4 }}>
+              <a href={game.joinUrl} target="_blank" rel="noopener noreferrer">{game.joinUrl}</a>
+            </p>
+            <p style={{ fontSize: 14, marginBottom: 12 }}>Room code: <strong>{game.code}</strong></p>
+            <p style={{ fontSize: 14, marginBottom: 8 }}>
+              <strong>TV display:</strong>{' '}
+              <a href={displayUrl} target="_blank" rel="noopener noreferrer">Open display</a>
+              {' '}(use this URL on the big screen)
+            </p>
+            <label style={{ display: 'block', marginBottom: 4 }}>Welcome message</label>
+            <input
+              type="text"
+              value={hostMessage}
+              onChange={(e) => setHostMessage(e.target.value)}
+              style={{ width: '100%', maxWidth: 400, padding: 8 }}
+            />
+          </div>
+        </details>
+
+        {/* Print materials — dropdown */}
+        <details style={{ marginTop: 12, border: '1px solid #4a5568', borderRadius: 8, overflow: 'hidden' }}>
+          <summary style={{ padding: '12px 16px', cursor: 'pointer', background: '#2d3748', fontWeight: 600 }}>
+            Print materials
+          </summary>
+          <div style={{ padding: 16, borderTop: '1px solid #4a5568' }}>
+            <p style={{ color: '#a0aec0', fontSize: 14, marginTop: 0 }}>
               For players without phones or devices. Generate and print from your browser.
             </p>
 
@@ -458,56 +478,55 @@ export default function Host() {
             )}
 
             {game.gameType === 'trivia' && (
-              <div style={{ marginBottom: 24, padding: 16, border: '1px solid #4a5568', borderRadius: 8 }}>
-                <h4 style={{ margin: '0 0 8px 0' }}>Quiz sheet</h4>
-                <p style={{ fontSize: 13, color: '#a0aec0', margin: '0 0 12px 0' }}>
-                  Print the current trivia questions as a paper quiz (questions + space for answers).
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const doc = buildTriviaQuizPrintDocument(triviaQuestions, game.eventConfig?.gameTitle);
-                    const w = window.open('', '_blank');
-                    if (!w) { alert('Please allow pop-ups to print.'); return; }
-                    w.document.write(doc);
-                    w.document.close();
-                    w.focus();
-                    w.onload = () => w.print();
-                  }}
-                  disabled={triviaQuestions.length === 0}
-                  style={{ padding: '10px 20px' }}
-                >
-                  Print quiz ({triviaQuestions.length} questions)
-                </button>
-              </div>
-            )}
-
-            {game.gameType === 'trivia' && (
-              <div style={{ padding: 16, border: '1px solid #4a5568', borderRadius: 8 }}>
-                <h4 style={{ margin: '0 0 8px 0' }}>Flashcards</h4>
-                <p style={{ fontSize: 13, color: '#a0aec0', margin: '0 0 12px 0' }}>
-                  Print questions on one side and answers on the other (cut and fold).
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const doc = buildFlashcardsPrintDocument(triviaQuestions, game.eventConfig?.gameTitle);
-                    const w = window.open('', '_blank');
-                    if (!w) { alert('Please allow pop-ups to print.'); return; }
-                    w.document.write(doc);
-                    w.document.close();
-                    w.focus();
-                    w.onload = () => w.print();
-                  }}
-                  disabled={triviaQuestions.length === 0}
-                  style={{ padding: '10px 20px' }}
-                >
-                  Print flashcards ({triviaQuestions.length})
-                </button>
-              </div>
+              <>
+                <div style={{ marginBottom: 24, padding: 16, border: '1px solid #4a5568', borderRadius: 8 }}>
+                  <h4 style={{ margin: '0 0 8px 0' }}>Quiz sheet</h4>
+                  <p style={{ fontSize: 13, color: '#a0aec0', margin: '0 0 12px 0' }}>
+                    Print the current trivia questions as a paper quiz (questions + space for answers).
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const doc = buildTriviaQuizPrintDocument(triviaQuestions, game.eventConfig?.gameTitle);
+                      const w = window.open('', '_blank');
+                      if (!w) { alert('Please allow pop-ups to print.'); return; }
+                      w.document.write(doc);
+                      w.document.close();
+                      w.focus();
+                      w.onload = () => w.print();
+                    }}
+                    disabled={triviaQuestions.length === 0}
+                    style={{ padding: '10px 20px' }}
+                  >
+                    Print quiz ({triviaQuestions.length} questions)
+                  </button>
+                </div>
+                <div style={{ padding: 16, border: '1px solid #4a5568', borderRadius: 8 }}>
+                  <h4 style={{ margin: '0 0 8px 0' }}>Flashcards</h4>
+                  <p style={{ fontSize: 13, color: '#a0aec0', margin: '0 0 12px 0' }}>
+                    Print questions on one side and answers on the other (cut and fold).
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const doc = buildFlashcardsPrintDocument(triviaQuestions, game.eventConfig?.gameTitle);
+                      const w = window.open('', '_blank');
+                      if (!w) { alert('Please allow pop-ups to print.'); return; }
+                      w.document.write(doc);
+                      w.document.close();
+                      w.focus();
+                      w.onload = () => w.print();
+                    }}
+                    disabled={triviaQuestions.length === 0}
+                    style={{ padding: '10px 20px' }}
+                  >
+                    Print flashcards ({triviaQuestions.length})
+                  </button>
+                </div>
+              </>
             )}
           </div>
-        )}
+        </details>
       </div>
       <SongFactPopUp
         song={factSong}
