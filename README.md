@@ -10,7 +10,7 @@ Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handl
 |------|------------|
 | **Run locally** | `npm install` then `npm start` (server on port 3001). |
 | **Deploy** | Push this repo, then either: **Railway** — `railway login`, `railway init`, `railway up`; or **Render** — connect repo, build `npm install`, start `npm start`. |
-| **Connect frontend** | The frontend lives in **`frontend/`** in this repo. Build with `cd frontend && npm ci && npm run build`. In Netlify: set `VITE_SOCKET_URL` to your backend URL, build command `cd frontend && npm ci && npm run build`, publish directory `frontend/dist`. |
+| **Connect frontend** | **Canonical Playroom frontend** = **music-bingo-app** repo (Netlify → theplayroom.netlify.app). The **frontend/** folder here is a reference copy. To push Roll Call / waiting room updates to the live site, run `./scripts/sync-roll-call-to-music-bingo-app.sh ../music-bingo-app` then commit and push in music-bingo-app. See **docs/PLAYROOM-REPOS.md**. |
 | **AI song generation** | Frontend sends `POST /api/generate-songs` with body `{ prompt, apiKey }` or you set `OPENAI_API_KEY` on the backend. |
 
 ---
