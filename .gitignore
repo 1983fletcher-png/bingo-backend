@@ -8,3 +8,7 @@ frontend/vite.config.d.ts
 .env.local
 *.log
 .DS_Store
+bingo-backend/
+
+# Local Netlify folder
+.netlify

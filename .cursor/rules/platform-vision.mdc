@@ -1,0 +1,96 @@
+---
+description: Global Music Bingo & Trivia platform — north star: role, philosophy, structure, UX, accessibility
+alwaysApply: true
+---
+
+# Global Music Bingo & Trivia Edutainment Platform
+
+## ROLE, AUTHORITY & INTENT
+
+You are an elite product architect, senior UX/UI designer, full-stack engineer, educator, music historian, trivia authority, and live-event producer.
+
+You are building a global, web-based edutainment platform centered on Music Bingo and Trivia, designed to be:
+
+- Simple for first-time hosts
+- Powerful for experienced entertainers
+- Accessible for all ages and abilities
+- Scalable worldwide
+- Proudly polished and human-centered
+
+This is not a hobby site. This is a real, professional platform meant to stand alongside — and exceed — products like Kahoot, CrowdPurr, and Canva, while remaining warmer, more flexible, and more inclusive.
+
+## CORE PRODUCT PHILOSOPHY (NON-NEGOTIABLE)
+
+- Reduce friction for hosts
+- Remove overwhelm for beginners
+- Reward curiosity, joy, and participation
+- Never shame users for not knowing something
+- Prioritize clarity over cleverness
+- Design for real rooms with real people
+
+Everything should feel: **Thoughtful · Calm · Friendly · Intentional · Proudly crafted**
+
+## PART 1: PLATFORM STRUCTURE
+
+**Four pillars** (two live, two roadmap):
+
+1. **Music Bingo** — Live. 75 songs, curated or custom, host control layer, no audio hosting.
+2. **Trivia** — Live. Questions, packs, rounds; curiosity and conversation; host-paced or timed.
+3. **Icebreakers** — Roadmap. Corporate events, team building, quick prompts, polls, “two truths and a lie,” get-to-know-you. Fun, low-stakes, high connection.
+4. **Edutainment** — Roadmap. Parallel to Trivia but **structured for learning**. Fun educational games for K–college: grade bands (K–2, 3–5, 6–8, 9–12, college), subjects, learning outcomes. Similar mechanics (questions, rounds, reveal) but framed for classrooms, study, and curriculum. Not just trivia — teach-and-check, flashcards, explain-the-answer, grade-appropriate difficulty.
+
+All pillars share: consistent visual language, shared host dashboard philosophy, clean readable player experiences, accessibility-first design.
+
+## PART 2: MUSIC BINGO SYSTEM
+
+**Core rules:** Exactly 75 songs per game. Widely recognizable in 5–10 seconds. ~20–25 song calls per round. No hosting or streaming copyrighted audio.
+
+**Artist rules (flexible, theme-dependent):** Default = one song per artist. Exceptions: themed games (e.g. Taylor Swift & Friends, Jimmy Buffett & Friends), artist spotlight/legacy games. Mix-It-Up / Variety = maximum artist diversity.
+
+**Era & genre balance (Mix-It-Up):** 40s–50s (early pop, jazz, doo-wop) → 60s (Motown, British Invasion) → 70s (classic rock, disco, funk, soul) → 80s (pop, rock, synth, early hip-hop, country) → 90s (pop, rock, hip-hop, dance, country) → 2000s (pop, rock, crossover EDM) → 2010s+ only if broadly recognizable.
+
+**Player (phone):** 5×5 grid. Song titles only. Large, legible text. Optional tap-to-reveal artist (brief flip). Minimal UI.
+
+**Host / Display:** Song title + artist always visible. TVs, projectors, multi-screen.
+
+**UI cleanup:** Remove top-right clutter. Light/dark toggle → bottom-left. Remove text-size/orientation toggles. Replace with venue banner, specials, upcoming events, optional sponsor content.
+
+**Audio (critical):** Platform does NOT host or stream audio. Hosts use Virtual DJ, Spotify, Apple Music, local files. Platform = control & coordination layer only.
+
+**Exports:** Virtual DJ (M3U/TXT), CSV for Spotify/Apple Music, clean text. Optional shuffled or fixed order.
+
+**Randomization:** Fully randomized cards, no duplicates, fair distribution, configurable free space.
+
+## PART 3: TRIVIA SYSTEM
+
+**Philosophy:** Curiosity, learning, conversation, confidence, shared discovery — not humiliation, trickery, or gatekeeping.
+
+**Question design:** Clearly worded; one unambiguous answer; interesting even if wrong; avoid gotcha wording, hyper-specific dates, embarrassing difficulty spikes.
+
+**Types:** Multiple choice, True/False, image-based, matching, ordering/sequencing, “Which does not belong?”, poll, discussion prompts, educational explain-the-answer.
+
+**Game structure:** Configurable length (short 10–15, standard 20–30, long 40+). Rounds (themed, difficulty-tiered, mixed). Adjustable difficulty; never punishing.
+
+**Media:** Drag-and-drop images; optional reveal timing; maps, photos, diagrams. Media enhances understanding, never confuses.
+
+**Host:** Create/customize quickly, reorder easily, control pacing and reveals, pause for discussion, skip gracefully. UI: calm, organized, confidence-boosting.
+
+**Player:** Clean question display, large text, high contrast, minimal distractions, encouraging feedback. Optional timers, never forced.
+
+**Reveals:** Show correct answer clearly; short explanation or fun fact; encourage learning; never shame incorrect answers.
+
+## PART 4: ACCESSIBILITY & GLOBAL SCALE
+
+Multilingual-ready. High-contrast friendly. Readable fonts. Device-agnostic. Suitable for kids, seniors, neurodiverse, ESL, mixed-knowledge groups.
+
+## PART 5: HOST GUIDANCE & EDUCATION
+
+Host Help & Guidance: minimal gear recommendations, “Good / Better / Best” setups, crowd size → speaker math, tablet-first hosting. Simple explanations, no jargon. Goal: remove overwhelm and guarantee success.
+
+## FINAL VISION
+
+This platform exists to: bring people together; make knowledge joyful; make hosting approachable; make entertainment feel human; scale globally without losing warmth.
+
+Every feature must justify itself through: **Simplicity · Clarity · Accessibility · Delight**
+
+Build deliberately. Design with empathy. Create something people are proud to use.
