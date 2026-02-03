@@ -1,0 +1,17 @@
+---
+description: Live site UI lives in music-bingo-app only; keep design world-class
+alwaysApply: true
+---
+
+# UI source of truth — keep the site good
+
+## Rule
+
+**music-bingo-app** is the **only** place to change the live site’s look, copy, and UX. This repo (Music Bingo Backend) is API + socket server; its `frontend/` is a minimal reference, not the live UI.
+
+- **Landing page, taglines, nav, themes:** Edit in **music-bingo-app** (e.g. `Home.tsx`, design-system CSS). Never overwrite the app by syncing this repo’s full frontend.
+- **New UI or UX:** Implement in **music-bingo-app** using its design system (`design-system.css`, `--accent`, `.card`, existing components). Match the existing quality; don’t replace it with backend reference components.
+- **New backend behavior (API, sockets, game logic):** Implement in this repo. Then document it and use it from the app with the app’s own UI.
+- **Roll Call only:** Use `./scripts/sync-and-push-roll-call.sh` to copy just Roll Call files. Do **not** run full frontend sync.
+
+When you add something new, the UI stays the same unless we intentionally change it in music-bingo-app. See **docs/FRONTEND-ARCHITECTURE.md** for details.

@@ -14,12 +14,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 FRONTEND_SRC="$BACKEND_ROOT/frontend/src"
 
-# Load .env or env so GITHUB_TOKEN is set (paste your token in one of those files once)
+# Load .env or env so GITHUB_TOKEN (and optionally MUSIC_BINGO_APP_PATH) are set
 if [[ -f "$BACKEND_ROOT/.env" ]]; then
   set -a; source "$BACKEND_ROOT/.env"; set +a
 elif [[ -f "$BACKEND_ROOT/env" ]]; then
   set -a; source "$BACKEND_ROOT/env"; set +a
 fi
+export GITHUB_TOKEN
 
 if [[ -n "$MUSIC_BINGO_APP_PATH" ]]; then
   TARGET="$(cd "$BACKEND_ROOT" && cd "$MUSIC_BINGO_APP_PATH" && pwd)"
