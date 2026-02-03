@@ -1,4 +1,5 @@
 import RollCallGame from './RollCallGame';
+import WaitingRoomTiltMaze from './WaitingRoomTiltMaze';
 import { pickMapForGame } from '../data/rollCallMaps';
 import type { RollCallTheme } from './RollCallGame';
 
@@ -30,6 +31,11 @@ interface WaitingRoomViewProps {
   onRollCallWin?: (timeMs: number) => void;
 }
 
+const TILT_MAZE_THEMES = ['classic', 'eighties', 'trivia'] as const;
+function useTiltMaze(themeName: string): boolean {
+  return TILT_MAZE_THEMES.includes(themeName as (typeof TILT_MAZE_THEMES)[number]);
+}
+
 export default function WaitingRoomView({
   gameCode,
   eventTitle,
@@ -40,6 +46,7 @@ export default function WaitingRoomView({
   const themeName = waitingRoom.theme || 'default';
   const theme = themeColors[themeName] || themeColors.default;
   const map = pickMapForGame(gameCode);
+  const useTilt = useTiltMaze(themeName);
 
   return (
     <div style={{ padding: 16, maxWidth: 480, margin: '0 auto' }}>
@@ -52,7 +59,15 @@ export default function WaitingRoomView({
           <p style={{ fontSize: 14, marginBottom: 8 }}>
             Tilt your device or use arrow keys to roll the marble to the goal.
           </p>
-          <RollCallGame map={map} theme={theme} onWin={onRollCallWin} />
+          {useTilt ? (
+            <WaitingRoomTiltMaze
+              themeKey={themeName as 'classic' | 'eighties' | 'trivia'}
+              overlay={themeName === 'trivia' ? 'brain' : 'music'}
+              onWin={onRollCallWin}
+            />
+          ) : (
+            <RollCallGame map={map} theme={theme} onWin={onRollCallWin} />
+          )}
         </>
       )}
 
