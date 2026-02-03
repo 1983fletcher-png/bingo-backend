@@ -12,6 +12,7 @@ if [[ -f "$REPO_ROOT/.env" ]]; then
 elif [[ -f "$REPO_ROOT/env" ]]; then
   set -a; source "$REPO_ROOT/env"; set +a
 fi
+export GITHUB_TOKEN
 
 echo "▶ Playroom deploy"
 echo "  $REPO_ROOT"
