@@ -1,5 +1,6 @@
 import RollCallGame from './RollCallGame';
 import WaitingRoomTiltMaze from './WaitingRoomTiltMaze';
+import StretchyLogoFidget from './StretchyLogoFidget';
 import { pickMapForGame } from '../data/rollCallMaps';
 import type { RollCallTheme } from './RollCallGame';
 
@@ -56,17 +57,28 @@ export default function WaitingRoomView({
 
       {waitingRoom.game === 'roll-call' && (
         <>
-          <p style={{ fontSize: 14, marginBottom: 8 }}>
-            Tilt your device or use arrow keys to roll the marble to the goal.
-          </p>
-          {useTilt ? (
-            <WaitingRoomTiltMaze
-              themeKey={themeName as 'classic' | 'eighties' | 'trivia'}
-              overlay={themeName === 'trivia' ? 'brain' : 'music'}
-              onWin={onRollCallWin}
-            />
+          {themeName === 'fidget' ? (
+            <>
+              <p style={{ fontSize: 14, marginBottom: 8 }}>
+                Drag the logo to stretch and bounce it. Upload your own image to play.
+              </p>
+              <StretchyLogoFidget />
+            </>
           ) : (
-            <RollCallGame map={map} theme={theme} onWin={onRollCallWin} />
+            <>
+              <p style={{ fontSize: 14, marginBottom: 8 }}>
+                Tilt your device or use arrow keys to roll the marble to the goal.
+              </p>
+              {useTilt ? (
+                <WaitingRoomTiltMaze
+                  themeKey={themeName as 'classic' | 'eighties' | 'trivia'}
+                  overlay={themeName === 'trivia' ? 'brain' : 'music'}
+                  onWin={onRollCallWin}
+                />
+              ) : (
+                <RollCallGame map={map} theme={theme} onWin={onRollCallWin} />
+              )}
+            </>
           )}
         </>
       )}

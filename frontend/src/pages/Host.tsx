@@ -44,6 +44,7 @@ export default function Host() {
   const [selectedTriviaPackId, setSelectedTriviaPackId] = useState<string>(() => defaultTriviaPacks[0]?.id ?? 'music-general');
   const [triviaPackForGame, setTriviaPackForGame] = useState<TriviaPack | null>(null);
   const [printBingoCount, setPrintBingoCount] = useState<string>('50');
+  const [waitingRoomTheme, setWaitingRoomTheme] = useState<string>('default');
 
   useEffect(() => {
     const s = getSocket();
@@ -55,6 +56,7 @@ export default function Host() {
     s.on('game:created', (payload: GameCreated) => {
       setGame(payload);
       setHostMessage(payload.waitingRoom?.hostMessage || 'Starting soon…');
+      setWaitingRoomTheme(payload.waitingRoom?.theme || 'default');
       setSongPool(Array.isArray(payload.songPool) ? payload.songPool : []);
       setRevealed(Array.isArray(payload.revealed) ? payload.revealed : []);
       if (payload.trivia?.questions?.length) {
@@ -121,10 +123,10 @@ export default function Host() {
     socket.emit('host:set-waiting-room', {
       code: game.code,
       game: 'roll-call',
-      theme: 'default',
+      theme: waitingRoomTheme,
       hostMessage,
     });
-  }, [socket, game?.code, hostMessage]);
+  }, [socket, game?.code, hostMessage, waitingRoomTheme]);
 
   const startEvent = () => {
     if (!socket || !game) return;
@@ -419,6 +421,21 @@ export default function Host() {
               <a href={displayUrl} target="_blank" rel="noopener noreferrer">Open display</a>
               {' '}(use this URL on the big screen)
             </p>
+            <label style={{ display: 'block', marginBottom: 4 }}>Waiting room game</label>
+            <select
+              value={waitingRoomTheme}
+              onChange={(e) => setWaitingRoomTheme(e.target.value)}
+              style={{ padding: '8px 12px', minWidth: 200, marginBottom: 12 }}
+            >
+              <option value="default">Marble maze (keyboard)</option>
+              <option value="fidget">Stretchy logo fidget</option>
+              <option value="classic">Tilt maze — Classic</option>
+              <option value="eighties">Tilt maze — Eighties</option>
+              <option value="trivia">Tilt maze — Trivia</option>
+              <option value="neon">Marble — Neon</option>
+              <option value="vinyl">Marble — Vinyl</option>
+              <option value="rock">Marble — Rock</option>
+            </select>
             <label style={{ display: 'block', marginBottom: 4 }}>Welcome message</label>
             <input
               type="text"
