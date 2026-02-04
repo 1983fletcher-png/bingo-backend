@@ -29,34 +29,85 @@ app.get('/api/public-url', (_, res) => {
   res.json({ publicOrigin: process.env.PUBLIC_ORIGIN || null });
 });
 
-// Scrape venue site for logo/colors (optional)
+// Scrape venue site for logo, colors, title, description (public meta tags only).
+// Legal: we only fetch publicly available meta tags; no content scraping. Use only with sites you have permission to reference.
 app.get('/api/scrape-site', async (req, res) => {
   const url = req.query.url;
   if (!url || typeof url !== 'string') {
     return res.status(400).json({ error: 'Missing url query' });
   }
   try {
-    const u = new URL(url);
+    const u = new URL(url.trim());
     if (!['http:', 'https:'].includes(u.protocol)) {
       return res.status(400).json({ error: 'Invalid URL' });
     }
-    const resp = await fetch(url, {
-      headers: { 'User-Agent': 'Playroom/1.0' },
-      signal: AbortSignal.timeout(10000)
+    const resp = await fetch(u.href, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Playroom/1.0; +https://theplayroom.app)',
+        Accept: 'text/html'
+      },
+      redirect: 'follow',
+      signal: AbortSignal.timeout(12000)
     });
+    if (!resp.ok) {
+      return res.status(502).json({ error: `Site returned ${resp.status}. We only read public meta tags.` });
+    }
     const html = await resp.text();
-    const logoUrl = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)?.[1]
-      || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i)?.[1];
-    const themeColor = html.match(/<meta[^>]+name=["']theme-color["'][^>]+content=["']([^"']+)["']/i)?.[1]
-      || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+name=["']theme-color["']/i)?.[1];
-    const result = { logoUrl: logoUrl || null, colors: [], title: null };
-    if (themeColor) result.colors.push(themeColor);
-    const titleMatch = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i)
-      || html.match(/<title[^>]*>([^<]+)<\/title>/i);
-    if (titleMatch) result.title = titleMatch[1].trim();
+    const baseUrl = resp.url || u.href;
+
+    function resolveHref(href) {
+      if (!href || !href.trim()) return null;
+      try {
+        return new URL(href.trim(), baseUrl).href;
+      } catch {
+        return null;
+      }
+    }
+
+    function metaContent(patterns) {
+      for (const re of patterns) {
+        const m = html.match(re);
+        if (m && m[1]) return m[1].trim().replace(/^["']|["']$/g, '');
+      }
+      return null;
+    }
+
+    const logoUrl = resolveHref(
+      metaContent([
+        /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+        /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+        /<link[^>]+rel=["'](?:apple-touch-icon|icon)["'][^>]+href=["']([^"']+)["']/i,
+        /<link[^>]+href=["']([^"']+)["'][^>]+rel=["'](?:apple-touch-icon|icon)["']/i
+      ])
+    );
+    const themeColor = metaContent([
+      /<meta[^>]+name=["']theme-color["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']theme-color["']/i
+    ]);
+    const title = metaContent([
+      /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i,
+      /<title[^>]*>([^<]+)<\/title>/i
+    ]);
+    const description = metaContent([
+      /<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:description["']/i,
+      /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']description["']/i
+    ]);
+
+    const result = {
+      logoUrl: logoUrl || null,
+      colors: themeColor ? [themeColor] : [],
+      title: title || null,
+      description: description || null,
+      siteUrl: baseUrl,
+      disclaimer: 'We only fetch public meta tags. Use only with sites you have permission to reference. Data is not stored on our servers.'
+    };
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: err.message || 'Failed to fetch URL' });
+    const message = err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Failed to fetch URL');
+    res.status(500).json({ error: message });
   }
 });
 
@@ -396,14 +447,16 @@ function createGame(opts = {}) {
     revealed: [],
     winner: null,
     started: false,
+    welcomeDismissed: false, // when true, display shows first question/call sheet; when false, shows welcome panel
     freeSpace: true,
     winCondition: 'line',
     gameType,
     // Waiting room: mini-game and theme before host starts main event (default ON so players get a welcome screen)
     waitingRoom: {
-      game: 'roll-call',    // default ON: players see welcome + marble game until host starts
+      game: 'roll-call',
       theme: 'default',
-      hostMessage: 'Starting soon'
+      hostMessage: 'Starting soon',
+      logoAnimation: 'bounce'   // 'none' | 'bounce' | 'breathing' | 'glow' — Playroom logo on display & player waiting room
     },
     // Roll Call leaderboard (stubbed): playerId -> { bestTimeMs, displayName }
     rollCallScores: new Map(),
@@ -507,13 +560,14 @@ io.on('connection', (socket) => {
     io.to(`game:${game.code}`).emit('game:event-config-updated', { eventConfig: game.eventConfig });
   });
 
-  // Waiting room: host sets mini-game (e.g. roll-call), theme, and message
-  socket.on('host:set-waiting-room', ({ code, game: wrGame, theme, hostMessage }) => {
+  // Waiting room: host sets mini-game (roll-call, fidget/stretch, or none), theme, and message
+  socket.on('host:set-waiting-room', ({ code, game: wrGame, theme, hostMessage, logoAnimation }) => {
     const game = getGame(code);
     if (!game || game.hostId !== socket.id) return;
-    if (wrGame !== undefined) game.waitingRoom.game = wrGame === 'roll-call' ? 'roll-call' : null;
+    if (wrGame !== undefined) game.waitingRoom.game = (wrGame === 'roll-call' || wrGame === 'fidget') ? wrGame : null;
     if (theme !== undefined && typeof theme === 'string') game.waitingRoom.theme = theme;
     if (hostMessage !== undefined && typeof hostMessage === 'string') game.waitingRoom.hostMessage = hostMessage;
+    if (logoAnimation !== undefined && ['none', 'bounce', 'breathing', 'glow'].includes(logoAnimation)) game.waitingRoom.logoAnimation = logoAnimation;
     io.to(`game:${game.code}`).emit('game:waiting-room-updated', { waitingRoom: game.waitingRoom });
   });
 
@@ -544,7 +598,15 @@ io.on('connection', (socket) => {
     const game = getGame(code);
     if (!game || game.hostId !== socket.id) return;
     game.started = true;
-    io.to(`game:${game.code}`).emit('game:started', {});
+    game.welcomeDismissed = false;
+    io.to(`game:${game.code}`).emit('game:started', { welcomeDismissed: false });
+  });
+
+  socket.on('host:dismiss-welcome', ({ code }) => {
+    const game = getGame(code);
+    if (!game || game.hostId !== socket.id) return;
+    game.welcomeDismissed = true;
+    io.to(`game:${game.code}`).emit('game:welcome-dismissed', {});
   });
 
   socket.on('host:reset', ({ code }) => {
@@ -553,6 +615,7 @@ io.on('connection', (socket) => {
     game.revealed = [];
     game.winner = null;
     game.started = false;
+    game.welcomeDismissed = false;
     game.rollCallScores.clear();
     io.to(`game:${game.code}`).emit('game:reset', {});
   });
@@ -638,6 +701,7 @@ io.on('connection', (socket) => {
       winner: game.winner,
       gameType: game.gameType,
       started: game.started,
+      welcomeDismissed: game.welcomeDismissed,
       waitingRoom: game.waitingRoom,
       rollCallLeaderboard: getRollCallLeaderboard(game)
     };
@@ -650,9 +714,10 @@ io.on('connection', (socket) => {
     const game = getGame(code);
     if (!game || game.hostId !== socket.id || !game.trivia) return;
     game.started = true;
+    game.welcomeDismissed = false;
     game.trivia.currentIndex = 0;
     game.trivia.revealed = false;
-    io.to(`game:${game.code}`).emit('game:started', {});
+    io.to(`game:${game.code}`).emit('game:started', { welcomeDismissed: false });
     const payload = getTriviaPayload(game);
     io.to(`game:${game.code}`).emit('game:trivia-state', payload);
   });

@@ -60,3 +60,10 @@ Result: experiences are portable and future-proof; the product we ship today is 
 - **Trusted sources only:** Spotify, MusicBrainz, Last.fm (and later others). We use **metadata and statistics only**; no lyrics, no audio hosting. We stay legally above board.
 - **Regional and situational:** Some data (charts, popularity) can vary by region or source. We cite the source and accept that our experience may reflect one region or dataset; we don’t claim universal truth where it doesn’t apply.
 - **Schema:** Song and track data (including key, tempo, structure) live in the same framework-agnostic shape; React UIs consume and display them. Teaching modules (e.g. “songs in 4/4”, “songs in C”) can filter and order by this schema.
+
+---
+
+## Leaderboards (current & planned)
+
+- **Current:** Host control room shows "Players joined" with a list of display names (who's in the game). Trivia shows scores per player after each question.
+- **Planned:** Leaderboards for waiting-room mini-games (e.g. Roll Call best times, Stretch game), and a unified view of who's joined plus any stats we track. Backend already exposes `rollCallLeaderboard` for display; host UI can surface these when we add the views.
