@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { Song } from '../types/game';
+import { fetchJson } from '../lib/safeFetch';
 
-const API_BASE = import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? '' : window.location.origin);
+const API_BASE = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : window.location.origin);
 
 interface SongFactPopUpProps {
   song: Song | null;
@@ -27,10 +28,10 @@ export default function SongFactPopUp({
     }
     setLoading(true);
     const params = new URLSearchParams({ artist: song.artist, title: song.title });
-    fetch(`${API_BASE.replace(/\/$/, '')}/api/song-fact?${params}`)
-      .then((r) => r.json())
-      .then((data) => {
-        setFact(typeof data.fact === 'string' ? data.fact : null);
+    const url = `${API_BASE.replace(/\/$/, '')}/api/song-fact?${params}`;
+    fetchJson<{ fact?: string }>(url)
+      .then((result) => {
+        setFact(result.data && typeof result.data.fact === 'string' ? result.data.fact : null);
       })
       .catch(() => setFact(null))
       .finally(() => setLoading(false));

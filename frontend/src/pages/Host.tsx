@@ -7,10 +7,11 @@ import { defaultTriviaPacks } from '../data/triviaPacks';
 import type { TriviaPack, TriviaQuestion } from '../data/triviaPacks';
 import { printBingoCards } from '../lib/printBingoCards';
 import { buildTriviaQuizPrintDocument, buildFlashcardsPrintDocument } from '../lib/printMaterials';
+import { fetchJson } from '../lib/safeFetch';
 import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
 
-const API_BASE = import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? '' : window.location.origin);
+const API_BASE = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : window.location.origin);
 
 interface GameCreated {
   code: string;
@@ -172,7 +173,7 @@ export default function Host() {
     setGenLoading(true);
     const base = API_BASE.replace(/\/$/, '');
     try {
-      const res = await fetch(`${base}/api/generate-songs`, {
+      const result = await fetchJson<{ songs?: Song[]; error?: string }>(`${base}/api/generate-songs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -182,9 +183,9 @@ export default function Host() {
           apiKey: genApiKey || undefined,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to generate');
-      const songs = data.songs;
+      if (!result.ok) throw new Error(result.error ?? result.data?.error ?? 'Failed to generate');
+      const data = result.data;
+      const songs = data?.songs;
       if (Array.isArray(songs) && songs.length >= 24) {
         socket.emit('host:set-songs', { code: game.code, songs });
         setSongPool(songs);
