@@ -196,6 +196,9 @@ function nextQuestionsForIntent(intent) {
   return { done: questions.length === 0, questions };
 }
 
+// Optional: GET so you can verify AI Builder backend in browser (e.g. .../api/ai-builder/health)
+app.get('/api/ai-builder/health', (_, res) => res.json({ ok: true, service: 'ai-builder' }));
+
 app.post('/api/ai-builder/next-questions', (req, res) => {
   const intent = normalizeIntent(req.body);
   const result = nextQuestionsForIntent(intent);
