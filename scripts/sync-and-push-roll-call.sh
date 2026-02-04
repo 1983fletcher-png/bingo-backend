@@ -17,7 +17,8 @@ FRONTEND_SRC="$BACKEND_ROOT/frontend/src"
 # Load .env or env so GITHUB_TOKEN (and optionally MUSIC_BINGO_APP_PATH) are set
 if [[ -f "$BACKEND_ROOT/.env" ]]; then
   set -a; source "$BACKEND_ROOT/.env"; set +a
-elif [[ -f "$BACKEND_ROOT/env" ]]; then
+fi
+if [[ -z "$GITHUB_TOKEN" ]] && [[ -f "$BACKEND_ROOT/env" ]]; then
   set -a; source "$BACKEND_ROOT/env"; set +a
 fi
 export GITHUB_TOKEN

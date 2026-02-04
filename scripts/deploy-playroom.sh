@@ -9,7 +9,8 @@ cd "$REPO_ROOT"
 # Load .env or env so GITHUB_TOKEN is set (paste your token in one of those files once)
 if [[ -f "$REPO_ROOT/.env" ]]; then
   set -a; source "$REPO_ROOT/.env"; set +a
-elif [[ -f "$REPO_ROOT/env" ]]; then
+fi
+if [[ -z "$GITHUB_TOKEN" ]] && [[ -f "$REPO_ROOT/env" ]]; then
   set -a; source "$REPO_ROOT/env"; set +a
 fi
 export GITHUB_TOKEN
