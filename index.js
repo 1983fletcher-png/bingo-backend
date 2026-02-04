@@ -4,6 +4,8 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import { customAlphabet } from 'nanoid';
 import { generateSongs } from './lib/ai.js';
+import { fetchTrustedSources } from './lib/trustedSources.js';
+import { enrichTrack, getChartStyleList } from './lib/musicDataLayer.js';
 
 const nanoidCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 6);
 
@@ -96,6 +98,36 @@ app.get('/api/song-fact', (req, res) => {
   const title = req.query.title;
   const fact = getSongFact(artist, title);
   res.json({ fact: fact || null });
+});
+
+// Song metadata (key, tempo, year, playCount, tags, etc.) from MusicBrainz + Spotify + Last.fm.
+app.get('/api/song-metadata', async (req, res) => {
+  const artist = req.query.artist;
+  const title = req.query.title;
+  if (!artist || !title) {
+    return res.status(400).json({ error: 'Missing artist or title query' });
+  }
+  try {
+    const track = await enrichTrack(artist, title);
+    res.json(track);
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Failed to fetch metadata' });
+  }
+});
+
+// Chart-style top tracks by tag (Last.fm), e.g. ?tag=kids&limit=75 for "top 75 kids songs".
+app.get('/api/top-tracks-by-tag', async (req, res) => {
+  const tag = req.query.tag;
+  const limit = Math.min(parseInt(req.query.limit, 10) || 50, 50);
+  if (!tag || typeof tag !== 'string' || !tag.trim()) {
+    return res.status(400).json({ error: 'Missing or invalid tag query' });
+  }
+  try {
+    const tracks = await getChartStyleList({ tag: tag.trim(), limit });
+    res.json({ tag: tag.trim(), tracks });
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Failed to fetch top tracks' });
+  }
 });
 
 // =============================================================================
@@ -293,12 +325,39 @@ app.post('/api/ai-builder/generate', (req, res) => {
 
 // Verification gate: Phase 1 is “source-count validation”, not web crawling.
 // Anything factual requires >=2 sources to be considered VERIFIED.
-app.post('/api/ai-builder/verify', (req, res) => {
-  const nodes = Array.isArray(req.body?.nodes) ? req.body.nodes : [];
+app.post('/api/ai-builder/verify', async (req, res) => {
+  let nodes = Array.isArray(req.body?.nodes) ? req.body.nodes : [];
+  const factualTypes = ['factual_claim', 'myth_vs_truth'];
+
+  const updatedNodes = await Promise.all(
+    nodes.map(async (n) => {
+      const claimType = toStr(n?.claim_type) || 'factual_claim';
+      let sources = Array.isArray(n?.sources) ? n.sources : [];
+      const factual = factualTypes.includes(claimType);
+
+      if (factual && sources.length < 2) {
+        const claimText = toStr(n?.primaryClaim) || toStr(n?.title) || toStr(n?.claim) || '';
+        if (claimText) {
+          try {
+            const fetched = await fetchTrustedSources(claimText, 3);
+            const newSources = fetched.map((s) => ({ url: s.url, title: s.title || s.domain }));
+            sources = [...sources, ...newSources].slice(0, 5);
+          } catch {
+            // keep existing sources
+          }
+        }
+      }
+
+      return { ...n, sources };
+    })
+  );
+
+  nodes = updatedNodes;
+
   const results = nodes.map((n) => {
     const claimType = toStr(n?.claim_type) || 'factual_claim';
     const sources = Array.isArray(n?.sources) ? n.sources : [];
-    const factual = ['factual_claim', 'myth_vs_truth'].includes(claimType);
+    const factual = factualTypes.includes(claimType);
     const ok = factual ? sources.length >= 2 : true;
     return {
       id: n?.id ?? null,
@@ -309,7 +368,8 @@ app.post('/api/ai-builder/verify', (req, res) => {
       notes: ok ? null : 'Factual content must include at least 2 independent sources before it can be shared.',
     };
   });
-  res.json({ results });
+
+  res.json({ results, updatedNodes });
 });
 
 // =============================================================================
