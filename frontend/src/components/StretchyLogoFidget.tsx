@@ -73,7 +73,7 @@ export default function StretchyLogoFidget() {
     const resize = () => {
       const rect = container.getBoundingClientRect();
       w = canvas.width = Math.floor(rect.width);
-      h = canvas.height = Math.floor(Math.min(rect.height, 420));
+      h = canvas.height = Math.floor(rect.height);
       buildGrid();
     };
 
@@ -185,43 +185,78 @@ export default function StretchyLogoFidget() {
 
   return (
     <div
-      ref={containerRef}
       style={{
-        position: 'relative',
+        width: '100%',
+        maxWidth: 480,
+        margin: '0 auto',
         background: '#111',
         borderRadius: 12,
         overflow: 'hidden',
-        touchAction: 'none',
-        width: '100%',
-        maxWidth: 480,
-        height: 420,
-        margin: '0 auto',
       }}
     >
-      <canvas
-        ref={canvasRef}
-        width={400}
-        height={420}
-        style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain' }}
-      />
-      <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 10, display: 'flex', gap: 8, alignItems: 'center' }}>
-        <label style={{ padding: '8px 16px', background: '#333', color: '#fff', borderRadius: 8, cursor: 'pointer', fontSize: 14 }}>
-          Upload image
-          <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
-        </label>
-        <button
-          type="button"
-          onClick={() => loadImage(DEFAULT_LOGO_URL)}
-          style={{ padding: '8px 16px', background: '#333', color: '#fff', border: 'none', borderRadius: 8, fontSize: 14, cursor: 'pointer' }}
-        >
-          Reset logo
-        </button>
+      <div
+        ref={containerRef}
+        style={{
+          position: 'relative',
+          touchAction: 'none',
+          width: '100%',
+          height: 380,
+        }}
+      >
+        <canvas
+          ref={canvasRef}
+          width={400}
+          height={380}
+          style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain' }}
+        />
+        {!imgLoaded && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#111', color: '#666' }}>
+            Loading…
+          </div>
+        )}
       </div>
-      {!imgLoaded && (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#111', color: '#666' }}>
-          Loading…
+      <div
+        style={{
+          padding: '14px 16px',
+          background: '#1a202c',
+          borderTop: '1px solid #333',
+        }}
+      >
+        <p style={{ margin: '0 0 10px 0', fontSize: 12, fontWeight: 600, color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          Options — upload your image (same stretchy physics)
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+          <label
+            style={{
+              padding: '10px 18px',
+              background: '#4a5568',
+              color: '#fff',
+              borderRadius: 8,
+              cursor: 'pointer',
+              fontSize: 14,
+              fontWeight: 500,
+            }}
+          >
+            Upload your image
+            <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+          </label>
+          <button
+            type="button"
+            onClick={() => loadImage(DEFAULT_LOGO_URL)}
+            style={{
+              padding: '10px 18px',
+              background: '#2d3748',
+              color: '#e2e8f0',
+              border: '1px solid #4a5568',
+              borderRadius: 8,
+              fontSize: 14,
+              cursor: 'pointer',
+            }}
+          >
+            Reset to default logo
+          </button>
         </div>
-      )}
+      </div>
     </div>
   );
 }

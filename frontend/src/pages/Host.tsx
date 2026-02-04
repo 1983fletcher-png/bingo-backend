@@ -281,14 +281,34 @@ export default function Host() {
         {activeTab === 'waiting' && (
           <>
             <h2 style={{ marginTop: 0 }}>Waiting room</h2>
-            <p style={{ color: '#a0aec0' }}>Share this link. Players see the marble game until you start.</p>
+            <p style={{ color: '#a0aec0' }}>Share this link. Players see the waiting room game until you start.</p>
             <p style={{ fontSize: 18, wordBreak: 'break-all' }}>
               <a href={game.joinUrl} target="_blank" rel="noopener noreferrer">
                 {game.joinUrl}
               </a>
             </p>
             <p style={{ fontSize: 14 }}>Room code: <strong>{game.code}</strong></p>
-            <p style={{ fontSize: 13, color: '#a0aec0' }}>Edit welcome message in Event & venue details below.</p>
+
+            <div style={{ marginTop: 20, padding: 16, border: '1px solid #4a5568', borderRadius: 8, background: '#2d3748' }}>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: 16 }}>Waiting room game</h3>
+              <p style={{ fontSize: 13, color: '#a0aec0', margin: '0 0 12px 0' }}>Choose what players see while waiting.</p>
+              <select
+                value={waitingRoomTheme}
+                onChange={(e) => setWaitingRoomTheme(e.target.value)}
+                style={{ padding: '8px 12px', minWidth: 220, width: '100%', maxWidth: 280 }}
+              >
+                <option value="default">Roll Call — Marble maze (keyboard)</option>
+                <option value="fidget">Stretch game</option>
+                <option value="classic">Tilt maze — Classic</option>
+                <option value="eighties">Tilt maze — Eighties</option>
+                <option value="trivia">Tilt maze — Trivia</option>
+                <option value="neon">Marble — Neon</option>
+                <option value="vinyl">Marble — Vinyl</option>
+                <option value="rock">Marble — Rock</option>
+              </select>
+            </div>
+
+            <p style={{ fontSize: 13, color: '#a0aec0', marginTop: 16 }}>Edit welcome message in Event & venue details below.</p>
 
             <div style={{ marginTop: 24 }}>
               <button onClick={startEvent} style={{ padding: '12px 24px' }}>
@@ -427,8 +447,8 @@ export default function Host() {
               onChange={(e) => setWaitingRoomTheme(e.target.value)}
               style={{ padding: '8px 12px', minWidth: 200, marginBottom: 12 }}
             >
-              <option value="default">Marble maze (keyboard)</option>
-              <option value="fidget">Stretchy logo fidget</option>
+              <option value="default">Roll Call — Marble maze (keyboard)</option>
+              <option value="fidget">Stretch game</option>
               <option value="classic">Tilt maze — Classic</option>
               <option value="eighties">Tilt maze — Eighties</option>
               <option value="trivia">Tilt maze — Trivia</option>

@@ -60,7 +60,7 @@ export default function WaitingRoomView({
           {themeName === 'fidget' ? (
             <>
               <p style={{ fontSize: 14, marginBottom: 8 }}>
-                Drag the logo to stretch and bounce it. Upload your own image to play.
+                Stretch game — drag to stretch and bounce. Use Options below to upload your own image (same physics).
               </p>
               <StretchyLogoFidget />
             </>
