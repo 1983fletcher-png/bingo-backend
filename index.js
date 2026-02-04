@@ -72,10 +72,13 @@ app.get('/api/scrape-site', async (req, res) => {
       return null;
     }
 
+    // Logo: og:image, twitter:image, apple-touch-icon, favicon — works across WordPress, Wix, Squarespace, custom, etc.
     const logoUrl = resolveHref(
       metaContent([
         /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
         /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+        /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+        /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i,
         /<link[^>]+rel=["'](?:apple-touch-icon|icon)["'][^>]+href=["']([^"']+)["']/i,
         /<link[^>]+href=["']([^"']+)["'][^>]+rel=["'](?:apple-touch-icon|icon)["']/i
       ])
@@ -87,11 +90,15 @@ app.get('/api/scrape-site', async (req, res) => {
     const title = metaContent([
       /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i,
       /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i,
+      /<meta[^>]+name=["']twitter:title["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:title["']/i,
       /<title[^>]*>([^<]+)<\/title>/i
     ]);
     const description = metaContent([
       /<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["']/i,
       /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:description["']/i,
+      /<meta[^>]+name=["']twitter:description["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:description["']/i,
       /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i,
       /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']description["']/i
     ]);
