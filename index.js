@@ -99,6 +99,217 @@ app.get('/api/song-fact', (req, res) => {
 });
 
 // =============================================================================
+// AI Builder (Phase 1: private drafts + export; no public library yet)
+// =============================================================================
+// Non‑negotiable: anything presented as factual must be cross‑referenced.
+// In Phase 1, we enforce this at "publish/share" time. Draft/local play may
+// contain unverified facts, but they are marked UNVERIFIED and must not be shared.
+
+const AI_BUILDER_ALLOWED_BUILDS = ['trivia_pack', 'myth_vs_truth', 'icebreakers', 'edutainment'];
+
+function toStr(x) {
+  return typeof x === 'string' ? x : '';
+}
+
+function normalizeIntent(body) {
+  const intent = body?.intent && typeof body.intent === 'object' ? body.intent : {};
+  return {
+    build: toStr(intent.build),
+    title: toStr(intent.title),
+    venue_type: Array.isArray(intent.venue_type) ? intent.venue_type.filter((v) => typeof v === 'string') : [],
+    audience: intent.audience && typeof intent.audience === 'object' ? intent.audience : {},
+    duration_minutes: Number.isFinite(intent.duration_minutes) ? intent.duration_minutes : undefined,
+    energy_waveform: Array.isArray(intent.energy_waveform) ? intent.energy_waveform.filter((v) => typeof v === 'string') : [],
+    notes: toStr(intent.notes),
+  };
+}
+
+function nextQuestionsForIntent(intent) {
+  const questions = [];
+
+  if (!AI_BUILDER_ALLOWED_BUILDS.includes(intent.build)) {
+    questions.push({
+      id: 'build',
+      prompt: 'What are you building?',
+      type: 'single_select',
+      options: [
+        { id: 'trivia_pack', label: 'Trivia pack (fact-checked + explanations)' },
+        { id: 'myth_vs_truth', label: 'Myth vs Truth (gentle explanations + prompts)' },
+        { id: 'icebreakers', label: 'Icebreakers (opinion/story prompts)' },
+        { id: 'edutainment', label: 'Edutainment (teach-then-check)' },
+      ],
+    });
+  }
+
+  if (!intent.title) {
+    questions.push({
+      id: 'title',
+      prompt: 'What is the title/theme?',
+      type: 'text',
+      placeholder: 'e.g., 80s Night, Curiosity & Shared Truths, Team Night',
+    });
+  }
+
+  const minAge = Number.isFinite(intent.audience?.min_age) ? intent.audience.min_age : undefined;
+  const maxAge = Number.isFinite(intent.audience?.max_age) ? intent.audience.max_age : undefined;
+  if (!(minAge >= 0) || !(maxAge >= 0)) {
+    questions.push({
+      id: 'audience',
+      prompt: 'Who is this for?',
+      type: 'audience_range',
+      fields: [
+        { id: 'min_age', label: 'Min age', type: 'number', default: 4 },
+        { id: 'max_age', label: 'Max age', type: 'number', default: 99 },
+        { id: 'notes', label: 'Notes (optional)', type: 'text', placeholder: 'Mixed ages, family-friendly' },
+      ],
+    });
+  }
+
+  if (!intent.venue_type?.length) {
+    questions.push({
+      id: 'venue_type',
+      prompt: 'Where is this being hosted?',
+      type: 'multi_select',
+      options: [
+        { id: 'brewery', label: 'Brewery' },
+        { id: 'sports_bar', label: 'Sports bar' },
+        { id: 'school', label: 'School' },
+        { id: 'library', label: 'Library' },
+        { id: 'home', label: 'Home' },
+      ],
+      allow_multiple: true,
+    });
+  }
+
+  if (!Number.isFinite(intent.duration_minutes)) {
+    questions.push({
+      id: 'duration_minutes',
+      prompt: 'How long should it run?',
+      type: 'number',
+      min: 5,
+      max: 120,
+      default: 30,
+    });
+  }
+
+  // Energy waveform (optional in Phase 1; we can auto-fill defaults).
+  return { done: questions.length === 0, questions };
+}
+
+app.post('/api/ai-builder/next-questions', (req, res) => {
+  const intent = normalizeIntent(req.body);
+  const result = nextQuestionsForIntent(intent);
+  res.json({ intent, ...result });
+});
+
+// Phase 1 generator: returns a skeleton "experience spec" plus draft nodes.
+// UI can iterate without needing the full AI generation step yet.
+app.post('/api/ai-builder/generate', (req, res) => {
+  const intent = normalizeIntent(req.body);
+  const { done } = nextQuestionsForIntent(intent);
+  if (!done) {
+    return res.status(400).json({ error: 'Intent incomplete. Call /api/ai-builder/next-questions first.', intent });
+  }
+
+  const experience = {
+    experience_id: `draft-${Date.now()}`,
+    title: intent.title || 'Untitled',
+    venue_type: intent.venue_type?.length ? intent.venue_type : ['home'],
+    audience: {
+      min_age: Number.isFinite(intent.audience?.min_age) ? intent.audience.min_age : 4,
+      max_age: Number.isFinite(intent.audience?.max_age) ? intent.audience.max_age : 99,
+      notes: toStr(intent.audience?.notes) || 'Mixed ages, family-friendly',
+    },
+    core_theme: intent.build === 'myth_vs_truth' ? 'Curiosity & Shared Truths' : 'Play, Learn, Connect',
+    energy_waveform: [
+      'arrival_calm',
+      'gentle_engagement',
+      'curiosity_build',
+      'competitive_spike',
+      'community_release',
+      'warm_close',
+    ],
+    modules: [
+      {
+        module_id: 'arrival_01',
+        type: 'warm_up',
+        energy_level: 'low',
+        interaction_style: 'discussion',
+        question_format: 'open_prompt',
+        content: {
+          prompt: 'What’s something you believed as a kid that you later updated?',
+          visuals_optional: true,
+        },
+        host_guidance: {
+          tone: 'calm',
+          instructions: 'Let tables talk for 30–60 seconds. No answers collected.',
+        },
+      },
+    ],
+    scoring: {
+      competitive_weight: 0.2,
+      participation_weight: 0.8,
+      notes: 'Competition is optional; participation and conversation are primary.',
+    },
+    printable_assets: true,
+    localization_ready: true,
+    accessibility_notes: 'Can be run without screens; host reads prompts aloud.',
+  };
+
+  // Draft nodes (intentionally minimal in Phase 1)
+  const draft_nodes = [
+    {
+      id: `node-${Date.now()}`,
+      claim_type: intent.build === 'icebreakers' ? 'opinion_prompt' : 'factual_claim',
+      type: intent.build === 'myth_vs_truth' ? 'myth_vs_truth' : 'fact',
+      title: 'Draft question',
+      primaryClaim: 'Replace with a real claim/prompt',
+      verifiedAnswer: intent.build === 'icebreakers' ? null : null,
+      explanationSimple: '',
+      explanationExpanded: '',
+      confidenceLevel: 'low',
+      sources: [],
+      ageAdaptations: {
+        kids: '',
+        teens: '',
+        adults: '',
+      },
+      conversationPrompts: ['What do you think?', 'Why might people believe this?'],
+      energyLevel: 'medium',
+      localizationNotes: '',
+      sensitivityTags: [],
+      verification: {
+        status: 'unverified',
+        required_sources: intent.build === 'icebreakers' ? 0 : 2,
+      },
+    },
+  ];
+
+  res.json({ experience, draft_nodes });
+});
+
+// Verification gate: Phase 1 is “source-count validation”, not web crawling.
+// Anything factual requires >=2 sources to be considered VERIFIED.
+app.post('/api/ai-builder/verify', (req, res) => {
+  const nodes = Array.isArray(req.body?.nodes) ? req.body.nodes : [];
+  const results = nodes.map((n) => {
+    const claimType = toStr(n?.claim_type) || 'factual_claim';
+    const sources = Array.isArray(n?.sources) ? n.sources : [];
+    const factual = ['factual_claim', 'myth_vs_truth'].includes(claimType);
+    const ok = factual ? sources.length >= 2 : true;
+    return {
+      id: n?.id ?? null,
+      claim_type: claimType,
+      verification_status: ok ? 'verified' : (factual ? 'unverified' : 'not_required'),
+      required_sources: factual ? 2 : 0,
+      source_count: sources.length,
+      notes: ok ? null : 'Factual content must include at least 2 independent sources before it can be shared.',
+    };
+  });
+  res.json({ results });
+});
+
+// =============================================================================
 // Game sessions — room code, host, players, songs, bingo
 // =============================================================================
 

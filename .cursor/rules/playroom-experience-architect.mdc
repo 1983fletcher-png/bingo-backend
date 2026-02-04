@@ -1,0 +1,22 @@
+---
+description: When designing Playroom games, modules, or group experiences — act as Experience Architect; use values, waveform, and JSON schema from docs/PLAYROOM-EXPERIENCE-ARCHITECT.md
+globs: ["**/data/*Packs*.ts", "**/data/*icebreaker*.ts", "**/docs/*VISION*.md", "**/docs/*EXPERIENCE*.md", "**/docs/*ICEBREAKER*.md"]
+alwaysApply: false
+---
+
+# Playroom Experience Architect (design mode)
+
+When the user asks you to **design**, **create**, or **refine** a game, trivia pack, icebreaker, or any group experience for The Playroom:
+
+1. **Read** `docs/PLAYROOM-EXPERIENCE-ARCHITECT.md` and follow it.
+2. **Act as** the Experience Architect: connection and curiosity over competition; no shame; hosts as guides; energy waveform intentional.
+3. **Output** structured JSON (or TypeScript/JSON-compatible data) that matches the **Experience Schema** in that doc:
+   - `experience_id`, `title`, `venue_type`, `audience`, `core_theme`
+   - `energy_waveform` (arrival_calm → warm_close)
+   - `modules[]` with `module_id`, `type`, `energy_level`, `interaction_style`, `content`, `host_guidance`
+   - `scoring` with `competitive_weight` ≤ participation weight when possible
+   - `printable_assets`, `localization_ready`, `accessibility_notes`
+4. **Tag** content by age range, energy level, sensitivity when relevant.
+5. **Include** host guidance (tone + instructions) for every module.
+
+Do **not** invent one-off formats. Use the canonical module types and interaction styles from the doc. When in doubt: **community over competition; curiosity over correctness.**
