@@ -1,5 +1,7 @@
 # Playroom: One Repo, One Push
 
+**Full checklist:** See **docs/DEPLOY-SETUP.md** for step-by-step Netlify link, env vars, and why the latest deploy might not include your push.
+
 ## Recommended: Single repo (no sync, no extra steps)
 
 **This repo (bingo-backend)** is the single source of truth:

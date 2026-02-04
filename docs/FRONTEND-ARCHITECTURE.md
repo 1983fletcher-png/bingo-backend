@@ -13,13 +13,16 @@
 
 ## Where things live
 
+**Recommended (one push):** Netlify builds the live site from **this repo** (bingo-backend), `frontend/` directory. See **docs/DEPLOY-SETUP.md** for the exact Netlify link and env vars. One push to `main` updates both backend (Railway) and frontend (Netlify).
+
+**Alternative:** The live site can instead be built from **music-bingo-app** (Netlify linked to that repo). Then design system, nav, and UX live in music-bingo-app; this repo is API/socket only.
+
 | What | Where |
 |------|--------|
-| **Live site (theplayroom.netlify.app)** | Built from **music-bingo-app** (Netlify). |
-| **Design system, nav, themes, landing page** | **music-bingo-app** only. Change here when you want to tweak copy or look. |
+| **Live site (e.g. theplayroom.netlify.app)** | Built from **bingo-backend** (recommended) or **music-bingo-app** (Netlify). See **DEPLOY-SETUP.md**. |
 | **Backend API + Socket.io** | **Music Bingo Backend** (e.g. Railway). |
-| **New API/socket behavior** | Implement in backend; document; then use from the app. |
-| **New UI or UX** | Implement in **music-bingo-app** using its components and CSS variables. |
+| **New API/socket behavior** | Implement in backend; document; then use from the app or from this repo’s `frontend/`. |
+| **New UI or UX (if using music-bingo-app)** | Implement in **music-bingo-app** using its components and CSS variables. |
 
 ---
 
