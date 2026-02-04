@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import HostSongGrid from '../components/HostSongGrid';
 import SongFactPopUp from '../components/SongFactPopUp';
@@ -256,6 +257,9 @@ export default function Host() {
   return (
     <>
       <div style={{ padding: 24, maxWidth: 560 }}>
+        <p style={{ marginTop: 0, marginBottom: 16 }}>
+          <Link to="/" style={{ color: '#a0aec0', fontSize: 14, textDecoration: 'none' }}>← The Playroom</Link>
+        </p>
         <div style={{ display: 'flex', gap: 8, marginBottom: 16, borderBottom: '1px solid #4a5568' }}>
           {tabs.map(({ id, label }) => (
             <button
@@ -281,23 +285,30 @@ export default function Host() {
         {activeTab === 'waiting' && (
           <>
             <h2 style={{ marginTop: 0 }}>Waiting room</h2>
-            <p style={{ color: '#a0aec0' }}>Share this link. Players see the waiting room game until you start.</p>
-            <p style={{ fontSize: 18, wordBreak: 'break-all' }}>
-              <a href={game.joinUrl} target="_blank" rel="noopener noreferrer">
-                {game.joinUrl}
-              </a>
+            <p style={{ color: '#a0aec0', fontSize: 14 }}>Share the link. Players see the waiting game until you start.</p>
+            <p style={{ fontSize: 16, wordBreak: 'break-all', marginBottom: 4 }}>
+              <a href={game.joinUrl} target="_blank" rel="noopener noreferrer">{game.joinUrl}</a>
             </p>
-            <p style={{ fontSize: 14 }}>Room code: <strong>{game.code}</strong></p>
+            <p style={{ fontSize: 13, color: '#718096', marginBottom: 20 }}>Room code: <strong>{game.code}</strong></p>
 
-            <div style={{ marginTop: 20, padding: 16, border: '1px solid #4a5568', borderRadius: 8, background: '#2d3748' }}>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: 16 }}>Waiting room game</h3>
-              <p style={{ fontSize: 13, color: '#a0aec0', margin: '0 0 12px 0' }}>Choose what players see while waiting.</p>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontSize: 13, marginBottom: 4 }}>Welcome message</label>
+              <input
+                type="text"
+                value={hostMessage}
+                onChange={(e) => setHostMessage(e.target.value)}
+                style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }}
+                placeholder="e.g. Starting soon…"
+              />
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: 'block', fontSize: 13, marginBottom: 4 }}>Waiting room game</label>
               <select
                 value={waitingRoomTheme}
                 onChange={(e) => setWaitingRoomTheme(e.target.value)}
-                style={{ padding: '8px 12px', minWidth: 220, width: '100%', maxWidth: 280 }}
+                style={{ padding: '8px 12px', minWidth: 220, width: '100%', maxWidth: 280, borderRadius: 6 }}
               >
-                <option value="default">Roll Call — Marble maze (keyboard)</option>
+                <option value="default">Roll Call — Marble maze</option>
                 <option value="fidget">Stretch game</option>
                 <option value="classic">Tilt maze — Classic</option>
                 <option value="eighties">Tilt maze — Eighties</option>
@@ -308,13 +319,9 @@ export default function Host() {
               </select>
             </div>
 
-            <p style={{ fontSize: 13, color: '#a0aec0', marginTop: 16 }}>Edit welcome message in Event & venue details below.</p>
-
-            <div style={{ marginTop: 24 }}>
-              <button onClick={startEvent} style={{ padding: '12px 24px' }}>
-                {game.gameType === 'trivia' ? 'Start trivia' : 'Start the game'} — everyone enters
-              </button>
-            </div>
+            <button onClick={startEvent} style={{ padding: '12px 24px', borderRadius: 8 }}>
+              {game.gameType === 'trivia' ? 'Start trivia' : 'Start the game'}
+            </button>
           </>
         )}
 
@@ -425,44 +432,16 @@ export default function Host() {
           </>
         )}
 
-        {/* Event & venue details — dropdown */}
+        {/* TV display link — optional */}
         <details style={{ marginTop: 24, border: '1px solid #4a5568', borderRadius: 8, overflow: 'hidden' }}>
-          <summary style={{ padding: '12px 16px', cursor: 'pointer', background: '#2d3748', fontWeight: 600 }}>
-            Event & venue details
+          <summary style={{ padding: '12px 16px', cursor: 'pointer', background: '#2d3748', fontWeight: 600, fontSize: 14 }}>
+            TV display &amp; links
           </summary>
           <div style={{ padding: 16, borderTop: '1px solid #4a5568' }}>
-            <p style={{ margin: '0 0 8px 0', fontSize: 14, color: '#a0aec0' }}>Share this link with players. Open the display link on your TV or projector.</p>
-            <p style={{ fontSize: 18, wordBreak: 'break-all', marginBottom: 4 }}>
-              <a href={game.joinUrl} target="_blank" rel="noopener noreferrer">{game.joinUrl}</a>
+            <p style={{ margin: '0 0 8px 0', fontSize: 13, color: '#a0aec0' }}>Use the display URL on your TV or projector so players see the main view.</p>
+            <p style={{ fontSize: 14, wordBreak: 'break-all' }}>
+              <a href={displayUrl} target="_blank" rel="noopener noreferrer">{displayUrl}</a>
             </p>
-            <p style={{ fontSize: 14, marginBottom: 12 }}>Room code: <strong>{game.code}</strong></p>
-            <p style={{ fontSize: 14, marginBottom: 8 }}>
-              <strong>TV display:</strong>{' '}
-              <a href={displayUrl} target="_blank" rel="noopener noreferrer">Open display</a>
-              {' '}(use this URL on the big screen)
-            </p>
-            <label style={{ display: 'block', marginBottom: 4 }}>Waiting room game</label>
-            <select
-              value={waitingRoomTheme}
-              onChange={(e) => setWaitingRoomTheme(e.target.value)}
-              style={{ padding: '8px 12px', minWidth: 200, marginBottom: 12 }}
-            >
-              <option value="default">Roll Call — Marble maze (keyboard)</option>
-              <option value="fidget">Stretch game</option>
-              <option value="classic">Tilt maze — Classic</option>
-              <option value="eighties">Tilt maze — Eighties</option>
-              <option value="trivia">Tilt maze — Trivia</option>
-              <option value="neon">Marble — Neon</option>
-              <option value="vinyl">Marble — Vinyl</option>
-              <option value="rock">Marble — Rock</option>
-            </select>
-            <label style={{ display: 'block', marginBottom: 4 }}>Welcome message</label>
-            <input
-              type="text"
-              value={hostMessage}
-              onChange={(e) => setHostMessage(e.target.value)}
-              style={{ width: '100%', maxWidth: 400, padding: 8 }}
-            />
           </div>
         </details>
 
