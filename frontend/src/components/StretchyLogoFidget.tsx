@@ -66,7 +66,6 @@ export default function StretchyLogoFidget() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const img = imgRef.current;
     let w = 400;
     let h = 400;
 
