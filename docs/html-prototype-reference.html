@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>The Playroom – Bingo & Maze Core</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --bg-dark: #0f1115;
+  --panel: #1b1f27;
+  --accent: #3fa9f5;
+  --text: #ffffff;
+  --muted: #9aa3ad;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text);
+}
+
+header {
+  padding: 12px 16px;
+  background: var(--panel);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+
+section {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  color: #000;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #444;
+  color: white;
+}
+
+canvas {
+  background: #000;
+  border-radius: 8px;
+  display: block;
+  margin: auto;
+}
+
+.bingo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.bingo-cell {
+  border: 1px solid #555;
+  padding: 12px;
+  text-align: center;
+  font-size: 18px;
+  background: #111;
+}
+
+.bingo-cell.active {
+  background: var(--accent);
+  color: #000;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <strong>The Playroom</strong>
+  <span class="muted">Host-Controlled Event System</span>
+</header>
+
+<main>
+
+<!-- WAITING ROOM MAZE -->
+<section>
+<h2>Waiting Room Maze</h2>
+<canvas id="maze" width="300" height="300"></canvas>
+<p class="muted">Use arrow keys or tap to move</p>
+</section>
+
+<!-- MUSIC BINGO HOST -->
+<section>
+<h2>Music Bingo – Host</h2>
+<button onclick="drawSong()">🎲 Random Song</button>
+<button class="secondary" onclick="confirmSong()">▶ Song Playing</button>
+<p>Current Song: <strong id="currentSong">—</strong></p>
+</section>
+
+<!-- DISPLAY GRID -->
+<section>
+<h2>Display Bingo Board</h2>
+<div id="displayGrid" class="bingo-grid"></div>
+</section>
+
+<!-- PLAYER CARD -->
+<section>
+<h2>Player Card</h2>
+<div id="playerGrid" class="bingo-grid"></div>
+</section>
+
+</main>
+
+<script>
+/* ---------------------------
+   MAZE MODULE (GRID-BASED)
+--------------------------- */
+
+const mazeCanvas = document.getElementById("maze");
+const ctx = mazeCanvas.getContext("2d");
+
+const tileSize = 30;
+const maze = [
+  "##########",
+  "#S   #   #",
+  "# ## # # #",
+  "#    # #G#",
+  "##########"
+];
+
+let player = { x: 1, y: 1 };
+
+function drawMaze() {
+  ctx.clearRect(0,0,300,300);
+  for (let y=0;y<maze.length;y++) {
+    for (let x=0;x<maze[y].length;x++) {
+      if (maze[y][x] === "#") {
+        ctx.fillStyle = "#444";
+        ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
+      }
+      if (maze[y][x] === "G") {
+        ctx.fillStyle = "#3fa9f5";
+        ctx.fillRect(x*tileSize,y*tileSize,tileSize,tileSize);
+      }
+    }
+  }
+  ctx.fillStyle = "yellow";
+  ctx.beginPath();
+  ctx.arc(
+    player.x*tileSize + tileSize/2,
+    player.y*tileSize + tileSize/2,
+    tileSize/3,
+    0,
+    Math.PI*2
+  );
+  ctx.fill();
+}
+
+function move(dx,dy) {
+  const nx = player.x + dx;
+  const ny = player.y + dy;
+  if (maze[ny][nx] !== "#") {
+    player.x = nx;
+    player.y = ny;
+    if (maze[ny][nx] === "G") {
+      player = {x:1,y:1};
+    }
+  }
+  drawMaze();
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowUp") move(0,-1);
+  if (e.key === "ArrowDown") move(0,1);
+  if (e.key === "ArrowLeft") move(-1,0);
+  if (e.key === "ArrowRight") move(1,0);
+});
+
+drawMaze();
+
+/* ---------------------------
+   MUSIC BINGO CORE LOGIC
+--------------------------- */
+
+const songs = [
+  "Take On Me",
+  "Billie Jean",
+  "Sweet Caroline",
+  "Dancing Queen",
+  "Livin' on a Prayer"
+];
+
+let pendingSong = null;
+
+function drawSong() {
+  pendingSong = songs[Math.floor(Math.random()*songs.length)];
+  document.getElementById("currentSong").innerText = pendingSong;
+}
+
+function confirmSong() {
+  if (!pendingSong) return;
+  activateBingo(pendingSong);
+}
+
+/* ---------------------------
+   BINGO BOARD GENERATION
+--------------------------- */
+
+function createGrid(container, clickable=false) {
+  container.innerHTML = "";
+  for (let i=0;i<25;i++) {
+    const cell = document.createElement("div");
+    cell.className = "bingo-cell";
+    cell.innerText = i === 12 ? "FREE" : i+1;
+    if (clickable) {
+      cell.onclick = () => cell.classList.toggle("active");
+    }
+    container.appendChild(cell);
+  }
+}
+
+function activateBingo(label) {
+  document.querySelectorAll(".bingo-cell").forEach(c=>{
+    if (c.innerText !== "FREE") {
+      c.classList.remove("active");
+    }
+  });
+}
+
+createGrid(document.getElementById("displayGrid"));
+createGrid(document.getElementById("playerGrid"), true);
+
+/* ---------------------------
+   PRINTABLE CARD GENERATOR
+--------------------------- */
+
+function printCards(title="Music Bingo", venue="") {
+  const win = window.open("");
+  win.document.write(`
+    <h1>${title}</h1>
+    <p>${venue}</p>
+    <table border="1" style="width:100%;height:90vh;font-size:24px;text-align:center">
+      ${[...Array(5)].map(()=>`<tr>${[...Array(5)].map(()=>`<td>□</td>`).join("")}</tr>`).join("")}
+    </table>
+  `);
+  win.print();
+}
+
+</script>
+
+</body>
+</html>

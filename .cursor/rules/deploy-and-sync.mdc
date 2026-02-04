@@ -6,13 +6,34 @@ alwaysApply: false
 
 # Deploy and sync from Cursor
 
-## Pushing to GitHub
+## Pushing to GitHub — always use the token from Cursor
 
-- **Normal `git push origin main`** often fails in Cursor with "could not read Username".
-- **Fix:** Use token-based push so the agent can push without interactive auth.
-  1. User sets **GITHUB_TOKEN** (GitHub Personal Access Token with `repo` scope) in Cursor env or shell.
-  2. Scripts use **scripts/git-push-with-token.sh**: if GITHUB_TOKEN is set, push via HTTPS with the token; else run normal `git push origin main`.
-- **deploy-playroom.sh** already calls `git-push-with-token.sh`. So after the user sets GITHUB_TOKEN, running `./scripts/deploy-playroom.sh` will commit and push this repo successfully.
+**Do not run plain `git push origin main`** from Cursor; it will fail with "could not read Username" / "Device not configured" because there is no interactive auth.
+
+**Always use the GitHub token:**
+
+1. **GITHUB_TOKEN** must be set (e.g. in this repo's **.env** or **env** file, or in Cursor env). See **docs/GITHUB-PUSH-AND-SYNC-SETUP.md**.
+2. **When pushing this repo (Music Bingo Backend):**  
+   Source the env, then run the token script:
+   ```bash
+   cd "/path/to/Music Bingo Backend"
+   [ -f .env ] && set -a && source .env && set +a
+   [ -f env ] && set -a && source env && set +a
+   export GITHUB_TOKEN
+   ./scripts/git-push-with-token.sh
+   ```
+   Or run **./scripts/deploy-playroom.sh** (it uses the script and loads .env/env).
+3. **When pushing music-bingo-app:**  
+   From the app repo, run the **backend's** token script so GITHUB_TOKEN is used:
+   ```bash
+   cd "/path/to/music-bingo-app"
+   [ -f ../Music\ Bingo\ Backend/.env ] && set -a && source ../Music\ Bingo\ Backend/.env && set +a
+   export GITHUB_TOKEN
+   /path/to/Music\ Bingo\ Backend/scripts/git-push-with-token.sh
+   ```
+   Or use **sync-and-push-roll-call.sh** from the backend (it pushes the app with the token).
+
+**Rule:** From now on, any push from Cursor must use the token (script or deploy/sync scripts that call it). This keeps pushes smooth and avoids auth errors.
 
 ## Syncing frontend to the live site (music-bingo-app)
 

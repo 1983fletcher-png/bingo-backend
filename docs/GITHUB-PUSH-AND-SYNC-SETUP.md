@@ -4,6 +4,19 @@ So that the agent can **push** and **sync the frontend to music-bingo-app** with
 
 ---
 
+## From Cursor: always use the token
+
+**We use the GitHub token from Cursor for every push** so there are no "could not read Username" or "Device not configured" errors.
+
+- **Do not** run plain `git push origin main` from the agent/Cursor — it will fail.
+- **Do** ensure **GITHUB_TOKEN** is in this repo's **.env** or **env** file (see below).
+- **Do** use **scripts/git-push-with-token.sh** (or **deploy-playroom.sh** / **sync-and-push-roll-call.sh**, which use it) so the token is used automatically.
+- Scripts load `.env` / `env` from the repo root and export `GITHUB_TOKEN` before pushing.
+
+This is the standard from now on for smooth pushes.
+
+---
+
 ## 1. GitHub Personal Access Token (PAT)
 
 1. On GitHub: **Settings → Developer settings → Personal access tokens → Tokens (classic)**.

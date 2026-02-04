@@ -1,0 +1,12 @@
+---
+description: When pushing to GitHub from Cursor, always use the token (no plain git push)
+alwaysApply: true
+---
+
+# Push from Cursor: use the token
+
+When pushing to GitHub from Cursor, **do not** run plain `git push origin main` — it will fail with auth errors.
+
+**Always use the token:** Load **GITHUB_TOKEN** from this repo's **.env** or **env** (e.g. `source .env` or `source env`), then run **scripts/git-push-with-token.sh** from the repo you are pushing. For this repo, **deploy-playroom.sh** does that. For music-bingo-app, run the backend's **git-push-with-token.sh** from the app directory after sourcing the backend's .env.
+
+Details: **.cursor/rules/deploy-and-sync.mdc** and **docs/GITHUB-PUSH-AND-SYNC-SETUP.md**.
