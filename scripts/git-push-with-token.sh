@@ -14,6 +14,11 @@ if [[ "$ORIGIN" =~ ^https://github\.com/ ]]; then
   # https://github.com/owner/repo -> https://TOKEN@github.com/owner/repo
   PUSH_URL="${ORIGIN#https://}"
   PUSH_URL="https://${GITHUB_TOKEN}@${PUSH_URL}"
+elif [[ "$ORIGIN" =~ ^https://[^@]+@github\.com/(.+)$ ]]; then
+  # https://token@github.com/owner/repo[.git] -> https://TOKEN@github.com/owner/repo
+  SUFFIX="${BASH_REMATCH[1]}"
+  SUFFIX="${SUFFIX%.git}"
+  PUSH_URL="https://${GITHUB_TOKEN}@github.com/${SUFFIX}"
 elif [[ "$ORIGIN" =~ ^git@github\.com: ]]; then
   # git@github.com:owner/repo.git -> https://TOKEN@github.com/owner/repo
   SUFFIX="${ORIGIN#git@github.com:}"
