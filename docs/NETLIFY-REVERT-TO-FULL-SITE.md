@@ -16,6 +16,8 @@ If the live site shows only a basic "Host a game — create a room" page, Netlif
 
 The full landing page and features will return after the deploy finishes.
 
+**Env vars:** In Netlify, set **VITE_SOCKET_URL** (and optionally **VITE_API_URL**) to your Railway backend URL (e.g. `https://your-app.up.railway.app`, no trailing slash), then trigger a new deploy. The music-bingo-app repo now includes the same **parse fix** (safe JSON handling for API responses), so you get the full UI and no "JSON.parse" errors when the backend is correct.
+
 ---
 
 ## Why this happened
