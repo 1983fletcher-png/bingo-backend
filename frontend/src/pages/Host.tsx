@@ -29,10 +29,11 @@ interface GameCreated {
 
 type HostTab = 'waiting' | 'call' | 'questions';
 
-export type CreateMode = 'music-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building';
+export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building';
 
 function createModeFromUrl(type: string | null): CreateMode {
   if (type === 'bingo' || type === 'music-bingo') return 'music-bingo';
+  if (type === 'classic-bingo') return 'classic-bingo';
   if (type === 'trivia' || type === 'icebreakers' || type === 'edutainment' || type === 'team-building') return type;
   return 'music-bingo';
 }
@@ -169,7 +170,7 @@ export default function Host() {
       .catch(() => setBackendReachable(false));
   }, [apiBase]);
 
-  const createGame = (gameType: 'music-bingo' | 'trivia') => {
+  const createGame = (gameType: 'music-bingo' | 'classic-bingo' | 'trivia') => {
     if (!socket) return;
     setGame(null);
     setTriviaPackForGame(null);
@@ -178,7 +179,7 @@ export default function Host() {
     const initialEventConfig: EventConfig =
       gameType === 'trivia'
         ? { ...eventConfig, gameTitle: 'Trivia' }
-        : { ...eventConfig, gameTitle: eventConfig.gameTitle || 'The Playroom' };
+        : { ...eventConfig, gameTitle: eventConfig.gameTitle || (gameType === 'classic-bingo' ? 'Classic Bingo' : 'The Playroom') };
     if (gameType === 'trivia') {
       const pack = defaultTriviaPacks.find(p => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
       setTriviaPackForGame(pack);
@@ -191,7 +192,7 @@ export default function Host() {
     } else {
       socket.emit('host:create', {
         baseUrl: window.location.origin,
-        gameType: 'music-bingo',
+        gameType: gameType as 'music-bingo' | 'classic-bingo',
         eventConfig: initialEventConfig,
       });
     }
@@ -307,8 +308,7 @@ export default function Host() {
       if (data.logoUrl) updates.logoUrl = data.logoUrl;
       if (data.colors?.[0]) updates.accentColor = data.colors[0];
       if (data.title) {
-        updates.gameTitle = data.title;
-        if (!eventConfig.venueName) updates.venueName = data.title;
+        updates.venueName = data.title;
       }
       if (data.description) updates.promoText = data.description;
       if (data.foodMenuUrl) updates.foodMenuUrl = data.foodMenuUrl ?? undefined;
@@ -321,13 +321,29 @@ export default function Host() {
       const parts: string[] = [];
       if (updates.logoUrl) parts.push('logo');
       if (updates.accentColor) parts.push('color');
-      if (updates.gameTitle) parts.push('title');
+      if (updates.venueName) parts.push('venue name');
       if (updates.promoText) parts.push('description');
       if (updates.foodMenuUrl) parts.push('food menu');
       if (updates.drinkMenuUrl) parts.push('drink menu');
       if (updates.eventsUrl) parts.push('events');
       if (updates.facebookUrl) parts.push('Facebook');
       if (updates.instagramUrl) parts.push('Instagram');
+      const eventsUrlToScrape = updates.eventsUrl || scrapeUrl;
+      if (apiBase && eventsUrlToScrape) {
+        fetchJson<{ events?: { month: number; day: number; title: string }[] }>(`${apiBase}/api/scrape-events?url=${encodeURIComponent(eventsUrlToScrape)}`)
+          .then((res) => {
+            if (res.ok && res.data?.events?.length) {
+              const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+              const lines = res.data.events.slice(0, 12).map((e) => `${MONTHS[e.month - 1]} ${e.day}: ${e.title}`);
+              const eventsBlock = lines.join('\n');
+              const newPromo = updates.promoText ? `${updates.promoText}\n\n${eventsBlock}` : eventsBlock;
+              setEventConfigState((c) => ({ ...c, promoText: newPromo }));
+              setGame((g) => (g ? { ...g, eventConfig: { ...g.eventConfig, promoText: newPromo } } : null));
+              parts.push('events list');
+            }
+          })
+          .catch(() => {});
+      }
       setScrapeSuccess(
         parts.length
           ? `Fetched ${parts.join(', ')}. Review below and click "Apply event details to game" to show on display and players.`
@@ -453,27 +469,31 @@ export default function Host() {
   }
 
   if (!game) {
-    const isPackMode = createMode !== 'music-bingo';
+    const isBingo = createMode === 'music-bingo' || createMode === 'classic-bingo';
+    const isPackMode = !isBingo;
     const selectedPack = defaultTriviaPacks.find((p) => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
     const canCreateTrivia = isPackMode && selectedPack && selectedPack.questions.length > 0;
-    const canCreate = socket?.connected && (createMode === 'music-bingo' || canCreateTrivia);
-    const step = createMode === 'music-bingo' ? (canCreate ? 3 : 1) : canCreate ? 3 : selectedPack ? 2 : 1;
+    const canCreate = socket?.connected && (isBingo || canCreateTrivia);
+    const step = isBingo ? (canCreate ? 3 : 1) : canCreate ? 3 : selectedPack ? 2 : 1;
 
     const handleCreate = () => {
       if (createMode === 'music-bingo') createGame('music-bingo');
+      else if (createMode === 'classic-bingo') createGame('classic-bingo');
       else createGame('trivia');
     };
 
     const createButtonLabel =
       createMode === 'music-bingo'
         ? 'Create Music Bingo'
-        : createMode === 'trivia'
-          ? 'Create Trivia'
-          : createMode === 'icebreakers'
-            ? 'Create Icebreakers'
-            : createMode === 'edutainment'
-              ? 'Create Edutainment'
-              : 'Create Team Building';
+        : createMode === 'classic-bingo'
+          ? 'Create Classic Bingo'
+          : createMode === 'trivia'
+            ? 'Create Trivia'
+            : createMode === 'icebreakers'
+              ? 'Create Icebreakers'
+              : createMode === 'edutainment'
+                ? 'Create Edutainment'
+                : 'Create Team Building';
 
     return (
       <div className="host-create">
@@ -508,6 +528,13 @@ export default function Host() {
           </button>
           <button
             type="button"
+            className={`host-create__game-type-btn ${createMode === 'classic-bingo' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('classic-bingo')}
+          >
+            Classic Bingo
+          </button>
+          <button
+            type="button"
             className={`host-create__game-type-btn ${createMode === 'trivia' ? 'host-create__game-type-btn--on' : ''}`}
             onClick={() => setCreateMode('trivia')}
           >
@@ -539,6 +566,11 @@ export default function Host() {
         {createMode === 'music-bingo' && (
           <p className="host-create__copy">
             Create a room and generate 75 songs from the Call sheet tab (AI or theme). One link for everyone.
+          </p>
+        )}
+        {createMode === 'classic-bingo' && (
+          <p className="host-create__copy">
+            Classic number bingo. Call sheet and grid on the display. One link for everyone.
           </p>
         )}
         {createMode === 'trivia' && (
@@ -635,13 +667,14 @@ export default function Host() {
           <span className="host-room__connected">● Connected</span>
         </p>
 
-        <header className="host-room__header">
-          <div className="host-room__qr-block">
-            <img src={qrImageUrl} alt="" width={240} height={240} aria-label="QR code to join game" />
-            <p className="host-room__qr-hint">Scan to join</p>
-            <p className="host-room__qr-sub">One link for everyone</p>
-          </div>
-          <div className="host-room__meta">
+        <div className="host-room__wrap">
+          <aside className="host-room__left">
+            <p className="host-room__section-label">Share with players</p>
+            <div className="host-room__qr-block">
+              <img src={qrImageUrl} alt="" width={240} height={240} aria-label="QR code to join game" />
+              <p className="host-room__qr-hint">Scan or open this link</p>
+              <p className="host-room__qr-sub">One link for everyone</p>
+            </div>
             <span className="host-room__badge">Game code</span>
             <span className="host-room__code">{game.code}</span>
             <div className="host-room__join-row">
@@ -661,25 +694,30 @@ export default function Host() {
                 {copyFeedback ? 'Copied' : 'Copy'}
               </button>
             </div>
+            <hr className="host-room__left-divider" />
+            <span className="host-room__link-label">Quick actions</span>
             <div className="host-room__link-group">
-              <span className="host-room__link-label">Host tools</span>
               <a href={`/join/${game.code}`} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
-                Preview player view
+                Preview
               </a>
               <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
-                TV / display view
+                Display
               </a>
             </div>
-            <p className="host-room__display-hint">The TV display shows a QR code—open it on the big screen so players can scan to join.</p>
+            <p className="host-room__display-hint">Open Display on your TV so the code and QR are visible to the room.</p>
             <div className="host-room__actions">
               <button type="button" onClick={() => setGame(null)} className="host-room__btn-secondary">
                 End game
               </button>
               <Link to="/" className="host-room__back-link">← Back</Link>
             </div>
-          </div>
-        </header>
+          </aside>
 
+          <div className="host-room__right">
+            <div className="host-room__right-head">
+              <h1 className="host-room__right-title">Run the game</h1>
+              <p className="host-room__right-sub">Set what players see while they wait, then start when you’re ready. You can change these anytime.</p>
+            </div>
         <div className="host-room__tabs">
           {tabs.map(({ id, label }) => (
             <button
@@ -696,57 +734,61 @@ export default function Host() {
         {activeTab === 'waiting' && (
           <>
             <section className="host-room__when" aria-label="When players join">
-              <h2 className="host-room__when-title">When players join</h2>
-              <p className="host-room__when-hint">Players see this until you start the game.</p>
-              <div style={{ marginBottom: 12 }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: 4 }}>Mini-game</label>
+              <h2 className="host-room__when-title">While players join</h2>
+              <p className="host-room__when-hint">Choose a mini-game and message. Players see this until you start.</p>
+              <div className="host-room__field">
+                <label className="host-room__label" htmlFor="host-waiting-minigame">Mini-game</label>
                 <select
+                  id="host-waiting-minigame"
+                  className="host-room__select"
                   value={game.waitingRoom?.game ?? ''}
                   onChange={(e) => {
                     const val = e.target.value as '' | 'roll-call' | 'fidget';
                     setWaitingRoomGame(val === 'roll-call' || val === 'fidget' ? val : null);
                   }}
-                  style={{ padding: '10px 12px', width: '100%', maxWidth: 320, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
                 >
                   <option value="">None</option>
                   <option value="roll-call">Roll Call (marble)</option>
                   <option value="fidget">Stretch game</option>
                 </select>
               </div>
-              <div style={{ marginBottom: 12 }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: 4 }}>Welcome message</label>
+              <div className="host-room__field">
+                <label className="host-room__label" htmlFor="host-waiting-message">Welcome message</label>
                 <input
+                  id="host-waiting-message"
                   type="text"
+                  className="host-room__input"
                   value={hostMessage}
                   onChange={(e) => setHostMessage(e.target.value)}
-                  placeholder="e.g. Starting soon · Welcome to [venue]"
-                  style={{ padding: '10px 12px', width: '100%', maxWidth: 400, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+                  placeholder="e.g. Starting soon · Welcome!"
                 />
               </div>
-              <button
-                type="button"
-                className="host-room__start-btn"
-                onClick={startEvent}
-                disabled={game.gameType === 'music-bingo' && (songPool?.length ?? 0) < 24}
-              >
-                {game.gameType === 'trivia' ? 'Start trivia' : 'Start the game'}
-              </button>
-              {game.gameType === 'music-bingo' && (songPool?.length ?? 0) < 24 && (
-                <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: 8 }}>Add at least 24 songs (Call sheet tab) to start.</p>
-              )}
+              <div className="host-room__when-cta">
+                <button
+                  type="button"
+                  className="host-room__start-btn"
+                  onClick={startEvent}
+                  disabled={game.gameType === 'music-bingo' && (songPool?.length ?? 0) < 24}
+                >
+                  {game.gameType === 'trivia' ? 'Start trivia' : 'Start the game'}
+                </button>
+                {game.gameType === 'music-bingo' && (songPool?.length ?? 0) < 24 && (
+                  <p className="host-room__when-note">Add at least 24 songs in the Call sheet tab to start.</p>
+                )}
+              </div>
             </section>
 
             <details className="host-room__details">
               <summary className="host-room__details-summary">Event &amp; venue details</summary>
               <div className="host-room__details-body">
-                <p style={{ color: 'var(--text-muted)', margin: '0 0 12px', fontSize: '0.8125rem' }}>
-                  Event details (including scraped data) are not shown on the display or player screens until you click &quot;Apply event details to game&quot; below.
+                <p className="host-room__details-intro">
+                  Event details are not shown on the display or player screens until you click &quot;Apply to game&quot; below.
                 </p>
                 <div style={{ marginBottom: 16 }}>
-                  <button type="button" onClick={pushEventConfigToGame} disabled={!socket?.connected || !game?.code} style={{ padding: '10px 20px', marginRight: 8 }}>
-                    Apply event details to game
+                  <button type="button" className="host-room__apply-btn" onClick={pushEventConfigToGame} disabled={!socket?.connected || !game?.code}>
+                    Apply to game
                   </button>
-                  {eventConfigAppliedFeedback && <span style={{ color: '#68d391', fontSize: 13 }} role="status">Applied — visible on display and players.</span>}
+                  {eventConfigAppliedFeedback && <span className="host-room__apply-feedback" role="status">Applied — visible on display and players.</span>}
                 </div>
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ display: 'block', marginBottom: 4 }}>Game title</label>
@@ -801,16 +843,8 @@ export default function Host() {
                   <textarea value={eventConfig.foodSpecials ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, foodSpecials: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. Half-price appetizers" rows={2} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
                 </div>
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Theme label (for display)</label>
-                  <input type="text" value={eventConfig.themeLabel ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, themeLabel: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. 80s, Classic Rock" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Welcome title</label>
-                  <input type="text" value={eventConfig.welcomeTitle ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, welcomeTitle: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. Welcome" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Welcome message</label>
-                  <textarea value={eventConfig.welcomeMessage ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, welcomeMessage: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. Thanks for coming!" rows={2} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+                  <label style={{ display: 'block', marginBottom: 4 }}>Welcome title / message</label>
+                  <input type="text" value={eventConfig.welcomeTitle ?? eventConfig.welcomeMessage ?? ''} onChange={(e) => { const v = e.target.value; setEventConfigState((c) => ({ ...c, welcomeTitle: v, welcomeMessage: v })); }} onBlur={applyEventConfig} placeholder="e.g. Welcome · Thanks for coming!" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
                 </div>
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ display: 'block', marginBottom: 4 }}>Welcome background image (optional URL)</label>
@@ -1078,6 +1112,8 @@ export default function Host() {
             )}
           </div>
         </details>
+          </div>
+      </div>
       </div>
       <SongFactPopUp
         song={factSong}

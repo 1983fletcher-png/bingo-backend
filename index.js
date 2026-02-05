@@ -929,11 +929,12 @@ function getGame(code) {
 function createGame(opts = {}) {
   let code;
   do { code = nanoidCode(); } while (games.has(code));
-  const gameType = opts.gameType === 'trivia' ? 'trivia' : 'music-bingo';
+  const gameType = opts.gameType === 'trivia' ? 'trivia' : (opts.gameType === 'classic-bingo' ? 'classic-bingo' : 'music-bingo');
+  const defaultTitle = gameType === 'trivia' ? 'Trivia' : (gameType === 'classic-bingo' ? 'Classic Bingo' : 'Playroom');
   const game = {
     code,
     hostId: null,
-    eventConfig: opts.eventConfig || { gameTitle: gameType === 'trivia' ? 'Trivia' : 'Playroom', venueName: '', accentColor: '#e94560' },
+    eventConfig: opts.eventConfig || { gameTitle: defaultTitle, venueName: '', accentColor: '#e94560' },
     players: new Map(),
     songPool: [],
     revealed: [],
@@ -1000,8 +1001,9 @@ function getRollCallLeaderboard(game) {
 io.on('connection', (socket) => {
   socket.on('host:create', ({ baseUrl, gameType, packId, questions, eventConfig } = {}) => {
     const isTrivia = gameType === 'trivia';
+    const resolvedType = isTrivia ? 'trivia' : (gameType === 'classic-bingo' ? 'classic-bingo' : 'music-bingo');
     const game = createGame({
-      gameType: isTrivia ? 'trivia' : 'music-bingo',
+      gameType: resolvedType,
       packId: isTrivia ? (packId || '') : undefined,
       questions: isTrivia ? (Array.isArray(questions) ? questions : []) : undefined,
       eventConfig: eventConfig && typeof eventConfig === 'object' ? eventConfig : undefined

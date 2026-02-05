@@ -34,12 +34,27 @@ function buildMasterBoard(pool: Song[]): (Song | null)[][] {
   return grid;
 }
 
+type DisplayEventConfig = {
+  gameTitle?: string;
+  venueName?: string;
+  logoUrl?: string;
+  welcomeTitle?: string;
+  welcomeMessage?: string;
+  promoText?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+};
+
 export default function Display() {
   const { code } = useParams<{ code: string }>();
   const [joinUrl, setJoinUrl] = useState('');
   const [songPool, setSongPool] = useState<Song[]>([]);
   const [revealed, setRevealed] = useState<Song[]>([]);
   const [eventTitle, setEventTitle] = useState<string | undefined>();
+  const [eventConfig, setEventConfig] = useState<DisplayEventConfig | null>(null);
+  const [started, setStarted] = useState(false);
+  const [gameType, setGameType] = useState<string>('music-bingo');
+  const [triviaState, setTriviaState] = useState<{ currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number; correctAnswer?: string }[]; revealed?: boolean } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [setupOpen, setSetupOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
@@ -56,11 +71,15 @@ export default function Display() {
     }
     const s = getSocket();
     s.emit('display:join', { code: code.trim().toUpperCase() });
-    s.once('display:ok', (payload: { joinUrl?: string; songPool?: Song[]; revealed?: Song[]; eventConfig?: { gameTitle?: string } }) => {
+    s.once('display:ok', (payload: { joinUrl?: string; songPool?: Song[]; revealed?: Song[]; eventConfig?: DisplayEventConfig; started?: boolean; gameType?: string; trivia?: { currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean } }) => {
       setJoinUrl(payload.joinUrl || `${window.location.origin}/join/${code}`);
       setSongPool(Array.isArray(payload.songPool) ? payload.songPool : []);
       setRevealed(Array.isArray(payload.revealed) ? payload.revealed : []);
       setEventTitle(payload.eventConfig?.gameTitle);
+      setEventConfig(payload.eventConfig && typeof payload.eventConfig === 'object' ? payload.eventConfig : null);
+      setStarted(payload.started === true);
+      setGameType(payload.gameType || 'music-bingo');
+      setTriviaState(payload.trivia && typeof payload.trivia === 'object' ? { currentIndex: payload.trivia.currentIndex ?? 0, questions: payload.trivia.questions ?? [], revealed: (payload.trivia as { revealed?: boolean }).revealed } : null);
       setError(null);
     });
     s.once('display:error', (payload: { message?: string }) => {
@@ -72,9 +91,25 @@ export default function Display() {
     s.on('game:revealed', ({ revealed: rev }: { revealed: Song[] }) => {
       setRevealed(Array.isArray(rev) ? rev : []);
     });
+    s.on('game:started', () => setStarted(true));
+    s.on('game:trivia-state', (payload: { currentIndex?: number; questions?: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean }) => {
+      if (payload && typeof payload === 'object') {
+        setTriviaState((prev) => ({
+          currentIndex: payload.currentIndex ?? prev?.currentIndex ?? 0,
+          questions: payload.questions ?? prev?.questions ?? [],
+          revealed: payload.revealed ?? prev?.revealed,
+        }));
+      }
+    });
+    s.on('game:trivia-reveal', () => {
+      setTriviaState((prev) => (prev ? { ...prev, revealed: true } : null));
+    });
     return () => {
       s.off('game:songs-updated');
       s.off('game:revealed');
+      s.off('game:started');
+      s.off('game:trivia-state');
+      s.off('game:trivia-reveal');
     };
   }, [code]);
 
@@ -98,6 +133,116 @@ export default function Display() {
     ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(joinUrl)}`
     : '';
 
+  // Waiting room: show on TV before game starts — left: big QR; right: logo, game name, description (no clickable links)
+  if (!started) {
+    const welcome = eventConfig?.welcomeTitle || eventConfig?.welcomeMessage || 'Starting soon…';
+    const gameName = eventConfig?.gameTitle || eventTitle || 'The Playroom';
+    const venueName = eventConfig?.venueName || '';
+    const hasSocial = eventConfig?.facebookUrl || eventConfig?.instagramUrl;
+    const qrSize = 320;
+    const qrUrlWaiting = joinUrl
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&margin=12&data=${encodeURIComponent(joinUrl)}`
+      : '';
+    return (
+      <div
+        style={{
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 48,
+          padding: 40,
+          background: theme.bg,
+          color: theme.text,
+        }}
+      >
+        {/* Left: large QR + game code */}
+        <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          {qrUrlWaiting ? (
+            <>
+              <p style={{ margin: '0 0 12px', fontSize: 16, color: theme.muted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Scan to join · Enter your name</p>
+              <img src={qrUrlWaiting} alt="QR code to join" style={{ width: qrSize, height: qrSize, borderRadius: 16, border: `4px solid ${theme.border}` }} />
+              <p style={{ margin: '16px 0 0', fontSize: 32, fontWeight: 800, letterSpacing: '0.2em' }}>{code?.toUpperCase() || '—'}</p>
+            </>
+          ) : (
+            <div style={{ width: qrSize, height: qrSize, background: theme.card, borderRadius: 16, border: `4px dashed ${theme.border}` }} />
+          )}
+        </div>
+        {/* Right: optional logo, game name, description, venue/social */}
+        <div style={{ flex: '1 1 auto', minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: 20 }}>
+          {eventConfig?.logoUrl && (
+            <img src={eventConfig.logoUrl} alt="" style={{ maxHeight: 160, maxWidth: '100%', objectFit: 'contain' }} />
+          )}
+          <h1 style={{ margin: 0, fontSize: 'clamp(1.75rem, 4vw, 3rem)', fontWeight: 700 }}>{gameName}</h1>
+          <p style={{ margin: 0, fontSize: 'clamp(1rem, 2.5vw, 1.4rem)', color: theme.muted, maxWidth: 480, lineHeight: 1.4 }}>{welcome}</p>
+          {(venueName || hasSocial) && (
+            <div style={{ fontSize: 'clamp(0.875rem, 2vw, 1.1rem)', color: theme.muted }}>
+              {venueName && <p style={{ margin: '0 0 4px' }}>{venueName}</p>}
+              {hasSocial && (
+                <p style={{ margin: 0 }}>
+                  {eventConfig?.facebookUrl && 'Follow us on Facebook'}
+                  {eventConfig?.facebookUrl && eventConfig?.instagramUrl && ' · '}
+                  {eventConfig?.instagramUrl && 'Instagram'}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Started + Trivia: show trivia display (question, QR, logo, venue details)
+  if (started && gameType === 'trivia' && triviaState?.questions?.length) {
+    const idx = Math.min(triviaState.currentIndex, triviaState.questions.length - 1);
+    const q = triviaState.questions[idx];
+    const gameName = eventConfig?.gameTitle || eventTitle || 'Trivia';
+    const venueName = eventConfig?.venueName || '';
+    const hasSocial = eventConfig?.facebookUrl || eventConfig?.instagramUrl;
+    const trQr = joinUrl ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=${encodeURIComponent(joinUrl)}` : '';
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: theme.bg, color: theme.text }}>
+        <header style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', background: theme.panel, borderBottom: `2px solid ${theme.border}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            {eventConfig?.logoUrl && <img src={eventConfig.logoUrl} alt="" style={{ height: 40, objectFit: 'contain' }} />}
+            <div>
+              <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{gameName}</h1>
+              {venueName && <p style={{ margin: '2px 0 0 0', fontSize: 13, color: theme.muted }}>{venueName}</p>}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            {trQr && <img src={trQr} alt="Join" style={{ width: 80, height: 80, borderRadius: 8, border: `2px solid ${theme.border}` }} />}
+            <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.1em' }}>{code?.toUpperCase()}</span>
+          </div>
+        </header>
+        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 32, textAlign: 'center' }}>
+          <p style={{ margin: '0 0 12px', fontSize: 14, color: theme.muted }}>Question {idx + 1} of {triviaState.questions.length}</p>
+          <h2 style={{ margin: '0 0 24px', fontSize: 'clamp(1.25rem, 3vw, 2rem)', fontWeight: 600, lineHeight: 1.4 }}>{q?.question}</h2>
+          {triviaState.revealed && q?.options?.length ? (
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
+              {q.options.map((opt, i) => (
+                <span key={i} style={{ padding: '12px 20px', background: theme.card, color: theme.text, borderRadius: 12, fontWeight: 600, border: `2px solid ${theme.border}` }}>{opt}</span>
+              ))}
+            </div>
+          ) : triviaState.revealed && (q as { correctAnswer?: string })?.correctAnswer ? (
+            <p style={{ margin: 0, padding: '16px 24px', background: theme.accent, color: '#111', borderRadius: 12, fontWeight: 700, fontSize: 20 }}>{(q as { correctAnswer: string }).correctAnswer}</p>
+          ) : (
+            <p style={{ margin: 0, fontSize: 18, color: theme.muted }}>Answer on your phone</p>
+          )}
+        </main>
+        {(hasSocial || venueName) && (
+          <footer style={{ flex: '0 0 auto', padding: '12px 24px', textAlign: 'center', fontSize: 13, color: theme.muted }}>
+            {venueName && <span>{venueName}</span>}
+            {hasSocial && <span>{venueName && ' · '}Follow us on Facebook · Instagram</span>}
+          </footer>
+        )}
+      </div>
+    );
+  }
+
+  // Started + Bingo (music or classic): show call grid
+  const bingoLabel = gameType === 'classic-bingo' ? 'Classic Bingo' : 'Music Bingo';
   return (
     <div
       style={{
@@ -123,7 +268,7 @@ export default function Display() {
         }}
       >
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: '0.02em' }}>Playroom Bingo</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, letterSpacing: '0.02em' }}>{bingoLabel}</h1>
           {eventTitle && (
             <p style={{ margin: '2px 0 0 0', fontSize: 14, color: theme.muted, fontWeight: 500 }}>{eventTitle}</p>
           )}

@@ -16,8 +16,16 @@ export interface WaitingRoomConfig {
 
 export interface EventConfigForWaiting {
   gameTitle?: string;
-  /** Venue/scraped logo URL (from scrape + Apply event details) */
+  venueName?: string;
   logoUrl?: string | null;
+  drinkSpecials?: string;
+  foodSpecials?: string;
+  foodMenuUrl?: string;
+  drinkMenuUrl?: string;
+  eventsUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  promoText?: string;
 }
 
 export interface RollCallLeaderboardEntry {
@@ -65,11 +73,35 @@ export default function WaitingRoomView({
   const venueLogoUrl = eventConfig?.logoUrl ?? null;
   const customImageUrl = waitingRoom.stretchyImageUrl ?? null;
 
+  const hasSpecials = eventConfig?.drinkSpecials?.trim() || eventConfig?.foodSpecials?.trim();
+  const hasLinks = eventConfig?.foodMenuUrl || eventConfig?.drinkMenuUrl || eventConfig?.eventsUrl || eventConfig?.facebookUrl || eventConfig?.instagramUrl;
+
   return (
-    <div style={{ padding: 16, maxWidth: 480, margin: '0 auto' }}>
-      <h2 style={{ marginTop: 0, fontSize: 22 }}>{eventTitle || 'The Playroom'}</h2>
-      <p style={{ color: '#a0aec0', marginBottom: 16 }}>{waitingRoom.hostMessage || 'Starting soon…'}</p>
-      <p style={{ fontSize: 12, color: '#718096' }}>Room: {gameCode}</p>
+    <div style={{ padding: 16, maxWidth: 480, margin: '0 auto', color: 'var(--text)', background: 'var(--bg)' }}>
+      {eventConfig?.logoUrl && (
+        <img src={eventConfig.logoUrl} alt="" style={{ maxHeight: 64, maxWidth: '100%', objectFit: 'contain', marginBottom: 12 }} />
+      )}
+      <h2 style={{ marginTop: 0, fontSize: 22, color: 'var(--text)' }}>{eventTitle || 'The Playroom'}</h2>
+      {eventConfig?.venueName && <p style={{ margin: '0 0 4px', fontSize: 14, color: 'var(--text-muted)' }}>{eventConfig.venueName}</p>}
+      <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>{waitingRoom.hostMessage || 'Starting soon…'}</p>
+      <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>Room: {gameCode}</p>
+
+      {hasSpecials && (
+        <div style={{ marginBottom: 16, padding: 12, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12 }}>
+          {eventConfig?.drinkSpecials?.trim() && <p style={{ margin: '0 0 6px', fontSize: 14, color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text)' }}>Drinks:</strong> {eventConfig.drinkSpecials}</p>}
+          {eventConfig?.foodSpecials?.trim() && <p style={{ margin: 0, fontSize: 14, color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text)' }}>Food:</strong> {eventConfig.foodSpecials}</p>}
+        </div>
+      )}
+
+      {hasLinks && (
+        <div style={{ marginBottom: 16, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {eventConfig?.foodMenuUrl && <a href={eventConfig.foodMenuUrl} target="_blank" rel="noopener noreferrer" style={{ padding: '8px 14px', background: 'var(--accent)', color: '#fff', borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>View menu</a>}
+          {eventConfig?.drinkMenuUrl && !eventConfig?.foodMenuUrl && <a href={eventConfig.drinkMenuUrl} target="_blank" rel="noopener noreferrer" style={{ padding: '8px 14px', background: 'var(--accent)', color: '#fff', borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>View drinks</a>}
+          {eventConfig?.eventsUrl && <a href={eventConfig.eventsUrl} target="_blank" rel="noopener noreferrer" style={{ padding: '8px 14px', background: 'var(--surface)', color: 'var(--accent)', border: '2px solid var(--accent)', borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: 'none' }}>Events</a>}
+          {eventConfig?.facebookUrl && <a href={eventConfig.facebookUrl} target="_blank" rel="noopener noreferrer" style={{ padding: '8px 14px', background: 'var(--surface)', color: 'var(--accent)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, textDecoration: 'none' }}>Facebook</a>}
+          {eventConfig?.instagramUrl && <a href={eventConfig.instagramUrl} target="_blank" rel="noopener noreferrer" style={{ padding: '8px 14px', background: 'var(--surface)', color: 'var(--accent)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, textDecoration: 'none' }}>Instagram</a>}
+        </div>
+      )}
 
       {waitingRoom.game === 'roll-call' && (
         <>

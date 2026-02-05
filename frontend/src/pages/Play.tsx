@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import WaitingRoomView from '../components/WaitingRoomView';
 import PlayerBingoCard from '../components/PlayerBingoCard';
+import GameViewHeader from '../components/GameViewHeader';
 import SongFactPopUp from '../components/SongFactPopUp';
 import { buildCardFromPool } from '../types/game';
 import type { Song } from '../types/game';
@@ -11,7 +12,21 @@ import type { Socket } from 'socket.io-client';
 interface JoinState {
   code: string;
   started: boolean;
-  eventConfig: { gameTitle?: string; logoUrl?: string | null };
+  eventConfig: {
+    gameTitle?: string;
+    venueName?: string;
+    logoUrl?: string | null;
+    drinkSpecials?: string;
+    foodSpecials?: string;
+    foodMenuUrl?: string;
+    drinkMenuUrl?: string;
+    eventsUrl?: string;
+    facebookUrl?: string;
+    instagramUrl?: string;
+    welcomeTitle?: string;
+    welcomeMessage?: string;
+    venueAllowedUseOfMenuDesign?: boolean;
+  };
   waitingRoom: {
     game: 'roll-call' | null;
     theme: string;
@@ -36,6 +51,7 @@ export default function Play() {
   const [error, setError] = useState('');
   const [factSong, setFactSong] = useState<Song | null>(null);
   const [showFact, setShowFact] = useState(false);
+  const [menuOverlay, setMenuOverlay] = useState<{ url: string; useIframe: boolean } | null>(null);
 
   useEffect(() => {
     const s = getSocket();
@@ -47,12 +63,20 @@ export default function Play() {
       setError('');
     });
 
+    s.on('join:error', (payload: { message?: string }) => {
+      setError(payload?.message || 'Could not join. Check the code or try again.');
+    });
+
     s.on('game:started', () => {
       setJoinState((prev) => (prev ? { ...prev, started: true } : null));
     });
 
     s.on('game:waiting-room-updated', ({ waitingRoom }: { waitingRoom: JoinState['waitingRoom'] }) => {
       setJoinState((prev) => (prev ? { ...prev, waitingRoom } : null));
+    });
+
+    s.on('game:event-config-updated', ({ eventConfig }: { eventConfig?: JoinState['eventConfig'] }) => {
+      if (eventConfig) setJoinState((prev) => (prev ? { ...prev, eventConfig } : null));
     });
 
     s.on('game:roll-call-leaderboard', ({ leaderboard }: { leaderboard: JoinState['rollCallLeaderboard'] }) => {
@@ -69,8 +93,10 @@ export default function Play() {
 
     return () => {
       s.off('join:ok');
+      s.off('join:error');
       s.off('game:started');
       s.off('game:waiting-room-updated');
+      s.off('game:event-config-updated');
       s.off('game:roll-call-leaderboard');
       s.off('game:songs-updated');
       s.off('game:revealed');
@@ -141,7 +167,7 @@ export default function Play() {
   const songPool = joinState?.songPool || [];
   const revealed = joinState?.revealed || [];
   const card = useMemo(() => {
-    if (!joinState?.started || gameType !== 'music-bingo' || songPool.length < 24 || !name) return null;
+    if (!joinState?.started || (gameType !== 'music-bingo' && gameType !== 'classic-bingo') || songPool.length < 24 || !name) return null;
     return buildCardFromPool(songPool, joinState.code + name);
   }, [joinState?.started, joinState?.code, gameType, songPool, name]);
 
@@ -163,16 +189,34 @@ export default function Play() {
     if (socket && code) socket.emit('player:bingo', { code: code.toUpperCase() });
   };
 
-  if (gameType === 'music-bingo' && joinState?.started) {
+  if ((gameType === 'music-bingo' || gameType === 'classic-bingo') && joinState?.started) {
     return (
       <>
-        <PlayerBingoCard
-          card={card || []}
-          revealed={revealed}
-          onBingo={handleBingo}
-          winCondition={joinState.winCondition}
-          eventTitle={joinState?.eventConfig?.gameTitle}
-        />
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
+          <GameViewHeader
+            config={joinState.eventConfig}
+            onOpenMenu={(url, useIframe) => setMenuOverlay(useIframe ? { url, useIframe: true } : null)}
+          />
+          <PlayerBingoCard
+            card={card || []}
+            revealed={revealed}
+            onBingo={handleBingo}
+            winCondition={joinState.winCondition}
+            eventTitle={joinState?.eventConfig?.gameTitle}
+          />
+        </div>
+        {menuOverlay && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 12, borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
+              <span style={{ fontWeight: 600 }}>Menu</span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <a href={menuOverlay.url} target="_blank" rel="noopener noreferrer" style={{ padding: '8px 16px', background: 'var(--accent)', color: '#fff', borderRadius: 8, textDecoration: 'none', fontWeight: 600 }}>Open in new tab</a>
+                <button type="button" onClick={() => setMenuOverlay(null)} style={{ padding: '8px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}>Back to game</button>
+              </div>
+            </div>
+            <iframe src={menuOverlay.url} title="Venue menu" style={{ flex: 1, width: '100%', border: 'none' }} />
+          </div>
+        )}
         <SongFactPopUp
           song={factSong}
           show={showFact}
@@ -182,11 +226,25 @@ export default function Play() {
     );
   }
 
-  // Trivia or other: placeholder
+  // Trivia or other: placeholder with header
+  if (joinState?.started && gameType === 'trivia') {
+    return (
+      <>
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
+          <GameViewHeader config={joinState.eventConfig} />
+          <div style={{ padding: 24, flex: 1 }}>
+            <h2>{joinState?.eventConfig?.gameTitle || 'Trivia'}</h2>
+            <p>The game has started. Answer on your phone.</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <div style={{ padding: 24 }}>
       <h2>{joinState?.eventConfig?.gameTitle || 'Game'}</h2>
-      <p>The game has started. (Trivia UI would go here.)</p>
+      <p>The game has started.</p>
     </div>
   );
 }
