@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
+import '../styles/learn.css';
 
 const API_BASE =
   import.meta.env.VITE_SOCKET_URL ||
@@ -8,6 +9,18 @@ const API_BASE =
   (import.meta.env.DEV ? '' : window.location.origin);
 
 type CardSummary = { id: string; title: string; summary: string; tags?: string[] };
+
+const CATEGORIES: { id: string; label: string; description: string }[] = [
+  { id: 'biology', label: 'Biology & Nature', description: 'Plants, botany, gardening, and how living things grow and work.' },
+  { id: 'crafts-stem', label: 'Crafts & Gentle STEM', description: 'Hands-on activities and simple science you can do at home.' },
+  { id: 'animals', label: 'Animals', description: 'From backyard wildlife to ocean giants — trusted facts about the animal kingdom.' },
+];
+
+function getCategoryId(card: CardSummary): string {
+  if (card.id === 'plants-and-how-they-grow' || card.tags?.some((t) => ['plants', 'botany', 'gardening'].includes(t))) return 'biology';
+  if (card.id === 'crafts-and-gentle-stem' || (card.tags?.some((t) => ['crafts', 'STEM'].includes(t)) && card.title.toLowerCase().includes('craft'))) return 'crafts-stem';
+  return 'animals';
+}
 
 export default function Learn() {
   const [cards, setCards] = useState<CardSummary[]>([]);
@@ -26,77 +39,62 @@ export default function Learn() {
     return () => { cancelled = true; };
   }, []);
 
+  const cardsByCategory = useMemo(() => {
+    const map: Record<string, CardSummary[]> = { biology: [], 'crafts-stem': [], animals: [] };
+    for (const card of cards) {
+      const cat = getCategoryId(card);
+      if (map[cat]) map[cat].push(card);
+    }
+    return map;
+  }, [cards]);
+
   return (
-    <div style={{ minHeight: '100vh', padding: 24, maxWidth: 900, margin: '0 auto' }}>
-      <Link
-        to="/"
-        style={{ display: 'inline-block', marginBottom: 24, color: '#94a3b8', fontSize: '0.9rem', textDecoration: 'none' }}
-      >
+    <div className="learn-page">
+      <Link to="/" className="learn-page__back">
         ← Back to Playroom
       </Link>
-      <h1 style={{ margin: '0 0 8px', fontSize: '1.75rem' }}>Learn & Grow</h1>
-      <p style={{ color: '#94a3b8', marginBottom: 28, lineHeight: 1.5 }}>
-        Trusted, cited learning cards—plants, animals, crafts, science, and more. Pick a topic and explore at your own pace.
+      <h1 className="learn-page__title">Learn & Grow</h1>
+      <p className="learn-page__intro">
+        Trusted, cited learning cards—plants, animals, crafts, science, and more. Pick a category, then a topic, and explore at your own pace.
       </p>
 
-      {loading && <p style={{ color: '#94a3b8' }}>Loading…</p>}
-      {error && <p style={{ color: '#f87171' }}>{error}</p>}
+      {loading && <p className="learn-page__loading">Loading…</p>}
+      {error && <p className="learn-page__error">{error}</p>}
 
       {!loading && !error && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: 16,
-          }}
-        >
-          {cards.map((card) => (
-            <Link
-              key={card.id}
-              to={`/learn/${card.id}`}
-              style={{
-                display: 'block',
-                padding: 20,
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12,
-                textDecoration: 'none',
-                color: '#e2e8f0',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = '';
-                e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.2)';
-              }}
-            >
-              <h2 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: 600 }}>{card.title}</h2>
-              <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8', lineHeight: 1.45 }}>{card.summary}</p>
-              {card.tags && card.tags.length > 0 && (
-                <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {card.tags.slice(0, 4).map((tag) => (
-                    <span
-                      key={tag}
-                      style={{
-                        padding: '4px 8px',
-                        background: 'rgba(255,255,255,0.06)',
-                        borderRadius: 6,
-                        fontSize: '0.75rem',
-                        color: '#cbd5e0',
-                      }}
+        <>
+          {CATEGORIES.map((cat) => {
+            const list = cardsByCategory[cat.id] ?? [];
+            if (list.length === 0) return null;
+            return (
+              <section key={cat.id} className="learn-category" aria-labelledby={`learn-cat-${cat.id}`}>
+                <h2 id={`learn-cat-${cat.id}`} className="learn-category__title">{cat.label}</h2>
+                <p className="learn-category__desc">{cat.description}</p>
+                <div className="learn-cards">
+                  {list.map((card) => (
+                    <Link
+                      key={card.id}
+                      to={`/learn/${card.id}`}
+                      className="learn-card-link"
                     >
-                      {tag}
-                    </span>
+                      <h3 className="learn-card-link__title">{card.title}</h3>
+                      <p className="learn-card-link__summary">{card.summary}</p>
+                      {card.tags && card.tags.length > 0 && (
+                        <div className="learn-card-link__tags">
+                          {card.tags.slice(0, 4).map((tag) => (
+                            <span key={tag} className="learn-card-link__tag">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </Link>
                   ))}
                 </div>
-              )}
-            </Link>
-          ))}
-        </div>
+              </section>
+            );
+          })}
+        </>
       )}
     </div>
   );

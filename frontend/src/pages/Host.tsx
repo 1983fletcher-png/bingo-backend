@@ -21,7 +21,7 @@ interface GameCreated {
   joinUrl: string;
   gameType: string;
   eventConfig?: EventConfig;
-  waitingRoom: { game: 'roll-call' | null; theme: string; hostMessage: string };
+  waitingRoom: { game: 'roll-call' | 'fidget' | null; theme: string; hostMessage: string };
   songPool?: Song[];
   revealed?: Song[];
   trivia?: { questions: TriviaQuestion[] };
@@ -45,7 +45,7 @@ export default function Host() {
   const [connected, setConnected] = useState(false);
   const [game, setGame] = useState<GameCreated | null>(null);
   const [hostMessage, setHostMessage] = useState('Starting soon…');
-  const [pendingWaitingRoomEnable, setPendingWaitingRoomEnable] = useState(true);
+  const [copyFeedback, setCopyFeedback] = useState(false);
   const [songPool, setSongPool] = useState<Song[]>([]);
   const [revealed, setRevealed] = useState<Song[]>([]);
   const [activeTab, setActiveTab] = useState<HostTab>('waiting');
@@ -125,11 +125,15 @@ export default function Host() {
       }
     });
 
+    s.on('game:waiting-room-updated', (data: { waitingRoom?: GameCreated['waitingRoom'] }) => {
+      if (data.waitingRoom) {
+        setGame((prev) => (prev ? { ...prev, waitingRoom: data.waitingRoom! } : null));
+      }
+    });
+
     s.on('game:trivia-state', (payload: { questions?: TriviaQuestion[] }) => {
       if (Array.isArray(payload.questions)) setTriviaQuestions(payload.questions);
     });
-
-    s.on('game:waiting-room-updated', () => {});
 
     s.on('game:songs-updated', ({ songPool: pool }: { songPool: Song[] }) => {
       setSongPool(Array.isArray(pool) ? pool : []);
@@ -205,11 +209,11 @@ export default function Host() {
     if (!socket || !game) return;
     socket.emit('host:set-waiting-room', {
       code: game.code,
-      game: pendingWaitingRoomEnable ? 'roll-call' : null,
+      game: game.waitingRoom?.game ?? null,
       theme: waitingRoomTheme,
       hostMessage,
     });
-  }, [socket, game?.code, hostMessage, waitingRoomTheme, pendingWaitingRoomEnable]);
+  }, [socket, game?.code, hostMessage, waitingRoomTheme, game?.waitingRoom?.game]);
 
   const startEvent = () => {
     if (!socket || !game) return;
@@ -464,12 +468,12 @@ export default function Host() {
       createMode === 'music-bingo'
         ? 'Create Music Bingo'
         : createMode === 'trivia'
-          ? `Create ${selectedPack?.title ?? 'Trivia'}`
+          ? 'Create Trivia'
           : createMode === 'icebreakers'
-            ? `Create ${selectedPack?.title ?? 'Icebreakers'}`
+            ? 'Create Icebreakers'
             : createMode === 'edutainment'
-              ? `Create ${selectedPack?.title ?? 'Edutainment'}`
-              : `Create ${selectedPack?.title ?? 'Team Building'}`;
+              ? 'Create Edutainment'
+              : 'Create Team Building';
 
     return (
       <div className="host-create">
@@ -537,6 +541,26 @@ export default function Host() {
             Create a room and generate 75 songs from the Call sheet tab (AI or theme). One link for everyone.
           </p>
         )}
+        {createMode === 'trivia' && (
+          <p className="host-create__copy">
+            Pick a pack below. You can remove or reorder questions in the Questions tab after creating. One link for the whole room.
+          </p>
+        )}
+        {createMode === 'icebreakers' && (
+          <p className="host-create__copy">
+            Pick an icebreaker pack below. Two Truths, Would You Rather, quick energizers. Low-stakes, high connection. One link for everyone.
+          </p>
+        )}
+        {createMode === 'edutainment' && (
+          <p className="host-create__copy">
+            Pick a learning pack by grade band. K–college, curriculum-aligned. One link for the whole room.
+          </p>
+        )}
+        {createMode === 'team-building' && (
+          <p className="host-create__copy">
+            Pick a pack by age, occupation, or situation. Remote teams, retreats, community. One link for everyone.
+          </p>
+        )}
 
         {isPackMode && (
           <div className="host-create__content host-create__packs-wrap">
@@ -566,29 +590,6 @@ export default function Host() {
           </div>
         )}
 
-        {canCreate && (
-          <section className="host-create__when" aria-label="When players join">
-            <h2 className="host-create__when-title">When players join</h2>
-            <p className="host-create__when-hint">Players see this until you start the game.</p>
-            <label className="host-create__checkbox-row">
-              <input
-                type="checkbox"
-                checked={pendingWaitingRoomEnable}
-                onChange={(e) => setPendingWaitingRoomEnable(e.target.checked)}
-              />
-              <span>Show waiting room with Roll Call (marble game) until I start</span>
-            </label>
-            <label className="host-create__label">Welcome message</label>
-            <input
-              type="text"
-              className="host-create__input"
-              value={hostMessage}
-              onChange={(e) => setHostMessage(e.target.value)}
-              placeholder="e.g. Starting soon · Welcome to [venue]"
-            />
-          </section>
-        )}
-
         <button
           type="button"
           className="host-create__btn-primary"
@@ -616,30 +617,76 @@ export default function Host() {
       ];
 
   const displayUrl = `${window.location.origin}/display/${game.code}`;
+  const joinUrlForQR = game.joinUrl || `${window.location.origin}/join/${game.code}`;
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=10&data=${encodeURIComponent(joinUrlForQR)}`;
+
+  const setWaitingRoomGame = (gameVal: 'roll-call' | 'fidget' | null) => {
+    setGame((prev) => (prev ? { ...prev, waitingRoom: { ...prev.waitingRoom, game: gameVal } } : null));
+    if (socket?.connected && game?.code) {
+      socket.emit('host:set-waiting-room', { code: game.code, game: gameVal });
+    }
+  };
 
   return (
     <>
-      <div style={{ padding: 24, maxWidth: 560 }}>
-        <p style={{ marginTop: 0, marginBottom: 16 }}>
-          <Link to="/" style={{ color: '#a0aec0', fontSize: 14, textDecoration: 'none' }}>← The Playroom</Link>
-          <span style={{ fontSize: 12, color: '#68d391', marginLeft: 12 }}>● Connected</span>
+      <div className="host-room">
+        <p className="host-room__breadcrumb">
+          <Link to="/" className="host-room__breadcrumb-link">← The Playroom</Link>
+          <span className="host-room__connected">● Connected</span>
         </p>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16, borderBottom: '1px solid #4a5568' }}>
+
+        <header className="host-room__header">
+          <div className="host-room__qr-block">
+            <img src={qrImageUrl} alt="" width={240} height={240} aria-label="QR code to join game" />
+            <p className="host-room__qr-hint">Scan to join</p>
+            <p className="host-room__qr-sub">One link for everyone</p>
+          </div>
+          <div className="host-room__meta">
+            <span className="host-room__badge">Game code</span>
+            <span className="host-room__code">{game.code}</span>
+            <div className="host-room__join-row">
+              <a href={joinUrlForQR} target="_blank" rel="noopener noreferrer" className="host-room__join-url">
+                {joinUrlForQR}
+              </a>
+              <button
+                type="button"
+                className="host-room__copy-btn"
+                onClick={() => {
+                  navigator.clipboard?.writeText(joinUrlForQR).then(() => {
+                    setCopyFeedback(true);
+                    setTimeout(() => setCopyFeedback(false), 2000);
+                  });
+                }}
+              >
+                {copyFeedback ? 'Copied' : 'Copy'}
+              </button>
+            </div>
+            <div className="host-room__link-group">
+              <span className="host-room__link-label">Host tools</span>
+              <a href={`/join/${game.code}`} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
+                Preview player view
+              </a>
+              <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
+                TV / display view
+              </a>
+            </div>
+            <p className="host-room__display-hint">The TV display shows a QR code—open it on the big screen so players can scan to join.</p>
+            <div className="host-room__actions">
+              <button type="button" onClick={() => setGame(null)} className="host-room__btn-secondary">
+                End game
+              </button>
+              <Link to="/" className="host-room__back-link">← Back</Link>
+            </div>
+          </div>
+        </header>
+
+        <div className="host-room__tabs">
           {tabs.map(({ id, label }) => (
             <button
               key={id}
               type="button"
+              className={`host-room__tab ${activeTab === id ? 'host-room__tab--on' : ''}`}
               onClick={() => setActiveTab(id)}
-              style={{
-                padding: '10px 16px',
-                background: activeTab === id ? '#2d3748' : 'transparent',
-                color: '#e2e8f0',
-                border: 'none',
-                borderBottom: activeTab === id ? '2px solid #48bb78' : '2px solid transparent',
-                borderRadius: 6,
-                cursor: 'pointer',
-                fontWeight: activeTab === id ? 600 : 400,
-              }}
             >
               {label}
             </button>
@@ -648,51 +695,51 @@ export default function Host() {
 
         {activeTab === 'waiting' && (
           <>
-            <h2 style={{ marginTop: 0 }}>Waiting room</h2>
-            <p style={{ color: '#a0aec0', fontSize: 14 }}>Share the link. Players see the waiting game until you start.</p>
-            <p style={{ fontSize: 16, wordBreak: 'break-all', marginBottom: 4 }}>
-              <a href={game.joinUrl} target="_blank" rel="noopener noreferrer">{game.joinUrl}</a>
-            </p>
-            <p style={{ fontSize: 13, color: '#718096', marginBottom: 20 }}>Room code: <strong>{game.code}</strong></p>
-
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontSize: 13, marginBottom: 4 }}>Welcome message</label>
-              <input
-                type="text"
-                value={hostMessage}
-                onChange={(e) => setHostMessage(e.target.value)}
-                style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }}
-                placeholder="e.g. Starting soon…"
-              />
-            </div>
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontSize: 13, marginBottom: 4 }}>Waiting room game</label>
-              <select
-                value={waitingRoomTheme}
-                onChange={(e) => setWaitingRoomTheme(e.target.value)}
-                style={{ padding: '8px 12px', minWidth: 220, width: '100%', maxWidth: 280, borderRadius: 6 }}
+            <section className="host-room__when" aria-label="When players join">
+              <h2 className="host-room__when-title">When players join</h2>
+              <p className="host-room__when-hint">Players see this until you start the game.</p>
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: 4 }}>Mini-game</label>
+                <select
+                  value={game.waitingRoom?.game ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value as '' | 'roll-call' | 'fidget';
+                    setWaitingRoomGame(val === 'roll-call' || val === 'fidget' ? val : null);
+                  }}
+                  style={{ padding: '10px 12px', width: '100%', maxWidth: 320, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+                >
+                  <option value="">None</option>
+                  <option value="roll-call">Roll Call (marble)</option>
+                  <option value="fidget">Stretch game</option>
+                </select>
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: 4 }}>Welcome message</label>
+                <input
+                  type="text"
+                  value={hostMessage}
+                  onChange={(e) => setHostMessage(e.target.value)}
+                  placeholder="e.g. Starting soon · Welcome to [venue]"
+                  style={{ padding: '10px 12px', width: '100%', maxWidth: 400, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+                />
+              </div>
+              <button
+                type="button"
+                className="host-room__start-btn"
+                onClick={startEvent}
+                disabled={game.gameType === 'music-bingo' && (songPool?.length ?? 0) < 24}
               >
-                <option value="default">Roll Call — Marble maze</option>
-                <option value="fidget">Stretch game</option>
-                <option value="classic">Tilt maze — Classic</option>
-                <option value="eighties">Tilt maze — Eighties</option>
-                <option value="trivia">Tilt maze — Trivia</option>
-                <option value="neon">Marble — Neon</option>
-                <option value="vinyl">Marble — Vinyl</option>
-                <option value="rock">Marble — Rock</option>
-              </select>
-            </div>
+                {game.gameType === 'trivia' ? 'Start trivia' : 'Start the game'}
+              </button>
+              {game.gameType === 'music-bingo' && (songPool?.length ?? 0) < 24 && (
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: 8 }}>Add at least 24 songs (Call sheet tab) to start.</p>
+              )}
+            </section>
 
-            <button onClick={startEvent} style={{ padding: '12px 24px', borderRadius: 8 }}>
-              {game.gameType === 'trivia' ? 'Start trivia' : 'Start the game'}
-            </button>
-
-            <details style={{ marginTop: 24, border: '1px solid #4a5568', borderRadius: 8, overflow: 'hidden' }}>
-              <summary style={{ padding: '12px 16px', cursor: 'pointer', background: '#2d3748', fontWeight: 600, fontSize: 14 }}>
-                Event &amp; venue details
-              </summary>
-              <div style={{ padding: 16, borderTop: '1px solid #4a5568', fontSize: 14 }}>
-                <p style={{ color: '#a0aec0', margin: '0 0 12px', fontSize: 13 }}>
+            <details className="host-room__details">
+              <summary className="host-room__details-summary">Event &amp; venue details</summary>
+              <div className="host-room__details-body">
+                <p style={{ color: 'var(--text-muted)', margin: '0 0 12px', fontSize: '0.8125rem' }}>
                   Event details (including scraped data) are not shown on the display or player screens until you click &quot;Apply event details to game&quot; below.
                 </p>
                 <div style={{ marginBottom: 16 }}>
@@ -925,24 +972,20 @@ export default function Host() {
         )}
 
         {/* TV display link — optional */}
-        <details style={{ marginTop: 24, border: '1px solid #4a5568', borderRadius: 8, overflow: 'hidden' }}>
-          <summary style={{ padding: '12px 16px', cursor: 'pointer', background: '#2d3748', fontWeight: 600, fontSize: 14 }}>
-            TV display &amp; links
-          </summary>
-          <div style={{ padding: 16, borderTop: '1px solid #4a5568' }}>
-            <p style={{ margin: '0 0 8px 0', fontSize: 13, color: '#a0aec0' }}>Use the display URL on your TV or projector so players see the main view.</p>
-            <p style={{ fontSize: 14, wordBreak: 'break-all' }}>
-              <a href={displayUrl} target="_blank" rel="noopener noreferrer">{displayUrl}</a>
+        <details className="host-room__details">
+          <summary className="host-room__details-summary">TV display &amp; links</summary>
+          <div className="host-room__details-body">
+            <p style={{ margin: '0 0 8px 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Use the display URL on your TV or projector. The display screen shows a QR code so players can scan to join.</p>
+            <p style={{ fontSize: '0.9375rem', wordBreak: 'break-all' }}>
+              <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__join-url">{displayUrl}</a>
             </p>
           </div>
         </details>
 
         {/* Print materials — dropdown */}
-        <details style={{ marginTop: 12, border: '1px solid #4a5568', borderRadius: 8, overflow: 'hidden' }}>
-          <summary style={{ padding: '12px 16px', cursor: 'pointer', background: '#2d3748', fontWeight: 600 }}>
-            Print materials
-          </summary>
-          <div style={{ padding: 16, borderTop: '1px solid #4a5568' }}>
+        <details className="host-room__details">
+          <summary className="host-room__details-summary">Print materials</summary>
+          <div className="host-room__details-body">
             <p style={{ color: '#a0aec0', fontSize: 14, marginTop: 0 }}>
               For players without phones or devices. Generate and print from your browser.
             </p>

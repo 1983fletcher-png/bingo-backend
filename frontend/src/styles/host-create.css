@@ -229,3 +229,330 @@
   margin-bottom: 1rem;
   line-height: 1.5;
 }
+
+/* Host room (after game created): header with QR, join URL, links */
+.host-room {
+  min-height: 100vh;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+.host-room__breadcrumb {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+}
+
+.host-room__breadcrumb-link {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.host-room__breadcrumb-link:hover {
+  color: var(--accent);
+}
+
+.host-room__connected {
+  font-size: 0.75rem;
+  color: var(--success, #68d391);
+  margin-left: 0.75rem;
+}
+
+.host-room__header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: start;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+@media (min-width: 640px) {
+  .host-room__header {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+.host-room__qr-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.host-room__qr-block img {
+  display: block;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.host-room__qr-hint {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.host-room__qr-sub {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+}
+
+.host-room__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.host-room__badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.host-room__code {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  font-family: ui-monospace, monospace;
+}
+
+.host-room__join-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.host-room__join-url {
+  font-size: 0.875rem;
+  word-break: break-all;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.host-room__join-url:hover {
+  text-decoration: underline;
+}
+
+.host-room__copy-btn {
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.host-room__copy-btn:hover {
+  opacity: 0.9;
+}
+
+.host-room__link-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.host-room__link-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  width: 100%;
+  margin-bottom: -4px;
+}
+
+.host-room__link-btn {
+  display: inline-block;
+  padding: 10px 18px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.host-room__link-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.host-room__link {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.host-room__link:hover {
+  text-decoration: underline;
+}
+
+.host-room__display-hint {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 12px 0 0;
+  line-height: 1.4;
+}
+
+.host-room__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.host-room__btn-secondary {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.host-room__btn-secondary:hover {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.host-room__back-link {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.host-room__back-link:hover {
+  color: var(--accent);
+}
+
+/* Collapsible sections (Event & venue, TV display, Print materials) */
+.host-room__details {
+  margin-top: 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.host-room__details-summary {
+  padding: 14px 18px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text);
+  list-style: none;
+}
+
+.host-room__details-summary::-webkit-details-marker {
+  display: none;
+}
+
+.host-room__details-summary::before {
+  content: '▸ ';
+  margin-right: 6px;
+  transition: transform 0.2s;
+}
+
+.host-room__details[open] .host-room__details-summary::before {
+  transform: rotate(90deg);
+}
+
+.host-room__details-body {
+  padding: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+.host-room__tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.host-room__tab {
+  padding: 10px 16px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+}
+
+.host-room__tab:hover {
+  color: var(--text);
+}
+
+.host-room__tab--on {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.host-room__when {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.host-room__when-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.host-room__when-hint {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+.host-room__start-btn {
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.host-room__start-btn:hover:not(:disabled) {
+  opacity: 0.95;
+}
+
+.host-room__start-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

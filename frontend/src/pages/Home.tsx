@@ -63,40 +63,19 @@ export default function Home() {
 
   return (
     <div className="landing" style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '16px 24px',
-          maxWidth: 1000,
-          margin: '0 auto',
-          width: '100%',
-        }}
-      >
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text)' }}>
-          The Playroom
-        </span>
-        <button
-          type="button"
-          onClick={() => navigate('/calendar')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 16px',
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 10,
-            color: 'var(--text-secondary)',
-            fontSize: '0.9rem',
-            cursor: 'pointer',
-            boxShadow: 'var(--shadow-sm)',
-          }}
-        >
-          <span aria-hidden>📅</span>
-          Activity calendar
-        </button>
+      <header className="landing__header">
+        <span className="landing__header-title">The Playroom</span>
+        <nav className="landing__header-nav" aria-label="Main">
+          <button
+            type="button"
+            onClick={() => navigate('/calendar')}
+            className="landing__header-btn"
+          >
+            <span aria-hidden>📅</span>
+            Activity calendar
+          </button>
+          <span className="landing__header-help" aria-hidden>Help (coming soon)</span>
+        </nav>
       </header>
 
       <main style={{ flex: 1, width: '100%', padding: '0 24px 48px' }}>

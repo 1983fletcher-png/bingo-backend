@@ -10,6 +10,59 @@
   margin: 0 auto;
 }
 
+/* Solid header bar — title, Activity calendar, Help placeholder */
+.landing__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  margin: 0 -24px 0 -24px;
+  padding-left: calc(24px + env(safe-area-inset-left));
+  padding-right: calc(24px + env(safe-area-inset-right));
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.landing__header-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.landing__header-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing__header-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.landing__header-btn:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.landing__header-help {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding: 8px 12px;
+}
+
 .landing__hero {
   text-align: center;
   margin-bottom: 2.5rem;

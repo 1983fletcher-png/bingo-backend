@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import '../styles/join.css';
 
 export default function JoinEntry() {
   const [code, setCode] = useState('');
@@ -12,16 +13,13 @@ export default function JoinEntry() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: 24, maxWidth: 420, margin: '0 auto' }}>
-      <Link
-        to="/"
-        style={{ display: 'inline-block', marginBottom: 24, color: '#94a3b8', fontSize: '0.9rem', textDecoration: 'none' }}
-      >
+    <div className="join-page">
+      <Link to="/" className="join-page__back">
         ← Back to Playroom
       </Link>
-      <h1 style={{ margin: '0 0 8px', fontSize: '1.75rem' }}>Join a room</h1>
-      <p style={{ color: '#94a3b8', marginBottom: 28 }}>
-        Enter the game code your host shared. It's on the display screen or they can tell you.
+      <h1 className="join-page__title">Join a room</h1>
+      <p className="join-page__intro">
+        Enter the game code your host shared. It&apos;s on the display screen or they can tell you.
       </p>
       <form onSubmit={handleSubmit}>
         <input
@@ -31,33 +29,13 @@ export default function JoinEntry() {
           placeholder="e.g. ABC12"
           maxLength={12}
           autoFocus
-          style={{
-            width: '100%',
-            padding: '14px 18px',
-            fontSize: '1.1rem',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.15)',
-            borderRadius: 10,
-            color: '#e2e8f0',
-            marginBottom: 16,
-          }}
+          className="join-page__input"
+          aria-label="Game code"
         />
         <button
           type="submit"
           disabled={!code.trim()}
-          style={{
-            width: '100%',
-            padding: '14px 24px',
-            background: code.trim() ? '#3b82f6' : 'rgba(59,130,246,0.4)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 10,
-            fontSize: '1rem',
-            fontWeight: 600,
-            cursor: code.trim() ? 'pointer' : 'not-allowed',
-          }}
+          className="join-page__btn"
         >
           Join game
         </button>
