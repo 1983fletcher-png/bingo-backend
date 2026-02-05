@@ -28,13 +28,14 @@
 
 ## Safe ways to update the app from the backend
 
-1. **Selective sync (Roll Call only)**  
-   Use **`./scripts/sync-and-push-roll-call.sh`** to copy only:
-   - `RollCallGame.tsx`
-   - `WaitingRoomTiltMaze.tsx`
-   - `WaitingRoomView.tsx`
-   - `rollCallMaps.ts`  
-   That updates Roll Call logic/maps without touching the rest of the app.
+1. **Selective sync (waiting room + mini-games)**  
+   Use **`./scripts/sync-and-push-roll-call.sh`** to copy the waiting-room experience only:
+   - `RollCallGame.tsx` — marble maze mini-game
+   - `WaitingRoomTiltMaze.tsx` — tilt maze mini-game
+   - `StretchyLogoFidget.tsx` — stretchy logo fidget (default Playroom logo, venue/scrape logo, or load your own image)
+   - `WaitingRoomView.tsx` — waiting screen that hosts Roll Call, Tilt Maze, or Stretchy
+   - `rollCallMaps.ts` — maps/data for Roll Call  
+   So **only the waiting room and its mini-games** are synced by script. The rest of the live site (landing, host control room, event/venue scrape, display chrome, advertising) lives in **music-bingo-app** and is the single source of truth for that UI.
 
 2. **Port features by hand**  
    For anything beyond Roll Call (e.g. Print tab, new Host flow, new trivia packs):

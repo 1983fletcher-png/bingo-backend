@@ -11,8 +11,14 @@ import type { Socket } from 'socket.io-client';
 interface JoinState {
   code: string;
   started: boolean;
-  eventConfig: { gameTitle?: string };
-  waitingRoom: { game: 'roll-call' | null; theme: string; hostMessage: string };
+  eventConfig: { gameTitle?: string; logoUrl?: string | null };
+  waitingRoom: {
+    game: 'roll-call' | null;
+    theme: string;
+    hostMessage: string;
+    stretchyImageSource?: 'playroom' | 'venue-logo' | 'custom';
+    stretchyImageUrl?: string | null;
+  };
   rollCallLeaderboard: { playerId: string; displayName: string; bestTimeMs: number }[];
   songPool?: Song[];
   revealed?: Song[];
@@ -123,6 +129,7 @@ export default function Play() {
         gameCode={joinState.code}
         eventTitle={joinState.eventConfig?.gameTitle || 'The Playroom'}
         waitingRoom={joinState.waitingRoom}
+        eventConfig={joinState.eventConfig}
         rollCallLeaderboard={joinState.rollCallLeaderboard || []}
         onRollCallWin={handleRollCallWin}
       />

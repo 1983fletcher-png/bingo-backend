@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 
 const GRID_SIZE = 20;
 const SPRING = 0.1;
@@ -32,20 +32,49 @@ class Point {
   }
 }
 
-const DEFAULT_LOGO_URL = 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png';
+// Default Playroom logo: simple SVG (fits phone, stretchy-friendly)
+const PLAYROOM_DEFAULT_LOGO =
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80"><rect width="200" height="80" fill="#1a202c"/><text x="100" y="50" font-family="system-ui,sans-serif" font-size="28" font-weight="700" fill="#e94560" text-anchor="middle" dominant-baseline="middle">Playroom</text></svg>'
+  );
 
-export default function StretchyLogoFidget() {
+export type StretchyImageSource = 'playroom' | 'venue-logo' | 'custom';
+
+export interface StretchyLogoFidgetProps {
+  /** Source of the image: default Playroom, scraped venue logo, or host custom URL */
+  imageSource?: StretchyImageSource;
+  /** When imageSource is 'venue-logo', use this URL (e.g. from scrape / Apply event details) */
+  venueLogoUrl?: string | null;
+  /** When imageSource is 'custom', use this URL (host upload or custom image) */
+  customImageUrl?: string | null;
+}
+
+export default function StretchyLogoFidget({
+  imageSource = 'playroom',
+  venueLogoUrl = null,
+  customImageUrl = null,
+}: StretchyLogoFidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointsRef = useRef<Point[]>([]);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [imgLoaded, setImgLoaded] = useState(false);
+  /** Local override: user chose "Load image" or "Reset to default" this session */
+  const [localOverrideUrl, setLocalOverrideUrl] = useState<string | null>(null);
   const dragRef = useRef({ active: false, x: 0, y: 0 });
   const rafRef = useRef<number>(0);
 
+  const resolvedUrl = useMemo(() => {
+    if (localOverrideUrl) return localOverrideUrl;
+    if (imageSource === 'venue-logo' && venueLogoUrl) return venueLogoUrl;
+    if (imageSource === 'custom' && customImageUrl) return customImageUrl;
+    return PLAYROOM_DEFAULT_LOGO;
+  }, [localOverrideUrl, imageSource, venueLogoUrl, customImageUrl]);
+
   const loadImage = (src: string) => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    img.crossOrigin = src.startsWith('data:') ? '' : 'anonymous';
     img.onload = () => {
       imgRef.current = img;
       setImgLoaded(true);
@@ -55,8 +84,8 @@ export default function StretchyLogoFidget() {
   };
 
   useEffect(() => {
-    loadImage(DEFAULT_LOGO_URL);
-  }, []);
+    loadImage(resolvedUrl);
+  }, [resolvedUrl]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -176,10 +205,30 @@ export default function StretchyLogoFidget() {
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
-      if (dataUrl) loadImage(dataUrl);
+      if (dataUrl) {
+        setLocalOverrideUrl(dataUrl);
+        loadImage(dataUrl);
+      }
     };
     reader.readAsDataURL(file);
     e.target.value = '';
+  };
+
+  const usePlayroomDefault = () => {
+    setLocalOverrideUrl(null);
+    loadImage(PLAYROOM_DEFAULT_LOGO);
+  };
+
+  const useVenueLogo = () => {
+    if (!venueLogoUrl) return;
+    setLocalOverrideUrl(venueLogoUrl);
+    loadImage(venueLogoUrl);
+  };
+
+  const useCustomUrl = () => {
+    if (!customImageUrl) return;
+    setLocalOverrideUrl(customImageUrl);
+    loadImage(customImageUrl);
   };
 
   return (
@@ -199,7 +248,8 @@ export default function StretchyLogoFidget() {
           position: 'relative',
           touchAction: 'none',
           width: '100%',
-          height: 380,
+          minHeight: 240,
+          height: 'min(380px, 70vw)',
         }}
       >
         <canvas
@@ -209,7 +259,17 @@ export default function StretchyLogoFidget() {
           style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain' }}
         />
         {!imgLoaded && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#111', color: '#666' }}>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: '#111',
+              color: '#666',
+            }}
+          >
             Loading…
           </div>
         )}
@@ -221,10 +281,68 @@ export default function StretchyLogoFidget() {
           borderTop: '1px solid #333',
         }}
       >
-        <p style={{ margin: '0 0 10px 0', fontSize: 12, fontWeight: 600, color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          Options — upload your image (same stretchy physics)
+        <p
+          style={{
+            margin: '0 0 10px 0',
+            fontSize: 12,
+            fontWeight: 600,
+            color: '#a0aec0',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          Logo — default Playroom, venue/scraped, or load your own
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+          <button
+            type="button"
+            onClick={usePlayroomDefault}
+            style={{
+              padding: '10px 18px',
+              background: '#2d3748',
+              color: '#e2e8f0',
+              border: '1px solid #4a5568',
+              borderRadius: 8,
+              fontSize: 14,
+              cursor: 'pointer',
+            }}
+          >
+            Default (Playroom)
+          </button>
+          {venueLogoUrl && (
+            <button
+              type="button"
+              onClick={useVenueLogo}
+              style={{
+                padding: '10px 18px',
+                background: '#2d3748',
+                color: '#e2e8f0',
+                border: '1px solid #4a5568',
+                borderRadius: 8,
+                fontSize: 14,
+                cursor: 'pointer',
+              }}
+            >
+              Venue / scraped logo
+            </button>
+          )}
+          {customImageUrl && customImageUrl !== venueLogoUrl && (
+            <button
+              type="button"
+              onClick={useCustomUrl}
+              style={{
+                padding: '10px 18px',
+                background: '#2d3748',
+                color: '#e2e8f0',
+                border: '1px solid #4a5568',
+                borderRadius: 8,
+                fontSize: 14,
+                cursor: 'pointer',
+              }}
+            >
+              Host custom image
+            </button>
+          )}
           <label
             style={{
               padding: '10px 18px',
@@ -236,24 +354,14 @@ export default function StretchyLogoFidget() {
               fontWeight: 500,
             }}
           >
-            Upload your image
-            <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+            Load image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
           </label>
-          <button
-            type="button"
-            onClick={() => loadImage(DEFAULT_LOGO_URL)}
-            style={{
-              padding: '10px 18px',
-              background: '#2d3748',
-              color: '#e2e8f0',
-              border: '1px solid #4a5568',
-              borderRadius: 8,
-              fontSize: 14,
-              cursor: 'pointer',
-            }}
-          >
-            Reset to default logo
-          </button>
         </div>
       </div>
     </div>

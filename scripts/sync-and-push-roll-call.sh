@@ -45,20 +45,19 @@ echo ""
 
 mkdir -p "$TARGET_SRC/components" "$TARGET_SRC/data"
 cp "$FRONTEND_SRC/components/RollCallGame.tsx"         "$TARGET_SRC/components/"
+cp "$FRONTEND_SRC/components/StretchyLogoFidget.tsx"  "$TARGET_SRC/components/"
 cp "$FRONTEND_SRC/components/WaitingRoomTiltMaze.tsx"  "$TARGET_SRC/components/"
 cp "$FRONTEND_SRC/components/WaitingRoomView.tsx"      "$TARGET_SRC/components/"
 cp "$FRONTEND_SRC/data/rollCallMaps.ts"                "$TARGET_SRC/data/"
 
-echo "  Copied: RollCallGame, WaitingRoomTiltMaze, WaitingRoomView, rollCallMaps.ts"
+echo "  Copied: RollCallGame, StretchyLogoFidget, WaitingRoomTiltMaze, WaitingRoomView, rollCallMaps.ts"
 echo ""
 
 # Commit and push in the app repo
 cd "$TARGET"
-git add src/components/RollCallGame.tsx src/components/WaitingRoomTiltMaze.tsx \
-        src/components/WaitingRoomView.tsx src/data/rollCallMaps.ts 2>/dev/null || true
-
-# If WaitingRoomTiltMaze is new, ensure it's added
-git add src/components/WaitingRoomTiltMaze.tsx 2>/dev/null || true
+git add src/components/RollCallGame.tsx src/components/StretchyLogoFidget.tsx \
+        src/components/WaitingRoomTiltMaze.tsx src/components/WaitingRoomView.tsx \
+        src/data/rollCallMaps.ts 2>/dev/null || true
 
 if git diff --cached --quiet 2>/dev/null; then
   echo "  No changes to commit (files already match)."

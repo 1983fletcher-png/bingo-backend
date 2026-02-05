@@ -1,6 +1,7 @@
 import RollCallGame from './RollCallGame';
 import WaitingRoomTiltMaze from './WaitingRoomTiltMaze';
 import StretchyLogoFidget from './StretchyLogoFidget';
+import type { StretchyImageSource } from './StretchyLogoFidget';
 import { pickMapForGame } from '../data/rollCallMaps';
 import type { RollCallTheme } from './RollCallGame';
 
@@ -8,6 +9,15 @@ export interface WaitingRoomConfig {
   game: 'roll-call' | null;
   theme: string;
   hostMessage: string;
+  /** Stretchy fidget image: playroom default, venue (scraped) logo, or custom URL */
+  stretchyImageSource?: StretchyImageSource;
+  stretchyImageUrl?: string | null;
+}
+
+export interface EventConfigForWaiting {
+  gameTitle?: string;
+  /** Venue/scraped logo URL (from scrape + Apply event details) */
+  logoUrl?: string | null;
 }
 
 export interface RollCallLeaderboardEntry {
@@ -28,6 +38,8 @@ interface WaitingRoomViewProps {
   gameCode: string;
   eventTitle: string;
   waitingRoom: WaitingRoomConfig;
+  /** Event/venue config so stretchy can show venue logo when host applied scrape */
+  eventConfig?: EventConfigForWaiting | null;
   rollCallLeaderboard: RollCallLeaderboardEntry[];
   onRollCallWin?: (timeMs: number) => void;
 }
@@ -41,6 +53,7 @@ export default function WaitingRoomView({
   gameCode,
   eventTitle,
   waitingRoom,
+  eventConfig,
   rollCallLeaderboard,
   onRollCallWin,
 }: WaitingRoomViewProps) {
@@ -48,6 +61,9 @@ export default function WaitingRoomView({
   const theme = themeColors[themeName] || themeColors.default;
   const map = pickMapForGame(gameCode);
   const useTilt = useTiltMaze(themeName);
+  const stretchySource = waitingRoom.stretchyImageSource ?? 'playroom';
+  const venueLogoUrl = eventConfig?.logoUrl ?? null;
+  const customImageUrl = waitingRoom.stretchyImageUrl ?? null;
 
   return (
     <div style={{ padding: 16, maxWidth: 480, margin: '0 auto' }}>
@@ -60,9 +76,13 @@ export default function WaitingRoomView({
           {themeName === 'fidget' ? (
             <>
               <p style={{ fontSize: 14, marginBottom: 8 }}>
-                Stretch game — drag to stretch and bounce. Use Options below to upload your own image (same physics).
+                Stretch game — drag to stretch and bounce. Default is Playroom; use venue/scraped logo or load your own below.
               </p>
-              <StretchyLogoFidget />
+              <StretchyLogoFidget
+                imageSource={stretchySource}
+                venueLogoUrl={venueLogoUrl}
+                customImageUrl={customImageUrl}
+              />
             </>
           ) : (
             <>
