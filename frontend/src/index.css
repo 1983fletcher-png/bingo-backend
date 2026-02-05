@@ -3,3 +3,7 @@ body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background:
 #root { min-height: 100vh; }
 a { color: #6cb4ee; }
 button { cursor: pointer; font: inherit; }
+
+@media (max-width: 560px) {
+  .home-cards-grid { grid-template-columns: 1fr !important; }
+}
