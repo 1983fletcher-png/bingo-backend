@@ -27,10 +27,17 @@ alwaysApply: false
 
 ## Switching “back and forth”
 
-- There is only one correct setup for the Playroom live site: Netlify building from **bingo-backend** with base **frontend**. There is no “switch to music-bingo-app” for the main site unless the user explicitly wants a different app. If the site was mistakenly linked to music-bingo-app or base directory is wrong, **run the ensure script** or follow **docs/DEPLOY-CONTRACT.md** to point Netlify back at bingo-backend + frontend.
+- **New UI** (four cards, calendar, Learn & Grow, Join/Create) lives only in **bingo-backend/frontend**. **music-bingo-app** has the older UI (before those changes). If the user points Netlify at music-bingo-app, they will see the old school view — that’s expected.
+- For the live Playroom site to show the new UI, Netlify must build from **bingo-backend** with base **frontend**. To “flip back” to the new UI, point Netlify at bingo-backend again (ensure script or manual steps in DEPLOY-CONTRACT).
+
+## Frontend–backend linking (connections and format)
+
+- Frontend and backend are **tied by one backend URL**: set **VITE_SOCKET_URL** in Netlify to the Railway (or backend) URL so the built UI connects correctly. Format: HTTPS, no trailing slash.
+- For the full connection checklist and where each piece is set, follow **docs/FRONTEND-BACKEND-LINKING.md**. Use it whenever updating the UI or deploy so the right connections and format are correct before moving forward.
 
 ## Files that define behavior
 
 - **docs/DEPLOY-CONTRACT.md** — What deploys where, how to fix, env vars.
+- **docs/FRONTEND-BACKEND-LINKING.md** — How frontend and backend are linked; env vars, format, checklist.
 - **netlify.toml** — Build base, command, publish dir (Netlify reads this when building from this repo).
 - **scripts/ensure-netlify-builds-from-backend.sh** — Sets Netlify build settings to this repo + frontend (with API) or prints manual steps.

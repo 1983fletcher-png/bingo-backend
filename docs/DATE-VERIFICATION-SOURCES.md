@@ -18,8 +18,8 @@ This doc records authoritative sources used to verify entries. When adding or ch
 
 ## Easter
 
-- Computus: first Sunday after the first ecclesiastical full moon on or after March 21. Verified via timeanddate.com, today.com, etc.
-- 2025: April 20 | 2026: April 5
+- Computus: first Sunday after the first ecclesiastical full moon on or after March 21. Verified via timeanddate.com, calendar-365.com, etc.
+- 2025: April 20 | 2026: April 5 | 2027: March 28 | 2028: April 16
 
 ---
 
@@ -76,3 +76,4 @@ This doc records authoritative sources used to verify entries. When adding or ch
 ## Changes log
 
 - **2025-02:** Initial audit. Corrected: National Doughnut Day (was wrongly Nov 7 fixed → first Friday June); National Ice Cream Day (fixed Jul 20 → 3rd Sunday July); National Hot Dog Day (fixed Jul 23 → 3rd Wednesday July); National Cheesecake Day (Mar 24 → Jul 30); National Taco Day (fixed Oct 4 → first Tuesday October per NDC). All music and federal dates verified. Easter 2025/2026 verified.
+- **2026-02:** Easter 2027 (Mar 28) and 2028 (Apr 16) added and verified. Observances file and calendar aligned with docs/CALENDAR-TRUST-AND-ACCURACY.md (cross-reference, 2026–2027+ planning).

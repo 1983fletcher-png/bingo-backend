@@ -413,6 +413,76 @@ app.post('/api/parse-menu-from-file', express.json({ limit: '15mb' }), async (re
   }
 });
 
+// Scrape a venue/events page and extract event-like entries (date + title) for the activity calendar.
+// GET /api/scrape-events?url=https://example.com/events
+// Returns { events: [ { month, day, title } ] } (month 1–12, day 1–31). Heuristic; best effort.
+const MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+const MONTH_ABBREV = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+function parseEventsFromText(text) {
+  const events = [];
+  const seen = new Set();
+  const lines = text.split(/\n+/).map((s) => s.trim()).filter((s) => s.length > 2 && s.length < 500);
+  const monthRegex = new RegExp(`\\b(${MONTH_NAMES.join('|')}|${MONTH_ABBREV.join('|')})\\s*(\\d{1,2})\\b`, 'gi');
+  const numericRegex = /\b(1[0-2]|0?[1-9])\/(\d{1,2})\b/g;
+  for (const line of lines) {
+    let match;
+    monthRegex.lastIndex = 0;
+    while ((match = monthRegex.exec(line)) !== null) {
+      const monthName = (match[1] || '').toLowerCase();
+      const day = parseInt(match[2], 10);
+      if (day < 1 || day > 31) continue;
+      const month = MONTH_ABBREV.findIndex((m) => monthName.startsWith(m)) + 1 || MONTH_NAMES.findIndex((m) => monthName.startsWith(m)) + 1;
+      if (month < 1) continue;
+      const title = line.replace(match[0], '').replace(/^[\s\-–:]+|[\s\-–:]+$/g, '').trim().slice(0, 120) || `Event ${month}/${day}`;
+      const key = `${month}-${day}-${title.slice(0, 40)}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        events.push({ month, day, title });
+      }
+    }
+    numericRegex.lastIndex = 0;
+    while ((match = numericRegex.exec(line)) !== null) {
+      const month = parseInt(match[1], 10);
+      const day = parseInt(match[2], 10);
+      if (day < 1 || day > 31) continue;
+      const title = line.replace(match[0], '').replace(/^[\s\-–:]+|[\s\-–:]+$/g, '').trim().slice(0, 120) || `Event ${month}/${day}`;
+      const key = `${month}-${day}-${title.slice(0, 40)}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        events.push({ month, day, title });
+      }
+    }
+  }
+  return events.sort((a, b) => (a.month !== b.month ? a.month - b.month : a.day - b.day));
+}
+
+app.get('/api/scrape-events', async (req, res) => {
+  const url = req.query.url;
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ error: 'Missing url query' });
+  }
+  try {
+    const u = new URL(url.trim());
+    if (!['http:', 'https:'].includes(u.protocol)) {
+      return res.status(400).json({ error: 'Invalid URL' });
+    }
+    const { html } = await fetchHtmlForScrape(u.href, 15000);
+    const text = html
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, '\n')
+      .replace(/\s+/g, ' ')
+      .replace(/\n/g, '\n')
+      .trim();
+    const events = parseEventsFromText(text);
+    res.json({ events, sourceUrl: u.href });
+  } catch (err) {
+    const status = err.status === 403 || err.status === 503 ? 502 : 500;
+    const message = err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Failed to fetch');
+    res.status(status).json({ error: message });
+  }
+});
+
 // Phase C: Observances API for theme picker and activity director calendar.
 // Forward-looking only: use from = current date (e.g. 2026-02-04) so we never suggest past holidays.
 // GET /api/observances/upcoming?from=2026-02-04&days=30&category=music

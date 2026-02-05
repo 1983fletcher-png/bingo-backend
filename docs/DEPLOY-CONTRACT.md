@@ -2,6 +2,8 @@
 
 This is the **single source of truth** for where things deploy. When the live site shows the wrong UI or you need to “switch back,” follow this.
 
+**Frontend–backend connections and linking:** See **docs/FRONTEND-BACKEND-LINKING.md** for how the frontend and backend are tied (one backend URL, env vars, format). Use that doc to keep connections correct when updating the UI.
+
 ---
 
 ## The contract
@@ -13,6 +15,13 @@ This is the **single source of truth** for where things deploy. When the live si
 
 - **One repo:** **bingo-backend** (this repo). The Playroom UI (four-card home, calendar, Learn & Grow, Join/Create, etc.) lives in **frontend/**.
 - **Netlify must not** build from **music-bingo-app** for the Playroom live site. If it does, the new UI will never appear.
+
+## Why “switching back” to music-bingo-app shows the old UI
+
+- **bingo-backend/frontend** (this repo) = **new UI**: four-card home (Host, Join, Create a page, Learn & Grow), Activity Calendar, Join entry page, Learn list/detail, Create placeholder, updated observances.
+- **music-bingo-app** = **older UI**: the design from before we added the two extra cards and the new calendar. That repo has not been updated with those features.
+
+So if you point Netlify at **music-bingo-app** again, you will see the old school view by design. To get the new landing page, calendar, and cards, keep Netlify building from **bingo-backend** with base **frontend**. There is no “switch back” that keeps the new UI — the new UI only comes from bingo-backend.
 
 ---
 
@@ -56,6 +65,12 @@ When Netlify builds from this repo, these must be set (they are in **netlify.tom
 8. Save, then **Deploys** → **Trigger deploy** → **Clear cache and deploy site**.
 
 ---
+
+## Connections (frontend ↔ backend)
+
+- **One backend URL** (e.g. Railway) is used for both Socket.io and all `/api/*` requests. No trailing slash.
+- **Netlify** must set **VITE_SOCKET_URL** (and optionally **VITE_API_URL**) to that backend URL so the built frontend talks to the right server. After changing, trigger a new deploy.
+- Full details, format, and checklist: **docs/FRONTEND-BACKEND-LINKING.md**.
 
 ## Environment variables
 

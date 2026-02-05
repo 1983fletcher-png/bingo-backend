@@ -1,8 +1,9 @@
 # The Playroom — frontend deploy (Netlify)
 # Connect Netlify to this repo; one push updates the live site.
+# Frontend–backend linking: docs/FRONTEND-BACKEND-LINKING.md
 # Set in Netlify → Site configuration → Environment variables:
 #   VITE_SOCKET_URL = your Railway backend URL (no trailing slash)
-#   VITE_API_URL    = same backend URL for API calls (optional; falls back to VITE_SOCKET_URL)
+#   VITE_API_URL    = same backend URL (optional; falls back to VITE_SOCKET_URL)
 
 [build]
   base    = "frontend"
