@@ -50,6 +50,7 @@ Do this once so the live site is built from **bingo-backend** and gets every pus
 
 - Connect Railway to the **same repo** (bingo-backend), root as project root, so each push to `main` redeploys the backend.
 - Ensure the deployed backend URL is the one you set in Netlify as `VITE_SOCKET_URL` / `VITE_API_URL`.
+- **PDF and file support:** The app accepts PDF, plain text, HTML, and CSV for menu import. For reliable PDF on Railway, set the service to **Node 20** or later (Settings → Environment → Nixpacks or Docker); the PDF fallback (Mozilla PDF.js) works best on Node 20+. See **`docs/ACCEPT-ANYTHING-VISION.md`**.
 
 ---
 

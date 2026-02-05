@@ -25,6 +25,8 @@
 
 ## 2. Inputs: How Menu Content Gets In
 
+We aim to **accept anything**—like VLC: throw formats at us and we make them work. See **`docs/ACCEPT-ANYTHING-VISION.md`** for the principle and supported file types (PDF, text, HTML, CSV, and roadmap for images).
+
 Support multiple ways for hosts and activity directors to get content into the menu builder:
 
 | Input | Use case | What we do |

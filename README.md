@@ -116,7 +116,7 @@ The frontend uses `VITE_SOCKET_URL` in production to connect to this backend. Wi
 - `GET /api/public-url` — Returns `PUBLIC_ORIGIN` if set.
 - `GET /api/scrape-site?url=...` — Scrapes a URL for logo/theme (optional).
 - **`POST /api/generate-songs`** — AI Music Bingo song list (75 songs, theme-aware). Body: `{ prompt?, familyFriendly?, count?, apiKey? }`. API key can also be sent as header `x-openai-api-key` or set as env `OPENAI_API_KEY`. Returns `{ songs: [{ artist, title }], raw }`.
-- **Menu & theming (Phases A–C):** `GET /api/parse-menu-from-url?url=...`, `POST /api/parse-menu-from-file` (body: `{ file, mimeType }`), `GET /api/observances/upcoming?from=YYYY-MM-DD&days=1-365&category=...`, `GET /api/observances/calendar?year=...&month=...&category=...`. See **docs/PHASE-C-THEMING-AND-CALENDAR.md** and **docs/PHASE-A-B-AUDIT.md**.
+- **Menu & theming (Phases A–C):** `GET /api/parse-menu-from-url?url=...`, `POST /api/parse-menu-from-file` (body: `{ file, mimeType }` — accepts **PDF, plain text, HTML, CSV**; image OCR roadmap). Observances: `GET /api/observances/upcoming`, `GET /api/observances/calendar`. See **docs/PHASE-C-THEMING-AND-CALENDAR.md**, **docs/ACCEPT-ANYTHING-VISION.md**.
 
 Socket.io path: `/socket.io`. Events include `host:create`, `player:join`, `host:reveal`, `host:start`, trivia events, etc., matching the existing Playroom frontend.
 

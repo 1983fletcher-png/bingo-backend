@@ -3,11 +3,42 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import { customAlphabet } from 'nanoid';
-import { PDFParse } from 'pdf-parse';
 import { generateSongs } from './lib/ai.js';
 import { fetchTrustedSources } from './lib/trustedSources.js';
 import { enrichTrack, getChartStyleList } from './lib/musicDataLayer.js';
 import { getObservancesForYear, getUpcoming, CATEGORIES } from './lib/holidaysAndObservancesUS.js';
+
+/**
+ * Extract text from a PDF buffer. Tries pdf-parse first (best fidelity), then Mozilla PDF.js fallback
+ * so PDF works in all environments (e.g. Railway). Returns raw text string.
+ */
+async function extractPdfText(buffer) {
+  const uint8 = new Uint8Array(buffer);
+  try {
+    const pdfParseModule = await import('pdf-parse');
+    const PDFParse = pdfParseModule.PDFParse ?? pdfParseModule.default?.PDFParse ?? pdfParseModule.default;
+    if (PDFParse) {
+      const parser = new PDFParse({ data: uint8 });
+      const result = await parser.getText();
+      await parser.destroy();
+      return (result?.text || '').replace(/\s+/g, ' ').trim();
+    }
+  } catch (_) {}
+  const pdfjsMod = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  const pdfjsLib = pdfjsMod.default ?? pdfjsMod;
+  const loadingTask = pdfjsLib.getDocument({ data: uint8 });
+  const doc = await loadingTask.promise;
+  const numPages = doc.numPages;
+  const parts = [];
+  for (let i = 1; i <= numPages; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    const strings = content.items.map((item) => item.str || '');
+    parts.push(strings.join(' '));
+    page.cleanup?.();
+  }
+  return parts.join('\n').replace(/\s+/g, ' ').trim();
+}
 
 /** Heuristic: turn raw menu text into { sections: [ { name, items: [ { name, price? } ] } ] } for menu builder. */
 function parseMenuText(rawText) {
@@ -320,20 +351,63 @@ app.post('/api/parse-menu-from-file', express.json({ limit: '15mb' }), async (re
       return res.status(400).json({ error: 'Invalid or empty file data' });
     }
     if (mimeType.includes('pdf') || (!mimeType && buffer.slice(0, 5).toString() === '%PDF-')) {
-      const parser = new PDFParse({ data: new Uint8Array(buffer) });
-      const result = await parser.getText();
-      await parser.destroy();
-      const rawText = (result?.text || '').replace(/\s+/g, ' ').trim();
-      const { sections } = parseMenuText(rawText);
+      let rawText;
+      try {
+        rawText = await extractPdfText(buffer);
+      } catch (e) {
+        return res.status(500).json({
+          error: 'Failed to read PDF. Try "Import from URL" with a menu page link, or upload a plain text or CSV file.',
+          code: 'PDF_EXTRACT_FAILED'
+        });
+      }
+      const { sections } = parseMenuText(rawText || '');
       return res.json({ sections, source: 'pdf' });
+    }
+    if (mimeType.startsWith('text/plain') || mimeType === 'application/octet-stream') {
+      const rawText = (buffer.toString('utf8') || buffer.toString('utf16le') || '').trim();
+      if (!rawText) return res.status(400).json({ error: 'File is empty or not valid text.' });
+      const { sections } = parseMenuText(rawText);
+      return res.json({ sections, source: 'text' });
+    }
+    if (mimeType.includes('html')) {
+      const html = buffer.toString('utf8');
+      const rawText = html
+        .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      const { sections } = parseMenuText(rawText || '');
+      return res.json({ sections, source: 'html' });
+    }
+    if (mimeType.includes('csv') || mimeType === 'text/csv' || mimeType === 'application/csv') {
+      const text = buffer.toString('utf8').trim();
+      const lines = text.split(/\r?\n/).filter((l) => l.trim());
+      const rows = lines.map((line) => {
+        const cells = line.split(/\t|,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map((c) => c.replace(/^"|"$/g, '').trim());
+        return cells;
+      });
+      const priceRe = /^\$?\s*\d+\.?\d*\s*$/;
+      const items = rows.map((cells) => {
+        const last = cells[cells.length - 1];
+        const hasPrice = last && priceRe.test(last);
+        const name = (hasPrice ? cells.slice(0, -1).join(' ') : cells.join(' ')).trim() || 'Item';
+        const price = hasPrice ? last : '';
+        return price ? { name, price } : { name };
+      }).filter((it) => it.name.length > 0 && it.name.length < 300);
+      const sections = items.length ? [{ name: 'Menu', items }] : [{ name: 'Menu', items: [{ name: 'No rows found' }] }];
+      return res.json({ sections, source: 'csv' });
     }
     if (mimeType.startsWith('image/')) {
       return res.status(501).json({
-        error: 'Image OCR is not yet implemented. Use a PDF of your menu or paste the menu page URL.',
+        error: 'Image OCR is coming soon. For now use a PDF, paste the menu URL, or upload plain text or CSV.',
         code: 'IMAGE_OCR_NOT_IMPLEMENTED'
       });
     }
-    return res.status(400).json({ error: 'Unsupported file type. Use application/pdf or an image (image OCR coming later).' });
+    return res.status(400).json({
+      error: 'Unsupported file type. We accept: PDF, plain text (.txt), HTML, CSV, or paste a menu URL.',
+      code: 'UNSUPPORTED_TYPE'
+    });
   } catch (err) {
     const message = err.message || 'Failed to parse file';
     res.status(500).json({ error: message });

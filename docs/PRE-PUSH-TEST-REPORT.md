@@ -19,6 +19,7 @@
 | **Lint** (Host, Display, WaitingRoomView, PlayroomLogoAnimated, HostTips) | ✅ No linter errors |
 | **Scrape API** (`GET /api/scrape-site?url=https://www.bbc.com`) | ✅ Returns valid JSON: `title`, `colors` (e.g. theme-color), `logoUrl` (null when site has no og:image). Backend resolves URL, reads public meta tags, 12s timeout. |
 | **Observances API (Phase C)** | ✅ `npm run smoke:observances` passes (lib shape + filters). With backend running: `GET /api/observances/upcoming?from=2026-02-04&days=14` returns `{ from, days, observances }`; `GET /api/observances/calendar?year=2026&month=2` returns `{ year, month, observances }`. Valid `category` filter; invalid params return 400. |
+| **Accept anything (file types)** | ✅ Menu: PDF, text, HTML, CSV accepted. Unaccepted types and bridges documented in **`docs/UNACCEPTED-FILE-TYPES.md`**; vision in **`docs/ACCEPT-ANYTHING-VISION.md`**. |
 
 ---
 
@@ -81,5 +82,8 @@ Use this to click through and confirm behavior in the browser (run backend + fro
 - **Scrape API:** Verified with a real URL; returns title, colors, and optional logo/description; behavior matches “public meta only, no storage.”
 - **Observances API (Phase C):** Upcoming and calendar endpoints return correct shape; backend is the single source for observances (no frontend bundle of dates).
 - **Logic and flow:** Code paths for theme→create, welcome phase, apply-before-push, and logo animation are consistent and match the intended behavior above.
+
+**Accept anything (commit message when you push file-type / VLC work):**  
+`Accept anything: PDF fallback, text/HTML/CSV, vision + unaccepted-file-types doc. See docs/ACCEPT-ANYTHING-VISION.md and docs/UNACCEPTED-FILE-TYPES.md.`
 
 **Verdict:** Ready for you to run the manual checklist in the browser and then push. Phase C backend is complete; frontend can integrate theme picker, calendar, and waiting room menu when ready. If you want to add automated E2E tests later, consider Playwright or Cypress for the critical paths (create game → display waiting → start → begin → first question).
