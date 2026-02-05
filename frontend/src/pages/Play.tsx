@@ -141,6 +141,30 @@ export default function Play() {
     }
   }, [code, rejoining, socket?.connected, socket]);
 
+  // Game-started state: compute once per render, hooks must run unconditionally (before any early return)
+  const gameType = joinState?.gameType || 'music-bingo';
+  const songPool = joinState?.songPool ?? [];
+  const revealed = joinState?.revealed ?? [];
+  const displayName = name || 'Anonymous';
+  const card = useMemo(() => {
+    if (!joinState?.started || (gameType !== 'music-bingo' && gameType !== 'classic-bingo') || songPool.length < 24) return null;
+    return buildCardFromPool(songPool, joinState!.code + displayName);
+  }, [joinState?.started, joinState?.code, gameType, songPool, displayName]);
+
+  useEffect(() => {
+    if (socket && code && card && card.length > 0) {
+      socket.emit('player:card', { code: code.toUpperCase(), card });
+    }
+  }, [socket, code, card]);
+
+  useEffect(() => {
+    if (revealed.length > 0) {
+      const last = revealed[revealed.length - 1];
+      setFactSong(last);
+      setShowFact(true);
+    }
+  }, [revealed]);
+
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -217,30 +241,6 @@ export default function Play() {
       />
     );
   }
-
-  // Music Bingo: show card and fact pop-up
-  const gameType = joinState?.gameType || 'music-bingo';
-  const songPool = joinState?.songPool || [];
-  const revealed = joinState?.revealed || [];
-  const displayName = name || 'Anonymous';
-  const card = useMemo(() => {
-    if (!joinState?.started || (gameType !== 'music-bingo' && gameType !== 'classic-bingo') || songPool.length < 24) return null;
-    return buildCardFromPool(songPool, joinState!.code + displayName);
-  }, [joinState?.started, joinState?.code, gameType, songPool, displayName]);
-
-  useEffect(() => {
-    if (socket && code && card) {
-      socket.emit('player:card', { code: code.toUpperCase(), card });
-    }
-  }, [socket, code, card]);
-
-  useEffect(() => {
-    if (revealed.length > 0) {
-      const last = revealed[revealed.length - 1];
-      setFactSong(last);
-      setShowFact(true);
-    }
-  }, [revealed]);
 
   const handleBingo = () => {
     if (socket && code) socket.emit('player:bingo', { code: code.toUpperCase() });
