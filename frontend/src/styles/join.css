@@ -81,3 +81,47 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* In-game welcome join (optional name, same design system) */
+.join-welcome {
+  min-height: 100vh;
+  padding: 24px;
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.join-welcome__title {
+  margin: 0 0 8px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.join-welcome__intro {
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.join-welcome__room {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.join-welcome .join-page__input {
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+
+.join-welcome__rejoining {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 48px 24px;
+}

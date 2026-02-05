@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import WaitingRoomView from '../components/WaitingRoomView';
@@ -8,6 +8,9 @@ import SongFactPopUp from '../components/SongFactPopUp';
 import { buildCardFromPool } from '../types/game';
 import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
+import '../styles/join.css';
+
+const PLAYROOM_JOIN_KEY = (c: string) => `playroom_join_${c.trim().toUpperCase()}`;
 
 interface JoinState {
   code: string;
@@ -49,9 +52,27 @@ export default function Play() {
   const [joined, setJoined] = useState(false);
   const [joinState, setJoinState] = useState<JoinState | null>(null);
   const [error, setError] = useState('');
+  const [rejoining, setRejoining] = useState(false);
   const [factSong, setFactSong] = useState<Song | null>(null);
   const [showFact, setShowFact] = useState(false);
   const [menuOverlay, setMenuOverlay] = useState<{ url: string; useIframe: boolean } | null>(null);
+  const hasRejoinEmitted = useRef(false);
+
+  // Restore session so refresh keeps player in the same room
+  useEffect(() => {
+    if (!code?.trim()) return;
+    const key = PLAYROOM_JOIN_KEY(code);
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (raw) {
+        const { name: storedName } = JSON.parse(raw);
+        setName(storedName || 'Anonymous');
+        setRejoining(true);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [code]);
 
   useEffect(() => {
     const s = getSocket();
@@ -60,10 +81,13 @@ export default function Play() {
     s.on('join:ok', (payload: JoinState) => {
       setJoinState(payload);
       setJoined(true);
+      setRejoining(false);
       setError('');
     });
 
     s.on('join:error', (payload: { message?: string }) => {
+      if (code?.trim()) try { sessionStorage.removeItem(PLAYROOM_JOIN_KEY(code)); } catch { /* ignore */ }
+      setRejoining(false);
       setError(payload?.message || 'Could not join. Check the code or try again.');
     });
 
@@ -101,16 +125,34 @@ export default function Play() {
       s.off('game:songs-updated');
       s.off('game:revealed');
     };
-  }, []);
+  }, [code]);
+
+  // Rejoin with stored session on refresh
+  useEffect(() => {
+    if (!code?.trim() || !rejoining || !socket?.connected || hasRejoinEmitted.current) return;
+    try {
+      const raw = sessionStorage.getItem(PLAYROOM_JOIN_KEY(code));
+      if (!raw) return;
+      const { name: n } = JSON.parse(raw);
+      hasRejoinEmitted.current = true;
+      socket.emit('player:join', { code: code.trim().toUpperCase(), name: n || 'Anonymous' });
+    } catch {
+      /* ignore */
+    }
+  }, [code, rejoining, socket?.connected, socket]);
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!socket || !code?.trim() || !name.trim()) {
-      setError('Enter a display name.');
-      return;
+    if (!socket || !code?.trim()) return;
+    const displayName = name.trim() || 'Anonymous';
+    setName(displayName);
+    try {
+      sessionStorage.setItem(PLAYROOM_JOIN_KEY(code), JSON.stringify({ name: displayName }));
+    } catch {
+      /* ignore */
     }
-    socket.emit('player:join', { code: code.trim().toUpperCase(), name: name.trim() });
+    socket.emit('player:join', { code: code.trim().toUpperCase(), name: displayName });
   };
 
   const handleRollCallWin = (timeMs: number) => {
@@ -126,22 +168,36 @@ export default function Play() {
   }
 
   if (!joined) {
+    if (rejoining) {
+      return (
+        <div className="join-welcome">
+          <div className="join-welcome__rejoining">
+            <p style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}>Rejoining game…</p>
+            <p style={{ margin: '8px 0 0', color: 'var(--text-muted)' }}>Room: {code}</p>
+          </div>
+        </div>
+      );
+    }
     return (
-      <div style={{ padding: 24, maxWidth: 360, margin: '0 auto' }}>
-        <h2>Join the game</h2>
-        <p>Room: {code}</p>
+      <div className="join-welcome">
+        <h1 className="join-welcome__title">Welcome</h1>
+        <p className="join-welcome__intro">
+          Enter your name (optional). You can join as an anonymous player and still play.
+        </p>
+        <p className="join-welcome__room">Room: {code}</p>
         <form onSubmit={handleJoin}>
           <input
             type="text"
-            placeholder="Your name"
+            className="join-page__input"
+            placeholder="Your name (optional)"
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoFocus
-            style={{ width: '100%', padding: 10, marginBottom: 8 }}
+            autoComplete="name"
           />
-          {error && <p style={{ color: '#fc8181', fontSize: 14 }}>{error}</p>}
-          <button type="submit" style={{ padding: '10px 20px' }}>
-            Join
+          {error && <p style={{ color: 'var(--error, #fc8181)', fontSize: 14, marginBottom: 16 }}>{error}</p>}
+          <button type="submit" className="join-page__btn">
+            Join game
           </button>
         </form>
       </div>
@@ -166,10 +222,11 @@ export default function Play() {
   const gameType = joinState?.gameType || 'music-bingo';
   const songPool = joinState?.songPool || [];
   const revealed = joinState?.revealed || [];
+  const displayName = name || 'Anonymous';
   const card = useMemo(() => {
-    if (!joinState?.started || (gameType !== 'music-bingo' && gameType !== 'classic-bingo') || songPool.length < 24 || !name) return null;
-    return buildCardFromPool(songPool, joinState.code + name);
-  }, [joinState?.started, joinState?.code, gameType, songPool, name]);
+    if (!joinState?.started || (gameType !== 'music-bingo' && gameType !== 'classic-bingo') || songPool.length < 24) return null;
+    return buildCardFromPool(songPool, joinState!.code + displayName);
+  }, [joinState?.started, joinState?.code, gameType, songPool, displayName]);
 
   useEffect(() => {
     if (socket && code && card) {
@@ -190,20 +247,29 @@ export default function Play() {
   };
 
   if ((gameType === 'music-bingo' || gameType === 'classic-bingo') && joinState?.started) {
+    const bingoLabel = gameType === 'classic-bingo' ? 'Classic Bingo' : 'Music Bingo';
     return (
       <>
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
           <GameViewHeader
             config={joinState.eventConfig}
+            gameTypeLabel={bingoLabel}
             onOpenMenu={(url, useIframe) => setMenuOverlay(useIframe ? { url, useIframe: true } : null)}
           />
-          <PlayerBingoCard
-            card={card || []}
-            revealed={revealed}
-            onBingo={handleBingo}
-            winCondition={joinState.winCondition}
-            eventTitle={joinState?.eventConfig?.gameTitle}
-          />
+          {card && card.length > 0 ? (
+            <PlayerBingoCard
+              card={card}
+              revealed={revealed}
+              onBingo={handleBingo}
+              winCondition={joinState.winCondition}
+              eventTitle={joinState?.eventConfig?.gameTitle}
+            />
+          ) : (
+            <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-secondary)' }}>
+              <p style={{ margin: 0, fontSize: '1.125rem' }}>Preparing your card…</p>
+              <p style={{ margin: '8px 0 0', fontSize: 14 }}>The game has started. Your card will appear in a moment.</p>
+            </div>
+          )}
         </div>
         {menuOverlay && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
@@ -226,25 +292,30 @@ export default function Play() {
     );
   }
 
-  // Trivia or other: placeholder with header
+  // Trivia: show header with game type and answer prompt
   if (joinState?.started && gameType === 'trivia') {
     return (
       <>
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
-          <GameViewHeader config={joinState.eventConfig} />
+          <GameViewHeader config={joinState.eventConfig} gameTypeLabel="Trivia" />
           <div style={{ padding: 24, flex: 1 }}>
-            <h2>{joinState?.eventConfig?.gameTitle || 'Trivia'}</h2>
-            <p>The game has started. Answer on your phone.</p>
+            <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>{joinState?.eventConfig?.gameTitle || 'Trivia'}</h2>
+            <p style={{ margin: 0, color: 'var(--text-secondary)' }}>The game has started. Answer on your phone.</p>
           </div>
         </div>
       </>
     );
   }
 
+  // Other / unknown game type
+  const fallbackLabel = joinState?.gameType ? joinState.gameType.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : 'Game';
   return (
-    <div style={{ padding: 24 }}>
-      <h2>{joinState?.eventConfig?.gameTitle || 'Game'}</h2>
-      <p>The game has started.</p>
+    <div style={{ padding: 24, minHeight: '100vh', background: 'var(--bg)' }}>
+      <GameViewHeader config={joinState?.eventConfig} gameTypeLabel={fallbackLabel} />
+      <div style={{ padding: '24px 0' }}>
+        <h2 style={{ margin: '0 0 8px' }}>{joinState?.eventConfig?.gameTitle || fallbackLabel}</h2>
+        <p style={{ margin: 0, color: 'var(--text-secondary)' }}>The game has started.</p>
+      </div>
     </div>
   );
 }

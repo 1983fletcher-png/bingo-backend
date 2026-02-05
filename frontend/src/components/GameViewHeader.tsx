@@ -14,10 +14,12 @@ export interface GameViewHeaderConfig {
 
 interface GameViewHeaderProps {
   config: GameViewHeaderConfig | null | undefined;
+  /** e.g. "Music Bingo", "Classic Bingo", "Trivia" — shown under the event title so players know what game they're in */
+  gameTypeLabel?: string;
   onOpenMenu?: (url: string, useIframe: boolean) => void;
 }
 
-export default function GameViewHeader({ config, onOpenMenu }: GameViewHeaderProps) {
+export default function GameViewHeader({ config, gameTypeLabel, onOpenMenu }: GameViewHeaderProps) {
   const [linksExpanded, setLinksExpanded] = useState(false);
   const title = config?.gameTitle || 'The Playroom';
   const hasLinks = config?.foodMenuUrl || config?.drinkMenuUrl || config?.eventsUrl || config?.facebookUrl || config?.instagramUrl;
@@ -50,7 +52,11 @@ export default function GameViewHeader({ config, onOpenMenu }: GameViewHeaderPro
         )}
         <div style={{ minWidth: 0 }}>
           <h1 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h1>
-          {config?.venueName && <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{config.venueName}</p>}
+          {(gameTypeLabel || config?.venueName) && (
+            <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {[gameTypeLabel, config?.venueName].filter(Boolean).join(' · ')}
+            </p>
+          )}
         </div>
       </div>
       {hasLinks && (
