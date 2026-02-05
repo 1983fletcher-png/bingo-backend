@@ -93,6 +93,19 @@
 
 ---
 
+## 9. Menu & Theming (Phases A–C) — backend ✅
+
+| Item | Status | Notes |
+|------|--------|--------|
+| **Phase A** Observances data, menu design tokens, theme registry | ✅ Done | `lib/holidaysAndObservancesUS.js`; `docs/PAGE-MENU-BUILDER-SPEC.md`; `docs/DATE-VERIFICATION-SOURCES.md` |
+| **Phase B** Menu from URL, menu from file (PDF/image placeholder), permission flag | ✅ Done | `GET /api/parse-menu-from-url`, `POST /api/parse-menu-from-file`; `docs/PERMISSION-FLAG-VENUE-MENU.md` |
+| **Phase C** Observances API, waiting room menu link/preview contract | ✅ Done | `GET /api/observances/upcoming`, `GET /api/observances/calendar`; `docs/PHASE-C-THEMING-AND-CALENDAR.md` |
+| **Frontend** Theme picker, activity calendar UI, waiting room menu link/preview | ⏳ TBD | Backend APIs and eventConfig contracts ready; implement in music-bingo-app. |
+
+**References:** `docs/MENU-AND-THEMING-VISION.md`, `docs/PHASE-A-B-AUDIT.md`, `docs/PHASE-C-THEMING-AND-CALENDAR.md`.
+
+---
+
 ## Summary: implement before deploy?
 
 | Area | Safe to ship? | If you want “brief complete” first |

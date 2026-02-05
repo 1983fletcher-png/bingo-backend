@@ -3,9 +3,52 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import { customAlphabet } from 'nanoid';
+import { PDFParse } from 'pdf-parse';
 import { generateSongs } from './lib/ai.js';
 import { fetchTrustedSources } from './lib/trustedSources.js';
 import { enrichTrack, getChartStyleList } from './lib/musicDataLayer.js';
+import { getObservancesForYear, getUpcoming, CATEGORIES } from './lib/holidaysAndObservancesUS.js';
+
+/** Heuristic: turn raw menu text into { sections: [ { name, items: [ { name, price? } ] } ] } for menu builder. */
+function parseMenuText(rawText) {
+  const lines = rawText.split(/\n+/).map((s) => s.trim()).filter((s) => s.length > 0);
+  const sectionNames = new Set([
+    'appetizers', 'starters', 'soups', 'salads', 'mains', 'entrees', 'entrées', 'sides',
+    'desserts', 'drinks', 'beverages', 'cocktails', 'wine', 'beer', 'specials', 'today\'s specials',
+    'breakfast', 'lunch', 'dinner', 'brunch', 'kids', 'children', 'sides & more', 'extras'
+  ]);
+  const sections = [];
+  let currentSection = { name: 'Menu', items: [] };
+  const priceRe = /(\$?\s*\d+\.?\d*)\s*$/;
+  for (const line of lines) {
+    const lower = line.toLowerCase();
+    const possibleSection = lower.replace(/[:\s]+$/, '').replace(/^#+\s*/, '');
+    if (line.length <= 50 && (sectionNames.has(possibleSection) || /^(apps|mains|sides|drinks|desserts)$/.test(possibleSection))) {
+      if (currentSection.items.length > 0 || currentSection.name !== 'Menu') {
+        sections.push(currentSection);
+      }
+      currentSection = { name: line.replace(/:$/, '').trim() || 'Section', items: [] };
+      continue;
+    }
+    const priceMatch = line.match(priceRe);
+    let name = line;
+    let price = '';
+    if (priceMatch && line.length < 120) {
+      price = priceMatch[1].trim();
+      name = line.slice(0, priceMatch.index).trim().replace(/\s*[–\-]\s*$/, '');
+    }
+    if (name.length > 0 && name.length < 200) {
+      currentSection.items.push(price ? { name, price } : { name });
+    }
+  }
+  if (currentSection.items.length > 0 || currentSection.name !== 'Menu') {
+    sections.push(currentSection);
+  }
+  if (sections.length === 0) {
+    sections.push({ name: 'Items', items: lines.slice(0, 50).filter((l) => l.length > 1 && l.length < 200).map((name) => ({ name })) });
+  }
+  return { sections };
+}
 
 const nanoidCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 6);
 
@@ -31,6 +74,26 @@ app.get('/api/public-url', (_, res) => {
 
 // Scrape venue site for logo, colors, title, description (public meta tags only).
 // Legal: we only fetch publicly available meta tags; no content scraping. Use only with sites you have permission to reference.
+// Use browser-like headers so older sites and simple WAFs don't 403 us (we only read public meta, no JS/crawling).
+const SCRAPE_USER_AGENTS = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+];
+const SCRAPE_HEADERS = (userAgent) => ({
+  'User-Agent': userAgent,
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'Accept-Encoding': 'gzip, deflate, br',
+  'Cache-Control': 'no-cache',
+  'Pragma': 'no-cache',
+  'Upgrade-Insecure-Requests': '1',
+  'Sec-Fetch-Dest': 'document',
+  'Sec-Fetch-Mode': 'navigate',
+  'Sec-Fetch-Site': 'none',
+  'Sec-Fetch-User': '?1',
+});
+
 app.get('/api/scrape-site', async (req, res) => {
   const url = req.query.url;
   if (!url || typeof url !== 'string') {
@@ -41,16 +104,20 @@ app.get('/api/scrape-site', async (req, res) => {
     if (!['http:', 'https:'].includes(u.protocol)) {
       return res.status(400).json({ error: 'Invalid URL' });
     }
-    const resp = await fetch(u.href, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Playroom/1.0; +https://theplayroom.app)',
-        Accept: 'text/html'
-      },
-      redirect: 'follow',
-      signal: AbortSignal.timeout(12000)
-    });
+    let resp;
+    let lastStatus;
+    for (let i = 0; i < SCRAPE_USER_AGENTS.length; i++) {
+      resp = await fetch(u.href, {
+        headers: SCRAPE_HEADERS(SCRAPE_USER_AGENTS[i]),
+        redirect: 'follow',
+        signal: AbortSignal.timeout(12000)
+      });
+      lastStatus = resp.status;
+      if (resp.ok) break;
+      if (resp.status !== 403 && resp.status !== 406) break;
+    }
     if (!resp.ok) {
-      return res.status(502).json({ error: `Site returned ${resp.status}. We only read public meta tags.` });
+      return res.status(502).json({ error: `Site returned ${lastStatus}. We only read public meta tags. Try a different URL or contact the venue.` });
     }
     const html = await resp.text();
     const baseUrl = resp.url || u.href;
@@ -155,6 +222,7 @@ app.get('/api/scrape-site', async (req, res) => {
 });
 
 // Fetch a page's text content (for menu import). Public HTML only; strip tags, return lines.
+// Uses same browser-like headers as scrape-site for consistency and to avoid 403s on older sites.
 app.get('/api/fetch-page-text', async (req, res) => {
   const url = req.query.url;
   if (!url || typeof url !== 'string') {
@@ -165,16 +233,20 @@ app.get('/api/fetch-page-text', async (req, res) => {
     if (!['http:', 'https:'].includes(u.protocol)) {
       return res.status(400).json({ error: 'Invalid URL' });
     }
-    const resp = await fetch(u.href, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Playroom/1.0; +https://theplayroom.app)',
-        Accept: 'text/html'
-      },
-      redirect: 'follow',
-      signal: AbortSignal.timeout(15000)
-    });
+    let resp;
+    let lastStatus;
+    for (let i = 0; i < SCRAPE_USER_AGENTS.length; i++) {
+      resp = await fetch(u.href, {
+        headers: SCRAPE_HEADERS(SCRAPE_USER_AGENTS[i]),
+        redirect: 'follow',
+        signal: AbortSignal.timeout(15000)
+      });
+      lastStatus = resp.status;
+      if (resp.ok) break;
+      if (resp.status !== 403 && resp.status !== 406) break;
+    }
     if (!resp.ok) {
-      return res.status(502).json({ error: `Page returned ${resp.status}.` });
+      return res.status(502).json({ error: `Page returned ${lastStatus}.` });
     }
     const html = await resp.text();
     const text = html
@@ -187,6 +259,122 @@ app.get('/api/fetch-page-text', async (req, res) => {
   } catch (err) {
     const message = err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Failed to fetch');
     res.status(500).json({ error: message });
+  }
+});
+
+// Parse a menu page URL into structured sections/items for the menu builder (Phase B).
+// Fetches page text, then heuristically extracts sections and items (names, optional prices).
+// Returns data in menu-builder shape: { sections: [ { name, items: [ { name, description?, price? } ] } ] }.
+app.get('/api/parse-menu-from-url', async (req, res) => {
+  const url = req.query.url;
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ error: 'Missing url query' });
+  }
+  try {
+    const u = new URL(url.trim());
+    if (!['http:', 'https:'].includes(u.protocol)) {
+      return res.status(400).json({ error: 'Invalid URL' });
+    }
+    let resp;
+    let lastStatus;
+    for (let i = 0; i < SCRAPE_USER_AGENTS.length; i++) {
+      resp = await fetch(u.href, {
+        headers: SCRAPE_HEADERS(SCRAPE_USER_AGENTS[i]),
+        redirect: 'follow',
+        signal: AbortSignal.timeout(15000)
+      });
+      lastStatus = resp.status;
+      if (resp.ok) break;
+      if (resp.status !== 403 && resp.status !== 406) break;
+    }
+    if (!resp.ok) {
+      return res.status(502).json({ error: `Page returned ${lastStatus}.` });
+    }
+    const html = await resp.text();
+    const rawText = html
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, '\n')
+      .replace(/\s+/g, ' ')
+      .replace(/\n/g, '\n')
+      .trim();
+    const { sections } = parseMenuText(rawText);
+    res.json({ sections, sourceUrl: u.href });
+  } catch (err) {
+    const message = err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Failed to fetch');
+    res.status(500).json({ error: message });
+  }
+});
+
+// Parse menu from uploaded file (PDF or image). Phase B: upload → extract for menu builder.
+// Body: { file: base64String, mimeType: 'application/pdf' | 'image/jpeg' | ... }. PDF: extract text and parse. Image: OCR not yet implemented.
+app.post('/api/parse-menu-from-file', express.json({ limit: '15mb' }), async (req, res) => {
+  const fileB64 = req.body?.file;
+  const mimeType = (req.body?.mimeType || '').toLowerCase();
+  if (!fileB64 || typeof fileB64 !== 'string') {
+    return res.status(400).json({ error: 'Missing file (base64 string) in body' });
+  }
+  try {
+    const buffer = Buffer.from(fileB64, 'base64');
+    if (buffer.length === 0) {
+      return res.status(400).json({ error: 'Invalid or empty file data' });
+    }
+    if (mimeType.includes('pdf') || (!mimeType && buffer.slice(0, 5).toString() === '%PDF-')) {
+      const parser = new PDFParse({ data: new Uint8Array(buffer) });
+      const result = await parser.getText();
+      await parser.destroy();
+      const rawText = (result?.text || '').replace(/\s+/g, ' ').trim();
+      const { sections } = parseMenuText(rawText);
+      return res.json({ sections, source: 'pdf' });
+    }
+    if (mimeType.startsWith('image/')) {
+      return res.status(501).json({
+        error: 'Image OCR is not yet implemented. Use a PDF of your menu or paste the menu page URL.',
+        code: 'IMAGE_OCR_NOT_IMPLEMENTED'
+      });
+    }
+    return res.status(400).json({ error: 'Unsupported file type. Use application/pdf or an image (image OCR coming later).' });
+  } catch (err) {
+    const message = err.message || 'Failed to parse file';
+    res.status(500).json({ error: message });
+  }
+});
+
+// Phase C: Observances API for theme picker and activity director calendar.
+// Forward-looking only: use from = current date (e.g. 2026-02-04) so we never suggest past holidays.
+// GET /api/observances/upcoming?from=2026-02-04&days=30&category=music
+app.get('/api/observances/upcoming', (req, res) => {
+  const fromParam = req.query.from;
+  const from = fromParam ? String(fromParam).slice(0, 10) : new Date().toISOString().slice(0, 10);
+  const days = Math.min(365, Math.max(1, parseInt(req.query.days, 10) || 14));
+  const category = req.query.category ? String(req.query.category) : null;
+  const categoryFilter = category && Object.values(CATEGORIES).includes(category) ? category : null;
+  try {
+    const list = getUpcoming(from, days, categoryFilter);
+    res.json({ from, days, observances: list });
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Invalid parameters' });
+  }
+});
+
+// GET /api/observances/calendar?year=2026&month=2&category=...
+app.get('/api/observances/calendar', (req, res) => {
+  const year = parseInt(req.query.year, 10);
+  const month = parseInt(req.query.month, 10);
+  const category = req.query.category ? String(req.query.category) : null;
+  const categoryFilter = category && Object.values(CATEGORIES).includes(category) ? category : null;
+  if (!year || year < 2020 || year > 2030) {
+    return res.status(400).json({ error: 'Valid year (2020–2030) required' });
+  }
+  if (!month || month < 1 || month > 12) {
+    return res.status(400).json({ error: 'Valid month (1–12) required' });
+  }
+  try {
+    const list = getObservancesForYear(year, categoryFilter);
+    const forMonth = list.filter((o) => o.month === month);
+    res.json({ year, month, observances: forMonth });
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Invalid parameters' });
   }
 });
 

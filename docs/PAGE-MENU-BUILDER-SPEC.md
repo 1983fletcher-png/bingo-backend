@@ -193,6 +193,67 @@ Users should be able to:
 
 ---
 
+## Menu design tokens (Phase A – reference)
+
+All menu builder output must be **elegant, scannable, and mobile-first**. These tokens define layout and type so phone, tablet, TV, and print stay consistent.
+
+### Layout presets
+
+| Preset | Use case | Behavior |
+|--------|----------|----------|
+| **Compact list** | Dense menu (many items); print, TV ticker | Single column; section heading → items (name, optional description, price right-aligned); minimal gap between items. |
+| **Card grid** | Featured items, specials, short menus | Section as heading; items as cards (name + description + price); 2 columns on tablet/TV, 1 on phone. |
+| **Single column** | Phone/QR, readability-first | One column; clear section breaks; generous line height; section ~20–30pt equivalent, item 14–20pt, description 12–14pt. |
+
+### Typography scale (logical)
+
+- **Section heading:** Largest; bold; distinct from body. (Roughly 20–30pt at 4" width for phone.)
+- **Item name:** Primary content; 14–20pt; strong contrast.
+- **Description:** Secondary; 12–14pt; muted but readable.
+- **Price:** Aligned (e.g. right); same or one step down from item name; no decoration.
+
+Scale adjusts by output: **Phone/QR** (narrow) uses the sizes above; **TV** and **Print** scale up proportionally. **Contrast:** text/background must meet accessibility (e.g. WCAG AA) and work in low-light (dining, projectors).
+
+### Output dimensions (reference)
+
+- **Phone / QR menu:** ~4" width equivalent; vertical scroll; single column.
+- **TV display:** 16:9 or 4:3; landscape; section/item hierarchy preserved.
+- **Print:** Letter or A4; respect safe margins; same hierarchy.
+
+---
+
+## Theme registry (Phase A – spec)
+
+Themes drive **colors, accents, and optional assets** for the same menu content. When an observance is “upcoming,” we suggest its theme.
+
+### Holiday themes (first set)
+
+| Theme id | Name | Typical date / range | Accent (example) | Notes |
+|----------|------|----------------------|------------------|--------|
+| `valentines` | Valentine’s | Feb 14 | Rose, soft pink, white | Romantic; subtle patterns OK. |
+| `stpatricks` | St. Patrick’s Day | Mar 17 | Green, gold, white | Shamrocks, Celtic accents optional. |
+| `july4` | Fourth of July | Jul 4 | Red, white, blue | Patriotic; stars/stripes optional. |
+| `thanksgiving` | Thanksgiving / Autumn | 4th Thu Nov + November | Warm orange, brown, gold | Harvest, leaves optional. |
+| `easter` | Easter | (floating) | Pastels, spring green, white | Eggs, spring optional. |
+| `halloween` | Halloween | Oct 31 | Orange, black, purple | Spooky but not gory. |
+| `christmas` | Christmas | Dec 24–25 | Red, green, gold, white | Festive; snowflake/tree optional. |
+
+### Music theme (first)
+
+| Theme id | Name | Use when | Accent (example) |
+|----------|------|----------|-------------------|
+| `music` | Music / Backstage | Music observances (e.g. Jerry Garcia birthday, Elvis Week) | Deep purple, gold, or venue-driven; optional guitar/note icon. |
+
+### Fun theme (first)
+
+| Theme id | Name | Use when | Accent (example) |
+|----------|------|----------|-------------------|
+| `fun` | Fun & Quirky | National Puppy Day, Roller Coaster Day, etc. | Bright, playful; optional illustration set. |
+
+**Implementation note:** Theme = name + accent color(s) + optional illustration/icon set. Layout (Compact list, Card grid, Single column) is chosen separately. “Suggest theme” uses `lib/holidaysAndObservancesUS.js` `getUpcoming(fromDate, daysAhead)` with **fromDate = current date (e.g. 2026-02-04)** so we only suggest upcoming observances—never past holidays.
+
+---
+
 ## Implementation Phases
 
 ### Phase 1 – Create flow entry (Done in scaffold)

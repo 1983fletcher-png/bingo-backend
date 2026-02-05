@@ -1,7 +1,13 @@
 # Pre-push test report (recent changes)
 
-**Date:** 2026-02-04  
-**Scope:** All 10 completed-todo items (streamline, host UI, display, venue scrape, welcome panel, logo animation, etc.)
+**Date:** 2026-02-04 (streamline, host UI, display, scrape, welcome, logo); 2026-02-05 (Phase C backend)  
+**Scope:** All completed-todo items plus Phase C (observances API, menu/theming backend).
+
+---
+
+## Before you run checks
+
+- **Backend:** After pulling latest, restart the backend (`node index.js` or `npm run dev`) so new routes (e.g. `/api/observances/upcoming`, `/api/observances/calendar`) are loaded. If you see `Cannot GET /api/observances/...`, the process running on that port is an older instance.
 
 ---
 
@@ -12,6 +18,7 @@
 | **Frontend build** (`npm run build` in music-bingo-app) | ✅ Pass — Vite build completed in ~1.7s, no TS errors |
 | **Lint** (Host, Display, WaitingRoomView, PlayroomLogoAnimated, HostTips) | ✅ No linter errors |
 | **Scrape API** (`GET /api/scrape-site?url=https://www.bbc.com`) | ✅ Returns valid JSON: `title`, `colors` (e.g. theme-color), `logoUrl` (null when site has no og:image). Backend resolves URL, reads public meta tags, 12s timeout. |
+| **Observances API (Phase C)** | ✅ `npm run smoke:observances` passes (lib shape + filters). With backend running: `GET /api/observances/upcoming?from=2026-02-04&days=14` returns `{ from, days, observances }`; `GET /api/observances/calendar?year=2026&month=2` returns `{ year, month, observances }`. Valid `category` filter; invalid params return 400. |
 
 ---
 
@@ -61,12 +68,18 @@ Use this to click through and confirm behavior in the browser (run backend + fro
 ### 10. Legal / data flow
 - [ ] Scrape legal note visible; no event/scraped data on display or players until host clicks **Apply event details to game**.
 
+### 11. Phase C — when frontend implements (backend ready)
+- [ ] **Theme picker:** Host/activity director can see “Upcoming” suggestions from `GET /api/observances/upcoming` and apply a theme (theme registry in `PAGE-MENU-BUILDER-SPEC.md`).
+- [ ] **Activity calendar:** Month view uses `GET /api/observances/calendar?year=...&month=...`; categories filter correctly.
+- [ ] **Waiting room menu:** If `eventConfig.foodMenuUrl` or `drinkMenuUrl` is set, “View menu” link appears; optional short text preview from `GET /api/parse-menu-from-url`; `venueAllowedUseOfMenuDesign` respected (see `PERMISSION-FLAG-VENUE-MENU.md`).
+
 ---
 
 ## Summary
 
 - **Build and lint:** Pass.
 - **Scrape API:** Verified with a real URL; returns title, colors, and optional logo/description; behavior matches “public meta only, no storage.”
+- **Observances API (Phase C):** Upcoming and calendar endpoints return correct shape; backend is the single source for observances (no frontend bundle of dates).
 - **Logic and flow:** Code paths for theme→create, welcome phase, apply-before-push, and logo animation are consistent and match the intended behavior above.
 
-**Verdict:** Ready for you to run the manual checklist in the browser and then push. If you want to add automated E2E tests later, consider Playwright or Cypress for the critical paths (create game → display waiting → start → begin → first question).
+**Verdict:** Ready for you to run the manual checklist in the browser and then push. Phase C backend is complete; frontend can integrate theme picker, calendar, and waiting room menu when ready. If you want to add automated E2E tests later, consider Playwright or Cypress for the critical paths (create game → display waiting → start → begin → first question).

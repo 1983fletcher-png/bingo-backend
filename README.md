@@ -12,6 +12,8 @@ Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handl
 | **Deploy** | Push this repo, then either: **Railway** — `railway login`, `railway init`, `railway up`; or **Render** — connect repo, build `npm install`, start `npm start`. |
 | **Connect frontend** | Netlify builds the **music-bingo-app** repo. To sync this repo’s frontend (Roll Call, Host, Play, Print, trivia) to the live app: `./scripts/sync-full-frontend-and-push.sh` or `./scripts/sync-and-push-roll-call.sh /path/to/music-bingo-app`. See **docs/ROLL-CALL-LIVE-SITE.md**. |
 | **Push from Cursor / CI** | Set **GITHUB_TOKEN** (GitHub PAT with `repo`) and optionally **MUSIC_BINGO_APP_PATH**. Then `./scripts/deploy-playroom.sh` and `./scripts/sync-full-frontend-and-push.sh` can push without interactive auth. See **docs/GITHUB-PUSH-AND-SYNC-SETUP.md**. |
+| **Pre-push checks** | **docs/PRE-PUSH-TEST-REPORT.md** — build, lint, scrape API, `npm run smoke:observances` (observances lib). |
+| **Menu & theming (backend)** | Phases A–C complete. Observances API, menu parse, permission flag. **docs/PHASE-A-B-AUDIT.md**, **docs/PHASE-C-THEMING-AND-CALENDAR.md**, **docs/MENU-AND-THEMING-VISION.md**. |
 | **AI song generation** | Frontend sends `POST /api/generate-songs` with body `{ prompt, apiKey }` or you set `OPENAI_API_KEY` on the backend. |
 
 ---
@@ -114,6 +116,7 @@ The frontend uses `VITE_SOCKET_URL` in production to connect to this backend. Wi
 - `GET /api/public-url` — Returns `PUBLIC_ORIGIN` if set.
 - `GET /api/scrape-site?url=...` — Scrapes a URL for logo/theme (optional).
 - **`POST /api/generate-songs`** — AI Music Bingo song list (75 songs, theme-aware). Body: `{ prompt?, familyFriendly?, count?, apiKey? }`. API key can also be sent as header `x-openai-api-key` or set as env `OPENAI_API_KEY`. Returns `{ songs: [{ artist, title }], raw }`.
+- **Menu & theming (Phases A–C):** `GET /api/parse-menu-from-url?url=...`, `POST /api/parse-menu-from-file` (body: `{ file, mimeType }`), `GET /api/observances/upcoming?from=YYYY-MM-DD&days=1-365&category=...`, `GET /api/observances/calendar?year=...&month=...&category=...`. See **docs/PHASE-C-THEMING-AND-CALENDAR.md** and **docs/PHASE-A-B-AUDIT.md**.
 
 Socket.io path: `/socket.io`. Events include `host:create`, `player:join`, `host:reveal`, `host:start`, trivia events, etc., matching the existing Playroom frontend.
 
