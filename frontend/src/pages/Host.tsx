@@ -12,6 +12,7 @@ import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
 
 const API_BASE = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : window.location.origin);
+const BACKEND_CONFIGURED = !!(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL);
 
 interface GameCreated {
   code: string;
@@ -202,10 +203,15 @@ export default function Host() {
 
   if (!connected) {
     return (
-      <div style={{ padding: 24 }}>
-        <p>Connecting…</p>
-        <p style={{ fontSize: 14, color: '#a0aec0' }}>
-          Set <code>VITE_SOCKET_URL</code> to your backend URL in production.
+      <div style={{ padding: 24, maxWidth: 520 }}>
+        <p style={{ fontSize: 12, color: BACKEND_CONFIGURED ? '#68d391' : '#f6ad55', marginBottom: 8 }}>
+          {BACKEND_CONFIGURED ? '● Backend URL set in build' : '⚠ Backend URL not set in this build'}
+        </p>
+        <p><strong>Connecting to server…</strong></p>
+        <p style={{ fontSize: 14, color: '#a0aec0', marginTop: 8 }}>
+          {BACKEND_CONFIGURED
+            ? 'If this never goes away, check that Railway is up and the URL in Netlify is correct (no trailing slash).'
+            : 'This build did not have VITE_SOCKET_URL. In Netlify → Site configuration → Environment variables, set VITE_SOCKET_URL to your Railway URL (no trailing slash), then Deploys → Trigger deploy → Clear cache and deploy site.'}
         </p>
       </div>
     );
@@ -214,6 +220,10 @@ export default function Host() {
   if (!game) {
     return (
       <div style={{ padding: 24, maxWidth: 520 }}>
+        <p style={{ fontSize: 12, color: '#68d391', marginBottom: 4 }}>● Connected to server</p>
+        {!BACKEND_CONFIGURED && (
+          <p style={{ fontSize: 11, color: '#f6ad55', marginBottom: 8 }}>⚠ This build had no VITE_SOCKET_URL — set it in Netlify and redeploy for production.</p>
+        )}
         <h2>Host a game</h2>
         <p>The waiting room will show Roll Call (marble game) until you start.</p>
         <div style={{ marginTop: 16 }}>
@@ -260,6 +270,7 @@ export default function Host() {
       <div style={{ padding: 24, maxWidth: 560 }}>
         <p style={{ marginTop: 0, marginBottom: 16 }}>
           <Link to="/" style={{ color: '#a0aec0', fontSize: 14, textDecoration: 'none' }}>← The Playroom</Link>
+          <span style={{ fontSize: 12, color: '#68d391', marginLeft: 12 }}>● Connected</span>
         </p>
         <div style={{ display: 'flex', gap: 8, marginBottom: 16, borderBottom: '1px solid #4a5568' }}>
           {tabs.map(({ id, label }) => (

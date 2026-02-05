@@ -69,7 +69,8 @@ When Netlify builds from this repo, these must be set (they are in **netlify.tom
 ## Connections (frontend ↔ backend)
 
 - **One backend URL** (e.g. Railway) is used for both Socket.io and all `/api/*` requests. No trailing slash.
-- **Netlify** must set **VITE_SOCKET_URL** (and optionally **VITE_API_URL**) to that backend URL so the built frontend talks to the right server. After changing, trigger a new deploy.
+- **Netlify** must set **VITE_SOCKET_URL** (and optionally **VITE_API_URL**) to that backend URL so the built frontend talks to the right server. After changing, **trigger a new deploy** (or “Clear cache and deploy site”) so the build bakes in the correct URL.
+- **If Host stays “basic” or “Connecting…”:** The live app is not reaching Railway. In Netlify → Environment variables, set **VITE_SOCKET_URL** = your Railway URL (no trailing slash), then **Deploys** → **Trigger deploy** → **Clear cache and deploy site**.
 - Full details, format, and checklist: **docs/FRONTEND-BACKEND-LINKING.md**.
 
 ## Environment variables

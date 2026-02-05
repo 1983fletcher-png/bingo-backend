@@ -13,6 +13,7 @@ import { generateSongs } from './lib/ai.js';
 import { fetchTrustedSources } from './lib/trustedSources.js';
 import { enrichTrack, getChartStyleList } from './lib/musicDataLayer.js';
 import { getObservancesForYear, getUpcoming, CATEGORIES } from './lib/holidaysAndObservancesUS.js';
+import { isR2Configured, uploadToR2 } from './lib/r2.js';
 
 /**
  * Extract text from a PDF buffer. Tries pdf-parse first (best fidelity), then Mozilla PDF.js fallback
@@ -411,6 +412,27 @@ app.post('/api/parse-menu-from-file', express.json({ limit: '15mb' }), async (re
     const message = err.message || 'Failed to parse file';
     res.status(500).json({ error: message });
   }
+});
+
+// Upload image (or file) to Cloudflare R2. Requires R2_* env vars. See docs/R2-SETUP.md.
+// Body: { file: base64String, mimeType: 'image/png' | 'image/jpeg' | ..., prefix?: 'uploads' | 'logos' | ... }
+// Returns { url, key } (url only if R2_PUBLIC_BASE_URL set) or { error }.
+app.post('/api/upload-image', express.json({ limit: '10mb' }), async (req, res) => {
+  if (!isR2Configured()) {
+    return res.status(503).json({ error: 'Upload not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME (and optionally R2_ENDPOINT, R2_PUBLIC_BASE_URL) in env.' });
+  }
+  const fileB64 = req.body?.file;
+  const mimeType = (req.body?.mimeType || 'application/octet-stream').trim();
+  const prefix = (req.body?.prefix || 'uploads').replace(/[^a-z0-9_-]/gi, '') || 'uploads';
+  if (!fileB64 || typeof fileB64 !== 'string') {
+    return res.status(400).json({ error: 'Missing file (base64 string) in body' });
+  }
+  const buffer = Buffer.from(fileB64, 'base64');
+  if (buffer.length === 0) return res.status(400).json({ error: 'Invalid or empty file data' });
+  if (buffer.length > 8 * 1024 * 1024) return res.status(400).json({ error: 'File too large (max 8MB)' });
+  const result = await uploadToR2(buffer, mimeType, prefix);
+  if (result.error) return res.status(500).json({ error: result.error });
+  res.json({ url: result.url, key: result.key });
 });
 
 // Scrape a venue/events page and extract event-like entries (date + title) for the activity calendar.
