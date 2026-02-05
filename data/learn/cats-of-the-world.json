@@ -1,0 +1,72 @@
+{
+  "id": "cats-of-the-world",
+  "title": "Cats of the World",
+  "summary": "From house cats to lions, tigers, and lynx — one family of hunters, the Felidae, with dozens of species and a shared way of life.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Cats are animals that like to hunt. Some are small and live with people. Some are big and live in the wild.",
+      "sections": {
+        "what": "Cats are furry animals with whiskers and sharp claws. Some are little (like the cat in your house or at a farm). Some are very big, like lions and tigers. They are all in the same family.",
+        "why": "Cats are important in nature. They hunt other animals so the balance of life stays healthy. Little cats can be our friends. Big cats need wild places to live.",
+        "how": "Cats are good at seeing in the dark and moving quietly. They chase and pounce. Big cats do the same thing, but they hunt deer or other big animals. They all have soft feet and strong jaws.",
+        "keyFacts": "There are small cats (like house cats and lynx) and big cats (like lions, tigers, leopards, and jaguars). They live on every continent except Antarctica. They need meat to eat. Many big cats are in danger and need protection."
+      }
+    },
+    "learner": {
+      "summary": "The cat family (Felidae) includes house cats, lynx, pumas, cheetahs, lions, tigers, leopards, and jaguars — all carnivores with similar body plans and behaviors.",
+      "sections": {
+        "what": "The cat family (Felidae) has about 40 living species. They range from the small (e.g. black-footed cat, house cat) to the large (lion, tiger). All are carnivores: they eat meat. They have retractable claws (except cheetahs), excellent night vision, and flexible bodies. Scientists group them into big cats (Panthera: lion, tiger, leopard, jaguar, snow leopard) and other lineages (puma, lynx, cheetah, ocelot, and many small wild cats).",
+        "why": "Cats are top or mid-level predators in many ecosystems. They help control prey populations and keep food webs in balance. Domestic cats live with people worldwide. Wild cats face habitat loss and conflict; many are threatened. Understanding them helps us coexist and support conservation.",
+        "how": "Cats hunt by stalking and pouncing or short chases (cheetahs are built for speed). They have strong jaws and sharp teeth for gripping and shearing meat. Big cats often hunt at night or at dawn and dusk. They are mostly solitary (except lions, which live in prides). Cubs learn to hunt from their mothers.",
+        "keyFacts": "IUCN Cat Specialist Group recognizes about 40 wild cat species in 14 genera. Lions live in prides; most other cats are solitary. Tigers are the largest; cheetahs are the fastest land mammal. Pumas (cougars) range from Canada to South America. Lynx include Eurasian, Canadian, and Iberian lynx. All need intact habitat and prey; many are listed as vulnerable or endangered.",
+        "stepByStep": "1. Choose a cat you want to learn about (e.g. house cat, lion, lynx). 2. Use a trusted source (zoo, museum, or IUCN) to read about where it lives and what it eats. 3. Compare: How is it like other cats? How is it different? 4. If you have a pet cat, watch how it stalks or plays — same family, same instincts (safely and kindly).",
+        "realWorldExamples": "Zoos and wildlife parks care for and display big cats and support breeding programs. Conservation groups work to protect wild cats and their habitats. House cats are one of the world’s most popular pets but can impact local wildlife; keeping them indoors or supervised helps both cats and native animals."
+      }
+    },
+    "explorer": {
+      "summary": "Felidae taxonomy, lineages, and ecology: from Panthera to small felids; conservation status and the role of science in classification.",
+      "sections": {
+        "what": "Felidae is a family of carnivorous mammals in the order Carnivora. Current taxonomy (IUCN Cat Specialist Group, 2017) recognizes two subfamilies, eight lineages, 14 genera, and about 41 species (including the domestic cat). Lineages include Panthera (lion, tiger, leopard, jaguar, snow leopard), Puma (puma, cheetah), Lynx (Eurasian, Canadian, Iberian, bobcat), and others (ocelot, caracal, small wild cats). Body size ranges from about 1 kg (rusty-spotted cat) to over 300 kg (tigers). All are obligate carnivores with reduced teeth for shearing flesh and a short gut.",
+        "why": "Cats are apex or mesopredators in many biomes. Their presence or absence affects prey populations and plant communities (trophic cascades). Persecution, habitat loss, and prey decline threaten many species; IUCN Red List assessments guide conservation. Domestic cats are a single species (Felis catus) derived from wild ancestors; understanding wild relatives informs both biology and responsible pet ownership.",
+        "how": "Felids share a common body plan: digitigrade feet, retractable claws (except cheetah), large eyes with tapetum for low-light vision, and a flexible spine for pouncing. Hunting strategies vary: ambush (most), pursuit (cheetah), cooperative (lion). Social structure ranges from solitary to group-living (lions). Reproduction: most are solitary breeders; litter size and development vary (e.g. altricial cubs in big cats).",
+        "keyFacts": "Panthera species can roar (hyoid anatomy); other cats cannot. Cheetahs are morphologically and genetically distinct (reduced claws, high speed). Lynx lineages are adapted to cold and prey (e.g. snowshoe hare). Taxonomy is updated as molecular and morphological data improve; Smithsonian and IUCN Cat Specialist Group are authoritative sources.",
+        "stepByStep": "(1) Use IUCN Cat Specialist Group or Smithsonian mammal resources to see the full species list and ranges. (2) Pick one lineage (e.g. Panthera, Lynx) and compare species: habitat, diet, conservation status. (3) Read about one threat (e.g. habitat loss, conflict) and one conservation action. (4) Relate to domestic cat: same family, shared traits, different ecology.",
+        "realWorldExamples": "National zoos participate in Species Survival Plans for tigers, snow leopards, and other felids. IUCN assessments drive policy and funding. Camera-trap and genetic studies improve range maps and population estimates. Responsible cat ownership (indoor, supervised, or contained) reduces impact on native wildlife."
+      }
+    },
+    "deepDive": {
+      "summary": "Felidae systematics (IUCN/Smithsonian taxonomy), functional morphology, and conservation biology with citations.",
+      "sections": {
+        "what": "Felidae (Mammalia, Carnivora) comprises obligate carnivores with a conserved bauplan: digitigrade locomotion, retractable claws (except Acinonyx), sectorial carnassials, and a short digestive tract. The 2017 IUCN Cat Classification Task Force (Smithsonian repository) recognized 2 subfamilies, 8 lineages, 14 genera, 41 species, and 77–80 subspecies using morphological, molecular, and biogeographic evidence and a traffic-light certainty system. Panthera (roaring cats), Puma, Lynx, and smaller lineages (Leopardus, Caracal, etc.) are well supported.",
+        "why": "Felids influence ecosystem structure via predation; their decline can cause mesopredator release and altered prey behavior. Conservation prioritization relies on IUCN Red List and specialist group assessments. Domestic cat (F. catus) origins and feral impact are studied in invasion biology and wildlife management. Research is cited from Smithsonian, IUCN, and peer-reviewed mammalogy.",
+        "how": "Functional morphology: retractable claws reduce wear and allow quiet stalking; limb length and spine flexibility vary with hunting mode (ambush vs. chase). Panthera have an ossified hyoid enabling roaring. Population ecology: density depends on prey biomass and habitat; many species are solitary and territorial. Genetics (e.g. phylogeography) clarify species boundaries and inform reintroductions.",
+        "keyFacts": "Sources: IUCN/SSC Cat Specialist Group (catsg.org), Smithsonian National Museum of Natural History (mammals division), and the 2017 Felidae taxonomy in Smithsonian Research Online. Many species are declining; habitat connectivity and human–wildlife conflict mitigation are conservation priorities.",
+        "stepByStep": "Evidence-based sequence: (1) Consult IUCN Cat Specialist Group classification and Red List for current taxonomy and status. (2) Use Smithsonian or peer-reviewed literature for anatomy and behavior. (3) For conservation: identify threats and evidence-based interventions (e.g. protected areas, corridor restoration, conflict reduction). (4) For domestic cats: use veterinary and wildlife literature on responsible ownership and impact.",
+        "realWorldExamples": "Smithsonian’s National Zoo and Conservation Biology Institute hold and breed threatened felids and publish species accounts. IUCN Cat Specialist Group coordinates Red List assessments and action plans. Peer-reviewed work on felid ecology and genetics appears in Journal of Mammalogy, Conservation Biology, and similar journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are cats?", "learner": "What is the cat family?", "explorer": "What is Felidae?", "deepDive": "What is Felidae? (taxonomy and morphology)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do cats matter?", "learner": "Why do cats matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do cats live?", "learner": "How do cats hunt and live?", "explorer": "How they work", "deepDive": "How they work (functional ecology)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more about a cat", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Watch a cat (safely)", "layer": "child", "body": "If you have a cat or can visit one safely, watch how it moves. Does it sneak? Does it pounce on a toy? Big cats in the wild do the same thing to catch food. Never touch a cat that is not yours without a grown-up’s OK." },
+    { "type": "observation", "title": "Compare big and small cats", "layer": "learner", "body": "Pick a big cat (e.g. lion, tiger) and a small cat (e.g. house cat, lynx). Use a zoo or museum website. List: Where does each live? What does each eat? How are they the same? How are they different? They are all in the same family." },
+    { "type": "observation", "title": "Map one cat’s range", "layer": "explorer", "body": "Choose one wild cat species. Use IUCN or a museum site to find its range (where it lives). What kind of habitat does it need? Is it endangered? Write a short summary and one way people are trying to help it." }
+  ],
+  "sources": [
+    { "title": "Revised taxonomy of the Felidae (2017)", "institution": "IUCN Cat Specialist Group / Smithsonian Research Online", "url": "https://repository.si.edu/handle/10088/32616", "note": "Final report of the Cat Classification Task Force; 14 genera, 41 species; authoritative taxonomy." },
+    { "title": "IUCN Cat Specialist Group — Classification", "institution": "IUCN/SSC Cat Specialist Group", "url": "https://www.catsg.org/classification", "note": "Living species, lineages, and conservation; links to Red List." },
+    { "title": "Mammals", "institution": "Smithsonian National Museum of Natural History", "url": "https://naturalhistory.si.edu/research/vertebrate-zoology/mammals", "note": "Research and collections; scientific basis for mammal diversity and conservation." },
+    { "title": "North American Mammals", "institution": "Smithsonian National Museum of Natural History", "url": "https://naturalhistory.si.edu/north-american-mammals", "note": "Species accounts and range for North American cats (e.g. puma, bobcat, lynx)." },
+    { "title": "Felidae (cat family)", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/felid", "note": "Overview of cat family biology and classification." }
+  ],
+  "relatedCardIds": ["dogs-and-their-relatives", "sloths", "raccoons", "opossums", "pandas", "plants-and-how-they-grow", "animals-of-the-world"],
+  "tags": ["animals", "cats", "felidae", "mammals", "biology", "conservation", "big-cats", "predators"]
+}

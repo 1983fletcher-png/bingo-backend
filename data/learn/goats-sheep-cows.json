@@ -1,0 +1,72 @@
+{
+  "id": "goats-sheep-cows",
+  "title": "Goats, Sheep & Cows",
+  "summary": "Familiar livestock that live beside us: how they were domesticated, how they live, and why they matter for food, fiber, and farms.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Goats, sheep, and cows are animals that people have kept for a long, long time. They give us milk, meat, and wool or leather. They live on farms and in many places around the world.",
+      "sections": {
+        "what": "Goats, sheep, and cows are hoofed animals that eat plants. People raise them on farms. Goats are curious and can climb. Sheep have woolly coats and like to stay in a group. Cows are big and gentle. People have lived with them for thousands of years.",
+        "why": "They give us food (milk, cheese, meat) and materials (wool from sheep, leather from cows, fiber from goats). Farms that raise them carefully help feed people and take care of the land. When we learn about them, we understand where some of our food and clothes come from.",
+        "how": "They all eat grass and plants. Cows and sheep have a special stomach (with four parts in cows) so they can digest grass well. Goats can eat lots of different plants and like to browse. People breed them for milk, meat, or wool. They live in herds and feel safer in groups.",
+        "keyFacts": "Goats, sheep, and cows were domesticated long ago (thousands of years). They are ruminants: they chew cud and have a special way of digesting plants. They need space, food, water, and care. Different breeds are used for milk, meat, or fiber. Farms and extension offices help people learn to care for them."
+      }
+    },
+    "learner": {
+      "summary": "Goats, sheep, and cattle were among the first domesticated animals. They are ruminants — they ferment plant material in a multi-chambered stomach — and provide milk, meat, and fiber worldwide.",
+      "sections": {
+        "what": "Domestic goats (Capra hircus), sheep (Ovis aries), and cattle (Bos taurus) are artiodactyl mammals domesticated in the Neolithic period (roughly 10,000–8,000 years ago) in the Near East and elsewhere. All are ruminants: they have a multi-chambered stomach (rumen, reticulum, omasum, abomasum in cattle) where microbes break down cellulose. They graze or browse and “chew cud” — regurgitate and re-chew food. They provide milk, meat, leather, and (sheep and some goats) wool or fiber. Thousands of breeds exist for different climates and uses.",
+        "why": "Livestock provide a large share of the world’s protein, dairy, and fiber. Sustainable management — pasture health, animal welfare, and responsible use of resources — matters for food security and the environment. Extension programs and USDA support farmers and 4-H youth in raising goats, sheep, and cattle responsibly.",
+        "how": "Ruminants eat plant material; microbes in the rumen produce volatile fatty acids that the animal absorbs. This allows them to use grass and hay that humans cannot digest. Goats are browsers (leaves, shrubs) as well as grazers; sheep graze closely; cattle graze and can convert large amounts of forage to milk or meat. Breeding and nutrition are managed for health and productivity. Welfare includes space, shelter, veterinary care, and humane handling.",
+        "keyFacts": "Cattle have four stomach chambers; sheep and goats have four as well. Domestication changed body size, behavior, and productivity. USDA and land-grant university extension (e.g. Oregon State, others) publish research-based guides on sheep and goat management, nutrition, and health. Different breeds suit dairy, meat, or fiber production.",
+        "stepByStep": "1. Pick one: goat, sheep, or cow. 2. Use USDA or extension to find: What do they eat? What do we get from them (milk, meat, wool)? 3. Name one breed and what it is used for. 4. List two things a farmer must provide (e.g. feed, water, shelter, vet care).",
+        "realWorldExamples": "Extension offices (extension.org, state universities) offer workshops and publications on sheep, goats, and cattle. 4-H and FFA involve youth in livestock projects. USDA provides census data and animal production information. Farms and agritourism let people see livestock up close and learn where food and fiber come from."
+      }
+    },
+    "explorer": {
+      "summary": "Domestication of Capra, Ovis, and Bos; ruminant digestion and nutrition; breeds and uses; role of extension and USDA in livestock management.",
+      "sections": {
+        "what": "Capra hircus (goat), Ovis aries (sheep), and Bos taurus (cattle) descend from wild ancestors (e.g. bezoar goat, mouflon, aurochs) through domestication in the Fertile Crescent and other centers. Morphology and behavior were altered by selection for tameness, productivity, and adaptation. All are ruminants: forestomach fermentation (rumen, reticulum, omasum) followed by enzymatic digestion (abomasum). This allows use of fibrous plant material and production of milk and meat from non-human-edible feed.",
+        "why": "Ruminant livestock convert grassland and crop residues into human food and fiber; they also produce methane and require land and water. Sustainable intensification, pasture management, and animal welfare are research and policy priorities. Extension and USDA provide evidence-based guidance for producers and the public.",
+        "how": "Rumen microbes (bacteria, protozoa, fungi) break down cellulose and produce VFAs; the animal absorbs VFAs and uses them for energy and growth. Protein from microbes and bypass protein support milk and muscle. Breeding: selection for milk yield, growth rate, wool quality, or hardiness; breed diversity preserves adaptation. Nutrition: balanced diets for stage of life (growth, lactation, maintenance); mineral and vitamin supplementation as needed. Health: vaccination, parasite control, hoof care, and veterinary oversight.",
+        "keyFacts": "USDA Animal Production and state extension (e.g. Oregon State sheep and goats) provide management guides. Britannica covers cattle, sheep, and domestication. Domestication genetics and archaeology are documented in peer-reviewed literature. Welfare standards and certification programs exist for production systems.",
+        "stepByStep": "(1) Use USDA and extension to compare goat, sheep, and cattle: diet, stomach, main products. (2) Pick one species and one breed; describe its use (dairy, meat, fiber). (3) Read about domestication: when and where did it happen? What changed? (4) Relate to plants: ruminants depend on forage and pasture; sustainable grazing can support soil and biodiversity.",
+        "realWorldExamples": "USDA (usda.gov/animals, animal production) and extension (e.g. extension.oregonstate.edu/animals-livestock/sheep-goats) publish research-based livestock information. Land-grant universities offer courses and outreach. Peer-reviewed work on ruminant nutrition, genetics, and welfare appears in animal science and agriculture journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Ruminant physiology, domestication genetics, and livestock management with citations to USDA, extension, and research literature.",
+      "sections": {
+        "what": "Artiodactyla, Ruminantia: Capra hircus, Ovis aries, Bos taurus. Phylogeny and domestication are inferred from archaeology and genomics; multiple domestication events and introgression from wild populations are documented. Rumen microbiome composition and function are studied for nutrition and methane mitigation. Breed diversity reflects selection for environment and product; breed associations and gene banks conserve genetic resources.",
+        "why": "Livestock contribute to food security, rural livelihoods, and cultural practices; they also impact land use, water, and climate. Evidence-based management (nutrition, health, welfare) is supported by USDA, extension, and animal science research. Public education on where food and fiber come from supports informed choices.",
+        "how": "Rumen ecology: inoculum from dam and environment; diet shapes microbial community; pH and passage rate affect fermentation. Nutrition: NRC and other standards provide requirement estimates; extension translates to practical rations. Domestication: selection on behavior (tameness), reproduction, and morphology; genomic signatures of domestication and breed formation are documented. Welfare: space, social structure, health care, and handling; certification and audit schemes exist.",
+        "keyFacts": "Sources: USDA (animals, animal production), land-grant extension (sheep, goats, cattle), Encyclopaedia Britannica (cattle, sheep, domestication). Research on ruminant nutrition, genetics, and welfare in Journal of Animal Science, Animal, and related journals.",
+        "stepByStep": "Evidence-based sequence: (1) Consult USDA and extension for species and management. (2) For rumen function: use animal nutrition and microbiology literature. (3) For domestication: use archaeology and genomics. (4) For welfare: use animal science and certification standards.",
+        "realWorldExamples": "USDA National Agricultural Library and extension publications provide producer and public resources. State extension services (e.g. Oregon State sheep and goats) offer workshops and fact sheets. Research on domestication, nutrition, and welfare appears in peer-reviewed animal science and agriculture journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are goats, sheep, and cows?", "learner": "What are they?", "explorer": "What are they? (domestication and ruminants)", "deepDive": "What are they? (systematics and physiology)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do they matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (food and environment)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they digest and produce?", "explorer": "How they work", "deepDive": "How they work (rumen and management)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Visit a farm or watch a video", "layer": "child", "body": "With a grown-up, visit a farm or watch a video about goats, sheep, or cows. What do they eat? What do they look like? How do they move? We get milk, meat, and wool from them. Farmers take care of them every day." },
+    { "type": "observation", "title": "One species, one product", "layer": "learner", "body": "Pick one: goat, sheep, or cow. Use USDA or extension to find: What product do we get from it (milk, cheese, meat, wool, leather)? Name one breed used for that product. Write two sentences about how the animal is cared for on a farm." },
+    { "type": "observation", "title": "Ruminant digestion", "layer": "explorer", "body": "Cows (and sheep and goats) have four stomach chambers and “chew cud.” Use extension or Britannica to find: What is the rumen? Why can they eat grass and we can’t? Draw a simple diagram or write a short explanation." }
+  ],
+  "sources": [
+    { "title": "Sheep and goats", "institution": "Oregon State University Extension", "url": "https://extension.oregonstate.edu/animals-livestock/sheep-goats", "note": "Research-based management, nutrition, and health for sheep and goats; part of national extension system." },
+    { "title": "Animals", "institution": "U.S. Department of Agriculture", "url": "https://www.usda.gov/animals", "note": "USDA animal agriculture, census, and program information." },
+    { "title": "Animal Production", "institution": "U.S. Department of Agriculture", "url": "https://www.usda.gov/farming-and-ranching/animal-science/animal-production", "note": "Animal science and production resources." },
+    { "title": "Cattle (livestock)", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/cattle-livestock", "note": "Overview of cattle biology and husbandry." },
+    { "title": "Domesticated sheep", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/domesticated-sheep", "note": "Overview of sheep biology and breeds." }
+  ],
+  "relatedCardIds": ["plants-and-how-they-grow", "raccoons", "pandas", "cooking-basics-and-food-safety"],
+  "tags": ["animals", "livestock", "goats", "sheep", "cattle", "cows", "domestication", "ruminants", "biology", "agriculture"]
+}

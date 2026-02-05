@@ -35,17 +35,14 @@ alwaysApply: false
 
 **Rule:** From now on, any push from Cursor must use the token (script or deploy/sync scripts that call it). This keeps pushes smooth and avoids auth errors.
 
-## Syncing frontend to the live site (music-bingo-app)
+## Live site: one repo (bingo-backend)
 
-- The **live site** (Netlify) is built from the **music-bingo-app** repo. That repo is the **UI source of truth** (design system, nav, landing page, themes).
-- **Do not** run full frontend sync from this repo into music-bingo-app — it would overwrite the app's design. See **docs/FRONTEND-ARCHITECTURE.md**.
-- **Safe sync:** **sync-and-push-roll-call.sh** — copies only Roll Call–related files into music-bingo-app, then commits and pushes. Use when updating Roll Call logic/maps only.
-- **Everything else:** Implement or port features **in music-bingo-app** using its components and CSS. Backend: add API/socket here; app calls it and renders with its own UI.
-- **Path to music-bingo-app:** User sets **MUSIC_BINGO_APP_PATH**, or scripts try `..` and `../music-bingo-app`, or user passes the path as the first argument.
+- The **Playroom live site** (Netlify) should build from **this repo** (bingo-backend), **frontend/** directory. See **.cursor/rules/deploy-netlify-railway-one-repo.mdc** and **docs/DEPLOY-CONTRACT.md**.
+- If the live site shows the wrong or old UI, run **./scripts/ensure-netlify-builds-from-backend.sh** (with NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID in .env it will set Netlify build settings; otherwise it prints manual steps).
+- **Optional:** **sync-and-push-roll-call.sh** and **music-bingo-app** are for syncing only Roll Call–related files to a separate app repo if you still use it; the main Playroom site is built from bingo-backend/frontend.
 
 ## When to run what
 
-- **Backend-only changes:** Run `./scripts/deploy-playroom.sh` (commits if needed, pushes this repo with GITHUB_TOKEN).
-- **Roll Call updates:** Run `./scripts/sync-and-push-roll-call.sh` (syncs only Roll Call files to the app and pushes).
-- **Landing page, copy, or new UI:** Edit **music-bingo-app** directly; commit and push that repo (Netlify deploys).
-- **One-time setup:** See **docs/GITHUB-PUSH-AND-SYNC-SETUP.md** (PAT, GITHUB_TOKEN, MUSIC_BINGO_APP_PATH).
+- **Deploy (push + optional Netlify):** Run `./scripts/deploy-playroom.sh` (uses GITHUB_TOKEN; set DEPLOY_NETLIFY=1 to deploy frontend to Netlify).
+- **Netlify showing wrong UI / wrong repo:** Run `./scripts/ensure-netlify-builds-from-backend.sh`, then trigger deploy in Netlify and hard refresh.
+- **One-time setup:** See **docs/GITHUB-PUSH-AND-SYNC-SETUP.md** (PAT, GITHUB_TOKEN). For Netlify/Railway: **docs/DEPLOY-CONTRACT.md**.

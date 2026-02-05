@@ -1,0 +1,71 @@
+{
+  "id": "dogs-and-their-relatives",
+  "title": "Dogs & Their Relatives",
+  "summary": "Dogs, wolves, foxes, and their cousins — the Canidae family. From our best friends to wild hunters and survivors.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Dogs are animals that can be our friends. Wolves and foxes are their wild cousins. They are all in the same family.",
+      "sections": {
+        "what": "Dogs are animals with fur, a wet nose, and a tail. Some dogs live with people. Wolves and foxes live in the wild. They all have sharp teeth and like to run. They are related to each other.",
+        "why": "Dogs help people in many ways: as friends, helpers, and workers. Wolves and foxes are important in nature. They hunt other animals and keep the wild healthy. We need to protect wild dogs and wolves.",
+        "how": "Dogs and wolves and foxes hunt or find food. They can smell very well and hear things we cannot. They live in families or packs. Dogs learned to live with people a long, long time ago.",
+        "keyFacts": "Dogs, wolves, and foxes are all in the dog family. Wolves are big and live in packs. Foxes are smaller and often live alone or in small groups. Dogs came from wolves. Wild dogs need space and food; many need our help to survive."
+      }
+    },
+    "learner": {
+      "summary": "The dog family (Canidae) includes domestic dogs, wolves, foxes, coyotes, and other wild relatives — social, intelligent carnivores with a long history beside humans.",
+      "sections": {
+        "what": "The Canidae family includes domestic dogs (Canis familiaris), gray wolves (Canis lupus), coyotes, jackals, foxes (red, gray, arctic, fennec, and others), and less familiar species like the maned wolf and African wild dog. They range in size from the small fennec fox to the gray wolf. All are carnivores or omnivores with strong jaws, good hearing and smell, and often social living (packs or pairs). Dogs were domesticated from wolves thousands of years ago.",
+        "why": "Dogs are one of the first and most important domesticated animals: companions, guards, herders, and service animals. Wolves and other wild canids are apex or mesopredators; they shape ecosystems and prey populations. Many wild canids face habitat loss, conflict with people, or persecution. Understanding the family helps us care for pets responsibly and support conservation.",
+        "how": "Canids hunt by pursuit, chase, or scavenging. Wolves hunt in packs and share food; foxes often hunt alone. They communicate with barks, howls, whines, and body language. Wolves howl to keep the pack together and mark territory; dogs inherited some of these behaviors. Domestication changed dogs’ looks and behavior but they still share ancestry and many traits with wolves.",
+        "keyFacts": "Gray wolves are the largest wild canids (males ~65–175 lb). They live in packs with a breeding pair and offspring. Coyotes are highly adaptable and live across North America. Foxes are found on most continents. Maned wolves (South America) are not true wolves but canids with long legs and a distinctive look. Domestic dogs are the same species as gray wolves (Canis lupus) but with a long history of living with humans.",
+        "stepByStep": "1. Pick one canid (e.g. dog, wolf, fox). 2. Use a zoo or museum site to find where it lives and what it eats. 3. Compare: How is it like a dog you know? How is it different? 4. If you have a dog, notice how it plays or greets — many behaviors are shared with wild relatives (always be kind and safe).",
+        "realWorldExamples": "Zoos and conservation centers breed and display wolves and other canids and support reintroduction (e.g. gray wolves in some regions). Animal shelters and rescues care for domestic dogs. Wildlife agencies manage coyotes and foxes and help people coexist with them. Responsible dog ownership (training, containment, vaccination) protects both dogs and wildlife."
+      }
+    },
+    "explorer": {
+      "summary": "Canidae diversity, behavior, and conservation: from domestication and pack behavior to the role of wild canids in ecosystems.",
+      "sections": {
+        "what": "Canidae (Carnivora) includes roughly 35 species in genera such as Canis (wolves, dogs, coyotes, jackals), Vulpes and other foxes, Lycaon (African wild dog), and Chrysocyon (maned wolf). They occupy every continent except Antarctica. Body mass ranges from about 1 kg (fennec) to over 70 kg (gray wolf). All have long muzzles, non-retractable claws, and carnassial teeth; diet ranges from strictly carnivorous to omnivorous. Domestic dogs (Canis familiaris, sometimes Canis lupus familiaris) are derived from gray wolves through domestication.",
+        "why": "Canids influence ecosystems as predators and scavengers; their removal or return can shift prey and plant communities. Wolves in Yellowstone are a well-studied case of trophic cascades. Domestic dogs have enormous cultural and economic importance; feral and free-ranging dogs can impact wildlife. Conservation of wild canids depends on habitat, prey, and reducing human conflict.",
+        "how": "Social structure varies: gray wolves form packs with dominance hierarchy and cooperative hunting; red foxes are often solitary or in pairs; African wild dogs hunt in packs. Communication includes vocalizations (howls, barks, growls) and scent marking. Domestication selected for tameness, social bonding with humans, and phenotypic diversity; genetics and archaeology trace dog origins to multiple wolf populations.",
+        "keyFacts": "Gray wolf recovery in parts of North America and Europe is a conservation success; ongoing debate concerns range, livestock conflict, and hunting. Coyotes have expanded range in North America. IUCN and Smithsonian provide species accounts and status. Smithsonian’s National Zoo holds gray wolf information and participates in canid conservation (e.g. maned wolf).",
+        "stepByStep": "(1) Use Smithsonian National Zoo or IUCN to list canid species and their ranges. (2) Compare one pack-living species (e.g. gray wolf) and one more solitary species (e.g. red fox): diet, social structure, conservation status. (3) Read about domestication: how dogs split from wolves and what changed. (4) For dogs: relate one behavior (e.g. play bow, howl) to wild relatives.",
+        "realWorldExamples": "Smithsonian’s National Zoo and Conservation Biology Institute care for gray wolves and maned wolves and support breeding programs. Wildlife agencies provide guidance on coexisting with coyotes and foxes. Research on dog domestication and wolf behavior appears in peer-reviewed journals and is summarized by museums and zoos."
+      }
+    },
+    "deepDive": {
+      "summary": "Canidae systematics, behavioral ecology, domestication, and conservation with citations to Smithsonian and research literature.",
+      "sections": {
+        "what": "Canidae (Mammalia, Carnivora) is a monophyletic family of digitigrade carnivores/omnivores with elongated snouts, well-developed carnassials, and non-retractable claws. Phylogeny recognizes multiple genera including Canis (wolves, coyotes, jackals, and the domestic dog), Vulpes and allies (foxes), and distinct lineages (Lycaon, Chrysocyon). Canis familiaris is either a subspecies of C. lupus or a distinct species derived from it; genomic evidence supports a single domestication process (or limited introgression) from extinct or extant wolf populations.",
+        "why": "Wild canids are ecosystem engineers and flagship species; their conservation often requires landscape-level planning and conflict mitigation. Domestic dogs are a major human companion and can be a conservation concern (disease, predation, hybridization). Evidence-based management relies on IUCN assessments, government wildlife agencies, and peer-reviewed ecology.",
+        "how": "Pack formation in wolves involves kinship, dominance, and cooperative hunting; dispersal and territory are density- and resource-dependent. Domestication syndrome in dogs includes reduced fear, altered development, and morphological diversity. Conservation interventions include protected areas, connectivity, livestock protection (non-lethal), and public education. Sources: Smithsonian National Zoo species pages, IUCN Canid Specialist Group (where applicable), and peer-reviewed literature.",
+        "keyFacts": "Smithsonian National Zoo gray wolf page and Center for Species Survival (carnivores) provide authoritative summaries. IUCN Red List and specialist groups give conservation status. Domestication and canid behavior are covered in mammalogy and genetics journals.",
+        "stepByStep": "Evidence-based sequence: (1) Consult Smithsonian or IUCN for taxonomy and status. (2) For behavior: use zoo or peer-reviewed behavioral ecology. (3) For domestication: use genetics and archaeology literature. (4) For conservation: identify threats and evidence-based actions (habitat, conflict reduction, policy).",
+        "realWorldExamples": "Smithsonian’s National Zoo and Conservation Biology Institute hold gray wolves and maned wolves and publish care and conservation information. Reintroduction and management of wolves in North America and Europe are documented in agency and scientific literature. Dog welfare and impact on wildlife are studied in veterinary and conservation contexts."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are dogs and their family?", "learner": "What is the dog family?", "explorer": "What is Canidae?", "deepDive": "What is Canidae? (systematics and domestication)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do they matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they hunt and live?", "explorer": "How they work", "deepDive": "How they work (behavior and ecology)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more about a canid", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Watch a dog (safely)", "layer": "child", "body": "If you have a dog or can visit one safely, watch how it sniffs, runs, and plays. Dogs are related to wolves. They still like to explore and be with their family. Always ask a grown-up before you go near a dog you don’t know." },
+    { "type": "observation", "title": "Compare dog and wolf", "layer": "learner", "body": "Use a zoo or museum website. Find the gray wolf. Compare: How big is it? What does it eat? How does it live (pack vs. alone)? Now think about a dog. What is the same? What is different? Dogs came from wolves long ago." },
+    { "type": "observation", "title": "One canid’s range and status", "layer": "explorer", "body": "Pick one wild canid (e.g. gray wolf, red fox, coyote, maned wolf). Use Smithsonian or IUCN to find its range and conservation status. What threatens it? What is one thing people are doing to help? Write a short summary." }
+  ],
+  "sources": [
+    { "title": "Gray wolf", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/animals/gray-wolf", "note": "Species account: biology, behavior, conservation; authoritative zoo-based summary." },
+    { "title": "Carnivores — Center for Species Survival", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/center-for-species-survival/carnivores", "note": "Canid conservation and research; fennec to gray wolf." },
+    { "title": "Mammals", "institution": "Smithsonian National Museum of Natural History", "url": "https://naturalhistory.si.edu/research/vertebrate-zoology/mammals", "note": "Research and collections; scientific basis for mammal diversity." },
+    { "title": "Canidae (dog family)", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/canid", "note": "Overview of canid biology and classification." }
+  ],
+  "relatedCardIds": ["cats-of-the-world", "sloths", "raccoons", "opossums", "plants-and-how-they-grow", "animals-of-the-world"],
+  "tags": ["animals", "dogs", "wolves", "canidae", "mammals", "biology", "conservation", "domestication"]
+}

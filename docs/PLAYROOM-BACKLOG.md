@@ -55,6 +55,12 @@ See **docs/PLAYROOM-SCAN-ONCE-VISION.md** — one scan, one link; host runs mult
 
 ---
 
+## Learn & Grow (knowledge module)
+
+- **Playroom: Learn & Grow** — Truth-first, globally accessible knowledge center (ages 4–99+); layered Knowledge Cards with mandatory citations, STEM anchors, and activities. First 10 flagship cards defined; feeds Edutainment (trivia, teach-then-check) and activity director content. See **docs/LEARN-AND-GROW-VISION.md** and **docs/LEARN-AND-GROW-KNOWLEDGE-CARD-SPEC.md**.
+
+---
+
 ## Done / in progress
 
 - Scrape: backend returns JSON; frontend uses `https://` when env lacked scheme.

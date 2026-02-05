@@ -2,7 +2,13 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import { readFileSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { customAlphabet } from 'nanoid';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const LEARN_DATA_DIR = path.join(__dirname, 'data', 'learn');
 import { generateSongs } from './lib/ai.js';
 import { fetchTrustedSources } from './lib/trustedSources.js';
 import { enrichTrack, getChartStyleList } from './lib/musicDataLayer.js';
@@ -125,6 +131,43 @@ const SCRAPE_HEADERS = (userAgent) => ({
   'Sec-Fetch-User': '?1',
 });
 
+// Fetch HTML for scraping. Tries direct request first; on 403/503 (e.g. Cloudflare) falls back to ScraperAPI if SCRAPER_API_KEY is set. "We make everything work."
+async function fetchHtmlForScrape(targetUrl, timeoutMs = 15000) {
+  const u = new URL(targetUrl);
+  let resp;
+  let lastStatus;
+  for (let i = 0; i < SCRAPE_USER_AGENTS.length; i++) {
+    resp = await fetch(u.href, {
+      headers: SCRAPE_HEADERS(SCRAPE_USER_AGENTS[i]),
+      redirect: 'follow',
+      signal: AbortSignal.timeout(Math.min(timeoutMs, 12000))
+    });
+    lastStatus = resp.status;
+    if (resp.ok) {
+      const html = await resp.text();
+      return { html, baseUrl: resp.url || u.href };
+    }
+    if (resp.status !== 403 && resp.status !== 406 && resp.status !== 503) break;
+  }
+  // Cloudflare or other bot mitigation: try ScraperAPI when configured
+  const scraperKey = process.env.SCRAPER_API_KEY;
+  if ((lastStatus === 403 || lastStatus === 503) && scraperKey && scraperKey.trim()) {
+    const proxyUrl = `https://api.scraperapi.com?api_key=${encodeURIComponent(scraperKey.trim())}&url=${encodeURIComponent(u.href)}`;
+    const proxyResp = await fetch(proxyUrl, {
+      redirect: 'follow',
+      signal: AbortSignal.timeout(25000)
+    });
+    if (proxyResp.ok) {
+      const html = await proxyResp.text();
+      return { html, baseUrl: u.href };
+    }
+  }
+  const msg = lastStatus === 403 || lastStatus === 503
+    ? `Site returned ${lastStatus}. Add SCRAPER_API_KEY to .env to use fallback for Cloudflare-protected sites, or try a different URL.`
+    : `Site returned ${lastStatus}. We only read public meta tags. Try a different URL or contact the venue.`;
+  throw Object.assign(new Error(msg), { status: lastStatus });
+}
+
 app.get('/api/scrape-site', async (req, res) => {
   const url = req.query.url;
   if (!url || typeof url !== 'string') {
@@ -135,23 +178,7 @@ app.get('/api/scrape-site', async (req, res) => {
     if (!['http:', 'https:'].includes(u.protocol)) {
       return res.status(400).json({ error: 'Invalid URL' });
     }
-    let resp;
-    let lastStatus;
-    for (let i = 0; i < SCRAPE_USER_AGENTS.length; i++) {
-      resp = await fetch(u.href, {
-        headers: SCRAPE_HEADERS(SCRAPE_USER_AGENTS[i]),
-        redirect: 'follow',
-        signal: AbortSignal.timeout(12000)
-      });
-      lastStatus = resp.status;
-      if (resp.ok) break;
-      if (resp.status !== 403 && resp.status !== 406) break;
-    }
-    if (!resp.ok) {
-      return res.status(502).json({ error: `Site returned ${lastStatus}. We only read public meta tags. Try a different URL or contact the venue.` });
-    }
-    const html = await resp.text();
-    const baseUrl = resp.url || u.href;
+    const { html, baseUrl } = await fetchHtmlForScrape(u.href, 12000);
 
     function resolveHref(href) {
       if (!href || !href.trim()) return null;
@@ -247,13 +274,14 @@ app.get('/api/scrape-site', async (req, res) => {
     };
     res.json(result);
   } catch (err) {
+    const status = err.status === 403 || err.status === 503 ? 502 : 500;
     const message = err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Failed to fetch URL');
-    res.status(500).json({ error: message });
+    res.status(status).json({ error: message });
   }
 });
 
 // Fetch a page's text content (for menu import). Public HTML only; strip tags, return lines.
-// Uses same browser-like headers as scrape-site for consistency and to avoid 403s on older sites.
+// Uses fetchHtmlForScrape (direct + optional ScraperAPI fallback for Cloudflare etc.).
 app.get('/api/fetch-page-text', async (req, res) => {
   const url = req.query.url;
   if (!url || typeof url !== 'string') {
@@ -264,22 +292,7 @@ app.get('/api/fetch-page-text', async (req, res) => {
     if (!['http:', 'https:'].includes(u.protocol)) {
       return res.status(400).json({ error: 'Invalid URL' });
     }
-    let resp;
-    let lastStatus;
-    for (let i = 0; i < SCRAPE_USER_AGENTS.length; i++) {
-      resp = await fetch(u.href, {
-        headers: SCRAPE_HEADERS(SCRAPE_USER_AGENTS[i]),
-        redirect: 'follow',
-        signal: AbortSignal.timeout(15000)
-      });
-      lastStatus = resp.status;
-      if (resp.ok) break;
-      if (resp.status !== 403 && resp.status !== 406) break;
-    }
-    if (!resp.ok) {
-      return res.status(502).json({ error: `Page returned ${lastStatus}.` });
-    }
-    const html = await resp.text();
+    const { html } = await fetchHtmlForScrape(u.href, 15000);
     const text = html
       .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
       .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
@@ -288,14 +301,14 @@ app.get('/api/fetch-page-text', async (req, res) => {
       .trim();
     res.json({ text: text.slice(0, 50000) });
   } catch (err) {
+    const status = err.status === 403 || err.status === 503 ? 502 : 500;
     const message = err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Failed to fetch');
-    res.status(500).json({ error: message });
+    res.status(status).json({ error: message });
   }
 });
 
 // Parse a menu page URL into structured sections/items for the menu builder (Phase B).
-// Fetches page text, then heuristically extracts sections and items (names, optional prices).
-// Returns data in menu-builder shape: { sections: [ { name, items: [ { name, description?, price? } ] } ] }.
+// Fetches page text via fetchHtmlForScrape (direct + optional ScraperAPI fallback), then parses.
 app.get('/api/parse-menu-from-url', async (req, res) => {
   const url = req.query.url;
   if (!url || typeof url !== 'string') {
@@ -306,22 +319,7 @@ app.get('/api/parse-menu-from-url', async (req, res) => {
     if (!['http:', 'https:'].includes(u.protocol)) {
       return res.status(400).json({ error: 'Invalid URL' });
     }
-    let resp;
-    let lastStatus;
-    for (let i = 0; i < SCRAPE_USER_AGENTS.length; i++) {
-      resp = await fetch(u.href, {
-        headers: SCRAPE_HEADERS(SCRAPE_USER_AGENTS[i]),
-        redirect: 'follow',
-        signal: AbortSignal.timeout(15000)
-      });
-      lastStatus = resp.status;
-      if (resp.ok) break;
-      if (resp.status !== 403 && resp.status !== 406) break;
-    }
-    if (!resp.ok) {
-      return res.status(502).json({ error: `Page returned ${lastStatus}.` });
-    }
-    const html = await resp.text();
+    const { html } = await fetchHtmlForScrape(u.href, 15000);
     const rawText = html
       .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
       .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
@@ -332,8 +330,9 @@ app.get('/api/parse-menu-from-url', async (req, res) => {
     const { sections } = parseMenuText(rawText);
     res.json({ sections, sourceUrl: u.href });
   } catch (err) {
+    const status = err.status === 403 || err.status === 503 ? 502 : 500;
     const message = err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Failed to fetch');
-    res.status(500).json({ error: message });
+    res.status(status).json({ error: message });
   }
 });
 
@@ -449,6 +448,46 @@ app.get('/api/observances/calendar', (req, res) => {
     res.json({ year, month, observances: forMonth });
   } catch (err) {
     res.status(400).json({ error: err.message || 'Invalid parameters' });
+  }
+});
+
+// Learn & Grow: Knowledge Cards (truth-first, cited). Served from data/learn/*.json + manifest.
+// GET /api/learn/cards — list cards (id, title, summary, tags, stemAnchors). Optional: ?tag= & ?stemAnchor=
+// GET /api/learn/cards/:id — full card. Optional: ?layer=child|learner|explorer|deepDive to emphasize that layer.
+app.get('/api/learn/cards', (req, res) => {
+  try {
+    const manifestPath = path.join(LEARN_DATA_DIR, 'manifest.json');
+    const raw = readFileSync(manifestPath, 'utf8');
+    const { cards } = JSON.parse(raw);
+    let list = Array.isArray(cards) ? cards : [];
+    const tag = req.query.tag ? String(req.query.tag).trim() : null;
+    const stemAnchor = req.query.stemAnchor ? String(req.query.stemAnchor).trim() : null;
+    if (tag) list = list.filter((c) => Array.isArray(c.tags) && c.tags.includes(tag));
+    if (stemAnchor) list = list.filter((c) => Array.isArray(c.stemAnchors) && c.stemAnchors.includes(stemAnchor));
+    res.json({ cards: list });
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Failed to load Learn & Grow cards' });
+  }
+});
+
+app.get('/api/learn/cards/:id', (req, res) => {
+  const id = String(req.params.id || '').replace(/[^a-z0-9-]/g, '');
+  if (!id) return res.status(400).json({ error: 'Invalid card id' });
+  const layer = req.query.layer ? String(req.query.layer) : null;
+  const validLayers = ['child', 'learner', 'explorer', 'deepDive'];
+  const requestedLayer = validLayers.includes(layer) ? layer : null;
+  try {
+    const cardPath = path.join(LEARN_DATA_DIR, `${id}.json`);
+    const raw = readFileSync(cardPath, 'utf8');
+    const card = JSON.parse(raw);
+    if (requestedLayer && card.audienceLayers && card.audienceLayers[requestedLayer]) {
+      res.json({ ...card, _requestedLayer: requestedLayer });
+    } else {
+      res.json(card);
+    }
+  } catch (err) {
+    if (err.code === 'ENOENT') return res.status(404).json({ error: 'Card not found', id });
+    res.status(500).json({ error: err.message || 'Failed to load card' });
   }
 });
 

@@ -1,0 +1,71 @@
+{
+  "id": "birds",
+  "title": "Birds",
+  "summary": "Feathers, flight, and migration: birds are the most visible migrators on Earth, with thousands of species from backyard songbirds to raptors and ocean wanderers.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Birds have feathers and most can fly. They lay eggs and sing. They live everywhere — in your yard, in the forest, and over the ocean.",
+      "sections": {
+        "what": "Birds are animals with feathers, wings, and beaks. They lay eggs and have two legs. Most birds can fly. There are thousands of kinds: little ones like sparrows, big ones like eagles, and birds that swim like ducks. They are all related to dinosaurs.",
+        "why": "Birds eat bugs and seeds, spread seeds, and help flowers get pollinated. They are part of every ecosystem. Many birds fly far away in fall and come back in spring — that’s migration. When we protect places for birds, we help nature.",
+        "how": "Feathers keep them warm and help them fly. Their bones are light and hollow. They have strong breast muscles to flap. Some birds fly thousands of miles each year to find food and a safe place to nest. They see and hear very well.",
+        "keyFacts": "Birds have feathers — no other animal does. They lay hard-shelled eggs. Many migrate. Lots of bird species are in trouble; we can help by keeping cats indoors, not using poison, and protecting habitat. Scientists count birds to see how they are doing."
+      }
+    },
+    "learner": {
+      "summary": "Birds (Aves) are feathered, warm-blooded vertebrates; most fly. Migration, flight, and diversity link them to ecosystems worldwide; many species are declining and need conservation.",
+      "sections": {
+        "what": "Birds are a class of vertebrates (Aves) with feathers, beaks, and lightweight skeletons. They lay hard-shelled eggs and are endothermic (warm-blooded). There are roughly 10,000+ species, from hummingbirds to ostriches to albatrosses. Flight feathers (remiges on wings, rectrices on tail) provide lift and thrust; not all birds fly (e.g. penguins, ostriches). Many species migrate — move seasonally between breeding and wintering areas — often over long distances.",
+        "why": "Birds pollinate plants, disperse seeds, and control insect and rodent populations. They are indicators of ecosystem health. Since 1970, North America has lost nearly 3 billion birds (about 29%); more than half of North American species are at risk. Conservation — habitat protection, reducing window strikes and cat predation, and bird-friendly practices — helps reverse decline.",
+        "how": "Flight: wings generate lift; primaries (outer wing feathers) provide thrust. Migration is driven by food and climate; birds use sun, stars, and Earth’s magnetic field to navigate. Feathers provide insulation and waterproofing. Respiration is efficient (air sacs) for high metabolic demand. Smithsonian Migratory Bird Center and others study migration and connectivity to identify critical habitats.",
+        "keyFacts": "Smithsonian Migratory Bird Center is dedicated to migratory bird research. Bird-friendly certification (e.g. shade-grown coffee) protects wintering habitat. Threats include habitat loss, cats, windows, and climate change. You can help: keep cats indoors, reduce window strikes, plant native plants, and participate in citizen science (e.g. bird counts).",
+        "stepByStep": "1. Use Smithsonian Migratory Bird Center or a zoo site to read about one migratory bird (e.g. warbler, thrush). 2. Where does it breed? Where does it spend winter? 3. List one threat it faces. 4. Name one way to help birds (e.g. bird-friendly coffee, native plants, cat indoors).",
+        "realWorldExamples": "Smithsonian Migratory Bird Center tracks migration and promotes Bird Friendly® certification. Citizen science (e.g. eBird, Christmas Bird Count) helps monitor populations. Zoos and nature centers offer bird education. Protecting stopover sites and wintering habitat is critical for migrants."
+      }
+    },
+    "explorer": {
+      "summary": "Aves diversity, flight mechanics, migration ecology, and conservation; migratory connectivity and the role of research and policy.",
+      "sections": {
+        "what": "Aves (theropod dinosaurs) are characterized by feathers (unique to birds), a beak without teeth, and a lightweight skeleton (pneumatic bones). Flight is powered by pectoral muscles and supported by remiges and rectrices; wing shape varies with ecology (soaring, flapping, hovering). Migration: regular seasonal movement between breeding and non-breeding areas; migratory connectivity describes how populations link across the annual cycle. Over half of North American bird species are at risk; declines are linked to habitat loss, predation by cats, collisions, and climate.",
+        "why": "Birds provide ecosystem services (seed dispersal, pest control, pollination) and are cultural and economic assets. Understanding migration and connectivity helps identify where to protect habitat (breeding, stopover, wintering). Smithsonian and partners use tracking (geolocators, satellite tags) to map routes and prioritize conservation.",
+        "how": "Flight: lift from wing shape and flapping; primaries generate thrust. Migration: endogenous rhythms and environmental cues; navigation by geomagnetism, celestial cues, and landmarks. Population decline: cumulative effects of habitat loss, invasive species (e.g. cats), glass collisions, and pesticides. Conservation: protected areas, bird-friendly agriculture, reducing mortality sources.",
+        "keyFacts": "Smithsonian Migratory Bird Center (nationalzoo.si.edu/migratory-birds) conducts research and runs Bird Friendly® certification. Britannica covers feathers, flight, and migration. Tracking reveals critical seasons and sites for survival. Conservation actions are evidence-based where data exist.",
+        "stepByStep": "(1) Use Smithsonian Migratory Bird Center for migration and conservation. (2) Pick one species and trace its annual cycle: breeding range, migration route, winter range. (3) Identify one threat and one conservation action. (4) Relate to plants: many birds depend on insects, seeds, or fruit; habitat quality affects bird populations.",
+        "realWorldExamples": "Smithsonian Migratory Bird Center and NOAA (for seabirds) provide research and outreach. Citizen science datasets (eBird, Breeding Bird Survey) support population assessments. Bird-friendly certification and habitat programs link consumer choice to conservation."
+      }
+    },
+    "deepDive": {
+      "summary": "Aves systematics, flight biomechanics, migration ecology, and conservation biology with citations to Smithsonian and research literature.",
+      "sections": {
+        "what": "Aves is a crown group of theropod dinosaurs; feathers evolved before flight. Morphology: keratinous feathers (contour, down, flight), pneumatized skeleton, fused clavicle (furcula), and high metabolic rate. Flight: aerodynamic forces from wing geometry and stroke; different flight modes (flapping, soaring, hovering) reflect ecology. Migration: defined by seasonal round-trips; partial migration and nomadism also occur. Migratory connectivity quantifies population linkage across the annual cycle and informs conservation prioritization.",
+        "why": "Bird population declines (e.g. 3 billion birds lost in North America since 1970) reflect multiple stressors; conservation requires identifying critical habitats and reducing mortality. Smithsonian Migratory Bird Center and partners produce tracking and demographic data; Bird Friendly® and policy work address drivers. Research is cited from Smithsonian, USGS, and ornithology journals.",
+        "how": "Flight mechanics: lift and thrust from wing kinematics and feather structure. Migration: physiology (fat deposition, molt), navigation (magnetic, celestial), and stopover ecology. Demography: survival and reproduction vary by season and site; connectivity research identifies bottlenecks. Conservation: habitat protection, mortality reduction (cats, glass, pesticides), and climate adaptation.",
+        "keyFacts": "Sources: Smithsonian Migratory Bird Center, Britannica (feather, migration), peer-reviewed ornithology. Tracking and connectivity studies support spatial conservation. Evidence-based actions: reduce cat predation, bird-friendly glass, protect stopover and winter habitat.",
+        "stepByStep": "Evidence-based sequence: (1) Consult Smithsonian and ornithology resources for biology and migration. (2) For conservation: use connectivity and threat assessments. (3) For flight: use biomechanics and ecology literature. (4) For action: support Bird Friendly®, citizen science, and habitat programs.",
+        "realWorldExamples": "Smithsonian Migratory Bird Center publishes research and runs certification. USGS and Partners in Flight assess population status. Peer-reviewed work appears in Ecology, Conservation Biology, and ornithology journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are birds?", "learner": "What are birds?", "explorer": "What are birds? (Aves)", "deepDive": "What are birds? (systematics and flight)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do birds matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do birds fly and live?", "learner": "How do they fly and migrate?", "explorer": "How they work", "deepDive": "How they work (mechanics and ecology)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Watch birds (from a window or yard)", "layer": "child", "body": "Sit quietly and watch birds. What color are they? Do they hop or walk? Do they fly away when you move? You can put out a bird feeder (with a grown-up) and see who visits. Never touch a baby bird unless a grown-up says it needs help." },
+    { "type": "observation", "title": "One migratory bird", "layer": "learner", "body": "Use Smithsonian Migratory Bird Center. Pick one bird that migrates (e.g. American robin, warbler). Where does it breed? Where does it go in winter? Draw a simple map or write three sentences. Name one way to help it." },
+    { "type": "observation", "title": "Feathers and flight", "layer": "explorer", "body": "Use Britannica or Smithsonian. What are flight feathers (remiges)? How do they help a bird fly? Compare a bird that soars (e.g. hawk) to one that flaps a lot (e.g. hummingbird). Write a short paragraph." }
+  ],
+  "sources": [
+    { "title": "Introduction to Migratory Birds", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/migratory-birds/introduction-migratory-birds", "note": "Migration, connectivity, and conservation; Migratory Bird Center." },
+    { "title": "Saving Migratory Birds", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/conservation/saving-migratory-birds", "note": "Conservation and Bird Friendly® certification." },
+    { "title": "Bird migration — Encyclopedic primer", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/explore/savingearth/bird-migration-and-migrations-an-encyclopaedic-primer", "note": "Overview of bird migration and conservation." },
+    { "title": "Feather", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/science/feather", "note": "Structure and function of feathers and flight." }
+  ],
+  "relatedCardIds": ["plants-and-how-they-grow", "whales", "sloths", "cats-of-the-world", "crafts-and-gentle-stem"],
+  "tags": ["animals", "birds", "migration", "flight", "feathers", "biology", "conservation"]
+}

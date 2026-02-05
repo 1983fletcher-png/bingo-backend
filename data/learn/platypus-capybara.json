@@ -1,0 +1,71 @@
+{
+  "id": "platypus-capybara",
+  "title": "Platypus, Capybara & Other Unique Creatures",
+  "summary": "Egg-laying mammals and the world’s largest rodent: the platypus and capybara are just two of the planet’s most surprising and beloved animals.",
+  "audienceLayers": {
+    "child": {
+      "summary": "A platypus has a bill like a duck and lays eggs — but it’s a mammal. A capybara is a huge, friendly-looking rodent that loves water. Both are special and fun to learn about.",
+      "sections": {
+        "what": "The platypus lives in Australia. It has a duck-like bill, webbed feet, and a flat tail. It lays eggs but feeds its babies milk — it’s a mammal that lays eggs! The capybara lives in South America. It is the biggest rodent in the world, like a giant guinea pig. It loves to swim and sit in water. Both are unique — there’s nothing else quite like them.",
+        "why": "They show us how weird and wonderful nature is. The platypus was so strange that when scientists first saw it, some thought it was a fake. Capybaras are calm and social; they get along with other animals. When we protect their homes (rivers, wetlands), we protect them and lots of other creatures too.",
+        "how": "Platypus hunts in the water with its eyes and bill closed — it senses electricity from its prey! It eats insects, worms, and small animals. Capybaras eat grass and plants; they live in groups and spend a lot of time in water to stay cool and safe. Both need clean water and safe places to live.",
+        "keyFacts": "Platypus = egg-laying mammal (with echidnas). Capybara = largest rodent. Platypus lives only in Australia; capybara in South America. Both need water. We help by keeping rivers and wetlands clean and by not buying products that destroy their habitat."
+      }
+    },
+    "learner": {
+      "summary": "The platypus (monotreme) and capybara (largest rodent) are iconic, unique mammals; understanding them highlights evolution and the importance of freshwater habitat.",
+      "sections": {
+        "what": "The platypus (Ornithorhynchus anatinus) is a monotreme — an egg-laying mammal, one of only five living species (with echidnas). It has a leathery bill with electroreceptors (40,000+) to detect prey in murky water, webbed feet, dense fur, and (in males) venomous spurs on the hind legs. It is endemic to eastern Australia. The capybara (Hydrochoerus hydrochaeris) is the largest living rodent; it is semi-aquatic, social, and native to South America. Adults weigh 77–146 lb (35–66 kg) and are adapted to grasslands and wetlands. Both are charismatic and illustrate evolutionary uniqueness.",
+        "why": "Platypus and capybara are flagships for freshwater and wetland conservation. Platypus is threatened by drought, dams, and pollution; capybara populations are generally stable but depend on intact habitat. Learning about them builds appreciation for biodiversity and the need to protect rivers and marshes.",
+        "how": "Platypus: forages underwater, closing eyes and ears and using electroreception; diet of invertebrates; nests in burrows; female lays 1–3 eggs and nurses young after hatching. Capybara: grazes on grasses and aquatic plants; lives in groups; uses water for thermoregulation and escape; reproduces on land. Both are well adapted to aquatic or semi-aquatic life.",
+        "keyFacts": "Platypus: Britannica and San Diego Zoo (authoritative) provide biology; limited to Australia. Capybara: Smithsonian National Zoo and Rainforest Alliance; South America. Neither is a conventional mammal (platypus) or a conventional rodent (capybara’s size and ecology). Conservation: protect waterways and wetlands.",
+        "stepByStep": "1. Use Britannica or a zoo site for platypus and capybara. 2. List two things that make the platypus weird (e.g. eggs, bill, electroreception). 3. Why is the capybara called the largest rodent? What does it look like? 4. Name one threat to each (e.g. drought for platypus, habitat loss for capybara).",
+        "realWorldExamples": "San Diego Zoo and other accredited zoos display and interpret platypus (in Australia) and capybara. Britannica and Rainforest Alliance provide species summaries. Conservation groups work on river health (platypus) and wetland protection (capybara). Ecotourism (responsible) supports local conservation."
+      }
+    },
+    "explorer": {
+      "summary": "Monotremes (platypus) and caviomorph rodents (capybara): evolution, sensory biology, and conservation of unique mammals.",
+      "sections": {
+        "what": "Ornithorhynchus anatinus (Monotremata) is one of two extant monotreme genera; it retains ancestral traits (egg-laying, reptilian-style shoulder) alongside derived ones (electroreception, venom). Hydrochoerus hydrochaeris (Rodentia, Caviomorpha) is the largest rodent; semi-aquatic, social, and herbivorous. Platypus distribution is tied to permanent freshwater in eastern Australia; capybara to South American wetlands and grasslands. Both are evolutionarily and ecologically distinctive.",
+        "why": "Platypus is a symbol of Australian freshwater; threats include flow alteration, climate (drought), and pollution. Capybara is harvested in some regions (sustainable management possible) and is a flagship for wetlands. Conservation of both supports aquatic biodiversity. Sources: Britannica, zoo and conservation websites, peer-reviewed mammalogy.",
+        "how": "Platypus electroreception: bill has mechanoreceptors and electroreceptors; detects prey-generated electrical fields in turbid water. Venom: male spur delivers peptides; function may be intraspecific competition. Capybara: social structure (groups with dominant male), grazing ecology, and use of water for thermoregulation and predator avoidance. Reproduction: platypus lays eggs in burrow; capybara has precocial young.",
+        "keyFacts": "Britannica (platypus, capybara), San Diego Zoo (platypus), Rainforest Alliance (capybara). IUCN assesses platypus as near threatened; capybara as least concern. Research on monotreme biology and rodent ecology in mammalogy journals.",
+        "stepByStep": "(1) Use Britannica and zoo sites for biology. (2) Compare platypus to a “normal” mammal: what is the same? What is different (eggs, milk, electroreception)? (3) Relate capybara to other rodents: size, habitat, diet. (4) Identify one conservation action for each.",
+        "realWorldExamples": "San Diego Zoo and Australian institutions hold and study platypus. Smithsonian National Zoo and others hold capybara. Conservation NGOs focus on river and wetland protection. Research in Journal of Mammalogy and comparative biology journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Monotreme and caviomorph systematics, platypus electroreception and venom, capybara ecology, and conservation with citations.",
+      "sections": {
+        "what": "Monotremata (Prototheria) is the sister group to Theria (marsupials + placentals); platypus genome and physiology reflect this position. Electroreception: convergent with some fish; bill innervation and central processing are studied. Capybara (Caviomorpha, Caviidae) is the largest rodent; digestive and social ecology are well documented. Both are model species for comparative biology.",
+        "why": "Platypus conservation is linked to river flow, water quality, and climate adaptation; population monitoring and habitat protection are priorities. Capybara management (where harvested) requires sustainable quotas. Flagship status helps mobilize support for freshwater and wetland conservation. Sources: Britannica, IUCN, zoo and conservation literature.",
+        "how": "Electroreception: stimulus, transduction, and central representation. Venom: composition and function. Capybara: diet quality, group dynamics, and reproductive ecology. Conservation: environmental flow, riparian protection (platypus); sustainable use and habitat retention (capybara).",
+        "keyFacts": "Sources: Encyclopaedia Britannica (platypus, capybara), IUCN Red List, San Diego Zoo, Rainforest Alliance. Research on monotreme biology in comparative and genomics journals; capybara in mammalogy and wildlife management.",
+        "stepByStep": "Evidence-based sequence: (1) Consult Britannica and IUCN for biology and status. (2) For platypus: use monotreme and sensory biology literature. (3) For capybara: use rodent ecology and management. (4) For conservation: support wetland and river protection.",
+        "realWorldExamples": "Australian and U.S. zoos and research institutions; Rainforest Alliance and wetland conservation groups. Peer-reviewed work on platypus electroreception and capybara ecology in mammalogy and sensory biology journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are they?", "learner": "What are platypus and capybara?", "explorer": "What are they? (monotreme and rodent)", "deepDive": "What are they? (systematics)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do they matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they live?", "explorer": "How they work", "deepDive": "How they work (biology and ecology)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Platypus and capybara (video or zoo)", "layer": "child", "body": "Watch a video or see them at a zoo. What is weird about the platypus? (Bill, eggs!) What is big and friendly about the capybara? Both need water. We help them by keeping rivers and wetlands clean." },
+    { "type": "observation", "title": "Egg-laying mammal", "layer": "learner", "body": "Use Britannica or a zoo site. The platypus lays eggs but is a mammal. What makes it a mammal? (Fur, milk.) How is it different from other mammals? (Eggs, bill, electroreception.) Write three sentences." },
+    { "type": "observation", "title": "Compare platypus and capybara", "layer": "explorer", "body": "Use Britannica and zoo sources. Compare: Where does each live? What does each eat? How does each use water? Why is each “unique”? Write a short comparison. Name one threat to each." }
+  ],
+  "sources": [
+    { "title": "Platypus", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/platypus", "note": "Biology, electroreception, venom, monotreme." },
+    { "title": "Platypus", "institution": "San Diego Zoo Wildlife Alliance", "url": "https://animals.sandiegozoo.org/animals/platypus", "note": "Species account; authoritative zoo summary." },
+    { "title": "Capybara", "institution": "Rainforest Alliance", "url": "https://www.rainforest-alliance.org/species/capybara/", "note": "Capybara biology and habitat; conservation context." },
+    { "title": "Capybara", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/capybara", "note": "Overview of capybara biology and ecology." }
+  ],
+  "relatedCardIds": ["opossums", "marsupials", "sloths", "goats-sheep-cows", "plants-and-how-they-grow"],
+  "tags": ["animals", "platypus", "capybara", "monotreme", "rodent", "mammals", "biology", "unique", "wetlands"]
+}

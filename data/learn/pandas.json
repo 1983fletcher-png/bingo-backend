@@ -1,0 +1,71 @@
+{
+  "id": "pandas",
+  "title": "Giant Pandas & Red Pandas",
+  "summary": "Two very different “pandas”: the giant panda is a bamboo-eating bear from China; the red panda is a small, tree-dwelling cousin of raccoons — both need forests and our care.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Giant pandas are big black-and-white bears that eat bamboo. Red pandas are smaller, reddish, and live in trees. Both are called “panda” but they are not the same family.",
+      "sections": {
+        "what": "Giant pandas are large bears with black and white fur. They live in bamboo forests in China. They eat bamboo almost all day. Red pandas are much smaller and reddish-brown with a long tail. They live in trees in the mountains of Asia. They also eat bamboo. Both need forests to survive.",
+        "why": "Giant pandas were in danger; people are helping them so they don’t disappear. Red pandas are also in danger. When we protect their forests and support zoos and conservation, we help both kinds of pandas.",
+        "how": "Giant pandas have strong jaws and big molars to crush bamboo. They have a “thumb” (actually a wrist bone) to hold bamboo. Red pandas have a “false thumb” too and can climb very well. Both spend a lot of time eating because bamboo doesn’t give much energy. They are shy and like quiet, forested places.",
+        "keyFacts": "Giant panda = bear family. Red panda = its own family, more like raccoons. Both eat bamboo. Both need forests. Giant pandas live only in China. Red pandas live in the Himalayas and nearby. We can help by supporting conservation and not buying things that hurt their habitat."
+      }
+    },
+    "learner": {
+      "summary": "Giant pandas (bears) and red pandas (Ailuridae) share a name and a bamboo diet but are not closely related; both are forest-dependent and conservation priorities.",
+      "sections": {
+        "what": "The giant panda (Ailuropoda melanoleuca) is a bear (Ursidae) native to mountain bamboo forests in China. It is black and white, eats almost only bamboo, and has a modified wrist bone that works like a thumb for gripping stalks. The red panda (Ailurus fulgens) is much smaller (8–17 lb), reddish-brown with white face markings; it is the only living member of the family Ailuridae (related to raccoons and weasels). It also has a “false thumb” and eats mostly bamboo. Both are crepuscular or active at dawn and dusk; both need intact forest.",
+        "why": "Giant pandas were endangered; habitat protection and breeding programs have improved their status (now vulnerable). Red pandas are endangered: habitat loss and poaching threaten them. Understanding both helps us support conservation — protecting forests and supporting zoos and NGOs that work in range countries.",
+        "how": "Giant pandas spend many hours a day eating bamboo; they have a simple gut (unlike ruminants) so they process it inefficiently and need a lot of volume. They are mostly solitary. Red pandas are arboreal, with flexible ankles for climbing head-first down trees; they also eat bamboo (about 98% of diet) plus some fruit and insects. Both have low metabolic rates and are adapted to cool, high-elevation forests.",
+        "keyFacts": "Giant panda range: Sichuan, Shaanxi, Gansu (China). Red panda range: Himalayas (Nepal, India, Bhutan, China, Myanmar). Smithsonian National Zoo has held and bred both; giant pandas have been returned to China per agreements. Red pandas are not bears; the name “panda” was applied to both for different reasons. Conservation: protect habitat, reduce poaching, support breeding and reintroduction where appropriate.",
+        "stepByStep": "1. Use Smithsonian National Zoo to read about giant panda and red panda. 2. List three ways they are alike (e.g. bamboo, forest, “thumb”). 3. List three ways they are different (size, family, where they live). 4. Name one threat and one thing people do to help each species.",
+        "realWorldExamples": "Smithsonian National Zoo has giant pandas and red pandas and participates in conservation and breeding. IUCN and range-country agencies assess status. Conservation NGOs work on habitat protection and community programs. We support them by learning, visiting accredited zoos, and not buying products that destroy panda habitat."
+      }
+    },
+    "explorer": {
+      "summary": "Giant panda (Ursidae) vs red panda (Ailuridae): convergent evolution of bamboo diet and “thumb”; conservation status and habitat needs.",
+      "sections": {
+        "what": "Ailuropoda melanoleuca (Carnivora, Ursidae) is a bear that has shifted to herbivory; morphology includes robust molars for crushing bamboo and a radial sesamoid enlarged as a “thumb.” Ailurus fulgens (Carnivora, Ailuridae) is a small arboreal carnivoran with a similar radial sesamoid (“false thumb”) and bamboo-dominated diet — an example of convergent evolution. Giant pandas are endemic to central China; red pandas to Himalayan and Hengduan regions. Both depend on temperate montane forest and bamboo understory.",
+        "why": "Giant panda recovery (reclassification from Endangered to Vulnerable) is a conservation success linked to habitat protection and captive breeding. Red pandas remain Endangered; threats include deforestation, poaching, and climate change. Both are flagship species; conservation benefits other forest wildlife. Research is cited from Smithsonian, IUCN, and peer-reviewed mammalogy.",
+        "how": "Giant panda: foregut not specialized for fermentation; high intake and short retention of bamboo; seasonal movement to follow bamboo shoots. Red panda: similar dietary constraint; arboreal, crepuscular; flexible ankle (rotation) for descending trees. Reproduction: giant panda has narrow breeding window and altricial cubs; red panda has seasonal breeding and nest-bound young. Both have low reproductive rates, which makes population recovery slow.",
+        "keyFacts": "Smithsonian National Zoo provides species accounts for both. IUCN Red List gives status and threats. Convergent evolution of the “thumb” and bamboo diet is documented in comparative anatomy and phylogeny. Conservation relies on protected areas, corridors, and reducing human impact.",
+        "stepByStep": "(1) Use Smithsonian and IUCN to compare giant and red panda: family, range, diet, status. (2) Explain convergent evolution: why do both have a “thumb” and eat bamboo? (3) Pick one species and list one threat and one conservation action. (4) Relate to plants: both depend on bamboo and forest; habitat loss is the main threat.",
+        "realWorldExamples": "Smithsonian National Zoo and Conservation Biology Institute hold and study both species and support in-situ conservation. IUCN Red List and range-country agencies provide status assessments. Peer-reviewed work on panda ecology, evolution, and conservation appears in mammalogy and conservation journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Ailuropoda and Ailurus systematics, dietary and morphological convergence, and conservation biology with citations to Smithsonian and IUCN.",
+      "sections": {
+        "what": "Ailuropoda melanoleuca (Ursidae) is sister to other bears in molecular phylogenies; the lineage shifted to bamboo and evolved the radial sesamoid “thumb.” Ailurus fulgens (Ailuridae) is the sole living member of a clade with fossil relatives; its “false thumb” and bamboo diet evolved independently (convergence). Both show dental and gut morphology consistent with fibrous, low-quality diet; neither is a ruminant. Range and habitat use are documented by telemetry and field studies; genetics inform population structure and reintroduction.",
+        "why": "Giant panda downlisting (IUCN 2016) reflected habitat recovery and population increase but remains dependent on continued protection. Red panda is Endangered; populations are fragmented. Both are flagship and umbrella species; conservation secures habitat for sympatric biodiversity. Sources: Smithsonian National Zoo, IUCN, and peer-reviewed literature.",
+        "how": "Dietary ecology: bamboo has low protein and high fiber; both species select shoots and leaves and process large volumes. Morphology: radial sesamoid in both allows precise grip; giant panda has more robust dentition. Conservation: protected areas, habitat corridors, anti-poaching, community-based programs, and ex-situ breeding (giant panda reintroduction in China; red panda breeding in range countries and zoos).",
+        "keyFacts": "Sources: Smithsonian National Zoo (giant panda, red panda species pages), IUCN Red List. Phylogeny and convergent evolution: comparative anatomy and molecular systematics. Conservation: IUCN assessments and range-country action plans.",
+        "stepByStep": "Evidence-based sequence: (1) Consult Smithsonian and IUCN for biology and status. (2) For evolution: use phylogeny and comparative anatomy literature. (3) For conservation: use IUCN and NGO action plans. (4) For diet and habitat: use ecology and wildlife literature.",
+        "realWorldExamples": "Smithsonian National Zoo holds giant pandas (per agreement with China) and red pandas; both have species accounts and conservation links. IUCN Red List and specialist groups provide assessments. Research on panda ecology, evolution, and conservation appears in Conservation Biology, Journal of Mammalogy, and related journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are pandas?", "learner": "What are giant and red pandas?", "explorer": "What are they? (two species)", "deepDive": "What are they? (systematics and convergence)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do pandas matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they live?", "explorer": "How they work", "deepDive": "How they work (diet and morphology)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Giant vs red panda (video or zoo)", "layer": "child", "body": "Watch a short video or see them at a zoo. Which one is bigger? Which one is black and white? Which one is red? Both eat bamboo. We help them by taking care of forests and supporting zoos that protect them." },
+    { "type": "observation", "title": "Compare the two pandas", "layer": "learner", "body": "Use Smithsonian National Zoo. Make a table: giant panda vs red panda. Include: size, color, family, where they live, what they eat. Write one sentence: Why are they both called “panda” even though they are different?" },
+    { "type": "observation", "title": "Convergent evolution — the “thumb”", "layer": "explorer", "body": "Both have a “thumb” (or false thumb) for holding bamboo, but they are not closely related. Look up “convergent evolution.” Write a short paragraph: What problem do both animals have (eating bamboo)? How did they “solve” it in a similar way?" }
+  ],
+  "sources": [
+    { "title": "Giant panda", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/animals/giant-panda", "note": "Species account: biology, diet, conservation; authoritative zoo summary." },
+    { "title": "Red panda", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/animals/red-panda", "note": "Species account: biology, diet, conservation; Ailuridae, not a bear." },
+    { "title": "Giant panda", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/giant-panda", "note": "Overview of giant panda biology and conservation." },
+    { "title": "Red panda", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/red-panda", "note": "Overview of red panda biology and classification." }
+  ],
+  "relatedCardIds": ["raccoons", "sloths", "plants-and-how-they-grow", "cats-of-the-world"],
+  "tags": ["animals", "pandas", "giant-panda", "red-panda", "mammals", "biology", "conservation", "bamboo"]
+}

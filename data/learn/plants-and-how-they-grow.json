@@ -1,0 +1,171 @@
+{
+  "id": "plants-and-how-they-grow",
+  "title": "Plants & How They Grow",
+  "summary": "Plants use light, water, and air to grow and make their own food — and you can grow them too.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Plants need sun and water to grow big and green.",
+      "sections": {
+        "what": "Plants are living things that grow from the ground. They have leaves, stems, and sometimes flowers.",
+        "why": "Plants give us food, pretty flowers, and clean air. They are important for people and animals.",
+        "how": "Seeds go in the soil. With sun and water, a little plant comes out. Then it gets bigger.",
+        "keyFacts": "Plants need: light (sun), water, and air. Leaves are green. Roots are under the soil."
+      }
+    },
+    "learner": {
+      "summary": "Plants use sunlight, water, and air to make their own food and grow step by step.",
+      "sections": {
+        "what": "Plants are living organisms that make their own food using sunlight, water, and carbon dioxide from the air. They have roots (under the soil), stems, leaves, and often flowers or fruits.",
+        "why": "Plants produce oxygen we breathe, provide food for people and animals, and help keep the environment healthy. Gardening and growing plants can also be calming and rewarding.",
+        "how": "A seed in soil gets water and warmth. It sprouts (germinates). The root goes down; the shoot goes up. Leaves open and use sunlight to make food (photosynthesis). The plant grows and may flower and make new seeds.",
+        "keyFacts": "Plants need light, water, air (carbon dioxide), and nutrients from soil. Different plants need different amounts. The USDA Plant Hardiness Zone Map shows which plants grow best in your area.",
+        "stepByStep": "1. Choose a seed or small plant. 2. Put it in soil in a pot or garden. 3. Water it when the soil feels dry. 4. Put it where it gets enough light. 5. Watch it grow over days and weeks.",
+        "realWorldExamples": "Vegetables in a garden, herbs on a windowsill, and trees in a park all grow this way. Houseplants need a sunny spot and regular watering."
+      }
+    },
+    "explorer": {
+      "summary": "Photosynthesis, roots, and life cycles explain how plants grow and adapt to their environment.",
+      "sections": {
+        "what": "Plants are autotrophs: they use energy from sunlight to convert carbon dioxide and water into sugars (food) and release oxygen. This process is photosynthesis. Plant structure includes roots (absorption, anchorage), stems (support, transport), leaves (photosynthesis), and reproductive parts (flowers, seeds).",
+        "why": "Plants form the base of most food chains, produce oxygen, regulate water and soil health, and support ecosystems. Understanding how they grow helps us garden, farm, and care for the environment responsibly.",
+        "how": "Germination: a seed absorbs water and breaks dormancy; the embryo grows into a seedling. Roots take up water and minerals; leaves capture light and perform photosynthesis. Stems distribute water and sugars. Growth is regulated by light, temperature, water, and nutrients. Many plants follow seasonal cycles (growth, flowering, seed set).",
+        "keyFacts": "Photosynthesis occurs mainly in leaves, in structures called chloroplasts. Plants need nitrogen, phosphorus, potassium, and other minerals from soil. Hardiness zones (e.g. USDA map) indicate minimum winter temperatures and help choose suitable species. Overwatering or too little light are common reasons houseplants fail.",
+        "stepByStep": "To grow a plant from seed: (1) Select seeds suited to your climate and season. (2) Use well-draining soil and a container or bed. (3) Sow at the depth recommended on the packet; keep soil moist. (4) Provide adequate light—a south-facing window or grow light for indoors. (5) Thin seedlings if crowded; water when the top inch of soil is dry. (6) As the plant grows, support or stake if needed; harvest or enjoy flowers when ready.",
+        "realWorldExamples": "Community gardens grow food in cities. Farmers use crop rotation and soil care so plants get what they need. Native plant gardens support local wildlife and need less water when chosen for the region."
+      }
+    },
+    "deepDive": {
+      "summary": "Botanical and ecological mechanisms of plant growth: photosynthesis, nutrient uptake, development, and environmental adaptation, with citations.",
+      "sections": {
+        "what": "Plants are multicellular eukaryotes in the kingdom Plantae. They are characterized by photosynthetic nutrition (chloroplasts with chlorophyll), cell walls of cellulose, and life cycles that often alternate between sporophyte and gametophyte phases. Growth occurs at meristems (root and shoot tips) and, in some plants, in vascular cambium.",
+        "why": "Plants are primary producers in most ecosystems; they fix carbon and provide energy and structure for food webs. Agricultural and horticultural science applies botany to food security, landscaping, and conservation. Understanding plant biology supports evidence-based gardening and environmental stewardship.",
+        "how": "Photosynthesis: in the presence of light, chlorophyll in chloroplasts drives the conversion of CO₂ and H₂O to glucose and O₂ (e.g. 6 CO₂ + 6 H₂O + light → C₆H₁₂O₆ + 6 O₂). Water and dissolved minerals are absorbed by roots and moved upward via xylem; sugars are distributed via phloem. Growth is controlled by hormones (e.g. auxins, gibberellins) and environmental cues (photoperiod, temperature). Seed germination requires water, oxygen, and suitable temperature; some seeds need light or stratification. USDA Plant Hardiness Zones are based on average annual minimum winter temperature and guide species selection for a region.",
+        "keyFacts": "Sources: USDA ARS Plant Hardiness Zone Map; university extension publications on plant growth and gardening; botanical gardens and peer-reviewed botany texts. Overwatering can cause root rot (anaerobic conditions); insufficient light leads to etiolation. Soil pH and nutrient availability affect nutrient uptake; extension services provide region-specific guidance.",
+        "stepByStep": "Evidence-based sequence for growing plants from seed: (1) Match species to hardiness zone and season (extension resources). (2) Use sterile or well-draining media to reduce disease. (3) Sow at correct depth; maintain consistent moisture without waterlogging. (4) Provide light quality and duration appropriate to species (many need 6+ hours direct or equivalent). (5) Fertilize only as needed, based on soil tests or established recommendations. (6) Monitor for pests and disease; use integrated approaches per extension guidelines.",
+        "realWorldExamples": "Extension programs (e.g. land-grant universities) publish research-based guides for home and commercial growers. Botanical gardens document plant diversity and conservation. Sustainable gardening practices (mulching, composting, native plants) are supported by ecology and horticulture literature."
+      }
+    }
+  },
+  "sections": [
+    {
+      "key": "what",
+      "title": "What this is",
+      "titleByLayer": {
+        "child": "What is a plant?",
+        "learner": "What are plants?",
+        "explorer": "What are plants?",
+        "deepDive": "What are plants? (botanical context)"
+      }
+    },
+    {
+      "key": "why",
+      "title": "Why it matters",
+      "titleByLayer": {
+        "child": "Why do we care about plants?",
+        "learner": "Why plants matter",
+        "explorer": "Why plants matter",
+        "deepDive": "Why plants matter (ecological and practical)"
+      }
+    },
+    {
+      "key": "how",
+      "title": "How it works",
+      "titleByLayer": {
+        "child": "How do plants grow?",
+        "learner": "How plants grow",
+        "explorer": "How plants grow",
+        "deepDive": "How plants grow (mechanisms)"
+      }
+    },
+    {
+      "key": "keyFacts",
+      "title": "Key facts",
+      "titleByLayer": {
+        "child": "Things to remember",
+        "learner": "Key facts",
+        "explorer": "Key facts",
+        "deepDive": "Key facts (with sources)"
+      }
+    },
+    {
+      "key": "stepByStep",
+      "title": "Step-by-step",
+      "titleByLayer": {
+        "learner": "Steps to grow a plant",
+        "explorer": "Steps to grow a plant",
+        "deepDive": "Evidence-based steps"
+      }
+    },
+    {
+      "key": "realWorldExamples",
+      "title": "Real-world examples",
+      "titleByLayer": {
+        "learner": "Examples",
+        "explorer": "Real-world examples",
+        "deepDive": "Real-world examples and extension"
+      }
+    }
+  ],
+  "stemAnchors": ["science", "realWorldApplication", "systemsThinking"],
+  "activities": [
+    {
+      "type": "observation",
+      "title": "Watch a plant grow",
+      "layer": "child",
+      "body": "Put a seed in a little pot with soil. Water it a little. Put it by a window. Look at it every few days. Draw or take a picture when something changes. You will see the plant come up and get bigger."
+    },
+    {
+      "type": "observation",
+      "title": "Watch a plant grow",
+      "layer": "learner",
+      "body": "Plant a seed (e.g. bean or sunflower) in a pot with drainage. Keep the soil moist but not soggy. Place it where it gets sunlight. Check every 2–3 days: when does the seed sprout? When do the first leaves appear? Write or draw what you see each time. Over 2–4 weeks you’ll see roots, stem, and leaves."
+    },
+    {
+      "type": "experiment",
+      "title": "Seed in a jar",
+      "layer": "learner",
+      "body": "Dampen a paper towel and put it inside a clear jar. Place a few bean seeds between the towel and the glass so you can see them. Keep the towel moist. Watch the seed swell, then split. You’ll see the root grow down and the shoot grow up. No soil needed for this observation—you’re seeing germination up close."
+    },
+    {
+      "type": "experiment",
+      "title": "Seed in a jar (explorer)",
+      "layer": "explorer",
+      "body": "Use a clear jar with a damp paper towel and bean seeds pressed against the glass. Compare seeds in a dark cupboard vs. in the light. Which germinate? Do roots always go down and shoots up? You’re observing gravitropism and phototropism. Keep a simple log of what you see each day."
+    }
+  ],
+  "sources": [
+    {
+      "title": "USDA Plant Hardiness Zone Map",
+      "institution": "U.S. Department of Agriculture, Agricultural Research Service",
+      "url": "https://planthardiness.ars.usda.gov/",
+      "year": "2023",
+      "note": "Official map of hardiness zones by region; used to select plants suited to local climate."
+    },
+    {
+      "title": "Gardening and plant growth basics",
+      "institution": "University of Minnesota Extension",
+      "url": "https://extension.umn.edu/yard-and-garden",
+      "note": "Research-based gardening and plant care information for the public."
+    },
+    {
+      "title": "Plant science and education",
+      "institution": "Missouri Botanical Garden",
+      "url": "https://www.missouribotanicalgarden.org/",
+      "note": "Botanical garden resources on plant biology and conservation."
+    },
+    {
+      "title": "Photosynthesis and plant biology",
+      "institution": "Encyclopaedia Britannica",
+      "url": "https://www.britannica.com/science/photosynthesis",
+      "note": "Authoritative overview of photosynthesis and related plant processes."
+    },
+    {
+      "title": "Extension Master Gardener and horticulture outreach",
+      "institution": "Cooperative Extension System (land-grant universities)",
+      "url": "https://extension.org/",
+      "note": "Nationwide network of university-based extension programs; evidence-based gardening and crop information."
+    }
+  ],
+  "relatedCardIds": ["earth-and-environment", "cooking-basics-and-food-safety", "crafts-and-gentle-stem", "cats-of-the-world", "dogs-and-their-relatives", "sloths", "raccoons", "opossums", "pandas", "goats-sheep-cows", "birds", "whales", "sharks", "ocean-invertebrates", "reptiles", "amphibians", "spiders-and-relatives", "insects", "platypus-capybara", "marsupials"],
+  "tags": ["plants", "botany", "gardening", "science", "sustainability", "food-plants"]
+}

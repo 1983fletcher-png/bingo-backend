@@ -1,0 +1,71 @@
+{
+  "id": "insects",
+  "title": "Beetles, Flies, Mosquitoes & Insect Relatives",
+  "summary": "Six legs and endless variety: insects include beetles, flies, mosquitoes, bees, and butterflies — pollinators, decomposers, and some pests we learn to live with.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Insects have six legs and often wings. Beetles are hard and shiny; flies and mosquitoes have two wings; bees and butterflies help flowers make seeds. Some bugs bite, but many are our friends.",
+      "sections": {
+        "what": "Insects are small animals with six legs, and usually two or four wings. They have three body parts: head, thorax, abdomen. Beetles have hard wing covers; flies and mosquitoes have one pair of wings; bees and butterflies have two pairs. There are millions of kinds — more than any other animal group. They live almost everywhere.",
+        "why": "Many insects pollinate flowers — that means they help plants make fruits and seeds. We need them for food (like apples and almonds). Some insects break down dead plants and animals. Others eat pests. A few (like some mosquitoes) can spread disease, so we protect ourselves but don’t have to hate all insects.",
+        "how": "Insects hatch from eggs; many go through stages (e.g. caterpillar to butterfly). They eat plants, other insects, or blood (like mosquitoes). Bees collect nectar and pollen; beetles chew leaves or wood; flies eat almost anything. They see and smell well. Many use camouflage or bright colors to stay safe.",
+        "keyFacts": "Insects have six legs (spiders have eight). Bees and butterflies pollinate — we need them. Mosquitoes can carry diseases; we use repellent and remove standing water. Don’t kill insects you don’t know; many are helpful. Gardens with flowers and water help good insects."
+      }
+    },
+    "learner": {
+      "summary": "Insects (Hexapoda) are the most diverse animal group: beetles, flies, mosquitoes, bees, butterflies, and more. They pollinate crops, decompose matter, and some vector disease; understanding them supports coexistence.",
+      "sections": {
+        "what": "Insects (class Insecta, within Hexapoda) have six legs, three body regions (head, thorax, abdomen), and typically one or two pairs of wings. Orders include Coleoptera (beetles — the largest order), Diptera (flies, mosquitoes — one pair of wings), Hymenoptera (bees, wasps, ants), Lepidoptera (butterflies, moths), and many others. Beetles have hardened forewings (elytra); flies have halteres (balance organs); bees have hairy bodies for collecting pollen. Nearly 90% of flowering plants depend on animal pollinators, most of them insects; one in three bites of food we eat relies on pollination.",
+        "why": "Pollinators (bees, butterflies, flies, beetles) are essential for crops and wild plants; USDA and Smithsonian support pollinator health and habitat. Decomposers (e.g. many beetles, flies) recycle nutrients. Some insects are pests or vectors (e.g. mosquitoes and disease); we manage risk with repellent, habitat reduction (standing water), and integrated approaches rather than blanket pesticide use.",
+        "how": "Metamorphosis: incomplete (egg, nymph, adult) or complete (egg, larva, pupa, adult). Feeding: chewing, sucking, or piercing mouthparts; diet varies (nectar, pollen, blood, detritus, other insects). Pollination: insects move pollen as they feed; honeybees and others add billions of dollars to U.S. agriculture. Mosquitoes: females need blood to lay eggs; they can transmit pathogens; reducing standing water and using repellent reduce bites.",
+        "keyFacts": "USDA (usda.gov, pollinators) and Smithsonian Pollinator Garden (NMNH) provide education. Beetles were pollinating gymnosperms over 100 million years ago (Smithsonian amber research). One in three bites of food depends on pollinators. Support pollinators: plant native flowers, avoid pesticides when possible, provide water. For mosquitoes: remove standing water, use EPA-approved repellent.",
+        "stepByStep": "1. Use USDA Pollinators or Smithsonian Pollinator Garden. 2. Name three insects that pollinate (e.g. bee, butterfly, beetle). 3. Why is standing water a problem? (mosquitoes lay eggs there.) 4. List one way to help good insects (e.g. plant flowers, don’t spray when bees are active).",
+        "realWorldExamples": "Smithsonian Pollinator Garden and USDA pollinator programs promote habitat. Beekeeping and native bee conservation support agriculture. Mosquito control (remove water, repellent) reduces disease risk without harming all insects. Citizen science (e.g. iNaturalist) helps document insect diversity."
+      }
+    },
+    "explorer": {
+      "summary": "Insect diversity, pollination ecology, metamorphosis, and human relevance; pollinators and vectors; USDA and Smithsonian sources.",
+      "sections": {
+        "what": "Insecta (Hexapoda) is the most species-rich class of animals; Coleoptera, Diptera, Hymenoptera, and Lepidoptera are among the largest orders. Morphology: exoskeleton, six legs, often wings; mouthparts and life history vary. Pollination: insects transfer pollen while foraging; many plants rely on specific or generalist pollinators. USDA estimates pollination by honeybees and others adds billions to U.S. crop value. Vectors: some mosquitoes, flies, and other insects transmit pathogens; integrated vector management and personal protection reduce risk.",
+        "why": "Ecosystem services: pollination, decomposition, biological control. Agricultural and natural systems depend on insect diversity. Pests and vectors require evidence-based management that minimizes harm to non-target species. Conservation: pollinator habitat, reduced pesticide use, and public education. Sources: USDA, Smithsonian, Britannica.",
+        "how": "Complete metamorphosis: larva (feeding), pupa (reorganization), adult (dispersal, reproduction). Pollination: nectar and pollen reward; flower shape and insect morphology coevolve. Vector ecology: mosquito life cycle (egg, larva, pupa, adult); blood-feeding in females for egg development. Management: habitat manipulation, biological control, targeted chemical use when justified.",
+        "keyFacts": "USDA Pollinators (usda.gov), Smithsonian Pollinator Garden, Britannica (insect). Smithsonian research: beetles and pollination in amber. Evidence-based pest and vector management: follow extension and public health guidance.",
+        "stepByStep": "(1) Use USDA and Smithsonian for pollination and diversity. (2) Compare one pollinator (e.g. bee) and one vector (e.g. mosquito): life cycle, diet, human impact. (3) Read about metamorphosis: why might it be an advantage? (4) Relate to plants: why do we need insects for food?",
+        "realWorldExamples": "USDA ARS bee labs and pollinator programs; Smithsonian Pollinator Garden and Pollination Investigation. Extension and public health agencies provide pest and vector guidance. Research on pollination and insect ecology in ecology and entomology journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Insect systematics, pollination and vector ecology, and integrated management with citations to USDA, Smithsonian, and research literature.",
+      "sections": {
+        "what": "Hexapoda includes Insecta and related groups; insect phylogeny and classification are active. Pollination: mutualism between plants and insects; diversity of pollinators and floral traits. Smithsonian research (e.g. amber fossils) documents ancient beetle–plant pollination. Vector biology: mosquito and other dipteran vectors; pathogen transmission and control. Life history: metamorphosis and diapause allow exploitation of seasonal resources.",
+        "why": "Pollinators are critical for food security and biodiversity; decline (habitat loss, pesticides, disease) threatens ecosystem and agricultural function. Vector-borne disease requires evidence-based control. Conservation and management balance services (pollination, decomposition) with risks (pests, vectors). Sources: USDA, Smithsonian, peer-reviewed entomology and ecology.",
+        "how": "Pollination ecology: foraging behavior, pollen transfer efficiency, and plant reproductive success. Vector ecology: host preference, transmission dynamics, and intervention. Integrated pest management: monitoring, thresholds, cultural and biological control, chemical use when necessary. Research on pollinator health and vector control in specialized journals.",
+        "keyFacts": "Sources: USDA (pollinators, insects), Smithsonian Pollinator Garden and research, Encyclopaedia Britannica (insect). Pollination and vector research in American Journal of Botany, Journal of Medical Entomology, and ecology journals.",
+        "stepByStep": "Evidence-based sequence: (1) Consult USDA and Smithsonian for pollination and diversity. (2) For vectors: use public health and medical entomology resources. (3) For management: use extension and IPM guidelines. (4) For conservation: support pollinator habitat and reduced pesticide impact.",
+        "realWorldExamples": "USDA pollinator and bee research; Smithsonian Pollinator Garden and amber research. Extension and CDC/state health for vector guidance. Peer-reviewed pollination and vector ecology in entomology and ecology journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are insects?", "learner": "What are insects?", "explorer": "What are insects? (Hexapoda)", "deepDive": "What are insects? (systematics)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do they matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (pollination and vectors)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they live?", "explorer": "How they work", "deepDive": "How they work (ecology and management)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Insect in the yard or park", "layer": "child", "body": "With a grown-up, look for insects: a beetle under a rock, a bee on a flower, or a butterfly. Count the legs (six!). Don’t touch bees or wasps. Look at how they move and what they eat. Leave them where they are." },
+    { "type": "observation", "title": "Pollinator watch", "layer": "learner", "body": "Sit by a flower (garden or wild) for a few minutes. What insects visit? Bee, butterfly, fly, beetle? Use USDA or Smithsonian to find: What do they get from the flower? What does the flower get? Write two or three sentences." },
+    { "type": "observation", "title": "Beetle, fly, and bee", "layer": "explorer", "body": "Use USDA or Britannica. Compare a beetle, a fly (or mosquito), and a bee: How many wings? What do they eat? Are they pollinators? Pests? Both? Write a short comparison. Why might we want to protect some and manage others?" }
+  ],
+  "sources": [
+    { "title": "Pollinators", "institution": "U.S. Department of Agriculture", "url": "https://www.usda.gov/farming-and-ranching/plants-and-crops/plant-breeding/pollinators", "note": "Pollinator importance and USDA programs." },
+    { "title": "Insects and Pollinators", "institution": "USDA National Agricultural Library", "url": "https://nal.usda.gov/animal-health-and-welfare/insects-and-pollinators", "note": "Pollinator health and resources." },
+    { "title": "Pollinator Garden", "institution": "Smithsonian Gardens / National Museum of Natural History", "url": "https://gardens.si.edu/gardens/pollinator-garden/", "note": "Pollination Investigation and pollinator habitat." },
+    { "title": "Insect", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/insect", "note": "Overview of insect biology and classification." }
+  ],
+  "relatedCardIds": ["spiders-and-relatives", "plants-and-how-they-grow", "birds", "crafts-and-gentle-stem"],
+  "tags": ["animals", "insects", "beetles", "bees", "butterflies", "mosquitoes", "pollinators", "biology", "invertebrates"]
+}

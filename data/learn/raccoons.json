@@ -1,0 +1,71 @@
+{
+  "id": "raccoons",
+  "title": "Raccoons",
+  "summary": "The masked neighbor: raccoons are adaptable, smart mammals that live beside us in woods, suburbs, and cities — and thrive by using their hands.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Raccoons are furry animals with a black mask and a striped tail. They are good at using their paws and can live near people.",
+      "sections": {
+        "what": "Raccoons are medium-sized animals with gray-brown fur, a black mask around their eyes, and a bushy tail with rings. They have clever front paws that can open things and feel around. They live in North America and in some other places where people brought them.",
+        "why": "Raccoons are part of nature. They eat lots of different foods and help clean up. They can live in the forest or in the city. When we don’t leave food out, we can live safely next to them.",
+        "how": "Raccoons are active at night. They climb trees and swim. They use their paws to find food — in the wild they grab fish or bugs, and near people they might try to open trash cans. They are omnivores: they eat plants and animals.",
+        "keyFacts": "Raccoons have a mask and a ringed tail. They like to be near water. They can live in many places. They are wild animals; we should watch them from a distance and never feed them. If you see one in the day, tell a grown-up — it might need help."
+      }
+    },
+    "learner": {
+      "summary": "Raccoons (Procyon lotor) are highly adaptable omnivores with sensitive paws, native to North America and introduced elsewhere; they coexist with people in suburbs and cities.",
+      "sections": {
+        "what": "The raccoon (Procyon lotor) is a mammal in the family Procyonidae (with coatis and kinkajous). It has gray to reddish-brown fur, a distinctive black facial mask, and a bushy tail with dark and light rings. Front paws have four times as many touch receptors as the back paws — similar to our hands — so they are excellent at manipulating objects. They are omnivores: they eat fruit, nuts, insects, fish, eggs, and sometimes human garbage. Native to North and Central America; introduced in Europe and Asia.",
+        "why": "Raccoons show how wildlife can adapt to human landscapes. They help disperse seeds and clean up carrion. Conflict happens when they raid trash, enter attics, or carry disease (e.g. rabies in some regions). Understanding them helps us coexist: secure trash, don’t feed them, and give them space.",
+        "how": "Raccoons are mostly nocturnal. They climb and swim well. They often “wash” or dunk food in water in captivity (the name “lotor” means “washer”); in the wild they forage along streams and in forests. They are solitary or in small family groups. They den in tree hollows, burrows, or human structures. In cold areas they may sleep more in winter but don’t truly hibernate.",
+        "keyFacts": "Weight about 4–23 lb (1.8–10.4 kg); males larger than females. Range from Canada through the U.S. to Central America. USDA Forest Service and state wildlife agencies provide fact sheets. They can carry rabies; never approach or touch. Securing garbage and closing entry points to buildings reduces conflict.",
+        "stepByStep": "1. Use a zoo or USDA/state wildlife site to read about raccoon diet and habitat. 2. List three things that make them good at living near people. 3. List three ways to live alongside them safely (e.g. secure trash, don’t feed). 4. If you see tracks or signs, try to identify them using a trusted guide.",
+        "realWorldExamples": "Wildlife rehabilitators care for orphaned or injured raccoons. Cities and counties offer tips on raccoon-proofing. USDA Forest Service and state agencies publish species profiles. Never feed or try to pet raccoons; enjoy them from a distance."
+      }
+    },
+    "explorer": {
+      "summary": "Procyon lotor ecology, behavior, and human–wildlife coexistence; sensory and manipulative abilities; range and introductions.",
+      "sections": {
+        "what": "Procyon lotor (Carnivora, Procyonidae) is a medium-sized omnivore with a flexible diet and broad habitat tolerance. Native range: North America from Canada to Panama; introduced in Europe (e.g. Germany, Japan). Physical traits: digitigrade front feet with sensitive tactile pads, dense fur, and a facial mask that may aid communication. Diet includes invertebrates, vertebrates, plant material, and anthropogenic food. They are generalists and thrive in fragmented and urban habitats where food and den sites exist.",
+        "why": "Raccoons are a model for urban and suburban wildlife ecology. They affect seed dispersal, prey populations, and scavenging. Human–raccoon conflict (property damage, disease risk) drives management; education on coexistence (secure trash, exclusion) is preferred over lethal control where possible. Research is cited from USDA Forest Service (FEIS), universities, and wildlife agencies.",
+        "how": "Foraging: tactile exploration and manipulation of objects; water often used in captivity for handling food. Nocturnal activity reduces encounters with diurnal predators and people. Denning in cavities (trees, buildings) provides shelter and rearing space. Reproduction: one litter per year in northern areas; two in southern. Dispersal of juveniles increases spread into new areas. Rabies and distemper can affect populations; vaccination and monitoring in some regions.",
+        "keyFacts": "USDA Forest Service FEIS and state wildlife agencies provide species reviews and management guidance. Britannica and university extension offer overviews. Coexistence focuses on reducing food attractants and den access.",
+        "stepByStep": "(1) Consult USDA FEIS or state wildlife agency for range, diet, and biology. (2) Compare raccoon to another Procyonid (e.g. coati) or urban carnivore: what traits allow success near people? (3) List evidence-based coexistence measures. (4) Relate to ecosystems: role as omnivore and seed disperser.",
+        "realWorldExamples": "USDA Forest Service Fire Effects Information System (FEIS) has a species review. State fish and wildlife departments publish fact sheets. Wildlife rehabilitation and conflict-resolution programs operate in many regions. Research on urban raccoon behavior appears in wildlife and ecology journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Procyon lotor systematics, sensory ecology, and human–wildlife conflict mitigation with citations to USDA and research literature.",
+      "sections": {
+        "what": "Procyon lotor (Mammalia, Carnivora, Procyonidae) is the type species of Procyon. Taxonomy is stable; subspecies have been described across the range. Morphology: plantigrade to digitigrade forefeet with high tactile sensitivity; visual and olfactory acuity support nocturnal foraging. Gut morphology is consistent with omnivory. Introduced populations (e.g. Europe) show rapid adaptation to novel habitats; genetics and ecology are studied for invasion biology and management.",
+        "why": "Raccoons are economically and ecologically significant: seed dispersal, scavenging, and as a reservoir for zoonotic disease (rabies, raccoon roundworm). Conflict mitigation relies on exclusion, attractant reduction, and public education. USDA and state agencies provide management guidelines; peer-reviewed work covers behavior and urban ecology.",
+        "how": "Sensory ecology: forepaw mechanoreceptors allow object manipulation and exploration; captive “washing” may be a fixed action pattern or water-enhanced tactile sampling. Population ecology: density depends on food and den availability; urban populations can be dense. Disease ecology: rabies variants, Baylisascaris procyonis; public health messaging emphasizes no feeding and no contact.",
+        "keyFacts": "Sources: USDA Forest Service FEIS (Procyon lotor species review), state wildlife agency publications, Britannica. Management: non-lethal exclusion and attractant removal are first-line recommendations.",
+        "stepByStep": "Evidence-based sequence: (1) Use USDA FEIS and state agency resources for biology and range. (2) For coexistence: apply exclusion and attractant-reduction guidelines. (3) For disease: follow public health and wildlife agency guidance (no contact, vaccinate pets). (4) For research: consult mammalogy and wildlife management literature.",
+        "realWorldExamples": "USDA FEIS (research.fs.usda.gov/feis) provides a detailed species review. State wildlife agencies publish coexistence and management guidance. Peer-reviewed raccoon ecology and behavior appear in Journal of Mammalogy and wildlife journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What is a raccoon?", "learner": "What are raccoons?", "explorer": "What is Procyon lotor?", "deepDive": "What is Procyon lotor? (systematics and ecology)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do raccoons matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conflict)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do raccoons live?", "learner": "How do they live?", "explorer": "How they work", "deepDive": "How they work (behavior and ecology)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more and coexist", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Raccoon signs (with a grown-up)", "layer": "child", "body": "With a grown-up, look for raccoon signs: tracks (five toes, look like little hands), or scat. Never touch. You might see them at dusk from a window. They are wild — we watch from far away." },
+    { "type": "observation", "title": "Coexistence checklist", "layer": "learner", "body": "Make a list: How can we live safely with raccoons? Use a wildlife agency or zoo site. Include: secure trash, don’t feed, close off attics and crawl spaces. Share your list with your family." },
+    { "type": "observation", "title": "Compare raccoon to another omnivore", "layer": "explorer", "body": "Pick another mammal that eats both plants and animals (e.g. black bear, opossum). Use USDA or a museum site. Compare: diet, where they live, how they get food. What is similar? What is different?" }
+  ],
+  "sources": [
+    { "title": "Procyon lotor — Northern raccoon", "institution": "U.S. Forest Service, Fire Effects Information System (FEIS)", "url": "https://www.fs.usda.gov/database/feis/animals/mammal/prlo/all.html", "note": "Species review: biology, range, habitat, management; USDA research." },
+    { "title": "Procyon lotor (northern raccoon) species review", "institution": "USDA Forest Service Research and Development", "url": "https://research.fs.usda.gov/feis/species-reviews/prlo", "note": "FEIS species review; ecology and fire effects." },
+    { "title": "Raccoon", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/raccoon", "note": "Overview of raccoon biology and behavior." },
+    { "title": "Critter Catalog — Procyon lotor", "institution": "University of Michigan, BioKIDS", "url": "https://biokids.umich.edu/critters/Procyon_lotor/", "note": "Educational species profile for K–12; peer-reviewed content." }
+  ],
+  "relatedCardIds": ["opossums", "cats-of-the-world", "dogs-and-their-relatives", "plants-and-how-they-grow"],
+  "tags": ["animals", "raccoons", "mammals", "biology", "omnivore", "urban-wildlife", "coexistence"]
+}

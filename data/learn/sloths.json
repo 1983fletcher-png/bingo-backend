@@ -1,0 +1,71 @@
+{
+  "id": "sloths",
+  "title": "Sloths",
+  "summary": "Life in slow motion: sloths are rainforest mammals that move slowly, hang upside down, and host a whole world in their fur.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Sloths are slow, furry animals that live in trees. They hang upside down and eat leaves. They are very calm.",
+      "sections": {
+        "what": "Sloths are animals that live in the rainforest. They have long arms and fuzzy fur. They hang from branches and move very slowly. They are not lazy — being slow helps them save energy and hide from animals that might eat them.",
+        "why": "Sloths are important in the forest. They eat leaves and move around in the trees. Other tiny animals sometimes live in their fur. When we protect the rainforest, we protect sloths and everything that lives there.",
+        "how": "Sloths have strong claws to hold onto branches. They eat leaves and move slowly so they don’t use too much energy. They sleep a lot. Some sloths have two toes on their front feet; some have three. Scientists study them to learn how they live.",
+        "keyFacts": "Sloths live in Central and South America. There are two-toed and three-toed sloths. They are slow on purpose. They need the rainforest to survive. Many sloths are in danger because the forest is being cut down."
+      }
+    },
+    "learner": {
+      "summary": "Sloths are tree-dwelling mammals with the slowest metabolism of any mammal; they host algae and moths in their fur and depend on tropical forest.",
+      "sections": {
+        "what": "Sloths are medium-sized mammals that live in the rainforests of Central and South America. There are two main groups: two-toed sloths (Choloepus) and three-toed sloths (Bradypus). They spend almost all their time in trees, hanging upside down, and eat mainly leaves. They move slowly — their metabolism is the lowest of any mammal — and their fur can host algae (giving a green tint) and specialized moths. They are not lazy; slow movement saves energy and helps avoid detection by predators.",
+        "why": "Sloths are part of the rainforest food web: they eat leaves and are prey for harpy eagles and big cats. Their fur is a mini-ecosystem (moths, algae). When sloths descend to the ground to defecate, moths that live in their fur lay eggs in the dung; the cycle connects trees, sloths, and soil. Protecting sloths means protecting intact forest. Several species are threatened by habitat loss.",
+        "how": "Sloths have long limbs and curved claws for gripping branches. They digest leaves slowly in a large, multi-chambered stomach; food can take weeks to pass through. Body temperature is variable (they are not strict endotherms like us). They sleep a lot and move slowly to conserve energy. Two-toed sloths are slightly more active and omnivorous; three-toed sloths are more strictly leaf-eaters.",
+        "keyFacts": "Three-toed sloths have the slowest metabolism; they can survive on roughly 100 calories a day. Smithsonian researchers found that moths in sloth fur depend on sloth droppings to reproduce. Pygmy sloth (Bradypus pygmaeus) is critically endangered and lives only on one island. Smithsonian National Zoo has cared for two-toed sloths and has had one of the oldest recorded sloths in human care.",
+        "stepByStep": "1. Choose a type: two-toed or three-toed sloth. 2. Use a zoo or Smithsonian site to find where it lives and what it eats. 3. List one way it is adapted to life in the trees and one way it is adapted to eating leaves. 4. Name one threat (e.g. forest loss) and one way people are helping.",
+        "realWorldExamples": "Smithsonian National Zoo and Smithsonian Tropical Research Institute (STRI) study and display sloths. STRI’s “Life in Slow Motion” and similar resources explain sloth biology. Conservation groups work to protect rainforest and rescue sloths. You can learn from zoo cams and trusted documentaries; never support touching or holding wild sloths in tourist setups that harm them."
+      }
+    },
+    "explorer": {
+      "summary": "Sloth biology: metabolism, digestion, symbiosis (moths, algae), and conservation; two-toed vs three-toed lineages and the pygmy sloth.",
+      "sections": {
+        "what": "Sloths (Folivora) are neotropical arboreal mammals in the order Pilosa (with anteaters). Two genera: Choloepus (two-toed sloths, 2 species) and Bradypus (three-toed sloths, 4 species including the pygmy sloth). They are obligate folivores or near-folivores with extremely low metabolic rates (40–45% of expected for body mass in three-toed sloths). Body temperature is variable (roughly 86–93°F). They have large, slow-digesting stomachs; passage time can exceed a month. Fur hosts algae (camouflage, possibly nutrition) and sloth-specific moths that complete their life cycle in sloth dung.",
+        "why": "Sloths are indicators of intact tropical forest; they require continuous canopy and specific tree species. Their removal or decline affects nutrient cycling and the moth–algae–sloth system. Pygmy sloth (B. pygmaeus) is critically endangered (single island). Understanding sloth biology informs conservation and captive care; Smithsonian has published on pygmy sloth biology and conservation.",
+        "how": "Locomotion: powerful limbs and claws allow suspension and slow climbing; they rarely descend. Digestion: bacterial fermentation in the stomach breaks down tough leaves; slow passage maximizes extraction. Symbiosis: moths lay eggs in sloth feces; emerging moths colonize sloth fur; algae may use nitrogen from moth waste. Predation: harpy eagles and large cats take sloths; slowness and camouflage reduce detection.",
+        "keyFacts": "Smithsonian Tropical Research Institute documents sloth adaptations and moth–sloth relationship. Smithsonian repository holds peer-reviewed work on pygmy sloth biology and conservation. National Zoo two-toed sloth page gives care and longevity data. IUCN Red List assesses threat status for all species.",
+        "stepByStep": "(1) Use Smithsonian National Zoo and STRI (striresearch.si.edu) resources to compare two-toed and three-toed sloths: range, diet, behavior. (2) Read about the moth–sloth–algae system: why do moths live in the fur? What happens when the sloth defecates? (3) Look up pygmy sloth: where does it live? Why is it critically endangered? (4) Relate to plants: sloths depend on trees; forest loss is the main threat.",
+        "realWorldExamples": "Smithsonian National Zoo keeps two-toed sloths and provides species accounts. Smithsonian Tropical Research Institute (Panama) studies sloth ecology and “life in slow motion.” Pygmy sloth research is published in Journal of Mammalogy and Smithsonian repository. Conservation focuses on habitat protection and reducing deforestation."
+      }
+    },
+    "deepDive": {
+      "summary": "Sloth physiology, symbiosis, and conservation with citations to Smithsonian, STRI, and peer-reviewed mammalogy.",
+      "sections": {
+        "what": "Folivora (Pilosa, Xenarthra) comprises Choloepus (two-toed) and Bradypus (three-toed) sloths. They exhibit extreme metabolic rate reduction (three-toed: ~40–45% of mass-predicted BMR), variable body temperature, and slow gut passage (days to weeks). Stomach is multi-chambered with fermenting microbiota. Fur supports phoretic moths (e.g. Cryptoses) and algae; moth life cycle is tied to sloth defecation (dung → larvae → adults → fur). Pygmy sloth (B. pygmaeus) is endemic to Isla Escudo de Veraguas; taxonomy and conservation are documented in Smithsonian and peer-reviewed literature.",
+        "why": "Sloths are model organisms for low-energy lifestyle and arboreal folivory. Their conservation is tied to forest integrity; deforestation and fragmentation are primary threats. Captive care and rehabilitation depend on understanding diet, temperature tolerance, and behavior. Sources: Smithsonian National Zoo, Smithsonian Tropical Research Institute, and Journal of Mammalogy (e.g. pygmy sloth biology and conservation).",
+        "how": "Physiology: low metabolic rate reduces energy need but limits thermoregulation; behavioral thermoregulation (basking, microhabitat choice) is important. Digestion: long retention time and fermentation allow extraction of energy from leaves. Symbiosis: moths transfer nutrients to fur; algae may provide camouflage or supplementary nitrogen. Conservation: protect habitat, maintain canopy connectivity, reduce illegal trade and inappropriate handling.",
+        "keyFacts": "Smithsonian repository: 'Biology and conservation of the pygmy sloth, Bradypus pygmaeus' (Journal of Mammalogy). National Zoo: two-toed sloth species account and longevity. STRI: rainforest adaptation and 'life in slow motion' education. IUCN Red List for all sloth species status.",
+        "stepByStep": "Evidence-based sequence: (1) Consult Smithsonian Zoo and STRI for biology and behavior. (2) For symbiosis: use STRI and peer-reviewed ecology. (3) For pygmy sloth: use Smithsonian repository and IUCN. (4) For conservation: identify threats (habitat loss, climate) and evidence-based actions (protected areas, research, outreach).",
+        "realWorldExamples": "Smithsonian National Museum of Natural History and STRI publish sloth research. National Zoo maintains two-toed sloths and public education. Pygmy sloth conservation involves in-situ protection and research (Smithsonian, NGOs). Peer-reviewed sloth biology appears in Journal of Mammalogy, Biotropica, and similar journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What is a sloth?", "learner": "What are sloths?", "explorer": "What are sloths?", "deepDive": "What are sloths? (taxonomy and physiology)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do sloths matter?", "learner": "Why do sloths matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do sloths live?", "learner": "How do sloths live?", "explorer": "How they work", "deepDive": "How they work (physiology and symbiosis)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more about sloths", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Watch a sloth (video or zoo)", "layer": "child", "body": "Watch a short video or a sloth at a zoo. See how slowly it moves. Does it hang upside down? What color is its fur? Sloths live in the rainforest; we can help them by taking care of the Earth and the forests." },
+    { "type": "observation", "title": "Two-toed vs three-toed", "layer": "learner", "body": "Use the Smithsonian National Zoo or STRI website. Find the two-toed sloth and the three-toed sloth. List: How many toes on the front feet? Where does each live? What does each eat? Which one has the slowest metabolism? Write a few sentences comparing them." },
+    { "type": "observation", "title": "Sloth, moths, and algae", "layer": "explorer", "body": "Read about the sloth–moth–algae system (Smithsonian STRI 'Life in Slow Motion' or similar). Draw or write: Where do the moths live? What happens when the sloth goes to the ground to defecate? Why might algae grow in the fur? Summarize in a short paragraph." }
+  ],
+  "sources": [
+    { "title": "Two-toed sloth", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/animals/two-toed-sloth", "note": "Species account: biology, care, longevity; authoritative zoo summary." },
+    { "title": "Life in Slow Motion — Rainforest adaptations", "institution": "Smithsonian Tropical Research Institute", "url": "https://striresearch.si.edu/rainforest/how_animals_adapt/life-in-slow-motion/", "note": "Sloth adaptations, metabolism, moth–sloth relationship; STRI education." },
+    { "title": "Biology and conservation of the pygmy sloth, Bradypus pygmaeus", "institution": "Smithsonian Research Online / Journal of Mammalogy", "url": "https://repository.si.edu/handle/10088/26591", "note": "Peer-reviewed research on pygmy sloth; taxonomy and conservation." },
+    { "title": "Sloth (two-toed and three-toed)", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/sloth", "note": "Overview of sloth biology and classification." }
+  ],
+  "relatedCardIds": ["cats-of-the-world", "dogs-and-their-relatives", "pandas", "plants-and-how-they-grow", "animals-of-the-world"],
+  "tags": ["animals", "sloths", "mammals", "biology", "conservation", "rainforest", "tropical"]
+}

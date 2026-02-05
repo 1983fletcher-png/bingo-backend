@@ -1,0 +1,170 @@
+{
+  "id": "crafts-and-gentle-stem",
+  "title": "Crafts & Gentle STEM",
+  "summary": "Simple, fun activities you can do at home with everyday stuff — and learn real science while you create.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Making things with your hands is fun. You can mix, build, and watch what happens.",
+      "sections": {
+        "what": "Crafts are things you make. When we do crafts that use science, we see how stuff works — like colors mixing, or things that fizz and bubble.",
+        "why": "Making things is fun. It helps your hands and your brain work together. You can do it at home with things you already have.",
+        "how": "You get some safe stuff (like paper, water, baking soda, food coloring). You follow simple steps. You watch what happens. That is science.",
+        "keyFacts": "You need: safe stuff from home, a grown-up to help sometimes, and curiosity. It is OK to try and see what happens."
+      }
+    },
+    "learner": {
+      "summary": "Crafts and simple experiments use everyday materials to teach real science — chemistry, physics, and engineering — at home.",
+      "sections": {
+        "what": "Crafts & Gentle STEM are hands-on activities that use common household materials (baking soda, vinegar, paper, water, food coloring) to explore real science. You observe, predict, and see cause and effect. It’s learning by doing.",
+        "why": "Hands-on activities help you remember ideas better than just reading. They build curiosity, problem-solving, and safe experimentation. Many scientists and engineers started with simple at-home projects. Plus it’s fun.",
+        "how": "Choose a simple activity (e.g. vinegar and baking soda, paper airplanes, color mixing). Gather materials. Follow steps safely. Observe what happens. Ask: What changed? Why? That’s the scientific process in miniature.",
+        "keyFacts": "Baking soda and vinegar make carbon dioxide gas (that’s the fizz). Paper airplanes fly because of lift and thrust. Mixing colors of light is different from mixing paint. Always have a grown-up for anything that could splash or get hot.",
+        "stepByStep": "1. Pick an activity from a trusted source. 2. List what you need and get it. 3. Do the activity in a safe place (tray, sink, or table you can wipe). 4. Watch and describe what happens. 5. Clean up. You can try again and change one thing to see what happens next.",
+        "realWorldExamples": "Kitchen chemistry (baking soda and vinegar), paper airplane challenges, making slime or oobleck, and building with straws or paper are all used in classrooms and at home. Museums and science centers offer similar activities; we bring that spirit to things you can do with stuff you have."
+      }
+    },
+    "explorer": {
+      "summary": "At-home crafts and gentle experiments connect to chemistry, physics, and engineering; they teach observation, variables, and evidence.",
+      "sections": {
+        "what": "Crafts & Gentle STEM are inquiry-based activities using low-cost, household materials to illustrate core concepts: chemical reactions (acids and bases, gases), forces and motion (paper airplanes, catapults), and structure (building, balance). The focus is on observation, prediction, and simple cause-and-effect reasoning.",
+        "why": "Research in science education shows that hands-on, inquiry-based learning improves retention and motivation. At-home activities lower barriers (no lab required) and let families and learners set the pace. Linking craft to real science terms (reaction, force, variable) builds vocabulary and connects play to formal STEM.",
+        "how": "Activities follow a loose scientific method: question, materials, procedure, observation, conclusion. Variables (e.g. amount of vinegar, wing shape) can be changed one at a time to see the effect. Safety rules (goggles if needed, ventilation, adult supervision for anything hazardous) apply.",
+        "keyFacts": "Vinegar (acetic acid) + baking soda (sodium bicarbonate) → carbon dioxide + water + sodium acetate; the gas causes bubbles. Paper airplane flight depends on lift, drag, and thrust; design changes affect stability and distance. Color mixing with light (additive) differs from mixing pigments (subtractive). Sources: NSF, MIT, and science museums publish vetted activities.",
+        "stepByStep": "(1) Choose an activity from a trusted source (e.g. NSF-supported or museum site). (2) Read through and list materials and safety notes. (3) Set up a workspace; protect surfaces. (4) Do the activity and record what you see. (5) Change one variable and repeat if possible. (6) Summarize: What did you notice? What might explain it?",
+        "realWorldExamples": "Exploratorium and Science Buddies offer at-home activities with clear procedures. MIT BLOSSOMS and NSF classroom resources link K–12 activities to standards. Engineering design (e.g. “build a boat that holds pennies”) uses the same cycle: design, build, test, improve."
+      }
+    },
+    "deepDive": {
+      "summary": "Evidence-based rationale for hands-on STEM; chemical and physical principles behind common at-home activities; citations to NSF, MIT, and museum education.",
+      "sections": {
+        "what": "Crafts & Gentle STEM refers to structured, hands-on activities that use household or low-cost materials to demonstrate concepts from chemistry (e.g. acid–base reactions, states of matter), physics (forces, motion, energy), and engineering (design, testing, iteration). Content is aligned with educational research on inquiry-based learning and developmentally appropriate practice.",
+        "why": "Meta-analyses and NSF-funded studies indicate that inquiry-based and hands-on science instruction can improve conceptual understanding and attitudes toward STEM when well structured. At-home activities extend access when formal labs are unavailable. Citing institutional sources (NSF, MIT, Exploratorium) ensures activities are vetted and age-appropriate.",
+        "how": "Acid–base reaction: CH₃COOH + NaHCO₃ → CO₂(g) + H₂O + NaCH₃COO; the observable fizz is CO₂ release. Paper airplane flight can be discussed in terms of Bernoulli’s principle and force balance; design variables (wing area, nose weight) affect performance. Color: additive (light) vs subtractive (pigment) mixing are distinct. Activities should specify supervision and hazards (e.g. eye protection, ventilation).",
+        "keyFacts": "NSF and university-based programs (e.g. MIT BLOSSOMS) provide free, vetted STEM lessons. Science museums (Exploratorium, Smithsonian) publish activity guides with clear procedures. Science Buddies cites primary literature where applicable. We summarize and attribute; we do not copy. All activities should be traceable to an allowed source type per Learn & Grow vision.",
+        "stepByStep": "Evidence-based sequence: (1) Select activity from an allowed source; check age range and safety. (2) Prepare materials and workspace; use safety equipment if specified. (3) Follow procedure; record observations. (4) Vary one factor at a time if exploring variables. (5) Discuss results and link to scientific terms (reaction, force, etc.) as appropriate for layer. (6) Clean up and store or dispose of materials safely.",
+        "realWorldExamples": "NSF Classroom Resources and NSF-supported projects (e.g. Let’s Do Chemistry) provide K–12 activities with everyday materials. MIT BLOSSOMS offers video lessons and supporting materials. Exploratorium’s Science Snacks are designed for educators and families. These institutions are cited in the sources list; we link so learners can go deeper."
+      }
+    }
+  },
+  "sections": [
+    {
+      "key": "what",
+      "title": "What this is",
+      "titleByLayer": {
+        "child": "What are crafts that use science?",
+        "learner": "What are Crafts & Gentle STEM?",
+        "explorer": "What are Crafts & Gentle STEM?",
+        "deepDive": "What are Crafts & Gentle STEM? (evidence-based definition)"
+      }
+    },
+    {
+      "key": "why",
+      "title": "Why it matters",
+      "titleByLayer": {
+        "child": "Why is making things fun?",
+        "learner": "Why do crafts and gentle STEM matter?",
+        "explorer": "Why do they matter?",
+        "deepDive": "Why they matter (research and access)"
+      }
+    },
+    {
+      "key": "how",
+      "title": "How it works",
+      "titleByLayer": {
+        "child": "How do we do it?",
+        "learner": "How do crafts and gentle STEM work?",
+        "explorer": "How do they work?",
+        "deepDive": "How they work (principles and safety)"
+      }
+    },
+    {
+      "key": "keyFacts",
+      "title": "Key facts",
+      "titleByLayer": {
+        "child": "Things to remember",
+        "learner": "Key facts",
+        "explorer": "Key facts",
+        "deepDive": "Key facts (with sources)"
+      }
+    },
+    {
+      "key": "stepByStep",
+      "title": "Step-by-step",
+      "titleByLayer": {
+        "learner": "Steps to try an activity",
+        "explorer": "Steps to try an activity",
+        "deepDive": "Evidence-based steps"
+      }
+    },
+    {
+      "key": "realWorldExamples",
+      "title": "Real-world examples",
+      "titleByLayer": {
+        "learner": "Examples",
+        "explorer": "Real-world examples",
+        "deepDive": "Real-world examples and institutions"
+      }
+    }
+  ],
+  "stemAnchors": ["science", "engineering", "realWorldApplication"],
+  "activities": [
+    {
+      "type": "experiment",
+      "title": "Vinegar and baking soda",
+      "layer": "child",
+      "body": "Put a little baking soda in a cup. Have a grown-up add a little vinegar. Watch what happens. It fizzes. That is a kind of science — something new is made when you mix them."
+    },
+    {
+      "type": "experiment",
+      "title": "Vinegar and baking soda",
+      "layer": "learner",
+      "body": "Put 1–2 tablespoons of baking soda in a bowl or tray. Slowly add vinegar and watch it fizz. The fizz is carbon dioxide gas. Try adding more vinegar or more baking soda (one change at a time) and see what happens. Do it in a place that’s easy to wipe; use a tray to catch spills."
+    },
+    {
+      "type": "craft",
+      "title": "Paper airplane challenge",
+      "layer": "learner",
+      "body": "Fold a paper airplane using a design from a book or the internet. Throw it gently. Does it go far? Does it turn? Try a different shape (longer wings, different nose). Change one thing at a time and see how it flies. You’re testing how shape affects motion — that’s engineering and physics."
+    },
+    {
+      "type": "experiment",
+      "title": "Vinegar and baking soda (explorer)",
+      "layer": "explorer",
+      "body": "Design a small experiment: same amount of vinegar, different amounts of baking soda (e.g. 1 tsp, 2 tsp, 3 tsp). Or same amounts but different temperatures of vinegar. Predict what will happen, then observe. The reaction is acid + base → salt + water + carbon dioxide. Record your results and compare."
+    }
+  ],
+  "sources": [
+    {
+      "title": "MIT BLOSSOMS — Math & Science Video Lessons",
+      "institution": "Massachusetts Institute of Technology",
+      "url": "https://blossoms.mit.edu/",
+      "note": "Free video lessons and resources for K–12 STEM; includes activities and teacher guides. Link to more advanced STEM content."
+    },
+    {
+      "title": "Classroom Resources",
+      "institution": "National Science Foundation",
+      "url": "https://www.nsf.gov/news/classroom/",
+      "note": "NSF-supported classroom and at-home STEM resources; vetted activities and links to funded projects."
+    },
+    {
+      "title": "Science Snacks",
+      "institution": "Exploratorium",
+      "url": "https://www.exploratorium.edu/snacks",
+      "note": "Hands-on activities using everyday materials; designed for educators and families. Science-driven, cited."
+    },
+    {
+      "title": "Science Buddies — STEM Activities for Kids",
+      "institution": "Science Buddies",
+      "url": "https://www.sciencebuddies.org/stem-activities",
+      "note": "Project ideas and procedures for at-home and classroom; links to primary literature where applicable."
+    },
+    {
+      "title": "Let's Do Chemistry — NSF-supported at-home chemistry",
+      "institution": "National Science Foundation (supported project)",
+      "url": "https://www.nsf.gov/science-matters/5-nsf-supported-stem-education-resources-are-perfect-virtual",
+      "note": "NSF highlight of STEM resources including chemistry kits and activities for K–12 with everyday materials."
+    }
+  ],
+  "relatedCardIds": ["plants-and-how-they-grow", "animals-of-the-world", "physics-in-everyday-life", "cats-of-the-world", "dogs-and-their-relatives", "sloths", "raccoons", "opossums", "pandas", "birds", "whales", "sharks", "ocean-invertebrates", "reptiles", "amphibians", "spiders-and-relatives", "insects", "platypus-capybara", "marsupials"],
+  "tags": ["crafts", "science", "STEM", "at-home", "experiments", "chemistry", "physics", "engineering"]
+}

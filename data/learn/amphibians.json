@@ -1,0 +1,70 @@
+{
+  "id": "amphibians",
+  "title": "Frogs, Toads & Salamanders",
+  "summary": "The slimy and the moist: amphibians live double lives in water and on land — and they are among the most threatened animals on Earth.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Frogs, toads, and salamanders have moist skin and often live near water. They start life in the water and many grow up to live on land too. They eat bugs and are fun to find.",
+      "sections": {
+        "what": "Amphibians are animals that can live in water and on land. Frogs and toads have big legs for jumping; salamanders look like lizards but have smooth, moist skin. They breathe through their skin and (when adults) often have lungs. Many start as tadpoles or larvae in the water, then change (metamorphose) into adults.",
+        "why": "Amphibians eat lots of insects and are food for other animals. They tell us if the environment is healthy — if the water or air is dirty, they get sick. Many are in big trouble; we can help by keeping water clean and not moving them from place to place.",
+        "how": "Frogs and toads catch bugs with a sticky tongue. Salamanders use their mouths. Their skin must stay moist so they often live near water or in damp places. They lay eggs in water or in wet spots. Some frogs are very colorful; that can mean “I’m poisonous — don’t eat me.”",
+        "keyFacts": "Frogs, toads, and salamanders are amphibians. They need clean water and damp places. Never touch them with dry hands — lotion or soap can hurt their skin. Many species are disappearing; scientists are trying to save them. Don’t take them from the wild."
+      }
+    },
+    "learner": {
+      "summary": "Amphibians (frogs, toads, salamanders, caecilians) have permeable skin and often a two-phase life (aquatic larval, terrestrial adult); over 40% of species are threatened.",
+      "sections": {
+        "what": "Amphibians (class Amphibia) include frogs and toads (Anura), salamanders (Urodela), and caecilians (limbless, tropical). They have moist, permeable skin used for respiration and water balance; many have a larval stage in water (tadpole) and metamorphose to a terrestrial or semi-aquatic adult. Frogs and toads have powerful hind legs for jumping; toads typically have drier, bumpier skin. Salamanders have tails and often look lizard-like but have smooth skin. More than 40% of amphibian species are threatened; chytrid fungus and habitat loss have caused declines and extinctions.",
+        "why": "Amphibians control insect populations and are prey for many animals; they are bioindicators — sensitive to pollution and climate. Smithsonian and partners work on conservation: breeding endangered species (e.g. Panamanian golden frog), monitoring wild populations, and fighting chytrid disease. Public support for clean water and habitat protection helps amphibians.",
+        "how": "Skin: permeable; many absorb water and exchange gases through skin. Metamorphosis: larvae (gills, tail) transform to adults (lungs, limbs). Diet: mostly invertebrates; larvae often herbivorous or detritivorous. Reproduction: most lay eggs in water or moist sites; some carry eggs or young. Chytrid fungus (Batrachochytrium) attacks skin and has caused mass die-offs; Smithsonian helped identify it.",
+        "keyFacts": "Smithsonian National Zoo runs amphibian conservation (Panama, Appalachia) and Saving Amphibians programs. Over 40% of species at risk; 122 species extinct since 1980. Never release pets or move wild amphibians; it spreads disease. Wet, clean hands only if handling for education with guidance.",
+        "stepByStep": "1. Use Smithsonian Saving Amphibians or a zoo site. 2. Pick one amphibian (frog, toad, or salamander). Where does it live? What does it eat? 3. Name one threat (e.g. chytrid, habitat loss). 4. List one way to help (e.g. protect wetlands, don’t use pesticides, don’t move animals).",
+        "realWorldExamples": "Smithsonian breeds Panamanian golden frogs (extinct in the wild) and monitors Appalachian salamanders. Zoos and NGOs run assurance colonies and reintroductions. Citizen science (e.g. FrogWatch) tracks populations. Protecting ponds and reducing pollution helps local amphibians."
+      }
+    },
+    "explorer": {
+      "summary": "Amphibian diversity, life history, chytrid crisis, and conservation; Smithsonian and global efforts.",
+      "sections": {
+        "what": "Amphibia comprises Anura (frogs, toads), Caudata (salamanders), and Gymnophiona (caecilians). Permeable skin and (in many) biphasic life history (aquatic larva, terrestrial adult) make them vulnerable to desiccation, pollution, and disease. Declines are global; chytridiomycosis (chytrid fungus), habitat loss, and climate change are major drivers. Appalachia has the world’s highest salamander diversity; Panama and other tropical regions have high frog diversity and have suffered severe chytrid impacts.",
+        "why": "Amphibians are indicator species and provide ecosystem services (predation on invertebrates, nutrient cycling). Conservation: captive breeding, reintroduction, disease research, and habitat protection. Smithsonian co-founded a Panama conservation center and runs Appalachian monitoring; eDNA and tracking help find and monitor species.",
+        "how": "Physiology: cutaneous respiration; water and ion balance via skin and kidney. Life history: metamorphosis regulated by hormones; some species skip free-living larval stage (direct development). Disease: chytrid disrupts skin function; spread is human-assisted (trade, movement). Conservation: biosecurity, captive assurance colonies, reintroduction into protected habitat.",
+        "keyFacts": "Smithsonian Saving Amphibians (nationalzoo.si.edu/conservation/saving-amphibians), Center for Species Survival (amphibians). Britannica covers amphibian biology. Research on chytrid and conservation in peer-reviewed herpetology and conservation journals.",
+        "stepByStep": "(1) Use Smithsonian for conservation and species. (2) Compare a frog and a salamander: life cycle, habitat, skin. (3) Read about chytrid: what is it? How do we slow its spread? (4) Relate to habitat: why clean water and wetlands matter.",
+        "realWorldExamples": "Smithsonian National Zoo and Conservation Biology Institute run amphibian programs in Panama and Appalachia. IUCN Amphibian Specialist Group coordinates assessments. Research on chytrid, reintroduction, and ecology in Conservation Biology and herpetology journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Amphibian systematics, physiology, chytridiomycosis, and conservation with citations to Smithsonian and research literature.",
+      "sections": {
+        "what": "Amphibia (Lissamphibia) includes three orders; phylogeny and taxonomy are active areas. Skin structure (mucous glands, granular glands) supports respiration and defense; permeability makes amphibians sensitive to contaminants and pathogens. Chytridiomycosis (Batrachochytrium dendrobatidis, B. salamandrivorans) causes mortality; Smithsonian scientists contributed to its identification and to conservation responses.",
+        "why": "Amphibian declines are a conservation crisis; captive breeding and reintroduction are last resort for some species. Habitat protection, disease biosecurity, and climate adaptation are priorities. Sources: Smithsonian, IUCN, peer-reviewed herpetology and disease ecology.",
+        "how": "Disease ecology: chytrid life cycle, transmission, and host susceptibility. Conservation: assurance colonies, reintroduction protocols, and wild monitoring. Physiology: osmoregulation and cutaneous gas exchange. Research on mitigation (e.g. probiotics, antifungal) is ongoing.",
+        "keyFacts": "Sources: Smithsonian Saving Amphibians, Center for Species Survival (amphibians), Encyclopaedia Britannica. Chytrid and conservation research in Diseases of Aquatic Organisms, Conservation Biology, and herpetology journals.",
+        "stepByStep": "Evidence-based sequence: (1) Consult Smithsonian and IUCN for status and programs. (2) For disease: use pathology and conservation literature. (3) For action: support habitat protection, biosecurity, and zoo conservation. (4) Never move amphibians or release pets.",
+        "realWorldExamples": "Smithsonian co-founded Panama Amphibian Rescue and Conservation; runs breeding and reintroduction. IUCN Amphibian Specialist Group and regional partners coordinate action. Peer-reviewed amphibian conservation and disease ecology in multiple journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are amphibians?", "learner": "What are amphibians?", "explorer": "What are Amphibia?", "deepDive": "What are Amphibia? (systematics and physiology)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do they matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they live?", "explorer": "How they work", "deepDive": "How they work (physiology and disease)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Frog or salamander (with care)", "layer": "child", "body": "With a grown-up, look for frogs or salamanders near a pond or in a damp place. Look but don’t touch — their skin is sensitive. If you must touch (for a school project with a teacher), use wet hands only, no soap. Then leave them where you found them." },
+    { "type": "observation", "title": "Tadpole to frog", "layer": "learner", "body": "Use Smithsonian or a zoo site. Read about metamorphosis: how does a tadpole become a frog? What changes (gills, legs, tail)? Draw or write the stages. Why do amphibians need clean water at each stage?" },
+    { "type": "observation", "title": "One amphibian in trouble", "layer": "explorer", "body": "Pick one threatened amphibian (e.g. Panamanian golden frog, hellbender). Use Smithsonian Saving Amphibians or IUCN. What made it threatened? What is one thing people are doing to save it? Write a short report." }
+  ],
+  "sources": [
+    { "title": "Saving Amphibians", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/conservation/saving-amphibians", "note": "Amphibian conservation, Panama and Appalachia, chytrid." },
+    { "title": "Amphibians — Center for Species Survival", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/center-for-species-survival/amphibians", "note": "Conservation and breeding programs." },
+    { "title": "Amphibian", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/amphibian", "note": "Overview of amphibian biology and classification." }
+  ],
+  "relatedCardIds": ["reptiles", "opossums", "birds", "plants-and-how-they-grow"],
+  "tags": ["animals", "amphibians", "frogs", "toads", "salamanders", "biology", "conservation", "wetlands"]
+}

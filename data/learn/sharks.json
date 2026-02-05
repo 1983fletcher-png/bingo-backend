@@ -1,0 +1,71 @@
+{
+  "id": "sharks",
+  "title": "Sharks",
+  "summary": "More than 500 species, from hand-sized to bus-length: sharks are ancient predators that keep ocean ecosystems in balance — and they need our protection, not our fear.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Sharks are fish that live in the ocean. They have been around for a very long time. Most are not dangerous to people. They help keep the sea healthy.",
+      "sections": {
+        "what": "Sharks are fish with a skeleton made of cartilage (not bone). They have lots of teeth that can grow back. There are big sharks like the whale shark (eats tiny plankton) and smaller ones. They come in many colors and shapes. They have been in the ocean for millions of years.",
+        "why": "Sharks are important in the ocean. They eat sick or weak animals and help keep fish populations healthy. Many sharks are in trouble because people catch too many or hurt their home. When we protect sharks, we protect the sea. They are not as dangerous as some people think.",
+        "how": "Sharks smell and sense electricity from other animals — that helps them find food. They swim with their tail and fins. Some sharks filter tiny food from the water; others hunt fish or squid. They don’t chew — they bite and swallow. Most sharks never bother people.",
+        "keyFacts": "There are over 500 kinds of sharks. Half are smaller than about 3 feet. Sharks were the first vertebrate predators. Many are threatened by overfishing and finning. We can help by not buying shark products and supporting ocean protection. Science tells us the truth — most sharks are not a danger to us."
+      }
+    },
+    "learner": {
+      "summary": "Sharks (elasmobranchs) are cartilaginous fish with more than 500 species; they are top or mid-level predators and face overfishing and habitat loss. Science over myth.",
+      "sections": {
+        "what": "Sharks are fish in the class Chondrichthyes (cartilaginous fish); they have a skeleton of cartilage, multiple gill slits, and skin covered in dermal denticles (tiny tooth-like scales). There are more than 500 species, from the dwarf lanternshark (hand-sized) to the whale shark (over 39 ft). They range from filter-feeders (whale shark, basking shark) to apex predators (great white, tiger). They have been in the oceans for hundreds of millions of years and were among the first vertebrate predators.",
+        "why": "Sharks help regulate prey populations and remove sick or weak individuals; as top or mesopredators they shape marine food webs. Many species are threatened by overfishing (including for fins), bycatch, and habitat degradation. Fear and myth drive persecution; in reality, shark bites on humans are rare. Conservation (fisheries management, fin trade regulation, protected areas) helps sharks and ecosystems.",
+        "how": "Sharks detect prey using smell, lateral line (water movement), and electroreception (ampullae of Lorenzini — sense electrical fields). They swim with a caudal fin and use pectoral fins for lift. Filter-feeders take in water and strain plankton; predatory sharks bite and often swallow whole or in large pieces. Teeth are replaced throughout life. Reproduction varies: some lay eggs (oviparous), some give live birth (viviparous). Many species are slow-growing and late to reproduce, so populations recover slowly.",
+        "keyFacts": "Smithsonian Ocean and NOAA provide species information. An estimated 100 million sharks are killed by fisheries annually; finning and bycatch are major threats. Sharks are in every ocean habitat — deep sea, reef, open ocean, even under Arctic ice. Science over myth: risk to humans is low; sharks are far more at risk from us.",
+        "stepByStep": "1. Use Smithsonian Ocean or NOAA to pick one shark (e.g. whale shark, great white, hammerhead). 2. What does it eat? Where does it live? 3. Is it threatened? Why? 4. List one way to help sharks (e.g. sustainable seafood, no shark products, support marine parks).",
+        "realWorldExamples": "Smithsonian Ocean Portal and NOAA Fisheries provide education and species info. Marine sanctuaries and shark fishing regulations protect populations. Research on shark ecology and conservation appears in marine biology journals. Responsible ecotourism (e.g. diving with sharks in managed sites) can support local conservation."
+      }
+    },
+    "explorer": {
+      "summary": "Shark diversity, anatomy, ecology, and conservation; elasmobranch biology and the gap between perception and evidence.",
+      "sections": {
+        "what": "Sharks (Selachimorpha or within Elasmobranchii) are cartilaginous fish with 5–7 gill slits, heterocercal tail, and replaceable teeth. Diversity: filter-feeders (whale, basking), large predators (great white, tiger, hammerhead), and many small and mesopredatory species. They occupy all ocean habitats. Sensory systems: olfaction, lateral line, ampullae of Lorenzini (electroreception); vision is well developed. Life history: slow growth, late maturity, few young — populations are vulnerable to overexploitation.",
+        "why": "Sharks are key predators; their removal can cause trophic cascades (e.g. mesopredator release, prey boom). Overfishing and finning have driven declines; some species are critically endangered. Public perception (fear) often outweighs actual risk; education and evidence-based policy support conservation. IUCN and NOAA assess status; fisheries management and trade regulation are tools.",
+        "how": "Feeding: filter-feeding via gill rakers (whale, basking); raptorial feeding with cutting or crushing teeth (others). Movement: body and tail propulsion; some species ram-ventilate (must keep moving to breathe). Reproduction: oviparity (egg cases), ovoviviparity (eggs retained), or viviparity (placental-like); parental care is absent. Threats: targeted fishing, bycatch, habitat loss, and climate. Conservation: quotas, fin regulations, MPAs, and bycatch reduction.",
+        "keyFacts": "Smithsonian Ocean (ocean.si.edu) and NOAA (fisheries.noaa.gov) provide species and conservation info. IUCN Red List assesses many species. Evidence: unprovoked bites are rare; most species are not dangerous to humans. Conservation relies on science-based management and reducing demand for shark products.",
+        "stepByStep": "(1) Use Smithsonian Ocean and NOAA for diversity and status. (2) Compare one filter-feeding and one predatory shark: diet, habitat, threats. (3) Read about one conservation measure (e.g. fin trade, MPA). (4) Relate to ecosystems: role as predator and why overfishing matters.",
+        "realWorldExamples": "Smithsonian Ocean Portal and NOAA National Marine Sanctuaries offer education. IUCN Shark Specialist Group and regional fisheries bodies assess and manage. Research on shark ecology and conservation in marine biology and conservation journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Elasmobranch systematics, sensory and feeding ecology, life history, and conservation with citations to Smithsonian, NOAA, and research literature.",
+      "sections": {
+        "what": "Sharks (Elasmobranchii, Chondrichthyes) are a monophyletic group with a fossil record extending over 400 million years. Morphology: cartilaginous skeleton, dermal denticles, multiple gill slits, and tooth replacement. Phylogeny includes filter-feeders (Megachasmidae, Cetorhinidae), large carnivores (Lamnidae, Carcharhinidae), and diverse smaller taxa. Sensory biology: electroreception (prey detection, navigation), olfaction, and lateral line are well studied. Life history traits (slow growth, low fecundity) make many species vulnerable to exploitation.",
+        "why": "Sharks structure marine communities; declines can alter food webs and fisheries. Overfishing (targeted and bycatch) and finning are primary threats; demand for fins drives illegal trade. Conservation: science-based quotas, fin regulations (e.g. CITES), MPAs, and bycatch reduction. Public education addresses fear and supports policy. Sources: Smithsonian Ocean, NOAA, IUCN, and peer-reviewed literature.",
+        "how": "Feeding ecology: filter-feeding mechanics (flow, retention); predatory strike and handling. Sensory ecology: electroreception range and sensitivity; role in prey detection. Demography: age and growth, maturity, fecundity — data inform stock assessments. Threats: catch, mortality, and population trends. Mitigation: gear modifications, trade regulation, and spatial protection.",
+        "keyFacts": "Sources: Smithsonian Ocean (ocean.si.edu/ocean-life/sharks-rays/sharks), NOAA Fisheries and Sanctuaries, IUCN Shark Specialist Group. Research on sensory biology, ecology, and conservation in Journal of Fish Biology, Marine Ecology Progress Series, and conservation journals.",
+        "stepByStep": "Evidence-based sequence: (1) Consult Smithsonian and NOAA for biology and status. (2) For ecology: use marine biology literature. (3) For conservation: use stock assessments and threat analyses. (4) For action: support sustainable seafood, no shark products, and marine protection.",
+        "realWorldExamples": "Smithsonian Ocean and NOAA provide public and scientific resources. IUCN Red List and specialist groups coordinate assessments. Peer-reviewed shark research in marine and conservation biology journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are sharks?", "learner": "What are sharks?", "explorer": "What are sharks? (elasmobranchs)", "deepDive": "What are sharks? (systematics and ecology)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do sharks matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do sharks live?", "learner": "How do they feed and sense?", "explorer": "How they work", "deepDive": "How they work (sensory and feeding ecology)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Shark at an aquarium or video", "layer": "child", "body": "Watch a shark at an aquarium or in a video. How does it move? Does it have lots of teeth? Many sharks are not dangerous to people. We help them by not hurting them and by keeping the ocean clean." },
+    { "type": "observation", "title": "Filter-feeder vs predator shark", "layer": "learner", "body": "Use Smithsonian Ocean. Compare whale shark (filter-feeder) and great white (predator). What does each eat? How does each get its food? Where does each live? Write a short comparison. Which one is bigger?" },
+    { "type": "observation", "title": "Shark threats and conservation", "layer": "explorer", "body": "Use Smithsonian Ocean or NOAA. Pick one threat to sharks (e.g. overfishing, finning, bycatch). What is it? What is one thing people are doing to reduce it? Write a paragraph. Why does it matter for the ocean?" }
+  ],
+  "sources": [
+    { "title": "Sharks", "institution": "Smithsonian Ocean", "url": "https://ocean.si.edu/ocean-life/sharks-rays/sharks", "note": "Diversity, ecology, and conservation; science over myth." },
+    { "title": "Shark species spotlight", "institution": "NOAA Office of National Marine Sanctuaries", "url": "https://sanctuaries.noaa.gov/education/teachers/sharks/species-spotlight.html", "note": "Education and species profiles in U.S. sanctuaries." },
+    { "title": "Find a species", "institution": "NOAA Fisheries", "url": "https://www.fisheries.noaa.gov/find-species", "note": "Search for shark and other species; conservation status." },
+    { "title": "Shark", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/shark", "note": "Overview of shark biology and classification." }
+  ],
+  "relatedCardIds": ["whales", "ocean-invertebrates", "birds", "plants-and-how-they-grow"],
+  "tags": ["animals", "sharks", "fish", "marine", "biology", "conservation", "predators", "ocean"]
+}

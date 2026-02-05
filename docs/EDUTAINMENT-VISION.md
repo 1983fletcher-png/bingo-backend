@@ -102,8 +102,20 @@ Same mechanics as trivia (host reveals, scores optional), but with **explanation
 
 ---
 
+## Learn & Grow integration
+
+**Playroom: Learn & Grow** is the knowledge layer that feeds Edutainment. Each **Knowledge Card** (truth-first, cited, age-layered) can supply:
+
+- **Teach-then-check** mini-lessons (card content → then 1–3 questions).
+- **Trivia hooks** and question/answer pairs tagged to cards (so "Learn more" opens the right card).
+- **Subject/tag alignment** — cards use the same taxonomy (STEM, subjects, tags) as trivia packs.
+
+See **docs/LEARN-AND-GROW-VISION.md** (values and flagship cards) and **docs/LEARN-AND-GROW-KNOWLEDGE-CARD-SPEC.md** (schema and API). Edutainment questions can reference `knowledgeCardId` for deep links and consistent sourcing.
+
+---
+
 ## Summary
 
 Edutainment on The Playroom = **Trivia-style mechanics** + **explanations** + **grade/subject structure** + **teacher control**. Build it so that one day a teacher can run a 20-minute review game as easily as a host runs Music Bingo, with the same calm, clear, human-centered UX.
 
-This doc is the vision. Implementation can start with: add `explanation` to trivia questions, add grade/subject filters to pack selection, and one or two sample edutainment packs (e.g. "Grade 5 Science" with explanations).
+This doc is the vision. Implementation can start with: add `explanation` to trivia questions, add grade/subject filters to pack selection, and one or two sample edutainment packs (e.g. "Grade 5 Science" with explanations). Learn & Grow cards then become the trusted source for those explanations and for "learn more" depth.

@@ -1,0 +1,69 @@
+{
+  "id": "reptiles",
+  "title": "Snakes, Lizards & Turtles",
+  "summary": "Scaly and ancient: reptiles include snakes, lizards, and turtles — they lay eggs on land, breathe with lungs, and live on every continent except Antarctica.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Reptiles have dry, scaly skin. Snakes slither, lizards run and climb, and turtles have a shell. They all lay eggs and like to warm up in the sun.",
+      "sections": {
+        "what": "Reptiles are animals with scales. Snakes have no legs and slither; lizards have four legs and can run and climb; turtles and tortoises have a hard shell. They breathe air with lungs and lay eggs (usually on land). They are cold-blooded — they need the sun to get warm.",
+        "why": "Reptiles eat bugs, rodents, and plants; they are part of the food web. Some help control pests. Many are in trouble because people hurt their homes or are afraid of them. When we learn about them, we can help protect them.",
+        "how": "Reptiles get warmth from the sun and hide when it is too hot or cold. Snakes swallow food whole; lizards and turtles use their jaws. Turtles pull into their shell to stay safe. Many snakes are not dangerous to people; only a few have venom, and they use it to catch food.",
+        "keyFacts": "Snakes, lizards, and turtles are all reptiles. They have scales and lay eggs. Most are harmless to people. Never touch a wild reptile without a grown-up who knows it is safe. Zoos and nature centers are great places to see them up close."
+      }
+    },
+    "learner": {
+      "summary": "Reptiles (class Reptilia) include snakes, lizards, turtles, and crocodilians — scaly, lung-breathing vertebrates that lay amniotic eggs; diverse in habitat and diet.",
+      "sections": {
+        "what": "Reptiles are cold-blooded (ectothermic) vertebrates with scales or scutes, lungs, and typically leathery or hard-shelled eggs. Major groups: squamates (snakes and lizards), turtles (including tortoises), and crocodilians (alligators, crocodiles). Snakes are legless lizards; they range from tiny threadsnakes to pythons and anacondas. Lizards include geckos, iguanas, monitors (e.g. Komodo dragon), and skinks. Turtles have a bony shell (carapace and plastron); tortoises are land turtles. Reptiles live on every continent except Antarctica.",
+        "why": "Reptiles control prey (insects, rodents) and are prey for other animals; they are indicators of ecosystem health. Many species are threatened by habitat loss, road mortality, and persecution. Understanding them reduces fear and supports conservation. Zoos (e.g. Smithsonian Reptile Discovery Center) display and breed rare species.",
+        "how": "Ectothermy: reptiles regulate temperature by moving between sun and shade. Snakes swallow prey whole (flexible jaws); some have venom for subduing prey. Lizards use teeth and claws; some drop their tail to escape. Turtles retract into shell or bite. Reproduction: most lay eggs; some snakes and lizards give live birth. Shedding: reptiles periodically shed their skin (ecdysis).",
+        "keyFacts": "Smithsonian National Zoo has a Reptile Discovery Center with snakes, lizards, and turtles. Most snakes are non-venomous; venomous species are important in their ecosystems. Turtles can live decades; some tortoises over 100 years. Never handle wild reptiles without expert guidance; respect their space.",
+        "stepByStep": "1. Use a zoo or museum site to pick one reptile (snake, lizard, or turtle). 2. Where does it live? What does it eat? 3. Is it venomous (if a snake) or harmless? 4. Name one way to help reptiles (e.g. protect habitat, watch for them on roads, don’t release pets into the wild).",
+        "realWorldExamples": "Smithsonian Reptile Discovery Center and zoos worldwide display and conserve reptiles. Wildlife agencies provide guidance on coexisting with native species. Never release pet reptiles; they can harm wild populations. Road awareness and habitat protection help turtles and snakes."
+      }
+    },
+    "explorer": {
+      "summary": "Reptilia diversity: squamates (snakes, lizards), testudines (turtles), crocodilians; ectothermy, reproduction, and conservation.",
+      "sections": {
+        "what": "Reptilia (or Sauropsida) comprises squamates (lizards and snakes), testudines (turtles), crocodilians, and (in some classifications) tuatara. Squamates are the most diverse (10,000+ species); snakes are derived legless lizards. Morphology: keratinous scales, lungs, and (in most) amniotic eggs with leathery or calcified shells. Ectothermy limits distribution to warmer regions or microclimates; behavior (basking, retreat) regulates temperature.",
+        "why": "Reptiles are predators and prey; they structure food webs and control pest populations. Many are declining due to habitat loss, invasive species, disease, and persecution. Conservation: protected areas, headstarting (turtles), and public education. Smithsonian and zoos participate in breeding and reintroduction.",
+        "how": "Thermoregulation: behavioral — move between sun and shade; some use metabolic heat (e.g. brooding pythons). Feeding: snakes use venom or constriction; lizards and turtles use jaws. Reproduction: oviparity (most), ovoviviparity, or viviparity; sex determination can be temperature-dependent in some turtles. Shedding: periodic ecdysis for growth and parasite removal.",
+        "keyFacts": "Smithsonian Reptile Discovery Center (nationalzoo.si.edu) and Britannica provide taxonomy and biology. IUCN Red List assesses many species. Coexistence: avoid handling wild reptiles; support habitat conservation and road mitigation (e.g. turtle crossings).",
+        "stepByStep": "(1) Use Smithsonian or zoo for species diversity. (2) Compare one snake, one lizard, and one turtle: diet, habitat, defense. (3) Read about one threat (e.g. habitat loss, road mortality) and one conservation action. (4) Relate to ecosystems: role as predator and prey.",
+        "realWorldExamples": "Smithsonian National Zoo Reptile Discovery Center holds snakes, lizards, and turtles and supports conservation. IUCN and state wildlife agencies assess status. Research on reptile ecology and conservation in herpetology and conservation journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Reptilian systematics, ectothermy, and conservation with citations to Smithsonian and research literature.",
+      "sections": {
+        "what": "Reptilia (Sauropsida) is a paraphyletic or monophyletic group depending on classification; it includes Testudines, Squamata (Sauria + Serpentes), Crocodilia, and Rhynchocephalia. Morphology: scales (beta-keratin), lungs, and (typically) cleidoic eggs. Snakes are nested within lizards (legless, elongated, reduced limbs). Ectothermy: metabolic rate and activity depend on environmental temperature; distribution and phenology are temperature-limited.",
+        "why": "Reptiles provide ecosystem services (predation, seed dispersal in some) and are culturally significant. Declines are driven by habitat loss, climate change, disease (e.g. chytrid in some contexts), and overexploitation. Conservation relies on IUCN assessments, captive breeding, and habitat protection. Sources: Smithsonian, Britannica, peer-reviewed herpetology.",
+        "how": "Physiology: ectothermy, water conservation (kidney, skin). Feeding: venom evolution in snakes (front-fanged, rear-fanged, constrictors); jaw mechanics in turtles. Reproduction: oviparity and viviparity; TSD (temperature-dependent sex determination) in some turtles. Conservation: population monitoring, headstarting, and translocation where evidence-based.",
+        "keyFacts": "Sources: Smithsonian Reptile Discovery Center, Encyclopaedia Britannica (reptile), IUCN. Research in Journal of Herpetology, Conservation Biology, and related journals.",
+        "stepByStep": "Evidence-based sequence: (1) Consult zoo and IUCN for diversity and status. (2) For physiology: use herpetology literature. (3) For conservation: use threat assessments and recovery plans. (4) For coexistence: follow wildlife agency guidance.",
+        "realWorldExamples": "Smithsonian National Zoo and conservation partners hold and breed threatened reptiles. IUCN Red List and specialist groups coordinate assessments. Peer-reviewed reptile ecology and conservation in herpetology journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are reptiles?", "learner": "What are reptiles?", "explorer": "What are Reptilia?", "deepDive": "What are Reptilia? (systematics)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do they matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they live?", "explorer": "How they work", "deepDive": "How they work (physiology and behavior)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Reptile at a zoo or nature center", "layer": "child", "body": "Visit a zoo or nature center with a grown-up. Find a snake, a lizard, and a turtle. How does each move? What does each look like? Never touch a wild reptile. Zoos are the safest place to see them." },
+    { "type": "observation", "title": "Compare snake, lizard, and turtle", "layer": "learner", "body": "Use Smithsonian Reptile Discovery Center or a zoo site. Pick one of each: snake, lizard, turtle. List: How does each get food? How does each stay safe? Where does each live? Write a short comparison." },
+    { "type": "observation", "title": "One reptile’s conservation", "layer": "explorer", "body": "Choose one reptile (e.g. sea turtle, indigo snake, gopher tortoise). Use a zoo or IUCN. What threatens it? What is one thing people are doing to help? Write a paragraph." }
+  ],
+  "sources": [
+    { "title": "Reptile Discovery Center", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/animals/exhibits/reptile-discovery-center", "note": "Snakes, lizards, turtles; diversity and conservation." },
+    { "title": "Reptile", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/reptile", "note": "Overview of reptile biology and classification." }
+  ],
+  "relatedCardIds": ["amphibians", "opossums", "birds", "plants-and-how-they-grow"],
+  "tags": ["animals", "reptiles", "snakes", "lizards", "turtles", "scaly", "biology", "conservation"]
+}

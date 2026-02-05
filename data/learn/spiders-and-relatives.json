@@ -1,0 +1,70 @@
+{
+  "id": "spiders-and-relatives",
+  "title": "Spiders & Their Relatives",
+  "summary": "Eight legs, silk, and venom: spiders, scorpions, and their arachnid relatives are predators and builders — and most are harmless to people.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Spiders have eight legs and make silk. They catch bugs in webs or by pouncing. Scorpions have a tail with a stinger. They are related — both are arachnids. Most don’t hurt people.",
+      "sections": {
+        "what": "Spiders and scorpions are arachnids — they have eight legs (insects have six). Spiders have fangs and make silk; they use webs to catch food or hunt. Scorpions have pincers and a tail that can sting. There are also ticks, mites, and daddy longlegs in the same big family. They are not insects.",
+        "why": "Spiders eat lots of insects — they help control pests. They are food for birds and other animals. Many people are afraid of them, but most spiders and scorpions are not dangerous to us. When we learn about them, we can be less scared and help protect them.",
+        "how": "Spiders inject venom (or use silk to wrap) their prey, then digest it outside their body and suck it up. They spin silk from their abdomen. Scorpions grab prey with pincers and can sting with their tail. They are mostly active at night. Both molt (shed their skin) to grow.",
+        "keyFacts": "Spiders and scorpions have eight legs; insects have six. Most spider venom is not harmful to people. Only a few kinds (like black widow or brown recluse in some areas) need caution. Don’t touch wild spiders or scorpions; look with your eyes. They are helpful in gardens and homes (they eat bugs)."
+      }
+    },
+    "learner": {
+      "summary": "Arachnids (spiders, scorpions, mites, ticks) have eight legs and two body regions; spiders use silk and venom; most are beneficial and not dangerous to humans.",
+      "sections": {
+        "what": "Arachnids (class Arachnida) include spiders, scorpions, mites, ticks, and harvestmen (daddy longlegs). They have eight legs, two body parts (cephalothorax and abdomen), and no antennae. Spiders have fangs (chelicerae) and spinnerets for silk; they may build webs or hunt actively. Scorpions have pedipalps (pincers) and a segmented tail with a stinger. Silk is used for webs, egg sacs, and draglines. Most spiders are venomous to their prey but not medically significant to people; only a few species (e.g. some widows, recluses) require caution in certain regions.",
+        "why": "Spiders are major predators of insects; they reduce pest numbers in gardens and homes. They are prey for birds and other animals. Fear of spiders is common but often out of proportion to risk; education (e.g. Smithsonian “From Fear to Fascination”) helps. Scorpions play a similar role in their habitats. Ticks and some mites can carry disease; awareness and prevention matter.",
+        "how": "Spiders: venom liquefies prey; spider feeds by sucking. Silk proteins are produced in glands and spun through spinnerets; web design varies (orb, sheet, funnel). Scorpions: grab with pincers, sting with tail; venom subdues prey. Both molt (ecdysis) to grow. Sensory: spiders have sensitive hairs and (in some) good vision; scorpions detect vibration and chemical cues.",
+        "keyFacts": "Smithsonian Education (“Under the Spell of Spiders”) and NMNH (“Spiders as Predators”) provide K–12 resources. Britannica covers arachnids. Most spiders are harmless; identify before worrying. Don’t kill spiders unnecessarily; they control pests. In tick country, do tick checks and use repellent.",
+        "stepByStep": "1. Use Smithsonian spider resources. 2. List two ways spiders help people (e.g. eating flies, mosquitoes). 3. How is a spider different from an insect? (legs, body parts.) 4. Name one spider that is safe to watch (e.g. orb weaver, jumping spider) and one to avoid touching (e.g. black widow in your region, if present).",
+        "realWorldExamples": "Smithsonian Gardens and NMNH offer spider education and “From Fear to Fascination” programs. Spider silk research (strong, lightweight) inspires materials science. Gardens and homes benefit from leaving harmless spiders in place. Tick awareness: CDC and state health departments provide prevention guidance."
+      }
+    },
+    "explorer": {
+      "summary": "Arachnid diversity, silk and venom, ecology, and human relevance; spiders as predators and the gap between perception and risk.",
+      "sections": {
+        "what": "Arachnida (Chelicerata) includes Araneae (spiders), Scorpiones (scorpions), Acari (mites, ticks), Opiliones (harvestmen), and others. Spiders: 50,000+ species; silk from abdominal glands, venom from chelicerae; web-building and cursorial (hunting) strategies. Scorpions: pedipalps, venomous telson; mostly nocturnal. Silk: protein-based; used for capture, retreat, dispersal (ballooning), and reproduction. Venom composition varies; few spider species cause significant envenomation in humans.",
+        "why": "Spiders are key invertebrate predators; they structure food webs and reduce herbivorous insects. Arachnophobia is common; evidence-based education reduces unnecessary killing. Ticks and some mites are vectors of human and animal disease; identification and prevention are public health priorities. Sources: Smithsonian Education, NMNH, Britannica.",
+        "how": "Silk: different gland types produce silk for different functions (dragline, capture spiral, egg sac). Venom: neurotoxic or cytotoxic depending on species; delivered via fangs. Predation: web builders trap prey; hunters stalk and pounce. Molting: exoskeleton is shed; spider is vulnerable until new cuticle hardens. Ecology: abundance and diversity respond to habitat and prey availability.",
+        "keyFacts": "Smithsonian (Under the Spell of Spiders, Spiders as Predators) and Britannica (arachnid) provide taxonomy and biology. Medically significant spiders are regional; consult local resources. Conservation: spiders are beneficial; avoid pesticides that harm them. Tick prevention: repellent, clothing, tick checks.",
+        "stepByStep": "(1) Use Smithsonian and Britannica for arachnid diversity. (2) Compare a web-building spider and a hunting spider: how does each catch prey? (3) Read about silk: what is it made of? What do spiders use it for? (4) Relate to ecosystems: role as predator and prey.",
+        "realWorldExamples": "Smithsonian Education and NMNH teaching resources cover spiders. Research on silk and venom appears in materials science and toxinology. Public health agencies (CDC, state) provide tick and mite guidance. Leaving harmless spiders in place supports natural pest control."
+      }
+    },
+    "deepDive": {
+      "summary": "Arachnid systematics, silk biochemistry, venom evolution, and ecology with citations to Smithsonian and research literature.",
+      "sections": {
+        "what": "Arachnida is a chelicerate class; phylogeny includes multiple orders. Spider silk: fibroins and other proteins; different glands (major ampullate, etc.) produce silks with different properties (strength, elasticity). Venom: diverse composition; evolution for prey capture and defense. Few taxa have venom of medical significance to humans; identification and regional awareness reduce unnecessary concern.",
+        "why": "Spiders provide ecosystem services (predation) and inspire biomaterials research. Conservation: spiders are often overlooked; habitat and pesticide reduction help. Ticks and mites: vector ecology and disease prevention are medical and veterinary priorities. Sources: Smithsonian, Britannica, peer-reviewed arachnology and toxinology.",
+        "how": "Silk production: gene expression, gland morphology, and spinning behavior. Venom: composition and mode of action; clinical significance in specific taxa. Ecology: population dynamics, prey selection, and community effects. Research on silk mechanics and venom in Journal of Arachnology, Toxicon, and materials science journals.",
+        "keyFacts": "Sources: Smithsonian Education (spiders), NMNH (Spiders as Predators), Encyclopaedia Britannica (arachnid). Silk and venom research in peer-reviewed journals. Coexistence: most spiders are benign; regional awareness for medically significant species.",
+        "stepByStep": "Evidence-based sequence: (1) Consult Smithsonian and Britannica for biology. (2) For silk and venom: use arachnology and biochemistry literature. (3) For risk: use regional medical and extension resources. (4) For conservation: support habitat and reduce unnecessary pesticide use.",
+        "realWorldExamples": "Smithsonian spider education and NMNH resources. Arachnology and toxinology research in specialized journals. Public health guidance for ticks and mites from CDC and state agencies."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are spiders and their relatives?", "learner": "What are arachnids?", "explorer": "What are Arachnida?", "deepDive": "What are Arachnida? (systematics)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do they matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and human relevance)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they hunt and build?", "explorer": "How they work", "deepDive": "How they work (silk and venom)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Watch a spider (safely)", "layer": "child", "body": "Find a spider in a web or on a wall. Watch from a little distance. Does it have eight legs? Can you see the web? Don’t touch. If it is in your house and you don’t want it there, ask a grown-up to put it outside in a cup. Most spiders are helpful — they eat flies." },
+    { "type": "observation", "title": "Spider vs insect", "layer": "learner", "body": "Use Smithsonian spider resources. List: How many legs does a spider have? An insect? How many body parts? What does a spider use silk for? Write three sentences. Find one spider that is common where you live and look it up — is it harmless?" },
+    { "type": "observation", "title": "Web or hunt?", "layer": "explorer", "body": "Pick one web-building spider (e.g. orb weaver) and one hunting spider (e.g. jumping spider). Use Smithsonian or Britannica. How does each get its food? How is its body adapted? Write a short comparison." }
+  ],
+  "sources": [
+    { "title": "Spiders as Predators", "institution": "Smithsonian National Museum of Natural History", "url": "https://naturalhistory.si.edu/education/teaching-resources/life-science/spiders-predators", "note": "Spider adaptations, feeding, silk; K–12 resources." },
+    { "title": "Under the Spell of Spiders", "institution": "Smithsonian Education", "url": "https://smithsonianeducation.org/educators/lesson_plans/under_spell_spiders/introduction.html", "note": "Spider curriculum; diversity and ecology." },
+    { "title": "Arachnid", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/arachnid", "note": "Overview of arachnids: spiders, scorpions, mites, ticks." }
+  ],
+  "relatedCardIds": ["insects", "reptiles", "amphibians", "plants-and-how-they-grow"],
+  "tags": ["animals", "spiders", "arachnids", "invertebrates", "biology", "silk", "predators"]
+}

@@ -1,0 +1,71 @@
+{
+  "id": "whales",
+  "title": "Whales",
+  "summary": "The largest animals on Earth: whales are marine mammals that sing, migrate, and filter krill or hunt squid — and they need healthy oceans to survive.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Whales are huge animals that live in the ocean. They breathe air like us. Some have big mouths that filter tiny food; some have teeth and hunt. They are gentle giants.",
+      "sections": {
+        "what": "Whales are not fish — they are mammals. They breathe air through a blowhole, have hair (a little!), and mothers feed their babies milk. There are two main kinds: baleen whales (like blue whales) that filter tiny krill, and toothed whales (like orcas and sperm whales) that eat fish and squid. The blue whale is the biggest animal ever.",
+        "why": "Whales help keep the ocean healthy. They move nutrients and are part of the food web. Many were hunted almost to extinction; now people protect them. When we protect whales, we protect the sea. We can learn from them and care about the ocean.",
+        "how": "Baleen whales have plates in their mouth that act like a sieve — they take in water and push it out, keeping krill and small animals. Toothed whales grab prey with their teeth. Whales migrate long distances to feed and have babies. They communicate with sounds — some sing long songs.",
+        "keyFacts": "Blue whale = biggest animal. Whales are mammals: they breathe air and nurse young. Baleen = filter feeders; toothed = hunters. Many whales are protected by law. Threats: ship strikes, fishing gear, noise, and climate change. We can help by supporting ocean protection and watching whales responsibly."
+      }
+    },
+    "learner": {
+      "summary": "Cetaceans (whales, dolphins, porpoises) include baleen whales (Mysticeti) and toothed whales (Odontoceti). They are marine mammals that migrate, communicate, and face threats from human activity.",
+      "sections": {
+        "what": "Whales, dolphins, and porpoises are cetaceans — marine mammals that breathe air, nurse their young, and are fully aquatic. Baleen whales (Mysticeti) have keratin baleen plates instead of teeth; they filter-feed on krill and small fish (e.g. blue, humpback, gray whale). Toothed whales (Odontoceti) include orcas, sperm whales, and dolphins; they hunt fish, squid, and sometimes other mammals. Size ranges from the dwarf sperm whale to the blue whale (largest animal on Earth). Many species migrate between feeding and breeding areas.",
+        "why": "Whales are apex or key consumers in ocean ecosystems; their recovery from whaling shows that protection can work. They face ongoing threats: entanglement in fishing gear, vessel strikes, ocean noise, and climate change (prey distribution, ice-dependent species). NOAA Fisheries and international bodies manage and protect whales under the Marine Mammal Protection Act and Endangered Species Act.",
+        "how": "Baleen feeding: whale takes in water and prey, then pushes water through baleen; prey is trapped and swallowed. Toothed whales use echolocation (sound) to find prey and navigate. Migration: many baleen whales feed in cold, productive waters and breed in warmer waters. Social structure varies (e.g. orca pods, sperm whale groups). Communication: songs (humpbacks), clicks, and calls.",
+        "keyFacts": "NOAA Fisheries (fisheries.noaa.gov/whales) is the U.S. authority on whale biology and conservation. Blue whale: up to ~100 ft, filter-feeder. Sperm whale: largest toothed whale, deep diver. Southern Resident killer whales are critically endangered. Conservation: reduce ship strikes, reduce entanglement, protect habitat, and limit noise.",
+        "stepByStep": "1. Use NOAA Fisheries to pick one whale (e.g. blue, humpback, orca). 2. Is it baleen or toothed? What does it eat? 3. Where does it live? Does it migrate? 4. Name one threat and one thing people do to protect it.",
+        "realWorldExamples": "NOAA Fisheries manages whale conservation and research. Whale-watching (responsible, regulated) supports education and local economies. International whaling commission and national laws protect many species. Reducing ship speed in whale habitat and using ropeless fishing gear are evidence-based measures."
+      }
+    },
+    "explorer": {
+      "summary": "Cetacean diversity, baleen vs toothed ecology, migration, and conservation; NOAA and MMPA/ESA framework.",
+      "sections": {
+        "what": "Cetacea (Mammalia) comprises Mysticeti (baleen whales) and Odontoceti (toothed whales, including dolphins and porpoises). Baleen: keratinous plates suspended from the upper jaw; filter-feeding on zooplankton (e.g. krill) and small fish. Toothed: homodont teeth, echolocation in many; diet includes fish, squid, and in some species marine mammals. Physiology: blubber for insulation, streamlined body, modified limbs (flippers), horizontal fluke. Many species are long-lived and slow to reproduce; population recovery from whaling is ongoing.",
+        "why": "Cetaceans influence marine food webs and nutrient cycling; some are culturally and economically important (whale-watching, indigenous harvest where permitted). Threats: bycatch and entanglement, vessel strikes, noise (sonar, shipping), and climate change (prey shifts, ice loss). NOAA and international agreements (IWC, CMS) provide management and protection; ESA and MMPA list species and populations.",
+        "how": "Filter-feeding: lunge-feeding or skim-feeding; baleen retention of prey. Echolocation: production and reception of clicks; toothed whales locate prey and navigate. Migration: tied to productivity (feeding grounds) and calving (breeding grounds). Demography: low reproductive rate; recovery is slow. Conservation: gear modifications (ropeless, weak links), vessel speed restrictions, critical habitat designation, and noise reduction.",
+        "keyFacts": "NOAA Fisheries provides species accounts, stock assessments, and conservation guidance. ESA-listed species (e.g. North Atlantic right whale, Southern Resident killer whale) receive heightened protection. Research on behavior, acoustics, and population dynamics supports management.",
+        "stepByStep": "(1) Use NOAA Fisheries for species list, diet, and status. (2) Compare one baleen and one toothed whale: feeding, range, threats. (3) Read about one conservation measure (e.g. ship speed, gear modification). (4) Relate to ocean health: whales as indicators and beneficiaries of ecosystem protection.",
+        "realWorldExamples": "NOAA Fisheries and NOAA Ocean Service provide science and policy. Cetacean assessment and ecology programs conduct surveys and tagging. Peer-reviewed work on cetacean ecology and conservation appears in marine mammal and conservation journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Cetacean systematics, feeding ecology, migration, and conservation with citations to NOAA and research literature.",
+      "sections": {
+        "what": "Cetacea is a fully aquatic order of mammals; phylogeny supports Mysticeti and Odontoceti as clades. Baleen evolved from tooth-bearing ancestors; filter-feeding allows exploitation of dense prey patches (krill, forage fish). Odontocetes have diversified in diet and habitat; echolocation is derived and supports foraging and social communication. Life history: long gestation, single offspring, extended maternal care; population growth is slow. Stock structure and migration are studied via genetics, tagging, and acoustics.",
+        "why": "Cetaceans are sentinels of ocean health; declines or recovery reflect ecosystem and human impacts. Management under MMPA and ESA requires stock assessments, threat identification, and mitigation. NOAA coordinates research and regulation; international bodies address high-seas and migratory populations.",
+        "how": "Baleen mechanics: flow through mouth and baleen; retention efficiency and prey size. Echolocation: click production (melon, phonic lips), reception (jaw, ear), and processing. Migration: drivers (prey, temperature, calving), connectivity. Threats: entanglement (fishing gear), vessel strike, noise (masking, behavioral change), and climate (prey distribution, ice). Mitigation: gear technology, speed rules, area closures, and noise standards.",
+        "keyFacts": "Sources: NOAA Fisheries (whales, species pages), peer-reviewed marine mammal literature. Stock assessments and PBR (potential biological removal) guide take limits. Conservation: evidence-based measures per threat (e.g. ropeless gear trials, vessel speed zones).",
+        "stepByStep": "Evidence-based sequence: (1) Consult NOAA for biology and status. (2) For ecology: use marine mammal and oceanography literature. (3) For conservation: use stock assessments and threat analyses. (4) For action: support regulated whale-watching, policy that reduces threats, and ocean protection.",
+        "realWorldExamples": "NOAA Fisheries Cetacean Assessment and Ecology Program and regional offices conduct research. ESA and MMPA recovery plans and critical habitat designations guide action. Research appears in Marine Mammal Science, Conservation Biology, and related journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are whales?", "learner": "What are cetaceans?", "explorer": "What are cetaceans?", "deepDive": "What are cetaceans? (systematics and ecology)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do whales matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do whales live?", "learner": "How do they feed and migrate?", "explorer": "How they work", "deepDive": "How they work (feeding and behavior)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Whale video or visit", "layer": "child", "body": "Watch a short video about whales or visit an aquarium. See how big they are. Do they have teeth or baleen? They breathe air like us. We help them by keeping the ocean clean and not bothering them when they are in the wild." },
+    { "type": "observation", "title": "Baleen vs toothed whale", "layer": "learner", "body": "Use NOAA Fisheries. Pick one baleen whale (e.g. blue, humpback) and one toothed whale (e.g. orca, sperm whale). Compare: What does each eat? How does it get food? Where does it live? Write a short comparison." },
+    { "type": "observation", "title": "One whale’s migration and threats", "layer": "explorer", "body": "Use NOAA. Choose one whale species. Where does it feed? Where does it breed or calve? What is one threat (e.g. ship strike, entanglement)? What is one thing people are doing to reduce that threat? Summarize in a paragraph." }
+  ],
+  "sources": [
+    { "title": "Whales", "institution": "NOAA Fisheries", "url": "https://www.fisheries.noaa.gov/whales", "note": "U.S. authority on whale biology, conservation, and management; MMPA and ESA." },
+    { "title": "Killer whale — Conservation and management", "institution": "NOAA Fisheries", "url": "https://www.fisheries.noaa.gov/species/killer-whale/conservation-management", "note": "Orca biology and conservation; Southern Resident population." },
+    { "title": "Sperm whale — Conservation and management", "institution": "NOAA Fisheries", "url": "https://www.fisheries.noaa.gov/species/sperm-whale/conservation-management", "note": "Sperm whale biology and recovery from whaling." },
+    { "title": "Whale", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/whale", "note": "Overview of whale biology and classification." }
+  ],
+  "relatedCardIds": ["sharks", "ocean-invertebrates", "birds", "plants-and-how-they-grow"],
+  "tags": ["animals", "whales", "cetaceans", "marine", "mammals", "biology", "conservation", "migration"]
+}

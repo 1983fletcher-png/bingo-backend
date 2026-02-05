@@ -1,0 +1,69 @@
+{
+  "id": "marsupials",
+  "title": "Marsupials: Kangaroos, Koalas & More",
+  "summary": "Pouches and joeys: kangaroos, koalas, wallabies, and wombats are marsupials — mammals that raise their tiny young in a pouch until they are ready for the world.",
+  "audienceLayers": {
+    "child": {
+      "summary": "Marsupials are mammals that carry their babies in a pouch. Kangaroos hop; koalas eat leaves and sleep a lot; wallabies are like small kangaroos. They live mostly in Australia.",
+      "sections": {
+        "what": "Marsupials are animals that have a pouch. The baby is born very tiny and crawls into the pouch to drink milk and grow. Kangaroos and wallabies have big back legs and hop; they live in Australia. Koalas live in trees and eat eucalyptus leaves. Wombats dig burrows. The opossum in North America is also a marsupial — the only one that lives here.",
+        "why": "They are special because they raise their babies in a pouch. Many live only in Australia, so when we protect Australian forests and grasslands, we protect them. Koalas need eucalyptus trees; kangaroos need open land. They are important to the places they live.",
+        "how": "The mother marsupial has a pouch on her belly. The baby (called a joey in kangaroos and koalas) is born very small and stays in the pouch for weeks or months, drinking milk. When it gets bigger, it comes out but may go back to hide or nurse. Kangaroos hop to move fast; koalas climb and sleep a lot to save energy.",
+        "keyFacts": "Kangaroo, koala, wallaby, and wombat are marsupials. So is the opossum (North America). They have pouches and tiny newborns. Most Australian marsupials need our help — fires and habitat loss hurt them. We can support zoos and groups that protect their habitat."
+      }
+    },
+    "learner": {
+      "summary": "Marsupials (Metatheria) give birth to altricial young that complete development in a pouch (marsupium); they include kangaroos, koalas, wallabies, wombats, and the Virginia opossum.",
+      "sections": {
+        "what": "Marsupials are mammals in the infraclass Metatheria. Females have a marsupium (pouch) where tiny, undeveloped young attach to a nipple and continue growing. Major groups: kangaroos and wallabies (Macropodidae — large feet, hopping), koalas (Phascolarctidae — eucalyptus specialists), wombats (Vombatidae — burrowing), and the Virginia opossum (Didelphidae — North America’s only marsupial). Most marsupials live in Australia and nearby; opossums range from Canada to South America. Bennett’s wallaby is about 3 ft tall; red kangaroos are much larger. Koalas sleep many hours a day and eat only certain eucalyptus leaves.",
+        "why": "Marsupials are ecologically and culturally important. Australian species face habitat loss, fire, and climate change; koalas are threatened. Opossums benefit ecosystems (tick consumption, carrion). Zoos (e.g. Smithsonian with Bennett’s wallabies) display and breed marsupials and support conservation. Understanding pouches and development helps us appreciate mammal diversity.",
+        "how": "Reproduction: short gestation (e.g. 12–13 days in opossum, ~30 in kangaroo); altricial young crawl to pouch and attach to nipple; weaning and emergence over weeks or months. Locomotion: macropods hop (powerful hind legs, tail for balance); koalas climb; wombats walk and dig. Diet: kangaroos and wallabies graze or browse; koalas are eucalyptus specialists; opossums are omnivores.",
+        "keyFacts": "Smithsonian National Zoo has Bennett’s wallabies; other zoos hold kangaroos, koalas, and wombats. Virginia opossum is the only North American marsupial (see opossums card). Koalas are vulnerable; habitat protection and fire management matter. Wallabies can jump 13 ft and run 30 mph.",
+        "stepByStep": "1. Use Smithsonian or a zoo site. 2. Pick one marsupial (kangaroo, koala, wallaby, wombat). Where does it live? What does it eat? 3. Describe the pouch: what is it for? 4. Name one threat (e.g. fire, habitat loss) and one way to help.",
+        "realWorldExamples": "Smithsonian National Zoo holds Bennett’s wallabies; Australian zoos and sanctuaries care for kangaroos, koalas, and wombats. Conservation groups work on habitat and fire recovery. Opossums (see opossums card) are marsupials we can see in North America."
+      }
+    },
+    "explorer": {
+      "summary": "Metatherian diversity, marsupial reproduction and development, and conservation of Australian and American marsupials.",
+      "sections": {
+        "what": "Metatheria comprises marsupials; phylogeny includes multiple orders (e.g. Didelphimorphia, Dasyuromorphia, Diprotodontia). Diprotodontia includes macropods (kangaroos, wallabies), koalas, and wombats. Morphology: marsupium (pouch) in most females; epipubic bones; typically small neonate and extended lactation. Distribution: Australasia (most diversity), Americas (opossums and relatives). Reproduction: brief gestation, birth of altricial young, crawl to pouch, attachment to nipple; development completed ex utero. Diet and locomotion vary: grazers (kangaroos), folivores (koalas), fossorial (wombats), omnivores (opossums).",
+        "why": "Australian marsupials are flagship species; many are threatened by habitat loss, introduced predators, and fire. Koala is vulnerable; kangaroo populations are managed in some regions. Conservation: protected areas, fire management, and predator control. Virginia opossum (Americas) is widespread and beneficial. Sources: Smithsonian, Britannica, Australian and U.S. wildlife agencies.",
+        "how": "Reproduction: yolk-deficient egg, short gestation, neonate with well-developed forelimbs for crawl to pouch; lactation extended, sometimes with composition change (e.g. two types of milk in some macropods). Ecology: kangaroos are cursorial grazers; koalas are arboreal folivores (eucalyptus); wombats are fossorial herbivores. Conservation: habitat retention, connectivity, and threat mitigation.",
+        "keyFacts": "Smithsonian National Zoo (Bennett’s wallabies), Britannica (marsupial), state and Australian wildlife agencies. IUCN assesses many Australian marsupials; koala is vulnerable. Opossum biology and benefit (e.g. tick consumption) are documented.",
+        "stepByStep": "(1) Use Smithsonian and Britannica for diversity and biology. (2) Compare kangaroo and koala: diet, locomotion, pouch use. (3) Read about one threat (e.g. fire, habitat) and one conservation action. (4) Relate opossum (Americas) to Australian marsupials: same infraclass, different ecology.",
+        "realWorldExamples": "Smithsonian National Zoo and Australian zoos/sanctuaries; IUCN and wildlife agencies. Research on marsupial reproduction and ecology in Journal of Mammalogy and Australian wildlife journals."
+      }
+    },
+    "deepDive": {
+      "summary": "Metatherian systematics, marsupial reproduction and life history, and conservation with citations to Smithsonian and research literature.",
+      "sections": {
+        "what": "Metatheria (Marsupialia) is a clade of mammals with characteristic reproduction: short gestation, altricial neonate, and prolonged lactation often in a pouch. Phylogeny: American (Didelphimorphia, etc.) and Australasian (Diprotodontia, Dasyuromorphia, etc.) radiations. Reproduction: no long gestation; neonate crawls to teat and attaches; lactation period long relative to gestation. Morphology: epipubic bones, marsupium (in most), and (in macropods) specialized hind limb and tail for saltation.",
+        "why": "Marsupials are key to understanding mammalian evolution and diversity. Australian species face multiple threats; conservation prioritization and management are ongoing. Opossums in the Americas are model species for urban wildlife and disease ecology. Sources: Smithsonian, Britannica, IUCN, peer-reviewed mammalogy.",
+        "how": "Reproductive physiology: gestation, parturition, and crawl; teat attachment and lactation. Life history: growth rates, age at weaning, and longevity vary. Ecology: diet (grazing, browsing, folivory) and habitat (grassland, forest, fossorial). Conservation: population assessments, habitat protection, and threat mitigation (fire, invasive species).",
+        "keyFacts": "Sources: Smithsonian National Zoo (wallabies), Encyclopaedia Britannica (marsupial), IUCN Red List. Research on marsupial reproduction and ecology in Journal of Mammalogy and Australian journals.",
+        "stepByStep": "Evidence-based sequence: (1) Consult zoo and IUCN for biology and status. (2) For reproduction: use mammalogy literature. (3) For conservation: use threat assessments and recovery plans. (4) For opossum: see opossums card and wildlife agency resources.",
+        "realWorldExamples": "Smithsonian National Zoo (Bennett’s wallabies); Australian wildlife and zoo conservation. IUCN and state agencies. Peer-reviewed marsupial biology in mammalogy and conservation journals."
+      }
+    }
+  },
+  "sections": [
+    { "key": "what", "title": "What this is", "titleByLayer": { "child": "What are marsupials?", "learner": "What are marsupials?", "explorer": "What are Metatheria?", "deepDive": "What are Metatheria? (systematics)" } },
+    { "key": "why", "title": "Why it matters", "titleByLayer": { "child": "Why do they matter?", "learner": "Why do they matter?", "explorer": "Why they matter", "deepDive": "Why they matter (ecology and conservation)" } },
+    { "key": "how", "title": "How it works", "titleByLayer": { "child": "How do they live?", "learner": "How do they live?", "explorer": "How they work", "deepDive": "How they work (reproduction and ecology)" } },
+    { "key": "keyFacts", "title": "Key facts", "titleByLayer": { "child": "Things to remember", "learner": "Key facts", "explorer": "Key facts", "deepDive": "Key facts (with sources)" } },
+    { "key": "stepByStep", "title": "Step-by-step", "titleByLayer": { "learner": "How to learn more", "explorer": "How to explore further", "deepDive": "Evidence-based next steps" } },
+    { "key": "realWorldExamples", "title": "Real-world examples", "titleByLayer": { "learner": "Examples", "explorer": "Real-world examples", "deepDive": "Real-world examples and institutions" } }
+  ],
+  "stemAnchors": ["science", "realWorldApplication"],
+  "activities": [
+    { "type": "observation", "title": "Marsupial at a zoo or video", "layer": "child", "body": "Watch a kangaroo, wallaby, or koala at a zoo or on video. Do you see the pouch? The baby is called a joey. They live in Australia (and opossums live near us). We help them by supporting zoos and protecting their habitat." },
+    { "type": "observation", "title": "Kangaroo vs koala", "layer": "learner", "body": "Use Smithsonian or a zoo site. Compare kangaroo (or wallaby) and koala: What does each eat? How does each move? Where does each live? How is the pouch used? Write a short comparison." },
+    { "type": "observation", "title": "Marsupial in trouble", "layer": "explorer", "body": "Pick one Australian marsupial (e.g. koala, wombat). Use IUCN or a zoo. What threatens it? (Fire, habitat loss, climate?) What is one thing people are doing to help? Write a paragraph." }
+  ],
+  "sources": [
+    { "title": "Bennett's wallabies", "institution": "Smithsonian's National Zoo and Conservation Biology Institute", "url": "https://nationalzoo.si.edu/animals/news/new-zoo-bennetts-wallabies", "note": "Wallaby biology; marsupials at the Zoo." },
+    { "title": "Marsupial", "institution": "Encyclopaedia Britannica", "url": "https://www.britannica.com/animal/marsupial", "note": "Overview of marsupial biology and diversity." }
+  ],
+  "relatedCardIds": ["opossums", "platypus-capybara", "sloths", "pandas", "plants-and-how-they-grow"],
+  "tags": ["animals", "marsupials", "kangaroos", "koalas", "wallabies", "wombats", "mammals", "biology", "conservation"]
+}

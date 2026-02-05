@@ -1,0 +1,36 @@
+---
+description: One-repo deploy contract — Netlify builds frontend, Railway runs backend. Use when touching deploy, Netlify, Railway, or when the live site shows the wrong UI.
+globs: 
+alwaysApply: false
+---
+
+# Netlify & Railway: one repo, one source of truth
+
+## Contract (follow this every time)
+
+- **One repo:** **bingo-backend** (this repo). All Playroom frontend and backend live here.
+- **Netlify** builds and deploys the **frontend** from this repo:
+  - **Repository:** `1983fletcher-png/bingo-backend` (or the same repo by name).
+  - **Base directory:** `frontend`
+  - **Build command:** `npm ci && npm run build`
+  - **Publish directory:** `dist`
+  - **Branch:** `main`
+- **Railway** runs the **backend** (root `index.js`) from this repo. Same repo, root as project root.
+- **Do not** link the Playroom Netlify site to **music-bingo-app** for the live site. If the live site shows an old or minimal UI, Netlify is likely building from the wrong repo or wrong base — fix it.
+
+## When the user says deploy / Netlify / Railway / wrong UI
+
+1. **Refer to** **docs/DEPLOY-CONTRACT.md** (single source of truth and fix steps).
+2. **If Netlify is showing the wrong UI or wrong repo:** Run or suggest **scripts/ensure-netlify-builds-from-backend.sh**. With `NETLIFY_AUTH_TOKEN` and `NETLIFY_SITE_ID` in `.env`, the script can set Netlify build settings to this repo + `frontend` base so the new UI deploys. Without tokens, the script prints the exact steps to fix in the Netlify UI.
+3. **Push:** Always use the token (see **deploy-and-sync.mdc**); e.g. `./scripts/deploy-playroom.sh` or `./scripts/git-push-with-token.sh`.
+4. **Deploy script:** **scripts/deploy-playroom.sh** pushes this repo, builds the frontend, and (if `DEPLOY_NETLIFY=1`) deploys to Netlify. Optionally run **ensure-netlify-builds-from-backend.sh** first if you have Netlify API credentials set.
+
+## Switching “back and forth”
+
+- There is only one correct setup for the Playroom live site: Netlify building from **bingo-backend** with base **frontend**. There is no “switch to music-bingo-app” for the main site unless the user explicitly wants a different app. If the site was mistakenly linked to music-bingo-app or base directory is wrong, **run the ensure script** or follow **docs/DEPLOY-CONTRACT.md** to point Netlify back at bingo-backend + frontend.
+
+## Files that define behavior
+
+- **docs/DEPLOY-CONTRACT.md** — What deploys where, how to fix, env vars.
+- **netlify.toml** — Build base, command, publish dir (Netlify reads this when building from this repo).
+- **scripts/ensure-netlify-builds-from-backend.sh** — Sets Netlify build settings to this repo + frontend (with API) or prints manual steps.
