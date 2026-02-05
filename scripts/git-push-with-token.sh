@@ -1,9 +1,28 @@
 #!/usr/bin/env bash
-# Push current repo to origin main. Uses GITHUB_TOKEN if set (for Cursor/CI); else normal git push.
-# Run from the repo root you want to push.
+# Push current repo to origin main. Auto-loads GITHUB_TOKEN from .env or env in repo root so Cursor/CI can push.
+# Run from the repo root you want to push (or from anywhere; script will cd to repo root).
 set -e
 
+# Find repo root (directory containing .git)
+GIT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || true
+if [[ -n "$GIT_ROOT" ]]; then
+  cd "$GIT_ROOT"
+  # Load token from .env or env (gitignored; never commit)
+  if [[ -f "$GIT_ROOT/.env" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source "$GIT_ROOT/.env"
+    set +a
+  elif [[ -f "$GIT_ROOT/env" ]]; then
+    set -a
+    # shellcheck source=/dev/null
+    source "$GIT_ROOT/env"
+    set +a
+  fi
+fi
+
 if [[ -z "$GITHUB_TOKEN" ]]; then
+  echo "GITHUB_TOKEN not set. Add GITHUB_TOKEN=ghp_... to this repo's .env or env file (see .env.example)."
   git push origin main
   exit $?
 fi
