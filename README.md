@@ -11,7 +11,7 @@ Node.js + Express + Socket.io backend for the Music Bingo (Playroom) game. Handl
 | **Run locally** | `npm install` then `npm start` (server on port 3001). |
 | **Deploy** | Push this repo, then either: **Railway** — `railway login`, `railway init`, `railway up`; or **Render** — connect repo, build `npm install`, start `npm start`. |
 | **Connect frontend** | Netlify builds the **music-bingo-app** repo. To sync this repo’s frontend (Roll Call, Host, Play, Print, trivia) to the live app: `./scripts/sync-full-frontend-and-push.sh` or `./scripts/sync-and-push-roll-call.sh /path/to/music-bingo-app`. See **docs/ROLL-CALL-LIVE-SITE.md**. |
-| **Push from Cursor / CI** | Set **GITHUB_TOKEN** (GitHub PAT with `repo`) and optionally **MUSIC_BINGO_APP_PATH**. Then `./scripts/deploy-playroom.sh` and `./scripts/sync-full-frontend-and-push.sh` can push without interactive auth. See **docs/GITHUB-PUSH-AND-SYNC-SETUP.md**. |
+| **Push from Cursor / CI** | Plain `git push` fails with *could not read Username for 'https://github.com': Device not configured*. Set **GITHUB_TOKEN** in `.env` and use **`./scripts/git-push-with-token.sh`** or **`./scripts/deploy-playroom.sh`** so push uses the token. See **docs/GITHUB-PUSH-AND-SYNC-SETUP.md**. |
 | **Pre-push checks** | **docs/PRE-PUSH-TEST-REPORT.md** — build, lint, scrape API, `npm run smoke:observances` (observances lib). |
 | **Menu & theming (backend)** | Phases A–C complete. Observances API, menu parse, permission flag. **docs/PHASE-A-B-AUDIT.md**, **docs/PHASE-C-THEMING-AND-CALENDAR.md**, **docs/MENU-AND-THEMING-VISION.md**. |
 | **AI song generation** | Frontend sends `POST /api/generate-songs` with body `{ prompt, apiKey }` or you set `OPENAI_API_KEY` on the backend. |

@@ -4,14 +4,31 @@ So that the agent can **push** and **sync the frontend to music-bingo-app** with
 
 ---
 
+## Why plain `git push` fails (use the token instead)
+
+When Cursor or a script runs **`git push origin main`** without your GitHub credentials, Git tries to prompt for a username. In that environment there is no terminal for input, so you get:
+
+```text
+fatal: could not read Username for 'https://github.com': Device not configured
+```
+
+**Fix:** Do **not** use plain `git push`. Use the **GitHub token** so Git never has to ask for a username:
+
+1. Put **GITHUB_TOKEN** in this repo's **.env** (or **env**) — see below.
+2. Use **scripts/git-push-with-token.sh** (or **deploy-playroom.sh**, which calls it). The script reads the token from `.env` and pushes using `https://TOKEN@github.com/...`, so the push goes straight to GitHub with no prompt.
+
+That way every push from Cursor or CI uses the token and succeeds.
+
+---
+
 ## From Cursor: always use the token
 
-**We use the GitHub token from Cursor for every push** so there are no "could not read Username" or "Device not configured" errors.
+**We use the GitHub token for every push** so there are no "could not read Username" or "Device not configured" errors.
 
-- **Do not** run plain `git push origin main` from the agent/Cursor — it will fail.
+- **Do not** run plain `git push origin main` from the agent/Cursor — it will fail with the error above.
 - **Do** ensure **GITHUB_TOKEN** is in this repo's **.env** or **env** file (see below).
 - **Do** use **scripts/git-push-with-token.sh** (or **deploy-playroom.sh** / **sync-and-push-roll-call.sh**, which use it) so the token is used automatically.
-- Scripts load `.env` / `env` from the repo root and export `GITHUB_TOKEN` before pushing.
+- Scripts load `.env` / `env` from the repo root and use the token in the push URL.
 
 This is the standard from now on for smooth pushes.
 

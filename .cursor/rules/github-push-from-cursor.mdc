@@ -5,8 +5,11 @@ alwaysApply: true
 
 # Push from Cursor: use the token
 
-When pushing to GitHub from Cursor, **do not** run plain `git push origin main` — it will fail with auth errors.
+**Failure when using plain push:**  
+`fatal: could not read Username for 'https://github.com': Device not configured`
 
-**Always use the token:** Load **GITHUB_TOKEN** from this repo's **.env** or **env** (e.g. `source .env` or `source env`), then run **scripts/git-push-with-token.sh** from the repo you are pushing. For this repo, **deploy-playroom.sh** does that. For music-bingo-app, run the backend's **git-push-with-token.sh** from the app directory after sourcing the backend's .env.
+Git tries to prompt for a username; in Cursor there is no interactive terminal, so the push fails. **Fix:** use the **GitHub token** so the push goes directly to GitHub (no username prompt).
+
+**Always use the token:** Load **GITHUB_TOKEN** from this repo's **.env** or **env**, then run **scripts/git-push-with-token.sh** (or **deploy-playroom.sh**, which calls it). The script builds a URL like `https://TOKEN@github.com/owner/repo` and runs `git push <that-url> main`, so the push succeeds. For music-bingo-app, run the backend's **git-push-with-token.sh** from the app directory after sourcing the backend's .env.
 
 Details: **.cursor/rules/deploy-and-sync.mdc** and **docs/GITHUB-PUSH-AND-SYNC-SETUP.md**.

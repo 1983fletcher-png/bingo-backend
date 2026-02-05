@@ -8,7 +8,7 @@ alwaysApply: false
 
 ## Pushing to GitHub — always use the token from Cursor
 
-**Do not run plain `git push origin main`** from Cursor; it will fail with "could not read Username" / "Device not configured" because there is no interactive auth.
+**Do not run plain `git push origin main`** from Cursor. It fails with: `fatal: could not read Username for 'https://github.com': Device not configured` (no interactive auth). Use **GITHUB_TOKEN** via **scripts/git-push-with-token.sh** so push goes straight to GitHub.
 
 **Always use the GitHub token:**
 
