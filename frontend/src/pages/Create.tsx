@@ -1,39 +1,34 @@
+/**
+ * Create a page – template family selection (Hospitality, Education, Care, Business, General).
+ */
 import { Link } from 'react-router-dom';
+import '../styles/create.css';
+
+const TEMPLATE_FAMILIES = [
+  { id: 'hospitality', title: 'Hospitality & Venues', description: 'Bars, restaurants, breweries, food trucks, music venues, hotels', to: '/create/hospitality' },
+  { id: 'education', title: 'Education & Learning', description: 'Schools, classrooms, libraries, youth programs, workshops', to: '/create/education' },
+  { id: 'care', title: 'Care & Wellness', description: 'Assisted living, clinics, therapy offices, hospitals', to: '/create/care' },
+  { id: 'business', title: 'Business & Corporate', description: 'Training, onboarding, internal communication', to: '/create/business' },
+  { id: 'general', title: 'General Page', description: 'Announcements, flyers, quick pages', to: '/create/general' },
+] as const;
 
 export default function Create() {
   return (
-    <div style={{ minHeight: '100vh', padding: 24, maxWidth: 560, margin: '0 auto' }}>
-      <Link
-        to="/"
-        style={{ display: 'inline-block', marginBottom: 24, color: '#94a3b8', fontSize: '0.9rem', textDecoration: 'none' }}
-      >
-        ← Back to Playroom
-      </Link>
-      <h1 style={{ margin: '0 0 12px', fontSize: '1.75rem' }}>Create a page</h1>
-      <p style={{ color: '#cbd5e0', lineHeight: 1.6, marginBottom: 24 }}>
-        Build menus, promos, and flyers for your venue or event. Food and drink menus for screens or print,
-        daily or weekly specials, event promotions, live music boards, and welcome or info displays—all from
-        simple, guided steps. Share a link or show on a screen.
-      </p>
-      <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
-        The full page builder (Hospitality, Education, Care, Business, and General templates) is coming soon
-        to this app. For now, use the Playroom to host games and explore Learn & Grow.
-      </p>
-      <Link
-        to="/"
-        style={{
-          display: 'inline-block',
-          marginTop: 20,
-          padding: '12px 20px',
-          background: 'rgba(255,255,255,0.1)',
-          color: '#e2e8f0',
-          borderRadius: 10,
-          textDecoration: 'none',
-          fontWeight: 600,
-        }}
-      >
-        Back to home
-      </Link>
+    <div className="create">
+      <section className="create__hero" aria-label="Choose a template">
+        <h1 className="create__title">Create a page</h1>
+        <p className="create__tagline">
+          Pick what you need. We’ll guide you step by step—no design experience required.
+        </p>
+      </section>
+      <div className="create__cards">
+        {TEMPLATE_FAMILIES.map((card) => (
+          <Link key={card.id} to={card.to} className="create__card">
+            <span className="create__card-title">{card.title}</span>
+            <span className="create__card-desc">{card.description}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

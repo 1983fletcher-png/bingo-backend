@@ -1,4 +1,15 @@
 /**
+ * Ensure a backend base URL has a scheme so fetch() hits the real host.
+ * If the value is "example.up.railway.app", returns "https://example.up.railway.app".
+ */
+export function normalizeBackendUrl(url: string): string {
+  const u = (url || '').trim().replace(/\/$/, '');
+  if (!u) return u;
+  if (/^https?:\/\//i.test(u)) return u;
+  return 'https://' + u;
+}
+
+/**
  * Fetch and parse JSON safely. If the response is HTML (e.g. 404 page) or
  * not valid JSON, returns a friendly error instead of throwing a parse error.
  */

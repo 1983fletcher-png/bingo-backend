@@ -1,0 +1,129 @@
+/**
+ * Design system — Playroom
+ * Clean, modern: intuitive, friendly, educational. Light + dark.
+ */
+
+/* Dark (default) */
+:root,
+[data-theme="dark"] {
+  --bg: #0c0c10;
+  --surface: #16161d;
+  --surface-elevated: #1e1e28;
+  --surface-hover: #252532;
+  --surface2: #252538;
+  --text: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --text-muted: #6e6e73;
+  --border: #2d2d3a;
+  --border-focus: #6366f1;
+  --accent: #e94560;
+  --accent-hover: #f25c75;
+  --accent-dim: #b8364d;
+  --accent-secondary: #6366f1;
+  --success: #34c759;
+  --warning: #ff9f0a;
+  --error: #ff3b30;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Light */
+[data-theme="light"] {
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-hover: #e8e8ed;
+  --surface2: #e8e8ed;
+  --text: #1d1d1f;
+  --text-secondary: #424245;
+  --text-muted: #6e6e73;
+  --border: #d2d2d7;
+  --border-focus: #6366f1;
+  --accent: #e94560;
+  --accent-hover: #d63d56;
+  --accent-dim: #b8364d;
+  --accent-secondary: #6366f1;
+  --success: #34c759;
+  --warning: #ff9f0a;
+  --error: #ff3b30;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --header-height: 56px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --transition-fast: 0ms; --transition-base: 0ms; }
+}
+
+.container-narrow {
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4) var(--space-6);
+  background: var(--accent);
+  color: #fff;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-base), transform var(--transition-fast);
+}
+[data-theme="dark"] .btn-primary { border-color: rgba(255, 255, 255, 0.15); }
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.btn-primary:active:not(:disabled) { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+.card--hover { cursor: pointer; }
+.card--hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--text-muted);
+}

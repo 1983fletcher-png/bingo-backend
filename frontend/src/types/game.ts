@@ -1,3 +1,51 @@
+/** localStorage key for UI theme: 'light' | 'dark' */
+export const THEME_KEY = 'playroom-theme';
+
+/** Event & venue config (display, welcome, scrape, social links). Synced to game via host:set-event-config. */
+export interface EventConfig {
+  gameTitle?: string;
+  venueName?: string;
+  logoUrl?: string;
+  accentColor?: string;
+  drinkSpecials?: string;
+  foodSpecials?: string;
+  themeLabel?: string;
+  promoText?: string;
+  bannerImageUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  welcomeTitle?: string;
+  welcomeMessage?: string;
+  welcomeImageUrl?: string;
+  useVenueLogoInCenter?: boolean;
+  foodMenuUrl?: string;
+  drinkMenuUrl?: string;
+  eventsUrl?: string;
+  venueAllowedUseOfMenuDesign?: boolean;
+}
+
+export const VENUE_PROFILES_KEY = 'playroom-venue-profiles';
+
+export interface VenueProfile {
+  id: string;
+  name: string;
+  gameTitle?: string;
+  venueName?: string;
+  logoUrl?: string;
+  accentColor?: string;
+  drinkSpecials?: string;
+  foodSpecials?: string;
+  themeLabel?: string;
+  promoText?: string;
+  bannerImageUrl?: string;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  foodMenuUrl?: string;
+  drinkMenuUrl?: string;
+  eventsUrl?: string;
+  venueAllowedUseOfMenuDesign?: boolean;
+}
+
 /** One song in the pool or on a card */
 export interface Song {
   artist: string;

@@ -7,11 +7,12 @@ const cardStyle: React.CSSProperties = {
   padding: '28px 24px',
   borderRadius: 16,
   textDecoration: 'none',
-  color: '#e2e8f0',
+  color: 'var(--text)',
   minHeight: 200,
-  boxShadow: '0 4px 20px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.2)',
+  boxShadow: 'var(--shadow-md)',
   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-  border: '1px solid rgba(255,255,255,0.06)',
+  border: '1px solid var(--border)',
+  background: 'var(--surface)',
 };
 
 const cardHoverStyle: React.CSSProperties = {
@@ -49,7 +50,7 @@ function Card({
       <h2 style={{ margin: '0 0 8px', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
         {title}
       </h2>
-      <p style={{ margin: 0, fontSize: '0.95rem', color: 'rgba(226,232,240,0.88)', lineHeight: 1.45 }}>
+      <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
         {description}
       </p>
     </Link>
@@ -60,7 +61,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #1a1a2e 0%, #16162a 100%)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       {/* Header with calendar */}
       <header
         style={{
@@ -72,7 +73,7 @@ export default function Home() {
           margin: '0 auto',
         }}
       >
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#e2e8f0' }}>The Playroom</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text)' }}>The Playroom</span>
         <button
           type="button"
           onClick={() => navigate('/calendar')}
@@ -81,13 +82,13 @@ export default function Home() {
             alignItems: 'center',
             gap: 8,
             padding: '10px 16px',
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.12)',
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
             borderRadius: 10,
-            color: '#cbd5e0',
+            color: 'var(--text-secondary)',
             fontSize: '0.9rem',
             cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            boxShadow: 'var(--shadow-sm)',
           }}
         >
           <span aria-hidden>📅</span>
@@ -103,7 +104,7 @@ export default function Home() {
               margin: '0 0 12px',
               fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
               fontWeight: 700,
-              color: '#f7fafc',
+              color: 'var(--text)',
               letterSpacing: '-0.03em',
             }}
           >
@@ -113,7 +114,7 @@ export default function Home() {
             style={{
               margin: 0,
               fontSize: '1.05rem',
-              color: 'rgba(226,232,240,0.85)',
+              color: 'var(--text-secondary)',
               lineHeight: 1.5,
               maxWidth: 520,
               marginLeft: 'auto',
@@ -164,10 +165,10 @@ export default function Home() {
         <section
           style={{
             padding: '28px 24px',
-            background: 'rgba(255,255,255,0.04)',
+            background: 'var(--surface)',
             borderRadius: 16,
-            border: '1px solid rgba(255,255,255,0.06)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <h2
@@ -175,7 +176,7 @@ export default function Home() {
               margin: '0 0 12px',
               fontSize: '1.15rem',
               fontWeight: 600,
-              color: '#e2e8f0',
+              color: 'var(--text)',
             }}
           >
             Who it's for
@@ -184,7 +185,7 @@ export default function Home() {
             style={{
               margin: '0 0 20px',
               fontSize: '1rem',
-              color: 'rgba(226,232,240,0.88)',
+              color: 'var(--text-secondary)',
               lineHeight: 1.55,
             }}
           >
@@ -203,11 +204,11 @@ export default function Home() {
                   key={label}
                   style={{
                     padding: '8px 14px',
-                    background: 'rgba(255,255,255,0.06)',
+                    background: 'var(--surface-hover)',
                     borderRadius: 8,
                     fontSize: '0.875rem',
-                    color: '#cbd5e0',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    color: 'var(--text-secondary)',
+                    border: '1px solid var(--border)',
                   }}
                 >
                   {label}
