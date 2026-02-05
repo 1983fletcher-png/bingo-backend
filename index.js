@@ -154,6 +154,62 @@ app.get('/api/scrape-site', async (req, res) => {
   }
 });
 
+// Fetch a page's text content (for menu import). Public HTML only; strip tags, return lines.
+app.get('/api/fetch-page-text', async (req, res) => {
+  const url = req.query.url;
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ error: 'Missing url query' });
+  }
+  try {
+    const u = new URL(url.trim());
+    if (!['http:', 'https:'].includes(u.protocol)) {
+      return res.status(400).json({ error: 'Invalid URL' });
+    }
+    const resp = await fetch(u.href, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Playroom/1.0; +https://theplayroom.app)',
+        Accept: 'text/html'
+      },
+      redirect: 'follow',
+      signal: AbortSignal.timeout(15000)
+    });
+    if (!resp.ok) {
+      return res.status(502).json({ error: `Page returned ${resp.status}.` });
+    }
+    const html = await resp.text();
+    const text = html
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    res.json({ text: text.slice(0, 50000) });
+  } catch (err) {
+    const message = err.name === 'AbortError' ? 'Request timed out' : (err.message || 'Failed to fetch');
+    res.status(500).json({ error: message });
+  }
+});
+
+// Page Builder: save document for shareable link (in-memory; optional DB later)
+const pageBuilderDocs = new Map();
+const nanoidSlug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10);
+app.post('/api/page-builder/save', (req, res) => {
+  const document = req.body?.document;
+  if (!document || typeof document !== 'object') {
+    return res.status(400).json({ error: 'Missing document body' });
+  }
+  const slug = nanoidSlug();
+  pageBuilderDocs.set(slug, { document, createdAt: Date.now() });
+  res.json({ slug });
+});
+app.get('/api/page-builder/:slug', (req, res) => {
+  const entry = pageBuilderDocs.get(req.params.slug);
+  if (!entry) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  res.json(entry.document);
+});
+
 // Music Bingo: AI-generated song list (75 songs, one per artist, theme-aware)
 app.post('/api/generate-songs', async (req, res) => {
   const { prompt = '', familyFriendly = false, count = 75 } = req.body || {};
