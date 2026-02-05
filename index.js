@@ -103,13 +103,49 @@ app.get('/api/scrape-site', async (req, res) => {
       /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']description["']/i
     ]);
 
+    // Optional: extract links from page (public <a href>) for menu, events, social — legal/respectful, no deep scraping
+    let foodMenuUrl = null;
+    let drinkMenuUrl = null;
+    let eventsUrl = null;
+    let facebookUrl = null;
+    let instagramUrl = null;
+    const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([^<]*)</gi;
+    let match;
+    while ((match = linkRegex.exec(html)) !== null) {
+      const href = (match[1] || '').trim();
+      const text = (match[2] || '').toLowerCase();
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) continue;
+      const full = resolveHref(href);
+      if (!full) continue;
+      const lower = full.toLowerCase();
+      if (!facebookUrl && (lower.includes('facebook.com') || lower.includes('fb.com'))) facebookUrl = full;
+      else if (!instagramUrl && lower.includes('instagram.com')) instagramUrl = full;
+      else if (!foodMenuUrl && (text.includes('food') || text.includes('menu') || lower.includes('menu') || lower.includes('food'))) foodMenuUrl = full;
+      else if (!drinkMenuUrl && (text.includes('drink') || text.includes('bar') || text.includes('cocktail') || lower.includes('drink') || lower.includes('bar'))) drinkMenuUrl = full;
+      else if (!eventsUrl && (text.includes('event') || text.includes('calendar') || lower.includes('event') || lower.includes('calendar'))) eventsUrl = full;
+    }
+    // Also check meta for social (some themes put them in og or link)
+    if (!facebookUrl) {
+      const fb = metaContent([/<link[^>]+href=["']([^"']*facebook[^"']*)["']/i, /<meta[^>]+content=["']([^"']*facebook[^"']*)["']/i]);
+      if (fb) facebookUrl = resolveHref(fb) || fb;
+    }
+    if (!instagramUrl) {
+      const ig = metaContent([/<link[^>]+href=["']([^"']*instagram[^"']*)["']/i, /<meta[^>]+content=["']([^"']*instagram[^"']*)["']/i]);
+      if (ig) instagramUrl = resolveHref(ig) || ig;
+    }
+
     const result = {
       logoUrl: logoUrl || null,
       colors: themeColor ? [themeColor] : [],
       title: title || null,
       description: description || null,
       siteUrl: baseUrl,
-      disclaimer: 'We only fetch public meta tags. Use only with sites you have permission to reference. Data is not stored on our servers.'
+      foodMenuUrl: foodMenuUrl || null,
+      drinkMenuUrl: drinkMenuUrl || null,
+      eventsUrl: eventsUrl || null,
+      facebookUrl: facebookUrl || null,
+      instagramUrl: instagramUrl || null,
+      disclaimer: 'We only fetch public meta tags and visible links. Use only with sites you have permission to reference. Data is not stored on our servers.'
     };
     res.json(result);
   } catch (err) {
@@ -463,7 +499,9 @@ function createGame(opts = {}) {
       game: 'roll-call',
       theme: 'default',
       hostMessage: 'Starting soon',
-      logoAnimation: 'bounce'   // 'none' | 'bounce' | 'breathing' | 'glow' — Playroom logo on display & player waiting room
+      logoAnimation: 'bounce',
+      stretchyImageSource: 'playroom',
+      mazeCenterSource: 'playroom'
     },
     // Roll Call leaderboard (stubbed): playerId -> { bestTimeMs, displayName }
     rollCallScores: new Map(),
@@ -568,13 +606,17 @@ io.on('connection', (socket) => {
   });
 
   // Waiting room: host sets mini-game (roll-call, fidget/stretch, or none), theme, and message
-  socket.on('host:set-waiting-room', ({ code, game: wrGame, theme, hostMessage, logoAnimation }) => {
+  socket.on('host:set-waiting-room', ({ code, game: wrGame, theme, hostMessage, logoAnimation, stretchyImageSource, stretchyImageUrl, mazeCenterSource, mazeCenterImageUrl }) => {
     const game = getGame(code);
     if (!game || game.hostId !== socket.id) return;
     if (wrGame !== undefined) game.waitingRoom.game = (wrGame === 'roll-call' || wrGame === 'fidget') ? wrGame : null;
     if (theme !== undefined && typeof theme === 'string') game.waitingRoom.theme = theme;
     if (hostMessage !== undefined && typeof hostMessage === 'string') game.waitingRoom.hostMessage = hostMessage;
     if (logoAnimation !== undefined && ['none', 'bounce', 'breathing', 'glow'].includes(logoAnimation)) game.waitingRoom.logoAnimation = logoAnimation;
+    if (stretchyImageSource !== undefined && ['playroom', 'venue-logo', 'custom'].includes(stretchyImageSource)) game.waitingRoom.stretchyImageSource = stretchyImageSource;
+    if (stretchyImageUrl !== undefined) game.waitingRoom.stretchyImageUrl = typeof stretchyImageUrl === 'string' ? stretchyImageUrl : undefined;
+    if (mazeCenterSource !== undefined && ['playroom', 'venue-logo', 'custom', 'music-note', 'question-mark'].includes(mazeCenterSource)) game.waitingRoom.mazeCenterSource = mazeCenterSource;
+    if (mazeCenterImageUrl !== undefined) game.waitingRoom.mazeCenterImageUrl = typeof mazeCenterImageUrl === 'string' ? mazeCenterImageUrl : undefined;
     io.to(`game:${game.code}`).emit('game:waiting-room-updated', { waitingRoom: game.waitingRoom });
   });
 
