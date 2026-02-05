@@ -1,68 +1,68 @@
 import { Link, useNavigate } from 'react-router-dom';
+import '../styles/home.css';
 
-const cardStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'flex-end',
-  padding: '28px 24px',
-  borderRadius: 16,
-  textDecoration: 'none',
-  color: 'var(--text)',
-  minHeight: 200,
-  boxShadow: 'var(--shadow-md)',
-  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-  border: '1px solid var(--border)',
-  background: 'var(--surface)',
-};
+const WHO_ITS_FOR = [
+  'Venues',
+  'Teachers',
+  'Corporate Teams',
+  'Libraries',
+  'Caregivers',
+  'Assisted Living',
+  'Youth Programs',
+  'Activity Directors',
+  'HR & Learning',
+];
 
-const cardHoverStyle: React.CSSProperties = {
-  transform: 'translateY(-4px)',
-  boxShadow: '0 12px 40px rgba(0,0,0,0.45), 0 4px 12px rgba(0,0,0,0.25)',
-};
-
-function Card({
-  to,
-  title,
-  description,
-  accent,
-}: {
-  to: string;
-  title: string;
-  description: string;
-  accent: string;
-}) {
-  return (
-    <Link
-      to={to}
-      style={{
-        ...cardStyle,
-        background: `linear-gradient(180deg, transparent 0%, ${accent}22 60%, ${accent}18 100%)`,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = cardHoverStyle.transform!;
-        e.currentTarget.style.boxShadow = cardHoverStyle.boxShadow!;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = '';
-        e.currentTarget.style.boxShadow = cardStyle.boxShadow!;
-      }}
-    >
-      <h2 style={{ margin: '0 0 8px', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-        {title}
-      </h2>
-      <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
-        {description}
-      </p>
-    </Link>
-  );
-}
+const GAME_TYPES = [
+  {
+    id: 'music-bingo',
+    title: 'Music Bingo',
+    description:
+      'Curated themes or build your own. One code for the whole room — host from a tablet, play on any phone.',
+    to: '/host?type=bingo',
+  },
+  {
+    id: 'trivia',
+    title: 'Trivia',
+    description:
+      'Packs and custom questions. Multiple choice, true/false. For pubs, teams, and family nights.',
+    to: '/host?type=trivia',
+  },
+  {
+    id: 'icebreakers',
+    title: 'Icebreakers',
+    description:
+      'Two Truths, Would You Rather, quick energizers. Low-stakes, high connection.',
+    to: '/host?type=icebreakers',
+  },
+  {
+    id: 'edutainment',
+    title: 'Edutainment',
+    description:
+      'Learning games for K–college. Grade bands, subjects, curriculum-aligned content.',
+    to: '/host?type=edutainment',
+  },
+  {
+    id: 'team-building',
+    title: 'Team Building',
+    description:
+      'Activities by age, occupation, or situation. Remote teams, retreats, community.',
+    to: '/host?type=team-building',
+  },
+  {
+    id: 'custom-training',
+    title: 'Custom Training Materials',
+    description:
+      'Build training and learning content for your company. Custom packs, compliance, onboarding.',
+    to: '/host?type=trivia',
+  },
+];
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* Header with calendar */}
+    <div className="landing" style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <header
         style={{
           display: 'flex',
@@ -71,9 +71,12 @@ export default function Home() {
           padding: '16px 24px',
           maxWidth: 1000,
           margin: '0 auto',
+          width: '100%',
         }}
       >
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text)' }}>The Playroom</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text)' }}>
+          The Playroom
+        </span>
         <button
           type="button"
           onClick={() => navigate('/calendar')}
@@ -96,127 +99,157 @@ export default function Home() {
         </button>
       </header>
 
-      <main style={{ maxWidth: 1000, margin: '0 auto', padding: '24px 24px 48px' }}>
-        {/* Welcome */}
-        <section style={{ textAlign: 'center', marginBottom: 36 }}>
-          <h1
-            style={{
-              margin: '0 0 12px',
-              fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
-              fontWeight: 700,
-              color: 'var(--text)',
-              letterSpacing: '-0.03em',
-            }}
-          >
-            Welcome to the Playroom
-          </h1>
-          <p
-            style={{
-              margin: 0,
-              fontSize: '1.05rem',
-              color: 'var(--text-secondary)',
-              lineHeight: 1.5,
-              maxWidth: 520,
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}
-          >
-            One space for live games, trivia, learning, and connection. Host from one device; everyone joins with a single link.
+      <main style={{ flex: 1, width: '100%', padding: '0 24px 48px' }}>
+        {/* Hero */}
+        <section className="landing__hero" aria-label="Welcome">
+          <h1 className="landing__hero-title">Welcome to the Playroom</h1>
+          <p className="landing__hero-tagline">
+            A shared space for live games, trivia, edutainment, training, and
+            interactive learning — hosted anywhere, played everywhere.
           </p>
+          <p className="landing__hero-support">
+            One room. One link. Everyone&apos;s in — on phones or with printable
+            materials when you need them.
+          </p>
+          {/* Four main cards — 2x2 */}
+          <div
+            className="landing__hero-cards"
+            style={{
+              maxWidth: 720,
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              marginBottom: 32,
+            }}
+          >
+            <Link to="/host" className="landing__hero-card">
+              <span className="landing__hero-card-title">Host a room</span>
+              <span className="landing__hero-card-desc">
+                Start a game — music bingo or trivia. Share the QR or link;
+                players join instantly. Control the flow from one screen.
+              </span>
+            </Link>
+            <Link to="/join" className="landing__hero-card">
+              <span className="landing__hero-card-title">Join a room</span>
+              <span className="landing__hero-card-desc">
+                Enter the game code from your host. Play on your phone or
+                tablet — no app required.
+              </span>
+            </Link>
+            <Link to="/create" className="landing__hero-card">
+              <span className="landing__hero-card-title">Create a page</span>
+              <span className="landing__hero-card-desc">
+                Menus, promos, and flyers for screens and print. Build food and
+                drink menus, event promos, welcome boards, and specials.
+              </span>
+            </Link>
+            <Link to="/learn" className="landing__hero-card">
+              <span className="landing__hero-card-title">Learn &amp; Grow</span>
+              <span className="landing__hero-card-desc">
+                Trusted, cited learning cards: plants, animals, crafts, science.
+                Calm, layered content for curious minds.
+              </span>
+            </Link>
+          </div>
         </section>
 
-        {/* Four cards — 2x2 grid, large and prominent */}
+        {/* How it works */}
         <section
-          className="home-cards-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 20,
-            marginBottom: 48,
-          }}
+          id="how-it-works"
+          className="landing__section"
+          aria-label="How it works"
         >
-          <Card
-            to="/host"
-            title="Host a room"
-            description="Start a game—music bingo or trivia. Share the QR or link; players join instantly. Control the flow from one screen."
-            accent="#6cb4ee"
-          />
-          <Card
-            to="/join"
-            title="Join a room"
-            description="Enter the game code from your host. Play on your phone or tablet—no app required."
-            accent="#86efac"
-          />
-          <Card
-            to="/create"
-            title="Create a page"
-            description="Menus, promos, and flyers for screens and print. Build food and drink menus, event promos, welcome boards, and specials—then share or display."
-            accent="#fcd34d"
-          />
-          <Card
-            to="/learn"
-            title="Learn & Grow"
-            description="Trusted, cited learning cards: plants, animals, crafts, science, and more. Calm, layered content for curious minds—from quick facts to deep dives."
-            accent="#c4b5fd"
-          />
+          <h2 className="landing__section-title">How it works</h2>
+          <ol className="landing__how-steps">
+            <li className="landing__how-step">
+              <span className="landing__how-num" aria-hidden>
+                1
+              </span>
+              <div>
+                <strong>Create</strong> — Pick a game or build your own. Music
+                Bingo, Trivia, Icebreakers, Edutainment, Team Building, or custom
+                training materials for your company.
+              </div>
+            </li>
+            <li className="landing__how-step">
+              <span className="landing__how-num" aria-hidden>
+                2
+              </span>
+              <div>
+                <strong>Share</strong> — One code or QR for everyone; players
+                join in seconds. Or use printable materials when devices
+                aren&apos;t an option.
+              </div>
+            </li>
+            <li className="landing__how-step">
+              <span className="landing__how-num" aria-hidden>
+                3
+              </span>
+              <div>
+                <strong>Play</strong> — Host runs it; players use their phones or
+                printed materials. Simple, fun, no friction.
+              </div>
+            </li>
+          </ol>
         </section>
 
         {/* Who it's for */}
         <section
-          style={{
-            padding: '28px 24px',
-            background: 'var(--surface)',
-            borderRadius: 16,
-            border: '1px solid var(--border)',
-            boxShadow: 'var(--shadow-md)',
-          }}
+          id="who-its-for"
+          className="landing__section"
+          aria-label="Who it's for"
         >
-          <h2
-            style={{
-              margin: '0 0 12px',
-              fontSize: '1.15rem',
-              fontWeight: 600,
-              color: 'var(--text)',
-            }}
-          >
-            Who it's for
-          </h2>
-          <p
-            style={{
-              margin: '0 0 20px',
-              fontSize: '1rem',
-              color: 'var(--text-secondary)',
-              lineHeight: 1.55,
-            }}
-          >
-            The same simple experience works in a brewery, a classroom, an assisted living facility, or a Fortune 500 company.
+          <h2 className="landing__section-title">Who it&apos;s for</h2>
+          <p className="landing__section-intro">
+            The same simple experience works in a brewery, a classroom, an
+            assisted living facility, or a Fortune 500 company.
           </p>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 10,
-            }}
-          >
-            {['Breweries & venues', 'Schools & libraries', 'Care & wellness', 'Business & training'].map(
-              (label) => (
-                <span
-                  key={label}
-                  style={{
-                    padding: '8px 14px',
-                    background: 'var(--surface-hover)',
-                    borderRadius: 8,
-                    fontSize: '0.875rem',
-                    color: 'var(--text-secondary)',
-                    border: '1px solid var(--border)',
-                  }}
-                >
-                  {label}
-                </span>
-              )
-            )}
+          <ul className="landing__who-grid">
+            {WHO_ITS_FOR.map((label) => (
+              <li key={label} className="landing__who-item">
+                <span>{label}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Game types */}
+        <section
+          id="game-types"
+          className="landing__section"
+          aria-label="Game types"
+        >
+          <h2 className="landing__section-title">Game types</h2>
+          <p className="landing__section-intro">
+            Pick a template and go — or customize to your needs.
+          </p>
+          <div className="landing__games-grid">
+            {GAME_TYPES.map((g) => (
+              <Link key={g.id} to={g.to} className="landing__game-card">
+                <h3 className="landing__game-title">{g.title}</h3>
+                <p className="landing__game-desc">{g.description}</p>
+                <span className="landing__game-cta">Get started →</span>
+              </Link>
+            ))}
           </div>
         </section>
+
+        {/* Our approach */}
+        <section
+          className="landing__section landing__values"
+          aria-label="Our approach"
+        >
+          <h2 className="landing__section-title">Our approach</h2>
+          <p className="landing__values-text">
+            Calm, welcoming, human. We reduce friction and avoid hype. Digital
+            when you want it, printable when you need it.
+          </p>
+          <p className="landing__values-spirit">
+            Knowledge · companionship · education · doing good.
+          </p>
+        </section>
+
+        <footer className="landing__footer" role="contentinfo">
+          <p className="landing__footer-brand">The Playroom</p>
+        </footer>
       </main>
     </div>
   );

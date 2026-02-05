@@ -1,0 +1,231 @@
+/**
+ * Host pre-create flow: progress, game type, pack picker. Uses design-system vars.
+ */
+.host-create {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px 48px;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.host-create__progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.host-create__progress-step {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.host-create__progress-step--done {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.host-create__progress-line {
+  width: 2rem;
+  height: 2px;
+  background: var(--border);
+}
+
+.host-create__progress-labels {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.host-create__progress-labels span {
+  flex: 0 0 4rem;
+  text-align: center;
+}
+
+.host-create__title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.35rem;
+}
+
+.host-create__sub {
+  color: var(--text-muted);
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.host-create__sub--small {
+  margin-bottom: 0.75rem;
+}
+
+.host-create__game-type {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.host-create__game-type-btn {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.host-create__game-type-btn:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+  background: var(--surface-hover, var(--surface));
+}
+
+.host-create__game-type-btn--on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.host-create__content {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.host-create__packs-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.host-create__label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.host-create__select {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.host-create__when {
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+.host-create__when-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+
+.host-create__when-hint {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem;
+}
+
+.host-create__checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.host-create__checkbox-row input {
+  width: 18px;
+  height: 18px;
+}
+
+.host-create__input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.host-create__btn-primary {
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.host-create__btn-primary:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.host-create__btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.host-create__back {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.host-create__back:hover {
+  color: var(--accent);
+}
+
+.host-create__hint {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.host-create__copy {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}

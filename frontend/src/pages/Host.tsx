@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import '../styles/host-create.css';
 import { getSocket } from '../lib/socket';
 import HostSongGrid from '../components/HostSongGrid';
 import SongFactPopUp from '../components/SongFactPopUp';
@@ -28,11 +29,23 @@ interface GameCreated {
 
 type HostTab = 'waiting' | 'call' | 'questions';
 
+export type CreateMode = 'music-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building';
+
+function createModeFromUrl(type: string | null): CreateMode {
+  if (type === 'bingo' || type === 'music-bingo') return 'music-bingo';
+  if (type === 'trivia' || type === 'icebreakers' || type === 'edutainment' || type === 'team-building') return type;
+  return 'music-bingo';
+}
+
 export default function Host() {
+  const [searchParams] = useSearchParams();
+  const typeFromUrl = searchParams.get('type');
+  const [createMode, setCreateMode] = useState<CreateMode>(() => createModeFromUrl(typeFromUrl));
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const [game, setGame] = useState<GameCreated | null>(null);
   const [hostMessage, setHostMessage] = useState('Starting soon…');
+  const [pendingWaitingRoomEnable, setPendingWaitingRoomEnable] = useState(true);
   const [songPool, setSongPool] = useState<Song[]>([]);
   const [revealed, setRevealed] = useState<Song[]>([]);
   const [activeTab, setActiveTab] = useState<HostTab>('waiting');
@@ -73,6 +86,11 @@ export default function Host() {
   const [eventConfigAppliedFeedback, setEventConfigAppliedFeedback] = useState(false);
   const [backendReachable, setBackendReachable] = useState<boolean | null>(null);
   const apiBase = normalizeBackendUrl(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || '');
+
+  useEffect(() => {
+    const mode = createModeFromUrl(typeFromUrl);
+    if (mode !== createMode) setCreateMode(mode);
+  }, [typeFromUrl]);
 
   useEffect(() => {
     const s = getSocket();
@@ -187,11 +205,11 @@ export default function Host() {
     if (!socket || !game) return;
     socket.emit('host:set-waiting-room', {
       code: game.code,
-      game: 'roll-call',
+      game: pendingWaitingRoomEnable ? 'roll-call' : null,
       theme: waitingRoomTheme,
       hostMessage,
     });
-  }, [socket, game?.code, hostMessage, waitingRoomTheme]);
+  }, [socket, game?.code, hostMessage, waitingRoomTheme, pendingWaitingRoomEnable]);
 
   const startEvent = () => {
     if (!socket || !game) return;
@@ -431,50 +449,157 @@ export default function Host() {
   }
 
   if (!game) {
+    const isPackMode = createMode !== 'music-bingo';
+    const selectedPack = defaultTriviaPacks.find((p) => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
+    const canCreateTrivia = isPackMode && selectedPack && selectedPack.questions.length > 0;
+    const canCreate = socket?.connected && (createMode === 'music-bingo' || canCreateTrivia);
+    const step = createMode === 'music-bingo' ? (canCreate ? 3 : 1) : canCreate ? 3 : selectedPack ? 2 : 1;
+
+    const handleCreate = () => {
+      if (createMode === 'music-bingo') createGame('music-bingo');
+      else createGame('trivia');
+    };
+
+    const createButtonLabel =
+      createMode === 'music-bingo'
+        ? 'Create Music Bingo'
+        : createMode === 'trivia'
+          ? `Create ${selectedPack?.title ?? 'Trivia'}`
+          : createMode === 'icebreakers'
+            ? `Create ${selectedPack?.title ?? 'Icebreakers'}`
+            : createMode === 'edutainment'
+              ? `Create ${selectedPack?.title ?? 'Edutainment'}`
+              : `Create ${selectedPack?.title ?? 'Team Building'}`;
+
     return (
-      <div style={{ padding: 24, maxWidth: 520 }}>
-        <p style={{ fontSize: 12, color: '#68d391', marginBottom: 4 }}>● Connected to server</p>
+      <div className="host-create">
+        <p style={{ fontSize: 12, color: '#68d391', marginBottom: 8 }}>● Connected to server</p>
         {!BACKEND_CONFIGURED && (
-          <p style={{ fontSize: 11, color: '#f6ad55', marginBottom: 8 }}>⚠ This build had no VITE_SOCKET_URL — set it in Netlify and redeploy for production.</p>
+          <p style={{ fontSize: 11, color: '#f6ad55', marginBottom: 8 }}>
+            ⚠ Set VITE_SOCKET_URL in Netlify and redeploy for production.
+          </p>
         )}
-        <h2>Host a game</h2>
-        <p>The waiting room will show Roll Call (marble game) until you start.</p>
-        <p style={{ fontSize: 13, color: '#a0aec0', marginTop: 8 }}>
-          Click <strong>Create Music Bingo</strong> to open the full host view: Waiting room, Call sheet, and share link.
+        <div className="host-create__progress" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={3} aria-label="Creation progress">
+          <span className={`host-create__progress-step ${step >= 1 ? 'host-create__progress-step--done' : ''}`}>1</span>
+          <span className="host-create__progress-line" />
+          <span className={`host-create__progress-step ${step >= 2 ? 'host-create__progress-step--done' : ''}`}>2</span>
+          <span className="host-create__progress-line" />
+          <span className={`host-create__progress-step ${step >= 3 ? 'host-create__progress-step--done' : ''}`}>3</span>
+        </div>
+        <p className="host-create__progress-labels">
+          <span>Choose type</span>
+          <span>Pick content</span>
+          <span>Create</span>
         </p>
-        {createError && (
-          <p style={{ fontSize: 13, color: '#fc8181', marginTop: 8 }}>{createError}</p>
-        )}
-        <div style={{ marginTop: 16 }}>
+        <h1 className="host-create__title">Host a game</h1>
+        <p className="host-create__sub">Choose your game type, then pick content. Share the QR or link so players can join.</p>
+        <p className="host-create__sub host-create__sub--small">What do you want to run?</p>
+        <div className="host-create__game-type">
           <button
-            onClick={() => createGame('music-bingo')}
-            disabled={createPending}
-            style={{ padding: '12px 24px', marginRight: 8 }}
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'music-bingo' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('music-bingo')}
           >
-            {createPending ? 'Creating…' : 'Create Music Bingo'}
+            Music Bingo
           </button>
-          <div style={{ marginTop: 16 }}>
-            <label style={{ display: 'block', marginBottom: 6 }}>Trivia pack</label>
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'trivia' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('trivia')}
+          >
+            Trivia
+          </button>
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'icebreakers' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('icebreakers')}
+          >
+            Icebreakers
+          </button>
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'edutainment' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('edutainment')}
+          >
+            Edutainment
+          </button>
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'team-building' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('team-building')}
+          >
+            Team Building
+          </button>
+        </div>
+
+        {createMode === 'music-bingo' && (
+          <p className="host-create__copy">
+            Create a room and generate 75 songs from the Call sheet tab (AI or theme). One link for everyone.
+          </p>
+        )}
+
+        {isPackMode && (
+          <div className="host-create__content host-create__packs-wrap">
+            <label className="host-create__label">
+              {createMode === 'trivia' && 'Trivia pack'}
+              {createMode === 'icebreakers' && 'Icebreaker pack'}
+              {createMode === 'edutainment' && 'Edutainment pack'}
+              {createMode === 'team-building' && 'Team building pack'}
+            </label>
             <select
+              className="host-create__select"
               value={selectedTriviaPackId}
               onChange={(e) => setSelectedTriviaPackId(e.target.value)}
-              style={{ padding: '8px 12px', minWidth: 220, marginRight: 8 }}
             >
               {defaultTriviaPacks.map((pack) => (
                 <option key={pack.id} value={pack.id}>
-                  {pack.title} ({pack.questions.length})
+                  {pack.title} ({pack.questions.length} questions)
                 </option>
               ))}
             </select>
-            <button
-              onClick={() => createGame('trivia')}
-              disabled={createPending}
-              style={{ padding: '12px 24px' }}
-            >
-              {createPending ? 'Creating…' : 'Create Trivia'}
-            </button>
+            <p className="host-create__hint">
+              {createMode === 'trivia' && 'Packs and custom questions. Multiple choice, true/false.'}
+              {createMode === 'icebreakers' && 'Two Truths, Would You Rather, quick energizers.'}
+              {createMode === 'edutainment' && 'Learning games by grade band. K–college.'}
+              {createMode === 'team-building' && 'Activities by age, occupation, or situation.'}
+            </p>
           </div>
-        </div>
+        )}
+
+        {canCreate && (
+          <section className="host-create__when" aria-label="When players join">
+            <h2 className="host-create__when-title">When players join</h2>
+            <p className="host-create__when-hint">Players see this until you start the game.</p>
+            <label className="host-create__checkbox-row">
+              <input
+                type="checkbox"
+                checked={pendingWaitingRoomEnable}
+                onChange={(e) => setPendingWaitingRoomEnable(e.target.checked)}
+              />
+              <span>Show waiting room with Roll Call (marble game) until I start</span>
+            </label>
+            <label className="host-create__label">Welcome message</label>
+            <input
+              type="text"
+              className="host-create__input"
+              value={hostMessage}
+              onChange={(e) => setHostMessage(e.target.value)}
+              placeholder="e.g. Starting soon · Welcome to [venue]"
+            />
+          </section>
+        )}
+
+        <button
+          type="button"
+          className="host-create__btn-primary"
+          onClick={handleCreate}
+          disabled={!canCreate || createPending}
+        >
+          {createPending ? 'Creating…' : createButtonLabel}
+        </button>
+        {createError && <p className="host-create__hint" style={{ color: 'var(--error, #fc8181)' }}>{createError}</p>}
+        {!socket?.connected && <p className="host-create__hint">Waiting for connection…</p>}
+        <Link to="/" className="host-create__back">← Back to home</Link>
       </div>
     );
   }
