@@ -32,25 +32,25 @@
     ],
     "section": [
       {
-        "id": "baking-soda-volcano-context-reaction",
+        "id": "baking-soda-volcano-context-containers",
         "volcanoSlug": "baking-soda-volcano",
         "src": {
-          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/97/Baking_soda_and_vinegar.jpg",
-          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/960px-Baking_soda_and_vinegar.jpg",
-          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/480px-Baking_soda_and_vinegar.jpg"
+          "lg": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&q=80",
+          "md": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=960&q=80",
+          "sm": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=480&q=80"
         },
-        "alt": "Baking soda and vinegar reacting — foam and bubbles from the same chemistry as the volcano experiment",
-        "caption": "Clear image showing the volcano mid-reaction: acid + base → CO₂ gas → foam.",
+        "alt": "Clear beakers and containers — where you'll mix baking soda and vinegar for the reaction",
+        "caption": "Clear containers like these are where the reaction happens: acid + base → CO₂ gas → foam.",
         "usage": { "role": "section", "priority": 0 },
         "license": {
-          "type": "cc-by",
-          "source": "Wikimedia Commons",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baking_soda_and_vinegar.jpg",
-          "attribution": "CC BY 2.0",
-          "attributionName": "katerha (Flickr)",
-          "attributionUrl": "https://www.flickr.com/photos/katerha/5703151566/"
+          "type": "cc0",
+          "source": "Unsplash",
+          "sourceUrl": "https://unsplash.com/photos/lQGJCMY5qcM",
+          "attribution": "Unsplash License",
+          "attributionName": "Hans Reniers",
+          "attributionUrl": "https://unsplash.com/@hansreniers"
         },
-        "dimensions": { "width": 2336, "height": 1557 },
+        "dimensions": { "width": 3000, "height": 2000 },
         "createdAt": "2026-02-06T00:00:00.000Z"
       },
       {

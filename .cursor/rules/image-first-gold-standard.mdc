@@ -9,8 +9,14 @@ Educational content must meet strict legal, scientific, and quality standards. *
 
 ## Image sourcing rules
 
-- Use **only** public domain, CC0, or explicitly open educational sources.
-- **Prioritize**: government and academic sources (NASA, USGS, NOAA, Smithsonian, NPS, Wikimedia PD).
+- Use **only** public domain, CC0, or explicitly open educational/free-license sources.
+- **Allowed sources** (verify license per image):
+  - **Wikimedia Commons** (PD, CC0, CC BY, CC BY-SA — with attribution where required).
+  - **Unsplash** (Unsplash License — free for commercial use; attribution optional but encouraged).
+  - **Pexels** (Pexels License — free for commercial use).
+  - **Pixabay** (Pixabay License — free; check individual image).
+  - **Government / academic**: NASA, USGS, NOAA, NPS, Smithsonian, CDC PHIL, NIH (public domain where applicable).
+- **Prioritize**: government and academic, then Commons, then Unsplash/Pexels/Pixabay when they better match context.
 - **Never** scrape Google Images, Pinterest, or unverified sites.
 
 ## Image requirements
