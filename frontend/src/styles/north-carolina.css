@@ -17,9 +17,27 @@
   box-sizing: border-box;
 }
 
+.nc-hero__img-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.nc-hero__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.nc-hero__img .volcano-image__caption {
+  display: none;
+}
+
 .nc-hero__layers {
   position: absolute;
   inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   pointer-events: none;
@@ -491,6 +509,51 @@
   margin-bottom: 16px;
 }
 
+.nc-regions__skin-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.nc-regions__skin-label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.nc-regions__skin-btn {
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.nc-regions__skin-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.nc-regions__skin-btn--on {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.nc-regions__outline {
+  color: var(--text-muted);
+}
+
+.nc-regions__map-wrap--topographic .nc-region {
+  opacity: 0.92;
+}
+
 .nc-regions__svg {
   display: block;
   width: 100%;
@@ -584,6 +647,50 @@
   font-weight: 500;
 }
 
+/* Notable locations: want to go explore? Links to official sites */
+.nc-regions__explore {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--surface-elevated);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.nc-regions__explore-intro {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin: 0 0 14px;
+}
+
+.nc-regions__explore-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+}
+
+.nc-regions__explore-item {
+  margin: 0;
+}
+
+.nc-regions__explore-link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.nc-regions__explore-link:hover {
+  text-decoration: underline;
+}
+
+.nc-regions__explore-tag {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
 /* Deep-dive panel (click to open) */
 .nc-deep-dive {
   margin-top: 20px;
@@ -628,6 +735,18 @@
   color: var(--accent);
   border-color: var(--accent);
   background: var(--surface-hover);
+}
+
+.nc-deep-dive__media {
+  margin: 16px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.nc-deep-dive__img img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .nc-deep-dive__content {
@@ -1016,9 +1135,375 @@
   margin-bottom: 6px;
 }
 
+/* ========== ENTERTAINMENT (film, musicians, actors) ========== */
+.nc-block--entertainment .nc-block__subtitle {
+  margin-top: 28px;
+  margin-bottom: 12px;
+}
+
+.nc-block--entertainment .nc-block__subtitle:first-of-type {
+  margin-top: 0;
+}
+
+.nc-entertainment {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-bottom: 24px;
+}
+
+.nc-entertainment-item {
+  display: grid;
+  gap: 20px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nc-entertainment-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+@media (min-width: 640px) {
+  .nc-entertainment-item {
+    grid-template-columns: 280px 1fr;
+    align-items: start;
+  }
+}
+
+.nc-entertainment-item__media {
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.nc-entertainment-item__placeholder {
+  width: 100%;
+  min-height: 180px;
+  background: linear-gradient(145deg, #1e2a38 0%, #2d3d4f 50%, #1a2530 100%);
+  position: relative;
+}
+
+.nc-entertainment-item__placeholder::after {
+  content: attr(data-placeholder);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nc-entertainment-item__img {
+  margin: 0;
+}
+
+.nc-entertainment-item__img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.nc-entertainment-item__caption {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding: 10px 14px;
+  background: var(--surface);
+  font-style: italic;
+  margin: 0;
+}
+
+.nc-entertainment-item__body {
+  min-width: 0;
+}
+
+.nc-entertainment-item__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.nc-entertainment-item__meta {
+  font-size: 0.875rem;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+
+.nc-entertainment-item__para {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+}
+
+.nc-entertainment-item__para:last-of-type {
+  margin-bottom: 0;
+}
+
+.nc-entertainment-item__trivia,
+.nc-entertainment-item__works {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 12px 0 0;
+  padding-left: 1.2em;
+}
+
+.nc-entertainment-item__trivia {
+  list-style: disc;
+}
+
+.nc-entertainment-item__trivia li {
+  margin-bottom: 4px;
+}
+
+.nc-entertainment-item__works {
+  padding-left: 0;
+}
+
+/* ========== LOCATIONS (waterfalls, estates, landmarks) ========== */
+.nc-locations {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.nc-location {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.nc-location__media {
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.nc-location__placeholder {
+  width: 100%;
+  min-height: 220px;
+  background: linear-gradient(160deg, #1a2e24 0%, #2d4a3a 40%, #1e3d2e 100%);
+  position: relative;
+}
+
+.nc-location__placeholder::after {
+  content: attr(data-placeholder);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nc-location__img {
+  margin: 0;
+}
+
+.nc-location__img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.nc-location__caption {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding: 10px 16px;
+  background: var(--surface-elevated);
+  font-style: italic;
+  margin: 0;
+}
+
+.nc-location__body {
+  padding: 20px 24px;
+}
+
+.nc-location__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.nc-location__region {
+  font-size: 0.875rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin: 0 0 6px;
+}
+
+.nc-location__known-for {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0 0 10px;
+}
+
+.nc-location__type {
+  display: inline-block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.nc-location__para {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+
+.nc-location__how,
+.nc-location__history,
+.nc-location__film {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  background: var(--surface-elevated);
+  border-radius: 8px;
+}
+
+.nc-location__trivia {
+  margin: 14px 0 0;
+  padding-left: 1.25em;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.nc-location__trivia li {
+  margin-bottom: 4px;
+}
+
+.nc-location__official {
+  margin: 16px 0 0;
+}
+
+.nc-location__official-link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.nc-location__official-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== BLUE RIDGE PARKWAY — dedicated section ========== */
+.nc-block--parkway .nc-block__intro--parkway {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.nc-parkway {
+  display: grid;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+@media (min-width: 640px) {
+  .nc-parkway {
+    grid-template-columns: 320px 1fr;
+    align-items: start;
+  }
+}
+
+.nc-parkway__media {
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.nc-parkway__placeholder {
+  width: 100%;
+  min-height: 200px;
+  background: linear-gradient(150deg, #1a2e28 0%, #2d4a42 40%, #1e3d35 100%);
+  position: relative;
+}
+
+.nc-parkway__placeholder::after {
+  content: attr(data-placeholder);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nc-parkway__img {
+  margin: 0;
+}
+
+.nc-parkway__img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.nc-parkway__caption {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding: 10px 16px;
+  background: var(--surface-elevated);
+  font-style: italic;
+  margin: 0;
+}
+
+.nc-parkway__body {
+  min-width: 0;
+}
+
+.nc-parkway__para {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+
+.nc-parkway__link-wrap {
+  margin: 16px 0 0;
+}
+
+.nc-parkway__link {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.nc-parkway__link:hover {
+  text-decoration: underline;
+}
+
 .nc-page__sections-title {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-secondary);
   margin: 32px 0 16px;
+}
+
+.nc-page__attribution {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
 }

@@ -44,11 +44,6 @@ const northCarolinaPage: GeneratedLearningPage = {
       title: "Wait — That's Weird",
       contentBlocks: [
         {
-          type: "paragraph",
-          content:
-            "Before we zoom in: a few lines that don't fit the usual \"state facts\" list. These are the dopamine hits.",
-        },
-        {
           type: "callout",
           emphasis: "fun-fact",
           content:
@@ -61,21 +56,11 @@ const northCarolinaPage: GeneratedLearningPage = {
       title: "Where Are You, Really?",
       contentBlocks: [
         {
-          type: "paragraph",
-          content:
-            "World map → U.S. → Southeast → North Carolina. Each zoom can reveal one surprising fact, not a paragraph. You're not just learning location; you're earning it.",
-        },
-        {
-          type: "paragraph",
-          content:
-            "Then: three worlds in one state. Not a list of regions — three characters.",
-        },
-        {
           type: "bullet-list",
           content: [
-            "The Blue Ridge (The Ancient One): Oldest mountains in North America. Rounded, not sharp — time did that. Home to rare species. Micro-hook: These mountains are older than trees.",
-            "The Piedmont (The Connector): Rolling hills. Most cities and people live here. Why humans settled here first. Micro-hook: Most people live here — and most don't know why.",
-            "The Coastal Plain (The Shapeshifter): Barrier islands, hurricanes, moving sand. Micro-hook: The land here rearranges itself every year.",
+            "The Blue Ridge (The Ancient One): Oldest mountains in North America. Rounded, not sharp — time did that. Home to rare species. These mountains are older than trees.",
+            "The Piedmont (The Connector): Rolling hills. Most cities and people live here. Most people live here — and most don't know why.",
+            "The Coastal Plain (The Shapeshifter): Barrier islands, hurricanes, moving sand. The land here rearranges itself every year.",
           ],
         },
       ],
@@ -97,24 +82,12 @@ const northCarolinaPage: GeneratedLearningPage = {
             "Tectonic history → the land that once touched Africa → the Appalachians we walk today.",
           ],
         },
-        {
-          type: "callout",
-          emphasis: "highlight",
-          content:
-            "Geology feels useful when it explains why people and life ended up where they did.",
-        },
       ],
     },
     {
       id: "difficulty_tiers",
       title: "How Deep Do You Want to Go?",
-      contentBlocks: [
-        {
-          type: "paragraph",
-          content:
-            "Peek, sample, back out, or dive deep — without feeling like homework. Short, rewarding interactions; expand-on-demand depth.",
-        },
-      ],
+      contentBlocks: [],
     },
     {
       id: "variations_and_experiments",
@@ -123,12 +96,7 @@ const northCarolinaPage: GeneratedLearningPage = {
         {
           type: "paragraph",
           content:
-            "Ecosystem tiles: each answers — Why here? What makes it special? What would disappear if it changed? That feeds climate, conservation, and trivia naturally.",
-        },
-        {
-          type: "paragraph",
-          content:
-            "Animals aren't just animals. Each is a problem-solver, an adapter, a specialist. Example: Why can black bears thrive in both mountains and suburbs? You're teaching adaptation without saying the word until they're curious.",
+            "Why can black bears thrive in both mountains and suburbs? Life here adapts — to elevation, to weather, to people. What makes each place special is what would disappear if it changed.",
         },
       ],
     },
@@ -144,7 +112,7 @@ const northCarolinaPage: GeneratedLearningPage = {
         {
           type: "paragraph",
           content:
-            "Human geography: no dates at first, no names at first. Just rivers, passes, soil, safety. Then history slots neatly into place. Why people built where they did — and why it still matters.",
+            "Rivers, passes, soil, and safety shaped where people built. Why towns grew where they did — and why it still matters.",
         },
       ],
     },
@@ -152,11 +120,6 @@ const northCarolinaPage: GeneratedLearningPage = {
       id: "cross_links",
       title: "Follow the Threads",
       contentBlocks: [
-        {
-          type: "paragraph",
-          content:
-            "The mycelium idea: one topic leads to another. Wander, don't just finish.",
-        },
         {
           type: "bullet-list",
           content: [
@@ -173,21 +136,21 @@ const northCarolinaPage: GeneratedLearningPage = {
       title: "Seeds for Trivia & Games",
       contentBlocks: [
         {
-          type: "paragraph",
-          content:
-            "Oldest mountain range in North America. Land that used to be part of Africa. A coast that moves. Black bears in suburbs. One state, three climates. These seeds become bingo clues, quiz questions, and \"did you know?\" moments.",
+          type: "bullet-list",
+          content: [
+            "Oldest mountain range in North America.",
+            "Land that used to be part of Africa.",
+            "A coast that moves.",
+            "Black bears in suburbs.",
+            "One state, three climates.",
+          ],
         },
       ],
     },
     {
       id: "further_exploration",
-      title: "This Page Knows More Than It Shows",
+      title: "Go Deeper",
       contentBlocks: [
-        {
-          type: "paragraph",
-          content:
-            "Hidden layer: trivia seeds, difficulty tiers, cross-topic hooks. The system is built so you can peek, sample, or dive — and every path connects to something else.",
-        },
         {
           type: "bullet-list",
           content: [
