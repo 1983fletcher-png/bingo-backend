@@ -15,12 +15,21 @@ import {
   NORTH_CAROLINA_FOLKLORE,
   NORTH_CAROLINA_FOOD,
   NORTH_CAROLINA_DRINKS,
+  NORTH_CAROLINA_FILMS,
+  NORTH_CAROLINA_MUSICIANS,
+  NORTH_CAROLINA_ACTORS,
+  NORTH_CAROLINA_LOCATIONS,
+  BLUE_RIDGE_PARKWAY_FEATURE,
 } from "../data/learningEnginePages/northCarolinaContent";
+import { getNCImageByPlaceholderId } from "../data/northCarolinaImages";
 import {
   GEOGRAPHY_ZOOM_LEVELS,
   ZOOM_LEVEL_ORDER,
   type ZoomLevelId,
 } from "../data/geographyZoomSpine";
+import type { VolcanoImage } from "../types/volcanoImages";
+import { VolcanoImage as VolcanoImageComponent } from "./VolcanoImage";
+import { AttributionSection } from "./AttributionSection";
 import "../styles/north-carolina.css";
 
 function renderContentBlock(block: ContentBlock, index: number) {
@@ -75,20 +84,29 @@ const ZOOM_MAP_CLASSES = ["nc-zoom__map--world", "nc-zoom__map--us", "nc-zoom__m
 
 export interface NorthCarolinaExplorationViewProps {
   page: LearningPage;
+  /** Volcano-style image registry (hero + section); optional. */
+  ncImages?: VolcanoImage[];
 }
 
-/** Simplified NC SVG paths (viewBox 0 0 200 300): Blue Ridge (w), Piedmont (c), Coastal Plain (e). */
+/** North Carolina outline (simplified): diagonal western border (mountains), viewBox 0 0 200 300. */
+const NC_OUTLINE_PATH =
+  "M 22 8 L 66 0 L 200 0 L 200 300 L 66 300 L 22 292 Z";
+/** Three regions inside NC shape: Blue Ridge (west), Piedmont (center), Coastal Plain (east). */
 const NC_REGION_PATHS: Record<NCRegion["id"], string> = {
-  blue_ridge: "M 0 35 L 52 0 L 67 0 L 67 300 L 0 300 Z",
-  piedmont: "M 67 0 L 133 0 L 133 300 L 67 300 Z",
+  blue_ridge: "M 22 8 L 66 0 L 66 300 L 22 292 Z",
+  piedmont: "M 66 0 L 133 0 L 133 300 L 66 300 Z",
   coastal_plain: "M 133 0 L 200 0 L 200 300 L 133 300 Z",
 };
+type MapSkin = "default" | "topographic" | "roadways";
 
-export default function NorthCarolinaExplorationView({ page }: NorthCarolinaExplorationViewProps) {
+export default function NorthCarolinaExplorationView({ page, ncImages = [] }: NorthCarolinaExplorationViewProps) {
+  const heroImages = ncImages.filter((img) => img.usage.role === "hero");
+  const sectionImages = ncImages.filter((img) => img.usage.role === "section").sort((a, b) => a.usage.priority - b.usage.priority);
   const [zoomStep, setZoomStep] = useState(0);
   const [openSectionId, setOpenSectionId] = useState<string | null>(null);
   const [hoveredRegion, setHoveredRegion] = useState<NCRegion["id"] | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<NCRegion["id"] | null>(null);
+  const [mapSkin, setMapSkin] = useState<MapSkin>("default");
 
   const currentLevelId = ZOOM_LEVEL_ORDER[zoomStep] as ZoomLevelId;
   const currentLevel = GEOGRAPHY_ZOOM_LEVELS.find((l) => l.id === currentLevelId);
@@ -112,8 +130,20 @@ export default function NorthCarolinaExplorationView({ page }: NorthCarolinaExpl
         ← Back to Learn & Grow
       </Link>
 
-      {/* Hero: layers + headline */}
+      {/* Hero: optional image + layers + headline */}
       <header className="nc-hero" aria-label="North Carolina — three worlds">
+        {heroImages.length > 0 && (
+          <div className="nc-hero__img-wrap">
+            {heroImages.map((img) => (
+              <VolcanoImageComponent
+                key={img.id}
+                image={img}
+                sizes="(max-width: 768px) 100vw, 1200px"
+                className="nc-hero__img"
+              />
+            ))}
+          </div>
+        )}
         <div className="nc-hero__layers">
           <div className="nc-hero__layer nc-hero__layer--mountains" aria-hidden />
           <div className="nc-hero__layer nc-hero__layer--forest" aria-hidden />
@@ -256,14 +286,54 @@ export default function NorthCarolinaExplorationView({ page }: NorthCarolinaExpl
       {/* Three regions map: hover to chunk/lift + label, click to dive deeper (only when zoom is at NC) */}
       {isZoomComplete && (
         <section className="nc-regions" aria-label="Three worlds in one state">
-          <p className="nc-regions__intro">Hover over a region — then click to dive deeper.</p>
-          <div className="nc-regions__map-wrap">
+          <p className="nc-regions__intro">Click a region to explore.</p>
+          <div className={`nc-regions__map-wrap nc-regions__map-wrap--${mapSkin}`}>
+            <div className="nc-regions__skin-toggles">
+              <span className="nc-regions__skin-label">Map:</span>
+              {(["default", "topographic", "roadways"] as MapSkin[]).map((skin) => (
+                <button
+                  key={skin}
+                  type="button"
+                  className={`nc-regions__skin-btn ${mapSkin === skin ? "nc-regions__skin-btn--on" : ""}`}
+                  onClick={() => setMapSkin(skin)}
+                  aria-pressed={mapSkin === skin}
+                >
+                  {skin === "default" ? "Regions" : skin === "topographic" ? "Topographic" : "Roads"}
+                </button>
+              ))}
+            </div>
             <svg
               className="nc-regions__svg"
               viewBox="0 0 200 300"
               aria-label="North Carolina — three regions"
               role="img"
             >
+              <defs>
+                <clipPath id="nc-clip">
+                  <path d={NC_OUTLINE_PATH} />
+                </clipPath>
+                <pattern id="nc-topo-pattern" patternUnits="userSpaceOnUse" width="20" height="20">
+                  <path d="M 0 10 L 20 10 M 10 0 L 10 20" stroke="currentColor" strokeWidth="0.4" fill="none" opacity="0.4" />
+                </pattern>
+                {/* Simplified “road” lines: I-40-ish E–W, US-1-ish N–S */}
+                <g id="nc-roads">
+                  <path d="M 30 150 L 170 150" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.5" strokeDasharray="4 4" />
+                  <path d="M 100 20 L 100 280" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.4" strokeDasharray="3 3" />
+                  <path d="M 66 80 L 133 220" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.35" strokeDasharray="2 2" />
+                </g>
+              </defs>
+              <path className="nc-regions__outline" d={NC_OUTLINE_PATH} fill="none" stroke="currentColor" strokeWidth="1" aria-hidden />
+              {mapSkin === "topographic" && (
+                <g clipPath="url(#nc-clip)">
+                  <path d={NC_OUTLINE_PATH} fill="url(#nc-topo-pattern)" fillOpacity="0.35" stroke="none" aria-hidden />
+                </g>
+              )}
+              {mapSkin === "roadways" && (
+                <g clipPath="url(#nc-clip)" aria-hidden>
+                  <use href="#nc-roads" />
+                </g>
+              )}
+              <g clipPath="url(#nc-clip)">
               {NORTH_CAROLINA_REGIONS.map((region) => (
                 <g key={region.id}>
                   <path
@@ -289,7 +359,7 @@ export default function NorthCarolinaExplorationView({ page }: NorthCarolinaExpl
                   {hoveredRegion === region.id && (
                     <text
                       className="nc-region__label"
-                      x={region.id === "blue_ridge" ? 33 : region.id === "piedmont" ? 100 : 167}
+                      x={region.id === "blue_ridge" ? 44 : region.id === "piedmont" ? 100 : 167}
                       y={140}
                       textAnchor="middle"
                     >
@@ -298,6 +368,7 @@ export default function NorthCarolinaExplorationView({ page }: NorthCarolinaExpl
                   )}
                 </g>
               ))}
+              </g>
             </svg>
             {hoveredRegion && (
               <p className="nc-regions__tagline" aria-live="polite">
@@ -307,36 +378,98 @@ export default function NorthCarolinaExplorationView({ page }: NorthCarolinaExpl
           </div>
 
           {/* Deep-dive panel when a region is selected */}
-          {selectedRegion && (
-            <div className="nc-deep-dive">
-              <div className="nc-deep-dive__header">
-                <h3 className="nc-deep-dive__title">
-                  {NORTH_CAROLINA_REGIONS.find((r) => r.id === selectedRegion)?.label}
-                </h3>
-                <button
-                  type="button"
-                  className="nc-deep-dive__close"
-                  onClick={() => setSelectedRegion(null)}
-                  aria-label="Close and return to map"
-                >
-                  ← Back to map
-                </button>
-              </div>
-              <div className="nc-deep-dive__content">
-                {NORTH_CAROLINA_REGIONS.find((r) => r.id === selectedRegion)?.deepContent.map((block, i) =>
-                  block.type === "paragraph" ? (
-                    <p key={i}>{block.content}</p>
-                  ) : (
-                    <ul key={i}>
-                      {(Array.isArray(block.content) ? block.content : [block.content]).map((item, j) => (
-                        <li key={j}>{item}</li>
-                      ))}
-                    </ul>
-                  )
+          {selectedRegion && (() => {
+            const region = NORTH_CAROLINA_REGIONS.find((r) => r.id === selectedRegion);
+            const regionIndex = region ? NORTH_CAROLINA_REGIONS.findIndex((r) => r.id === selectedRegion) : -1;
+            const sectionImg = regionIndex >= 0 && sectionImages[regionIndex];
+            return (
+              <div className="nc-deep-dive">
+                <div className="nc-deep-dive__header">
+                  <h3 className="nc-deep-dive__title">{region?.label}</h3>
+                  <button
+                    type="button"
+                    className="nc-deep-dive__close"
+                    onClick={() => setSelectedRegion(null)}
+                    aria-label="Close and return to map"
+                  >
+                    ← Back to map
+                  </button>
+                </div>
+                {sectionImg && (
+                  <div className="nc-deep-dive__media">
+                    <VolcanoImageComponent
+                      image={sectionImg}
+                      sizes="(max-width: 768px) 100vw, 400px"
+                      className="nc-deep-dive__img"
+                    />
+                  </div>
                 )}
+                <div className="nc-deep-dive__content">
+                  {region?.deepContent.map((block, i) =>
+                    block.type === "paragraph" ? (
+                      <p key={i}>{block.content}</p>
+                    ) : (
+                      <ul key={i}>
+                        {(Array.isArray(block.content) ? block.content : [block.content]).map((item, j) => (
+                          <li key={j}>{item}</li>
+                        ))}
+                      </ul>
+                    )
+                  )}
+                </div>
               </div>
+            );
+          })()}
+          {/* Notable places: want to go explore? Check these out — link to official sites for full info */}
+          <div className="nc-regions__explore">
+            <p className="nc-regions__explore-intro">Want to go explore? Check these out — official sites have full info, maps, and conditions.</p>
+            <ul className="nc-regions__explore-list">
+              {NORTH_CAROLINA_LOCATIONS.filter((loc) => loc.officialUrl).slice(0, 8).map((loc) => (
+                <li key={loc.id} className="nc-regions__explore-item">
+                  <a href={loc.officialUrl} target="_blank" rel="noopener noreferrer" className="nc-regions__explore-link">
+                    {loc.name}
+                    {loc.knownFor && <span className="nc-regions__explore-tag"> — {loc.knownFor}</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {/* Blue Ridge Parkway — dedicated section: our summary, link to NPS for full info */}
+      {isZoomComplete && (
+        <section className="nc-block nc-block--parkway" aria-label="Blue Ridge Parkway">
+          <h2 className="nc-block__title">Blue Ridge Parkway</h2>
+          <p className="nc-block__intro nc-block__intro--parkway">{BLUE_RIDGE_PARKWAY_FEATURE.knownFor}</p>
+          <div className="nc-parkway">
+            <figure className="nc-parkway__media">
+              {getNCImageByPlaceholderId(BLUE_RIDGE_PARKWAY_FEATURE.imagePlaceholder) ? (
+                <VolcanoImageComponent
+                  image={getNCImageByPlaceholderId(BLUE_RIDGE_PARKWAY_FEATURE.imagePlaceholder)!}
+                  sizes="(max-width: 768px) 100vw, 320px"
+                  className="nc-parkway__img"
+                />
+              ) : (
+                <>
+                  <div className="nc-parkway__placeholder" aria-hidden data-placeholder={BLUE_RIDGE_PARKWAY_FEATURE.imagePlaceholder} />
+                  <figcaption className="nc-parkway__caption">Blue Ridge Parkway — scenic drive through the North Carolina mountains.</figcaption>
+                </>
+              )}
+            </figure>
+            <div className="nc-parkway__body">
+              {BLUE_RIDGE_PARKWAY_FEATURE.summary.map((para, i) => (
+                <p key={i} className="nc-parkway__para">{para}</p>
+              ))}
+              {BLUE_RIDGE_PARKWAY_FEATURE.officialUrl && (
+                <p className="nc-parkway__link-wrap">
+                  <a href={BLUE_RIDGE_PARKWAY_FEATURE.officialUrl} target="_blank" rel="noopener noreferrer" className="nc-parkway__link">
+                    Plan your visit — full info, maps &amp; alerts (NPS)
+                  </a>
+                </p>
+              )}
             </div>
-          )}
+          </div>
         </section>
       )}
 
@@ -439,8 +572,195 @@ export default function NorthCarolinaExplorationView({ page }: NorthCarolinaExpl
         </section>
       )}
 
+      {/* Entertainment: film, musicians, actors — trivia backbone, placeholders for images */}
+      {isZoomComplete && (NORTH_CAROLINA_FILMS.length > 0 || NORTH_CAROLINA_MUSICIANS.length > 0 || NORTH_CAROLINA_ACTORS.length > 0) && (
+        <section className="nc-block nc-block--entertainment" aria-label="Film, music, and stars from North Carolina">
+          <h2 className="nc-block__title">Entertainment: film, music & stars from here</h2>
+          <p className="nc-block__intro">
+            Movies filmed in NC, musicians and actors born or raised here — the kind of trivia that ties place to people and stories.
+          </p>
+
+          {NORTH_CAROLINA_FILMS.length > 0 && (
+            <>
+              <h3 className="nc-block__subtitle">Films shot or set in North Carolina</h3>
+              <div className="nc-entertainment nc-entertainment--films">
+                {NORTH_CAROLINA_FILMS.map((film) => {
+                  const filmImg = film.imagePlaceholder ? getNCImageByPlaceholderId(film.imagePlaceholder) : undefined;
+                  return (
+                  <article key={film.id} className="nc-entertainment-item nc-entertainment-item--film">
+                    <figure className="nc-entertainment-item__media">
+                      {filmImg ? (
+                        <VolcanoImageComponent image={filmImg} sizes="(max-width: 768px) 100vw, 280px" className="nc-entertainment-item__img" />
+                      ) : (
+                        <>
+                          <div className="nc-entertainment-item__placeholder" aria-hidden data-placeholder={film.imagePlaceholder ?? "film"} />
+                          <figcaption className="nc-entertainment-item__caption">
+                            {film.title}
+                            {film.year > 0 ? ` (${film.year})` : ""} — {film.ncConnection}
+                          </figcaption>
+                        </>
+                      )}
+                    </figure>
+                    <div className="nc-entertainment-item__body">
+                      <h4 className="nc-entertainment-item__title">{film.title}</h4>
+                      <p className="nc-entertainment-item__meta">
+                        {film.year > 0 ? film.year : "Various"} · {film.ncConnection}
+                      </p>
+                      {film.body.map((para, i) => (
+                        <p key={i} className="nc-entertainment-item__para">{para}</p>
+                      ))}
+                      {film.triviaSeeds && film.triviaSeeds.length > 0 && (
+                        <ul className="nc-entertainment-item__trivia" aria-label="Trivia seeds">
+                          {film.triviaSeeds.map((seed, i) => (
+                            <li key={i}>{seed}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </article>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {NORTH_CAROLINA_MUSICIANS.length > 0 && (
+            <>
+              <h3 className="nc-block__subtitle">Musicians from North Carolina</h3>
+              <div className="nc-entertainment nc-entertainment--musicians">
+                {NORTH_CAROLINA_MUSICIANS.map((musician) => {
+                  const musicianImg = musician.imagePlaceholder ? getNCImageByPlaceholderId(musician.imagePlaceholder) : undefined;
+                  return (
+                  <article key={musician.id} className="nc-entertainment-item nc-entertainment-item--musician">
+                    <figure className="nc-entertainment-item__media">
+                      {musicianImg ? (
+                        <VolcanoImageComponent image={musicianImg} sizes="(max-width: 768px) 100vw, 280px" className="nc-entertainment-item__img" />
+                      ) : (
+                        <>
+                          <div className="nc-entertainment-item__placeholder" aria-hidden data-placeholder={musician.imagePlaceholder ?? "musician"} />
+                          <figcaption className="nc-entertainment-item__caption">{musician.name} — {musician.origin}</figcaption>
+                        </>
+                      )}
+                    </figure>
+                    <div className="nc-entertainment-item__body">
+                      <h4 className="nc-entertainment-item__title">{musician.name}</h4>
+                      <p className="nc-entertainment-item__meta">{musician.origin} · {musician.genre}</p>
+                      {musician.bio.map((para, i) => (
+                        <p key={i} className="nc-entertainment-item__para">{para}</p>
+                      ))}
+                      {musician.notableWorks && musician.notableWorks.length > 0 && (
+                        <p className="nc-entertainment-item__works">
+                          <strong>Notable works:</strong> {musician.notableWorks.join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {NORTH_CAROLINA_ACTORS.length > 0 && (
+            <>
+              <h3 className="nc-block__subtitle">Actors from North Carolina</h3>
+              <div className="nc-entertainment nc-entertainment--actors">
+                {NORTH_CAROLINA_ACTORS.map((actor) => {
+                  const actorImg = actor.imagePlaceholder ? getNCImageByPlaceholderId(actor.imagePlaceholder) : undefined;
+                  return (
+                  <article key={actor.id} className="nc-entertainment-item nc-entertainment-item--actor">
+                    <figure className="nc-entertainment-item__media">
+                      {actorImg ? (
+                        <VolcanoImageComponent image={actorImg} sizes="(max-width: 768px) 100vw, 280px" className="nc-entertainment-item__img" />
+                      ) : (
+                        <>
+                          <div className="nc-entertainment-item__placeholder" aria-hidden data-placeholder={actor.imagePlaceholder ?? "actor"} />
+                          <figcaption className="nc-entertainment-item__caption">{actor.name} — {actor.origin}</figcaption>
+                        </>
+                      )}
+                    </figure>
+                    <div className="nc-entertainment-item__body">
+                      <h4 className="nc-entertainment-item__title">{actor.name}</h4>
+                      <p className="nc-entertainment-item__meta">{actor.origin}</p>
+                      <p className="nc-entertainment-item__para">{actor.bioShort}</p>
+                      {actor.notableWorks && actor.notableWorks.length > 0 && (
+                        <p className="nc-entertainment-item__works">
+                          <strong>Notable works:</strong> {actor.notableWorks.join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </section>
+      )}
+
+      {/* Locations: waterfalls, estates, landmarks — how to get there, history, film connections */}
+      {isZoomComplete && NORTH_CAROLINA_LOCATIONS.length > 0 && (
+        <section className="nc-block nc-block--locations" aria-label="Places to explore: waterfalls, estates, and landmarks">
+          <h2 className="nc-block__title">Places to explore</h2>
+          <p className="nc-block__intro">
+            Waterfalls you can walk behind, film locations, and landmarks — with where they are, how to get there, and the history behind them.
+          </p>
+          <div className="nc-locations">
+            {NORTH_CAROLINA_LOCATIONS.map((loc) => {
+              const locImg = loc.imagePlaceholder ? getNCImageByPlaceholderId(loc.imagePlaceholder) : undefined;
+              return (
+              <article key={loc.id} className="nc-location">
+                <figure className="nc-location__media">
+                  {locImg ? (
+                    <VolcanoImageComponent image={locImg} sizes="(max-width: 768px) 100vw, 600px" className="nc-location__img" />
+                  ) : (
+                    <>
+                      <div className="nc-location__placeholder" aria-hidden data-placeholder={loc.imagePlaceholder ?? loc.type} />
+                      <figcaption className="nc-location__caption">{loc.name} — {loc.region}</figcaption>
+                    </>
+                  )}
+                </figure>
+                <div className="nc-location__body">
+                  <h3 className="nc-location__title">{loc.name}</h3>
+                  <p className="nc-location__region">{loc.region}</p>
+                  {loc.knownFor && <p className="nc-location__known-for">{loc.knownFor}</p>}
+                  <span className="nc-location__type" aria-label="Type">{loc.type.replace("_", " ")}</span>
+                  {loc.description.map((para, i) => (
+                    <p key={i} className="nc-location__para">{para}</p>
+                  ))}
+                  <div className="nc-location__how">
+                    <strong>How to get there:</strong> {loc.howToGetThere}
+                  </div>
+                  {loc.history && (
+                    <p className="nc-location__history"><strong>History:</strong> {loc.history}</p>
+                  )}
+                  {loc.filmConnection && (
+                    <p className="nc-location__film"><strong>On screen:</strong> {loc.filmConnection}</p>
+                  )}
+                  {loc.officialUrl && (
+                    <p className="nc-location__official">
+                      <a href={loc.officialUrl} target="_blank" rel="noopener noreferrer" className="nc-location__official-link">
+                        Full info &amp; plan your visit →
+                      </a>
+                    </p>
+                  )}
+                  {loc.triviaSeeds && loc.triviaSeeds.length > 0 && (
+                    <ul className="nc-location__trivia" aria-label="Trivia seeds">
+                      {loc.triviaSeeds.map((seed, i) => (
+                        <li key={i}>{seed}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {/* Expand on demand: accordion sections */}
-      <h2 className="nc-page__sections-title">Explore more — open what you like</h2>
+      <h2 className="nc-page__sections-title">More to explore</h2>
       {accordionSections.map((section) => (
         <AccordionSection
           key={section.id}
@@ -450,6 +770,10 @@ export default function NorthCarolinaExplorationView({ page }: NorthCarolinaExpl
           renderBlock={renderContentBlock}
         />
       ))}
+
+      {ncImages.length > 0 && (
+        <AttributionSection images={ncImages} className="nc-page__attribution" />
+      )}
     </article>
   );
 }
