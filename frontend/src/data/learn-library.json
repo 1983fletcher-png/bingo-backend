@@ -1,0 +1,188 @@
+{
+  "library": {
+    "name": "Learn & Grow",
+    "description": "A multi-layered, interactive learning library designed to inspire curiosity, retain attention, and provide thorough, fact-checked educational content.",
+    "primaryCategories": [
+      {
+        "id": "biology_nature",
+        "title": "Biology & Nature",
+        "description": "Explore plants, ecosystems, animals, and the amazing diversity of life on Earth.",
+        "icon": "🌿",
+        "hoverAction": "revealSubcategories",
+        "subcategories": [
+          {
+            "id": "plants_growth",
+            "title": "Plants & Growth",
+            "placeholder": true,
+            "description": "Learn how plants grow, photosynthesis, and fascinating plant behaviors.",
+            "cardExample": {
+              "title": "Photosynthesis Explained",
+              "hook": "Plants are little solar panels! Discover how they convert sunlight into life.",
+              "mediaSlots": ["diagram_1", "image_2", "video_1"],
+              "tags": ["biology", "plants", "photosynthesis", "experiment_ready"],
+              "metadata": {
+                "learningLevel": "Intermediate",
+                "interactive": true,
+                "triviaReady": true
+              }
+            }
+          },
+          {
+            "id": "ecosystems",
+            "title": "Ecosystems",
+            "placeholder": true,
+            "description": "Dive into forests, oceans, deserts, and the delicate balance of life.",
+            "cardExample": {}
+          },
+          {
+            "id": "microbiology",
+            "title": "Microbiology",
+            "placeholder": true,
+            "description": "Tiny organisms, huge impact! Learn about bacteria, viruses, and fungi.",
+            "cardExample": {}
+          }
+        ]
+      },
+      {
+        "id": "animals",
+        "title": "Animals",
+        "description": "From mammals to insects, discover the amazing diversity of animal life.",
+        "icon": "🦁",
+        "hoverAction": "revealSubcategories",
+        "subcategories": [
+          {
+            "id": "mammals",
+            "title": "Mammals",
+            "placeholder": true,
+            "description": "Learn about mammals from elephants to mice, their habitats, and behaviors.",
+            "cardExample": {}
+          },
+          {
+            "id": "birds",
+            "title": "Birds",
+            "placeholder": true,
+            "description": "Explore feathered friends, flight mechanics, and migration patterns.",
+            "cardExample": {}
+          }
+        ]
+      },
+      {
+        "id": "stem_crafts",
+        "title": "STEM & Crafts",
+        "description": "Hands-on experiments and creative projects for curious minds.",
+        "icon": "🔬",
+        "hoverAction": "revealSubcategories",
+        "subcategories": [
+          {
+            "id": "experiments",
+            "title": "Hands-on Experiments",
+            "placeholder": true,
+            "description": "Engage in fun, safe experiments with household items.",
+            "cardExample": {
+              "title": "Baking Soda Volcano",
+              "hook": "Erupting lava at your fingertips! Learn the chemistry behind the eruption.",
+              "mediaSlots": ["image_1", "diagram_1", "image_2", "video_1"],
+              "tags": ["experiment", "chemistry", "hands_on", "trivia_ready"],
+              "metadata": {
+                "learningLevel": "Beginner to Intermediate",
+                "interactive": true,
+                "triviaReady": true
+              }
+            }
+          },
+          {
+            "id": "engineering_projects",
+            "title": "Engineering Projects",
+            "placeholder": true,
+            "description": "Build bridges, rockets, circuits, and learn by doing.",
+            "cardExample": {}
+          },
+          {
+            "id": "coding_fun",
+            "title": "Coding & Logic",
+            "placeholder": true,
+            "description": "Learn programming concepts with fun, interactive challenges.",
+            "cardExample": {}
+          }
+        ]
+      },
+      {
+        "id": "time_travel_media",
+        "title": "Time Travel & Media",
+        "description": "Dive into science fiction, stories, films, music, and cultural explorations of time travel.",
+        "icon": "⏳",
+        "hoverAction": "revealSubcategories",
+        "subcategories": [
+          {
+            "id": "films",
+            "title": "Films",
+            "placeholder": true,
+            "description": "From 'Back to the Future' to 'Interstellar', explore time-traveling adventures.",
+            "cardExample": {}
+          },
+          {
+            "id": "tv_series",
+            "title": "TV Series",
+            "placeholder": true,
+            "description": "Time travel in episodic storytelling, from 'Doctor Who' to 'Dark'.",
+            "cardExample": {}
+          },
+          {
+            "id": "literature",
+            "title": "Literature",
+            "placeholder": true,
+            "description": "Classic and modern literature exploring the concept of time.",
+            "cardExample": {}
+          }
+        ]
+      },
+      {
+        "id": "scientists_inventors",
+        "title": "Scientists & Inventors",
+        "description": "Discover the lives, discoveries, and stories of history's greatest minds.",
+        "icon": "🧪",
+        "hoverAction": "revealSubcategories",
+        "subcategories": [
+          {
+            "id": "nikola_tesla",
+            "title": "Nikola Tesla",
+            "placeholder": true,
+            "description": "The visionary who harnessed electricity, shaping our modern world.",
+            "cardExample": {
+              "title": "Nikola Tesla: AC Power Pioneer",
+              "hook": "Tesla’s innovations power the world today. Discover the genius behind the currents.",
+              "mediaSlots": ["portrait_1", "invention_diagram_1", "lab_photo_1"],
+              "tags": ["scientist", "inventor", "electricity", "trivia_ready"],
+              "metadata": {
+                "learningLevel": "Intermediate to Advanced",
+                "interactive": true,
+                "triviaReady": true
+              }
+            }
+          },
+          {
+            "id": "albert_einstein",
+            "title": "Albert Einstein",
+            "placeholder": true,
+            "description": "The father of relativity and one of history’s greatest scientific minds.",
+            "cardExample": {}
+          }
+        ]
+      }
+    ]
+  },
+  "uiConfig": {
+    "cardHoverAnimation": "expandAndReveal",
+    "breadcrumbNavigation": true,
+    "expandableSections": true,
+    "relatedCardsDisplay": "onCardClick",
+    "gridLayout": {
+      "columns": 4,
+      "rowHeight": "auto",
+      "responsive": true
+    },
+    "mediaPriority": ["images", "diagrams", "videos"],
+    "triviaIntegration": true
+  }
+}
+

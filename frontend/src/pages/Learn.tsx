@@ -1,7 +1,8 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
 import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage } from '../types/learningEngine';
+import libraryConfig from '../data/learn-library.json';
 import '../styles/learn.css';
 
 const API_BASE =
@@ -39,27 +40,28 @@ const STATIC_CARDS: CardSummary[] = [
   },
 ];
 
-const CATEGORIES: { id: string; label: string; description: string }[] = [
-  { id: 'biology', label: 'Biology & Nature', description: 'Plants, botany, gardening, and how living things grow and work.' },
-  { id: 'crafts-stem', label: 'Crafts & Gentle STEM', description: 'Hands-on activities and simple science you can do at home.' },
-  { id: 'animals', label: 'Animals', description: 'From backyard wildlife to ocean giants — trusted facts about the animal kingdom.' },
-  { id: 'movies-culture', label: 'Time Travel & Culture', description: 'Movies, filmography, science fiction, and the big what-if — with real science and a practical twist.' },
-  { id: 'scientists-inventors', label: 'Scientists & Inventors', description: 'Biographies and contributions of history\'s great inventors and scientists — cited, engaging, trivia-ready.' },
-];
+type LearnLibraryConfig = typeof libraryConfig;
+type PrimaryCategory = LearnLibraryConfig['library']['primaryCategories'][number];
+type Subcategory = PrimaryCategory['subcategories'][number];
 
-function getCategoryId(card: CardSummary): string {
-  if (card.id === 'nikola-tesla' || card.tags?.some((t) => ['Nikola Tesla', 'inventor', 'biography', 'scientists'].includes(t))) return 'scientists-inventors';
-  if (card.id === 'time-travel-wormhole' || card.id === 'time-travel' || card.tags?.some((t) => ['time travel', 'movies', 'science fiction', "Hitchhiker's Guide to the Galaxy", 'Back to the Future'].includes(t))) return 'movies-culture';
-  if (card.id === 'baking-soda-volcano' || (card.tags?.some((t) => t === 'science experiments' || t === 'chemistry'))) return 'crafts-stem';
-  if (card.id === 'plants-and-how-they-grow' || card.tags?.some((t) => ['plants', 'botany', 'gardening'].includes(t))) return 'biology';
-  if (card.id === 'crafts-and-gentle-stem' || (card.tags?.some((t) => ['crafts', 'STEM'].includes(t)) && card.title.toLowerCase().includes('craft'))) return 'crafts-stem';
-  return 'animals';
-}
+const LIBRARY = libraryConfig as LearnLibraryConfig;
+
+// Current cards → library subcategory mapping (hand-curated for canonical pages).
+const CARD_TO_LIBRARY: Record<string, { primaryId: string; subId: string }> = {
+  'baking-soda-volcano': { primaryId: 'stem_crafts', subId: 'experiments' },
+  'time-travel': { primaryId: 'time_travel_media', subId: 'films' },
+  'time-travel-wormhole': { primaryId: 'time_travel_media', subId: 'films' },
+  'nikola-tesla': { primaryId: 'scientists_inventors', subId: 'nikola_tesla' },
+};
 
 export default function Learn() {
   const [cards, setCards] = useState<CardSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activePrimaryId, setActivePrimaryId] = useState<string>(
+    LIBRARY.library.primaryCategories[0]?.id ?? 'stem_crafts'
+  );
+  const [activeSubId, setActiveSubId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,62 +80,158 @@ export default function Learn() {
     return () => { cancelled = true; };
   }, []);
 
-  const cardsByCategory = useMemo(() => {
-    const map: Record<string, CardSummary[]> = { biology: [], 'crafts-stem': [], animals: [], 'movies-culture': [], 'scientists-inventors': [] };
-    for (const card of cards) {
-      const cat = getCategoryId(card);
-      if (map[cat]) map[cat].push(card);
-    }
-    return map;
-  }, [cards]);
+  const activePrimary = useMemo(
+    () => LIBRARY.library.primaryCategories.find((c) => c.id === activePrimaryId) ?? LIBRARY.library.primaryCategories[0],
+    [activePrimaryId]
+  );
+
+  const activeSubcategory: Subcategory | null = useMemo(() => {
+    if (!activePrimary) return null;
+    if (!activeSubId) return null;
+    return activePrimary.subcategories.find((s) => s.id === activeSubId) ?? null;
+  }, [activePrimary, activeSubId]);
+
+  const cardsForActiveSubcategory = useMemo(() => {
+    if (!activePrimary) return [];
+    if (!activeSubId) return [];
+    return cards.filter((c) => {
+      const mapping = CARD_TO_LIBRARY[c.id];
+      return mapping?.primaryId === activePrimary.id && mapping?.subId === activeSubId;
+    });
+  }, [cards, activePrimary, activeSubId]);
+
+  useEffect(() => {
+    // Ensure subcategory selection stays valid when switching primary categories.
+    if (!activePrimary) return;
+    const firstSub = activePrimary.subcategories[0]?.id ?? null;
+    setActiveSubId((prev) => {
+      if (prev && activePrimary.subcategories.some((s) => s.id === prev)) return prev;
+      return firstSub;
+    });
+  }, [activePrimary]);
 
   return (
     <div className="learn-page">
       <Link to="/" className="learn-page__back">
         ← Back to Playroom
       </Link>
-      <h1 className="learn-page__title">Learn & Grow</h1>
-      <p className="learn-page__intro">
-        Trusted, cited learning cards—plants, animals, crafts, science, and more. Pick a category, then a topic, and explore at your own pace.
-      </p>
+      <h1 className="learn-page__title">{LIBRARY.library.name}</h1>
+      <p className="learn-page__intro">{LIBRARY.library.description}</p>
+
+      {LIBRARY.uiConfig?.breadcrumbNavigation && (
+        <nav className="learn-breadcrumbs" aria-label="Breadcrumb">
+          <span className="learn-breadcrumbs__item">Learn</span>
+          <span className="learn-breadcrumbs__sep">/</span>
+          <span className="learn-breadcrumbs__item">{activePrimary?.title ?? 'Category'}</span>
+          {activeSubcategory && (
+            <>
+              <span className="learn-breadcrumbs__sep">/</span>
+              <span className="learn-breadcrumbs__item">{activeSubcategory.title}</span>
+            </>
+          )}
+        </nav>
+      )}
 
       {loading && <p className="learn-page__loading">Loading…</p>}
       {error && <p className="learn-page__error">{error}</p>}
 
-      {!loading && !error && (
-        <>
-          {CATEGORIES.map((cat) => {
-            const list = cardsByCategory[cat.id] ?? [];
-            if (list.length === 0) return null;
-            return (
-              <section key={cat.id} className="learn-category" aria-labelledby={`learn-cat-${cat.id}`}>
-                <h2 id={`learn-cat-${cat.id}`} className="learn-category__title">{cat.label}</h2>
-                <p className="learn-category__desc">{cat.description}</p>
-                <div className="learn-cards">
-                  {list.map((card) => (
-                    <Link
-                      key={card.id}
-                      to={`/learn/${card.id}`}
-                      className="learn-card-link"
-                    >
-                      <h3 className="learn-card-link__title">{card.title}</h3>
-                      <p className="learn-card-link__summary">{card.summary}</p>
-                      {card.tags && card.tags.length > 0 && (
-                        <div className="learn-card-link__tags">
-                          {card.tags.slice(0, 4).map((tag) => (
-                            <span key={tag} className="learn-card-link__tag">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-        </>
+      {!loading && !error && activePrimary && (
+        <div className="learn-library">
+          <section className="learn-library__primary" aria-label="Primary categories">
+            <div className="learn-library-grid">
+              {LIBRARY.library.primaryCategories.map((cat) => {
+                const isOn = cat.id === activePrimaryId;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    className={`learn-library-card ${isOn ? 'learn-library-card--on' : ''}`}
+                    onMouseEnter={() => cat.hoverAction === 'revealSubcategories' && setActivePrimaryId(cat.id)}
+                    onFocus={() => setActivePrimaryId(cat.id)}
+                    onClick={() => setActivePrimaryId(cat.id)}
+                    aria-pressed={isOn}
+                  >
+                    <div className="learn-library-card__icon" aria-hidden="true">
+                      {cat.icon}
+                    </div>
+                    <div className="learn-library-card__body">
+                      <div className="learn-library-card__title">{cat.title}</div>
+                      <div className="learn-library-card__desc">{cat.description}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="learn-library__sub" aria-label="Subcategories">
+            <h2 className="learn-category__title">{activePrimary.title}</h2>
+            <p className="learn-category__desc">{activePrimary.description}</p>
+
+            <div className="learn-subcategories">
+              {activePrimary.subcategories.map((sub) => {
+                const isOn = sub.id === activeSubId;
+                return (
+                  <button
+                    key={sub.id}
+                    type="button"
+                    className={`learn-subcategory ${isOn ? 'learn-subcategory--on' : ''}`}
+                    onClick={() => setActiveSubId(sub.id)}
+                    aria-pressed={isOn}
+                  >
+                    <div className="learn-subcategory__title">{sub.title}</div>
+                    {sub.description && <div className="learn-subcategory__desc">{sub.description}</div>}
+                    {sub.placeholder && <div className="learn-subcategory__badge">Coming soon</div>}
+                  </button>
+                );
+              })}
+            </div>
+
+            {activeSubId && (
+              <div className="learn-subcategory-panel">
+                <h3 className="learn-subcategory-panel__title">{activeSubcategory?.title ?? 'Topic'}</h3>
+                {activeSubcategory?.description && (
+                  <p className="learn-subcategory-panel__desc">{activeSubcategory.description}</p>
+                )}
+
+                {cardsForActiveSubcategory.length > 0 ? (
+                  <div className="learn-cards">
+                    {cardsForActiveSubcategory.map((card) => (
+                      <Link key={card.id} to={`/learn/${card.id}`} className="learn-card-link">
+                        <h4 className="learn-card-link__title">{card.title}</h4>
+                        <p className="learn-card-link__summary">{card.summary}</p>
+                        {card.tags && card.tags.length > 0 && (
+                          <div className="learn-card-link__tags">
+                            {card.tags.slice(0, 4).map((tag) => (
+                              <span key={tag} className="learn-card-link__tag">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="learn-subcategory-panel__empty">
+                    <p className="learn-page__loading" style={{ margin: 0 }}>
+                      No cards wired to this topic yet.
+                    </p>
+                    {activeSubcategory?.cardExample?.title && (
+                      <div className="learn-subcategory-example">
+                        <div className="learn-subcategory-example__label">Example card shape</div>
+                        <div className="learn-subcategory-example__title">{activeSubcategory.cardExample.title}</div>
+                        {activeSubcategory.cardExample.hook && (
+                          <div className="learn-subcategory-example__hook">{activeSubcategory.cardExample.hook}</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        </div>
       )}
     </div>
   );
