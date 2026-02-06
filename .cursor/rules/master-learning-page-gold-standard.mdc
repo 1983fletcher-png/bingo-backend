@@ -1,0 +1,100 @@
+---
+description: Gold-standard structure and quality for Learn & Grow educational pages. Apply when creating or editing any learning page (experiments, geography, biographies, etc.). Do not improvise structure; follow this template.
+alwaysApply: true
+---
+
+# Master Gold-Standard Learning Page
+
+You are building a **gold-standard educational learning page** for a global audience (children, teens, adults, educators).
+
+The page must be: **Clear**, **Layered**, **Psychologically engaging**, **Scientifically accurate**, **Reusable as a system template**.
+
+- **Do NOT** write a blog post.
+- **Do NOT** improvise structure.
+- **Do NOT** insert filler images.
+
+---
+
+## Required page structure (in order)
+
+### 1. Purpose Hook (Immediate)
+- One short paragraph answering:
+  - What is this?
+  - Why is it fascinating?
+  - Why should the reader keep going?
+
+### 2. What You'll Learn
+- Bullet list
+- Clear outcomes
+- Written for all ages
+
+### 3. Choose Your Depth
+- Clearly labeled learning paths:
+  - **Just Watch**
+  - **Build It**
+  - **Understand the Science**
+  - **Go Advanced**
+
+### 4. Materials List (if hands-on)
+- Complete
+- Practical
+- Common household items
+- No placeholders
+
+### 5. Do / Observe
+- Step-by-step
+- Images must be **process_step** (show the step)
+- No unrelated visuals
+
+### 6. What's Actually Happening
+- Explain cause and effect
+- Start simple
+- Expand to chemistry/physics as appropriate
+
+### 7. Connect to the Real World
+- Explicit comparisons
+- Clearly labeled analogies
+- No unexplained photos
+
+### 8. Go Deeper (expandable)
+- Advanced science
+- Equations if relevant
+- Edge cases and limitations
+
+### 9. Future Hooks
+- Trivia extraction ready
+- Cross-links to related topics
+
+---
+
+## Image requirements
+
+- Every image must have:
+  - **Role** (hero, step, diagram, comparison)
+  - **Source**
+  - **License** (public domain / CC0 / open education)
+  - **Caption** explaining why it exists
+- Images must **support learning**, not decoration.
+- If an image cannot be justified, **exclude it**.
+- Align with **.cursor/rules/image-first-gold-standard.mdc** (unique images, PD/CC only, no duplicates).
+
+---
+
+## Learning layers
+
+- **Early learner:** visual + simple language
+- **Intermediate:** cause and effect
+- **Advanced:** technical depth
+
+Content must **gracefully scale** between layers.
+
+---
+
+## Quality check (before completing)
+
+1. Is the **purpose** obvious in 5 seconds?
+2. Can someone **stop at any depth** and feel satisfied?
+3. Are **all images doing work** (no decoration-only)?
+4. Is this **reusable** for animals, geography, biographies, and other topics?
+
+If not, **revise before outputting**. Output final page content only after all criteria are satisfied.

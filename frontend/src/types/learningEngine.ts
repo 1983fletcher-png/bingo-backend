@@ -355,19 +355,85 @@ export interface TriviaBlueprint {
 const bakingSodaVolcanoSections: LearningSection[] = [
   {
     id: "intro.hook",
-    title: "Watch It Erupt",
+    title: "A Mini Volcano in Your Kitchen",
     intent: "hook",
     contentBlocks: [
       {
         type: "paragraph",
         content:
-          "You mix two everyday ingredients… and suddenly your volcano comes alive. Foamy bubbles spill over the sides like lava, and it feels a little bit like magic.",
+          "The baking soda volcano is a classic science experiment: two everyday ingredients — baking soda and vinegar — react to make a gas. That gas pushes foamy 'lava' up and over the sides. It's safe, fast, and it uses the same kind of chemistry that makes cakes rise and soda fizz. In under a minute you can see cause and effect with your own eyes.",
       },
       {
         type: "callout",
         emphasis: "fun-fact",
         content:
-          "This experiment looks simple, but it's powered by the same kind of chemistry that inflates airbags and fizzes soda.",
+          "Same idea as airbags and some fire extinguishers: a chemical reaction that quickly makes gas. Here you get to trigger it yourself.",
+      },
+    ],
+  },
+  {
+    id: "overview.what-you-learn",
+    title: "What You'll Learn",
+    intent: "overview",
+    contentBlocks: [
+      {
+        type: "bullet-list",
+        content: [
+          "What happens when an acid and a base mix (baking soda + vinegar).",
+          "Why the mixture foams and 'erupts' — gas needs more space than liquid.",
+          "How to build and run the experiment step by step.",
+          "How this reaction connects to real volcanoes, baking, and safety devices.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "depth.tiers",
+    title: "Choose Your Depth",
+    intent: "overview",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Pick how far you want to go: just watch it erupt, build it yourself, understand the science, or go advanced with equations and science-fair ideas.",
+      },
+    ],
+  },
+  {
+    id: "materials.list",
+    title: "What You'll Need",
+    intent: "instruction",
+    contentBlocks: [
+      {
+        type: "bullet-list",
+        content: [
+          "Baking soda (sodium bicarbonate)",
+          "Vinegar (any kind)",
+          "A small container or a homemade volcano (e.g. bottle in a mound of play dough or dirt)",
+          "Dish soap (optional — makes foam last longer)",
+          "Food coloring (optional — for colored 'lava')",
+        ],
+      },
+    ],
+  },
+  {
+    id: "steps.build",
+    title: "Do It — Step by Step",
+    intent: "instruction",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content: "Build your volcano, add the baking soda, then add the vinegar. Images below show the reaction and materials.",
+      },
+      {
+        type: "bullet-list",
+        content: [
+          "Make or choose a volcano shape (bottle in the center, crater at the top).",
+          "Put a few spoonfuls of baking soda into the crater.",
+          "Optional: add a squirt of dish soap and a drop of food coloring.",
+          "When you're ready, pour vinegar into the crater. Step back and watch.",
+          "Observe: foam rises and spills over. That's carbon dioxide gas forming and escaping.",
+        ],
       },
     ],
   },
@@ -389,35 +455,6 @@ const bakingSodaVolcanoSections: LearningSection[] = [
     ],
   },
   {
-    id: "materials.list",
-    title: "What You'll Need",
-    intent: "instruction",
-    contentBlocks: [
-      {
-        type: "bullet-list",
-        content: [
-          "Baking soda",
-          "Vinegar",
-          "Dish soap (optional, but fun)",
-          "Food coloring (optional)",
-          "A container or homemade volcano",
-        ],
-      },
-    ],
-  },
-  {
-    id: "steps.build",
-    title: "Build & Erupt",
-    intent: "instruction",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "Set up your volcano, add the baking soda, and get ready. When you pour in the vinegar, step back and watch the reaction take over.",
-      },
-    ],
-  },
-  {
     id: "reaction.chemistry",
     title: "The Chemistry Behind the Foam",
     intent: "explanation",
@@ -426,7 +463,7 @@ const bakingSodaVolcanoSections: LearningSection[] = [
       {
         type: "paragraph",
         content:
-          "Baking soda is a base. Vinegar is an acid. When they react, they form carbon dioxide gas — the same gas you exhale when you breathe.",
+          "Baking soda is a base. Vinegar is an acid. When they react, they form carbon dioxide gas — the same gas you exhale. The diagram shows how the reaction works.",
       },
     ],
   },
@@ -438,44 +475,32 @@ const bakingSodaVolcanoSections: LearningSection[] = [
       {
         type: "paragraph",
         content:
-          "Gas takes up more space than liquid. As carbon dioxide forms, pressure builds until it escapes upward.",
+          "Gas takes up more space than liquid. As CO₂ forms, pressure builds until it escapes upward. That's why the foam rises and overflows.",
       },
     ],
   },
   {
     id: "safety.notes",
-    title: "Safety Notes",
+    title: "Safety",
     intent: "safety",
     contentBlocks: [
       {
         type: "callout",
         emphasis: "warning",
         content:
-          "Never taste the mixture. Protect surfaces and eyes, especially with kids involved.",
-      },
-    ],
-  },
-  {
-    id: "depth.tiers",
-    title: "How Deep Do You Want to Go?",
-    intent: "overview",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "You can stay on the surface — make it, watch it erupt, done — or dive deeper. Three levels: Quick win (just do it), Explorer (change variables and compare), Deep dive (real chemistry and real volcanoes).",
+          "Do not taste the mixture. Protect surfaces and eyes; use a tray or towel. Supervise young children.",
       },
     ],
   },
   {
     id: "real-world.connections",
-    title: "How This Connects to the Real World",
+    title: "Connect to the Real World",
     intent: "real-world",
     contentBlocks: [
       {
         type: "paragraph",
         content:
-          "This same gas-producing reaction is used in baking, fire extinguishers, and emergency safety systems.",
+          "The same gas-producing reaction shows up in baking (leavening), some fire extinguishers, and inflatable safety systems. Real volcanoes work differently (magma and pressure under the Earth), but the idea — pressure building until something erupts — is a clear analogy. The images below compare your foam eruption with real volcanic activity.",
       },
     ],
   },
@@ -487,15 +512,34 @@ const bakingSodaVolcanoSections: LearningSection[] = [
       {
         type: "paragraph",
         content:
-          "When you're ready for more: the full equation, how real volcanoes work, and how to turn this into a science-fair project.",
+          "Advanced science: the full equation, how real volcanoes work, and how to turn this into a science-fair project.",
       },
       {
         type: "bullet-list",
         content: [
-          "The full reaction: NaHCO₃ (baking soda) + CH₃COOH (vinegar) → CO₂ (gas) + H₂O (water) + sodium acetate. The gas is what you see.",
-          "Real volcanoes: magma and pressure under the Earth's crust, not acid-base chemistry — but the idea of pressure building until something erupts is the same.",
-          "Try different amounts of baking soda and vinegar; measure how long the eruption lasts or how high the foam goes. That's real data.",
-          "Compare with other reactions: lemon juice + baking soda, citric acid + baking soda. Which makes the most foam?",
+          "Full reaction: NaHCO₃ (baking soda) + CH₃COOH (vinegar) → CO₂ (gas) + H₂O (water) + sodium acetate. The gas is what you see.",
+          "Real volcanoes: magma and pressure under the Earth's crust — not acid-base chemistry, but the same idea of pressure building until something erupts.",
+          "Science-fair idea: change the amounts of baking soda and vinegar; measure eruption height or duration. Compare lemon juice or citric acid with vinegar. Which makes the most foam?",
+        ],
+      },
+    ],
+  },
+  {
+    id: "future.hooks",
+    title: "What's Next?",
+    intent: "overview",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "This experiment is trivia-ready: you can turn it into bingo clues or quiz questions. To go further, try related topics: slime (chemistry and polymers), North Carolina (geography and landforms), or more crafts and STEM projects.",
+      },
+      {
+        type: "bullet-list",
+        content: [
+          "Related: Slime — another hands-on chemistry project.",
+          "Related: North Carolina — mountains, coast, and natural science.",
+          "Related: Crafts & STEM — more build-and-observe activities.",
         ],
       },
     ],
@@ -525,9 +569,9 @@ export const bakingSodaVolcanoPage: LearningPage = {
   },
 };
 
-/** Tier definitions for "How deep do you want to go?" — surface → explorer → deep dive. */
+/** Tier definitions: gold-standard four paths — Just Watch, Build It, Understand the Science, Go Advanced. */
 export interface BakingSodaVolcanoTier {
-  id: "quick_win" | "explorer" | "deep_dive";
+  id: "just_watch" | "build_it" | "understand_science" | "go_advanced";
   title: string;
   tagline: string;
   description: string;
@@ -537,27 +581,35 @@ export interface BakingSodaVolcanoTier {
 
 export const BAKING_SODA_VOLCANO_TIERS: BakingSodaVolcanoTier[] = [
   {
-    id: "quick_win",
-    title: "Quick Win",
-    tagline: "Make it and watch it erupt.",
+    id: "just_watch",
+    title: "Just Watch",
+    tagline: "See it erupt — no building required.",
     description:
-      "Follow the steps: build your volcano, add baking soda, pour vinegar. The payoff is immediate — foam spills over like lava. No variables to change; just 'I made it, and it works.' Perfect for a first try or a rainy afternoon.",
+      "Watch a video or a friend do it. The payoff is immediate: foam spills over like lava. You see cause and effect without touching the materials. Perfect if you want the 'what happens' before trying it yourself.",
     relatedTopicId: "crafts-stem",
   },
   {
-    id: "explorer",
-    title: "Explorer",
-    tagline: "Change one thing and see what happens.",
+    id: "build_it",
+    title: "Build It",
+    tagline: "Make it and watch it erupt.",
     description:
-      "Use more or less baking soda or vinegar. Add dish soap or food coloring. Try a taller volcano or a wider crater. Compare: Which combination makes the biggest eruption? The longest-lasting foam? Build cause-and-effect thinking: 'When I added more vinegar, the reaction was faster.'",
+      "Follow the steps: build your volcano, add baking soda, pour vinegar. The payoff is immediate — foam spills over like lava. Change one thing (more vinegar? dish soap?) and see what happens. Build cause-and-effect thinking: 'When I added more vinegar, the reaction was faster.'",
     relatedTopicId: "slime",
   },
   {
-    id: "deep_dive",
-    title: "Deep Dive",
-    tagline: "Real chemistry and real volcanoes.",
+    id: "understand_science",
+    title: "Understand the Science",
+    tagline: "Acid, base, gas — why it works.",
     description:
-      "The full equation: acid + base → CO₂ + water + salt. Why does gas take more space? How do real volcanoes work — and how is that different from this reaction? Connect to baking, fire extinguishers, and Earth science. Optional: measure eruption height or duration and turn it into a science-fair project.",
+      "Baking soda is a base; vinegar is an acid. Together they make carbon dioxide gas. Gas takes more space than liquid, so pressure builds and the foam erupts. Same idea as baking, fire extinguishers, and real volcanoes (which use magma and pressure under the Earth).",
+    relatedTopicId: "north-carolina",
+  },
+  {
+    id: "go_advanced",
+    title: "Go Advanced",
+    tagline: "Equations, real volcanoes, science-fair ideas.",
+    description:
+      "The full equation: NaHCO₃ + CH₃COOH → CO₂ + H₂O + sodium acetate. Why does gas take more space? How do real volcanoes work — and how is that different from this reaction? Measure eruption height or duration; compare lemon juice vs vinegar. Turn it into a science-fair project.",
     relatedTopicId: "north-carolina",
   },
 ];

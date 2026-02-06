@@ -83,10 +83,10 @@ export default function BakingSodaVolcanoExplorationView({
       {/* How deep do you want to go? — tier cards */}
       <section className="learn-page-view__section volcano-depth-tiers" aria-labelledby="depth-tiers-heading">
         <h2 id="depth-tiers-heading" className="learn-page-view__section-title">
-          How Deep Do You Want to Go?
+          Choose Your Depth
         </h2>
         <p className="learn-content-block learn-content-block--paragraph volcano-depth-tiers__intro">
-          You can stay on the surface — make it, watch it erupt, done — or dive deeper. Three levels:
+          Pick how far you want to go: just watch it erupt, build it yourself, understand the science, or go advanced with equations and science-fair ideas.
         </p>
         <div className="volcano-depth-tiers__grid">
           {BAKING_SODA_VOLCANO_TIERS.map((tier) => (
@@ -140,7 +140,7 @@ export default function BakingSodaVolcanoExplorationView({
             aria-expanded={goDeeperOpen}
             aria-controls="go-deeper-content"
           >
-            {goDeeperOpen ? "− Collapse" : "+ Full equation, real volcanoes, science-fair ideas"}
+            {goDeeperOpen ? "− Collapse" : "+ Go Advanced: equation, real volcanoes, science-fair ideas"}
           </button>
           <div
             id="go-deeper-content"
