@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
+import { bakingSodaVolcanoPage } from '../types/learningEngine';
 import '../styles/learn.css';
 
 const API_BASE =
@@ -10,6 +11,16 @@ const API_BASE =
 
 type CardSummary = { id: string; title: string; summary: string; tags?: string[] };
 
+/** Static learning pages (canonical schema) — merged into the card list so they appear on Learn. */
+const STATIC_CARDS: CardSummary[] = [
+  {
+    id: 'baking-soda-volcano',
+    title: bakingSodaVolcanoPage.title,
+    summary: bakingSodaVolcanoPage.subtitle ?? 'A small eruption that teaches big science.',
+    tags: bakingSodaVolcanoPage.topics,
+  },
+];
+
 const CATEGORIES: { id: string; label: string; description: string }[] = [
   { id: 'biology', label: 'Biology & Nature', description: 'Plants, botany, gardening, and how living things grow and work.' },
   { id: 'crafts-stem', label: 'Crafts & Gentle STEM', description: 'Hands-on activities and simple science you can do at home.' },
@@ -17,6 +28,7 @@ const CATEGORIES: { id: string; label: string; description: string }[] = [
 ];
 
 function getCategoryId(card: CardSummary): string {
+  if (card.id === 'baking-soda-volcano' || (card.tags?.some((t) => t === 'science experiments' || t === 'chemistry'))) return 'crafts-stem';
   if (card.id === 'plants-and-how-they-grow' || card.tags?.some((t) => ['plants', 'botany', 'gardening'].includes(t))) return 'biology';
   if (card.id === 'crafts-and-gentle-stem' || (card.tags?.some((t) => ['crafts', 'STEM'].includes(t)) && card.title.toLowerCase().includes('craft'))) return 'crafts-stem';
   return 'animals';
@@ -32,8 +44,13 @@ export default function Learn() {
     (async () => {
       const res = await fetchJson<{ cards: CardSummary[] }>(`${API_BASE}/api/learn/cards`);
       if (cancelled) return;
-      if (res.ok && res.data?.cards) setCards(res.data.cards);
-      else setError(res.error || 'Could not load cards');
+      const apiCards = res.ok && res.data?.cards ? res.data.cards : [];
+      const merged = [...STATIC_CARDS];
+      for (const c of apiCards) {
+        if (!merged.some((s) => s.id === c.id)) merged.push(c);
+      }
+      setCards(merged);
+      if (!res.ok) setError(res.error || 'Could not load cards');
       setLoading(false);
     })();
     return () => { cancelled = true; };

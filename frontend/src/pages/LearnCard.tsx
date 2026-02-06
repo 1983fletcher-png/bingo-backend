@@ -1,12 +1,32 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
+import LearningPageView from '../components/LearningPageView';
+import { bakingSodaVolcanoPage } from '../types/learningEngine';
+import type { VolcanoImage, VolcanoImageRegistry } from '../types/volcanoImages';
+import volcanoImagesRegistry from '../data/volcano-images.json';
 import '../styles/learn.css';
 
 const API_BASE =
   import.meta.env.VITE_SOCKET_URL ||
   import.meta.env.VITE_API_URL ||
   (import.meta.env.DEV ? '' : window.location.origin);
+
+/** Canonical learning pages (slug segment or id) render from static schema, not API. */
+const STATIC_LEARNING_PAGES: Record<string, { page: typeof bakingSodaVolcanoPage }> = {
+  'baking-soda-volcano': { page: bakingSodaVolcanoPage },
+};
+
+function getVolcanoImagesForSlug(slug: string): VolcanoImage[] {
+  const bySlug = (volcanoImagesRegistry as VolcanoImageRegistry)[slug];
+  if (!bySlug) return [];
+  return [
+    ...(bySlug.hero ?? []),
+    ...(bySlug.section ?? []),
+    ...(bySlug.gallery ?? []),
+    ...(bySlug.diagram ?? []),
+  ];
+}
 
 type Card = {
   id: string;
@@ -25,8 +45,13 @@ export default function LearnCard() {
   const [error, setError] = useState<string | null>(null);
   const [layer, setLayer] = useState<'child' | 'learner' | 'explorer' | 'deepDive'>('learner');
 
+  const staticPage = id ? STATIC_LEARNING_PAGES[id] : null;
+
   useEffect(() => {
-    if (!id) return;
+    if (!id || staticPage) {
+      if (staticPage) setLoading(false);
+      return;
+    }
     let cancelled = false;
     (async () => {
       const res = await fetchJson<Card>(`${API_BASE}/api/learn/cards/${encodeURIComponent(id)}`);
@@ -36,7 +61,20 @@ export default function LearnCard() {
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, staticPage]);
+
+  if (staticPage) {
+    const volcanoSlug = id === 'baking-soda-volcano' ? 'baking-soda-volcano' : null;
+    const volcanoImages = volcanoSlug ? getVolcanoImagesForSlug(volcanoSlug) : undefined;
+    return (
+      <div className="learn-page">
+        <Link to="/learn" className="learn-page__back">
+          ← Back to Learn & Grow
+        </Link>
+        <LearningPageView page={staticPage.page} volcanoImages={volcanoImages} />
+      </div>
+    );
+  }
 
   if (loading) return <div className="learn-page">Loading…</div>;
   if (error || !card) {
