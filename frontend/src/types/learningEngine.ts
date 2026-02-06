@@ -187,7 +187,21 @@ export const volcanoImageSlots: ImageSlot[] = [
     sectionId: "materials.list",
     role: "reference",
     required: true,
-    description: "Flat lay of all materials used in the experiment",
+    description: "Baking soda — one of the two main ingredients",
+  },
+  {
+    slotId: "materials.vinegar",
+    sectionId: "materials.list",
+    role: "reference",
+    required: true,
+    description: "Vinegar (e.g. white distilled) — the other main ingredient",
+  },
+  {
+    slotId: "materials.additives",
+    sectionId: "materials.list",
+    role: "reference",
+    required: false,
+    description: "Optional: dish soap and/or food coloring for foam and colored lava",
   },
   {
     slotId: "steps.build.volcano",
@@ -407,13 +421,18 @@ const bakingSodaVolcanoSections: LearningSection[] = [
     intent: "instruction",
     contentBlocks: [
       {
+        type: "paragraph",
+        content: "Gather everything before you start. Images below show each item so you know exactly what to use.",
+      },
+      {
         type: "bullet-list",
         content: [
-          "Baking soda (sodium bicarbonate)",
-          "Vinegar (any kind)",
-          "A small container or a homemade volcano (e.g. bottle in a mound of play dough or dirt)",
-          "Dish soap (optional — makes foam last longer)",
-          "Food coloring (optional — for colored 'lava')",
+          "Baking soda (sodium bicarbonate) — the base in the reaction.",
+          "Vinegar — white distilled vinegar works great; any vinegar will do.",
+          "A small plastic bottle — this becomes the crater of your volcano.",
+          "Something to build the volcano shape around the bottle: play dough, dirt in a tray, or aluminum foil.",
+          "Dish soap (optional) — one squirt makes the foam last longer and look more dramatic.",
+          "Food coloring (optional) — a drop or two gives you colored 'lava'.",
         ],
       },
     ],
@@ -425,14 +444,14 @@ const bakingSodaVolcanoSections: LearningSection[] = [
     contentBlocks: [
       {
         type: "paragraph",
-        content: "Build your volcano, add the baking soda, then add the vinegar. Images below show the reaction and materials.",
+        content: "Build your volcano around the bottle, add baking soda (and optional soap and food coloring), then pour in the vinegar. Images above show the real ingredients and the bottle you'll use.",
       },
       {
         type: "bullet-list",
         content: [
-          "Make or choose a volcano shape (bottle in the center, crater at the top).",
-          "Put a few spoonfuls of baking soda into the crater.",
-          "Optional: add a squirt of dish soap and a drop of food coloring.",
+          "Set the bottle in the center of a tray or plate. Build a volcano shape around it with play dough, dirt, or foil — leave the mouth of the bottle open at the top (the crater).",
+          "Put 2–3 spoonfuls of baking soda into the crater.",
+          "Optional: add a small squirt of dish soap and a drop or two of food coloring.",
           "When you're ready, pour vinegar into the crater. Step back and watch.",
           "Observe: foam rises and spills over. That's carbon dioxide gas forming and escaping.",
         ],

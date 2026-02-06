@@ -63,8 +63,8 @@
           "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Sodium_bicarbonate.jpg/960px-Sodium_bicarbonate.jpg",
           "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Sodium_bicarbonate.jpg/480px-Sodium_bicarbonate.jpg"
         },
-        "alt": "Baking soda (sodium bicarbonate) — one of the key materials for the experiment",
-        "caption": "Flat lay of materials: baking soda is a key ingredient.",
+        "alt": "Baking soda (sodium bicarbonate) — one of the two main ingredients",
+        "caption": "Baking soda: the base in the reaction. You'll put a few spoonfuls in the crater.",
         "usage": { "role": "section", "priority": 1 },
         "license": {
           "type": "public-domain",
@@ -75,15 +75,15 @@
         "createdAt": "2026-02-06T00:00:00.000Z"
       },
       {
-        "id": "baking-soda-volcano-step-erupt",
+        "id": "baking-soda-volcano-reference-vinegar",
         "volcanoSlug": "baking-soda-volcano",
         "src": {
           "lg": "https://upload.wikimedia.org/wikipedia/commons/8/83/Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg",
           "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg/960px-Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg",
           "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg/480px-Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg"
         },
-        "alt": "Vinegar bottle — add vinegar to baking soda to trigger the eruption",
-        "caption": "Have your vinegar ready — you'll add it to the baking soda to trigger the reaction.",
+        "alt": "Vinegar bottle — white distilled or any vinegar; the acid that reacts with baking soda",
+        "caption": "Vinegar (e.g. white distilled): the acid. You'll pour it into the crater to trigger the eruption.",
         "usage": { "role": "section", "priority": 2 },
         "license": {
           "type": "cc-by-sa",
@@ -94,6 +94,47 @@
           "attributionUrl": "https://commons.wikimedia.org/wiki/User:Pigsonthewing"
         },
         "dimensions": { "width": 2592, "height": 3872 },
+        "createdAt": "2026-02-06T00:00:00.000Z"
+      },
+      {
+        "id": "baking-soda-volcano-reference-additives",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/4/45/Liquid_soap.svg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Liquid_soap.svg/330px-Liquid_soap.svg.png",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Liquid_soap.svg/250px-Liquid_soap.svg.png"
+        },
+        "alt": "Dish soap (optional) — makes foam last longer; food coloring (optional) for colored lava",
+        "caption": "Optional: a squirt of dish soap makes the foam last longer; a drop of food coloring gives you colored 'lava'.",
+        "usage": { "role": "section", "priority": 3 },
+        "license": {
+          "type": "public-domain",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Liquid_soap.svg"
+        },
+        "dimensions": { "width": 512, "height": 1190 },
+        "createdAt": "2026-02-06T00:00:00.000Z"
+      },
+      {
+        "id": "baking-soda-volcano-step-bottle",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Plastic_Water_Bottle.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Plastic_Water_Bottle.jpg/960px-Plastic_Water_Bottle.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Plastic_Water_Bottle.jpg/480px-Plastic_Water_Bottle.jpg"
+        },
+        "alt": "A small plastic bottle — the container that becomes the crater of your volcano",
+        "caption": "Use a small bottle as the crater: build your volcano shape around it (play dough, dirt, or foil), then add baking soda and pour in the vinegar.",
+        "usage": { "role": "section", "priority": 4 },
+        "license": {
+          "type": "cc-by-sa",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plastic_Water_Bottle.jpg",
+          "attribution": "CC BY-SA 4.0",
+          "attributionName": "Kykywinks",
+          "attributionUrl": "https://commons.wikimedia.org/wiki/User:Kykywinks"
+        },
+        "dimensions": { "width": 1247, "height": 1962 },
         "createdAt": "2026-02-06T00:00:00.000Z"
       }
     ],
