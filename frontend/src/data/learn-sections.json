@@ -1,0 +1,42 @@
+{
+  "description": "Flat, approachable sections for Learn & Grow. Cards appear in a section if they have any of its tags (cross-tagged). Same tags power trivia.",
+  "triviaBackbone": true,
+  "sections": [
+    {
+      "id": "all",
+      "title": "All",
+      "description": "Everything—browse and hunt for trivia.",
+      "tags": []
+    },
+    {
+      "id": "stem_crafts",
+      "title": "STEM & Crafts",
+      "description": "Experiments, engineering, and hands-on fun.",
+      "tags": ["experiment", "chemistry", "hands_on", "hands-on", "volcano", "trivia_ready", "engineering", "circuits", "rockets", "build", "coding", "programming", "logic", "science experiments"]
+    },
+    {
+      "id": "time_travel_media",
+      "title": "Time Travel & Media",
+      "description": "Films, TV, books, and the science of time.",
+      "tags": ["time travel", "Back to the Future", "sci-fi", "movies", "film", "TV", "Doctor Who", "Dark", "series", "Literature", "Comics", "Music", "media", "science fiction", "Hitchhiker's Guide to the Galaxy", "cause and effect", "butterfly effect"]
+    },
+    {
+      "id": "scientists_inventors",
+      "title": "Scientists & Inventors",
+      "description": "Biographies and breakthroughs—trivia-ready.",
+      "tags": ["Nikola Tesla", "tesla", "inventor", "electricity", "AC", "Tesla coil", "wireless", "radio", "biography", "scientists", "einstein", "relativity", "physics"]
+    },
+    {
+      "id": "biology_nature",
+      "title": "Biology & Nature",
+      "description": "Plants, ecosystems, and life science.",
+      "tags": ["plants", "botany", "photosynthesis", "gardening", "growth", "ecosystems", "forest", "ocean", "desert", "habitat", "microbiology", "bacteria", "virus", "fungi", "biology"]
+    },
+    {
+      "id": "animals",
+      "title": "Animals",
+      "description": "Mammals, birds, and the animal kingdom.",
+      "tags": ["mammals", "mammal", "animals", "elephant", "dog", "cat", "birds", "bird", "migration", "flight"]
+    }
+  ]
+}

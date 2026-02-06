@@ -8,7 +8,8 @@
     "dev": "node index.js",
     "smoke:observances": "node scripts/smoke-observances.js",
     "ingest:tesla": "node scripts/ingest-tesla-biography.js",
-    "ingest:figure": "node scripts/ingest-figure-dynamic.js"
+    "ingest:figure": "node scripts/ingest-figure-dynamic.js",
+    "scrape:site": "node scripts/scrape-site.js"
   },
   "engines": {
     "node": ">=18"
@@ -18,6 +19,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "nanoid": "^5.0.4",
+    "puppeteer": "^24.15.0",
     "pdf-parse": "^2.4.5",
     "pdfjs-dist": "^4.10.38",
     "sharp": "^0.33.5",

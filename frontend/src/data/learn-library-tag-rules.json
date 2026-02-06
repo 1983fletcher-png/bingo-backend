@@ -1,0 +1,85 @@
+{
+  "description": "Ordered rules to auto-map cards into Learn library (primary → subcategory). First match wins. cardIds = exact id; tagAny = case-insensitive tag match.",
+  "rules": [
+    {
+      "primaryId": "stem_crafts",
+      "subId": "experiments",
+      "cardIds": ["baking-soda-volcano"]
+    },
+    {
+      "primaryId": "time_travel_media",
+      "subId": "films",
+      "cardIds": ["time-travel", "time-travel-wormhole"]
+    },
+    {
+      "primaryId": "scientists_inventors",
+      "subId": "nikola_tesla",
+      "cardIds": ["nikola-tesla"]
+    },
+    {
+      "primaryId": "stem_crafts",
+      "subId": "experiments",
+      "tagAny": ["experiment", "chemistry", "hands_on", "hands-on", "volcano", "trivia_ready"]
+    },
+    {
+      "primaryId": "stem_crafts",
+      "subId": "engineering_projects",
+      "tagAny": ["engineering", "circuits", "rockets", "build"]
+    },
+    {
+      "primaryId": "stem_crafts",
+      "subId": "coding_fun",
+      "tagAny": ["coding", "programming", "logic"]
+    },
+    {
+      "primaryId": "time_travel_media",
+      "subId": "films",
+      "tagAny": ["time travel", "back to the future", "sci-fi", "movies", "film"]
+    },
+    {
+      "primaryId": "time_travel_media",
+      "subId": "tv_series",
+      "tagAny": ["tv", "doctor who", "dark", "series"]
+    },
+    {
+      "primaryId": "time_travel_media",
+      "subId": "literature",
+      "tagAny": ["literature", "books", "comics", "graphic novel"]
+    },
+    {
+      "primaryId": "scientists_inventors",
+      "subId": "nikola_tesla",
+      "tagAny": ["nikola tesla", "tesla", "inventor", "electricity", "ac power"]
+    },
+    {
+      "primaryId": "scientists_inventors",
+      "subId": "albert_einstein",
+      "tagAny": ["einstein", "relativity", "physics"]
+    },
+    {
+      "primaryId": "biology_nature",
+      "subId": "plants_growth",
+      "tagAny": ["plants", "botany", "photosynthesis", "gardening", "growth"]
+    },
+    {
+      "primaryId": "biology_nature",
+      "subId": "ecosystems",
+      "tagAny": ["ecosystems", "forest", "ocean", "desert", "habitat"]
+    },
+    {
+      "primaryId": "biology_nature",
+      "subId": "microbiology",
+      "tagAny": ["microbiology", "bacteria", "virus", "fungi"]
+    },
+    {
+      "primaryId": "animals",
+      "subId": "mammals",
+      "tagAny": ["mammals", "mammal", "animals", "elephant", "dog", "cat"]
+    },
+    {
+      "primaryId": "animals",
+      "subId": "birds",
+      "tagAny": ["birds", "bird", "migration", "flight"]
+    }
+  ]
+}
