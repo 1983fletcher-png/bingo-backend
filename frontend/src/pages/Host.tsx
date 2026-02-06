@@ -6,6 +6,10 @@ import HostSongGrid from '../components/HostSongGrid';
 import SongFactPopUp from '../components/SongFactPopUp';
 import { defaultTriviaPacks } from '../data/triviaPacks';
 import type { TriviaPack, TriviaQuestion } from '../data/triviaPacks';
+import { icebreakerPacks, defaultIcebreakerPack } from '../data/icebreakerPacks';
+import { edutainmentPacks, defaultEdutainmentPack } from '../data/edutainmentPacks';
+import { teamBuildingPacks, defaultTeamBuildingPack } from '../data/teamBuildingActivities';
+import { musicBingoGames } from '../data/musicBingoGames';
 import { printBingoCards } from '../lib/printBingoCards';
 import { buildTriviaQuizPrintDocument, buildFlashcardsPrintDocument } from '../lib/printMaterials';
 import { fetchJson, normalizeBackendUrl } from '../lib/safeFetch';
@@ -60,12 +64,17 @@ export default function Host() {
   // Trivia: host's selected/ordered questions; which pack was used to create (for "Reset to full pack")
   const [triviaQuestions, setTriviaQuestions] = useState<TriviaQuestion[]>([]);
   const [selectedTriviaPackId, setSelectedTriviaPackId] = useState<string>(() => defaultTriviaPacks[0]?.id ?? 'music-general');
+  const [selectedIcebreakerPackId, setSelectedIcebreakerPackId] = useState<string>(() => defaultIcebreakerPack?.id ?? 'corporate');
+  const [selectedEdutainmentPackId, setSelectedEdutainmentPackId] = useState<string>(() => defaultEdutainmentPack?.id ?? 'k5-general');
+  const [selectedTeamBuildingPackId, setSelectedTeamBuildingPackId] = useState<string>(() => defaultTeamBuildingPack?.id ?? 'team-building-activities');
+  const [selectedPrebuiltGameId, setSelectedPrebuiltGameId] = useState<string | null>(null);
   const [triviaPackForGame, setTriviaPackForGame] = useState<TriviaPack | null>(null);
   const [printBingoCount, setPrintBingoCount] = useState<string>('50');
   const [waitingRoomTheme, setWaitingRoomTheme] = useState<string>('default');
   const [createPending, setCreatePending] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const createTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prebuiltSongsRef = useRef<Song[] | null>(null);
   // Event & venue: full config, scrape, venue profiles
   const [eventConfig, setEventConfigState] = useState<EventConfig>(() => ({
     gameTitle: 'Music Bingo',
@@ -108,7 +117,8 @@ export default function Host() {
       setGame(payload);
       setHostMessage(payload.waitingRoom?.hostMessage || 'Starting soon…');
       setWaitingRoomTheme(payload.waitingRoom?.theme || 'default');
-      setSongPool(Array.isArray(payload.songPool) ? payload.songPool : []);
+      const songsFromServer = Array.isArray(payload.songPool) ? payload.songPool : [];
+      setSongPool(songsFromServer);
       setRevealed(Array.isArray(payload.revealed) ? payload.revealed : []);
       if (payload.eventConfig && typeof payload.eventConfig === 'object') {
         setEventConfigState((prev) => ({ ...prev, ...payload.eventConfig }));
@@ -117,6 +127,11 @@ export default function Host() {
         setTriviaQuestions(payload.trivia.questions);
       } else {
         setTriviaQuestions([]);
+      }
+      if (payload.gameType === 'music-bingo' && prebuiltSongsRef.current && prebuiltSongsRef.current.length >= 24) {
+        s.emit('host:set-songs', { code: payload.code, songs: prebuiltSongsRef.current });
+        setSongPool(prebuiltSongsRef.current);
+        prebuiltSongsRef.current = null;
       }
     });
 
@@ -170,7 +185,7 @@ export default function Host() {
       .catch(() => setBackendReachable(false));
   }, [apiBase]);
 
-  const createGame = (gameType: 'music-bingo' | 'classic-bingo' | 'trivia') => {
+  const createGame = (gameType: 'music-bingo' | 'classic-bingo' | 'trivia', pack?: TriviaPack | null) => {
     if (!socket) return;
     setGame(null);
     setTriviaPackForGame(null);
@@ -178,16 +193,24 @@ export default function Host() {
     setCreatePending(true);
     const initialEventConfig: EventConfig =
       gameType === 'trivia'
-        ? { ...eventConfig, gameTitle: 'Trivia' }
+        ? { ...eventConfig, gameTitle: pack?.title ?? 'Trivia' }
         : { ...eventConfig, gameTitle: eventConfig.gameTitle || (gameType === 'classic-bingo' ? 'Classic Bingo' : 'The Playroom') };
-    if (gameType === 'trivia') {
-      const pack = defaultTriviaPacks.find(p => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
+    if (gameType === 'trivia' && pack) {
       setTriviaPackForGame(pack);
       socket.emit('host:create', {
         baseUrl: window.location.origin,
         gameType: 'trivia',
         eventConfig: { ...initialEventConfig, gameTitle: pack.title },
         questions: pack.questions,
+      });
+    } else if (gameType === 'trivia') {
+      const fallback = defaultTriviaPacks.find(p => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
+      setTriviaPackForGame(fallback);
+      socket.emit('host:create', {
+        baseUrl: window.location.origin,
+        gameType: 'trivia',
+        eventConfig: { ...initialEventConfig, gameTitle: fallback.title },
+        questions: fallback.questions,
       });
     } else {
       socket.emit('host:create', {
@@ -471,15 +494,32 @@ export default function Host() {
   if (!game) {
     const isBingo = createMode === 'music-bingo' || createMode === 'classic-bingo';
     const isPackMode = !isBingo;
-    const selectedPack = defaultTriviaPacks.find((p) => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
-    const canCreateTrivia = isPackMode && selectedPack && selectedPack.questions.length > 0;
-    const canCreate = socket?.connected && (isBingo || canCreateTrivia);
-    const step = isBingo ? (canCreate ? 3 : 1) : canCreate ? 3 : selectedPack ? 2 : 1;
+    const selectedTriviaPack = defaultTriviaPacks.find((p) => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
+    const selectedIcebreakerPack = icebreakerPacks.find((p) => p.id === selectedIcebreakerPackId) ?? defaultIcebreakerPack;
+    const selectedEdutainmentPack = edutainmentPacks.find((p) => p.id === selectedEdutainmentPackId) ?? defaultEdutainmentPack;
+    const selectedTeamBuildingPack = teamBuildingPacks.find((p) => p.id === selectedTeamBuildingPackId) ?? defaultTeamBuildingPack;
+    const packForMode =
+      createMode === 'trivia' ? selectedTriviaPack
+      : createMode === 'icebreakers' ? (selectedIcebreakerPack ? { id: selectedIcebreakerPack.id, title: selectedIcebreakerPack.title, questions: selectedIcebreakerPack.prompts.map((pr) => ({ question: pr.text, correctAnswer: '', points: 1 })) } : null)
+      : createMode === 'edutainment' ? selectedEdutainmentPack
+      : createMode === 'team-building' ? selectedTeamBuildingPack
+      : null;
+    const packHasContent = packForMode && 'questions' in packForMode && packForMode.questions.length > 0;
+    const canCreatePack = isPackMode && !!packHasContent;
+    const canCreate = socket?.connected && (isBingo || canCreatePack);
+    const step = isBingo ? (canCreate ? 3 : 1) : canCreate ? 3 : packForMode ? 2 : 1;
 
     const handleCreate = () => {
-      if (createMode === 'music-bingo') createGame('music-bingo');
-      else if (createMode === 'classic-bingo') createGame('classic-bingo');
-      else createGame('trivia');
+      if (createMode === 'music-bingo') {
+        if (selectedPrebuiltGameId) {
+          const prebuilt = musicBingoGames.find((g) => g.id === selectedPrebuiltGameId);
+          if (prebuilt?.songs?.length === 75) prebuiltSongsRef.current = prebuilt.songs;
+        } else {
+          prebuiltSongsRef.current = null;
+        }
+        createGame('music-bingo');
+      } else if (createMode === 'classic-bingo') createGame('classic-bingo');
+      else createGame('trivia', packForMode as TriviaPack);
     };
 
     const createButtonLabel =
@@ -564,9 +604,27 @@ export default function Host() {
         </div>
 
         {createMode === 'music-bingo' && (
-          <p className="host-create__copy">
-            Create a room and generate 75 songs from the Call sheet tab (AI or theme). One link for everyone.
-          </p>
+          <>
+            <div className="host-create__content host-create__packs-wrap">
+              <label className="host-create__label">Pre-built game (optional)</label>
+              <select
+                className="host-create__select"
+                value={selectedPrebuiltGameId ?? ''}
+                onChange={(e) => setSelectedPrebuiltGameId(e.target.value || null)}
+              >
+                <option value="">I'll build with Call sheet / AI</option>
+                {musicBingoGames.map((g) => (
+                  <option key={g.id} value={g.id}>{g.title} — 75 songs</option>
+                ))}
+              </select>
+              <p className="host-create__hint">
+                Choose a pre-built game (75 songs, no duplicate artists) or leave blank to add songs from the Call sheet tab after creating.
+              </p>
+            </div>
+            <p className="host-create__copy">
+              {selectedPrebuiltGameId ? 'Create a room with the selected game. One link for everyone.' : 'Create a room and add 75 songs from the Call sheet tab (AI or theme). One link for everyone.'}
+            </p>
+          </>
         )}
         {createMode === 'classic-bingo' && (
           <p className="host-create__copy">
@@ -602,17 +660,34 @@ export default function Host() {
               {createMode === 'edutainment' && 'Edutainment pack'}
               {createMode === 'team-building' && 'Team building pack'}
             </label>
-            <select
-              className="host-create__select"
-              value={selectedTriviaPackId}
-              onChange={(e) => setSelectedTriviaPackId(e.target.value)}
-            >
-              {defaultTriviaPacks.map((pack) => (
-                <option key={pack.id} value={pack.id}>
-                  {pack.title} ({pack.questions.length} questions)
-                </option>
-              ))}
-            </select>
+            {createMode === 'trivia' && (
+              <select className="host-create__select" value={selectedTriviaPackId} onChange={(e) => setSelectedTriviaPackId(e.target.value)}>
+                {defaultTriviaPacks.map((pack) => (
+                  <option key={pack.id} value={pack.id}>{pack.title} ({pack.questions.length} questions)</option>
+                ))}
+              </select>
+            )}
+            {createMode === 'icebreakers' && (
+              <select className="host-create__select" value={selectedIcebreakerPackId} onChange={(e) => setSelectedIcebreakerPackId(e.target.value)}>
+                {icebreakerPacks.map((pack) => (
+                  <option key={pack.id} value={pack.id}>{pack.title} ({pack.prompts.length} prompts)</option>
+                ))}
+              </select>
+            )}
+            {createMode === 'edutainment' && (
+              <select className="host-create__select" value={selectedEdutainmentPackId} onChange={(e) => setSelectedEdutainmentPackId(e.target.value)}>
+                {edutainmentPacks.map((pack) => (
+                  <option key={pack.id} value={pack.id}>{pack.title} ({pack.questions.length} questions)</option>
+                ))}
+              </select>
+            )}
+            {createMode === 'team-building' && (
+              <select className="host-create__select" value={selectedTeamBuildingPackId} onChange={(e) => setSelectedTeamBuildingPackId(e.target.value)}>
+                {teamBuildingPacks.map((pack) => (
+                  <option key={pack.id} value={pack.id}>{pack.title} ({pack.questions.length} activities)</option>
+                ))}
+              </select>
+            )}
             <p className="host-create__hint">
               {createMode === 'trivia' && 'Packs and custom questions. Multiple choice, true/false.'}
               {createMode === 'icebreakers' && 'Two Truths, Would You Rather, quick energizers.'}
