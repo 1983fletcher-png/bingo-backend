@@ -26,6 +26,10 @@ function useFlipped() {
   return { flipped, toggle };
 }
 
+/** Neutral = uncalled; solid blue = called. Front = song title only; tap to flip for artist. */
+const TILE_NEUTRAL_BG = '#2d3748';
+const TILE_CALLED_BG = '#2b6cb0'; // solid blue when song/number has been called
+
 /** Front = song title only. Tap to flip and see the artist/band on the back. */
 function TileSolid({
   item,
@@ -40,6 +44,9 @@ function TileSolid({
 }) {
   const isFree = item === 'FREE';
   const song = isFree ? null : (item as Song);
+  const tileBg = isRevealed ? TILE_CALLED_BG : TILE_NEUTRAL_BG;
+  const faceBg = isRevealed ? TILE_CALLED_BG : TILE_NEUTRAL_BG;
+  const backBg = isRevealed ? '#1e4d7b' : '#1a202c'; // slightly darker blue when called, else dark gray
 
   return (
     <button
@@ -51,9 +58,9 @@ function TileSolid({
         minHeight: TILE_MIN_HEIGHT,
         margin: 0,
         padding: 8,
-        border: `2px solid ${isRevealed ? '#48bb78' : '#4a5568'}`,
+        border: `2px solid ${isRevealed ? '#1e4d7b' : '#4a5568'}`,
         borderRadius: 8,
-        background: '#2d3748',
+        background: tileBg,
         color: '#e2e8f0',
         fontSize: 12,
         fontWeight: 600,
@@ -81,7 +88,7 @@ function TileSolid({
             position: 'absolute',
             inset: 0,
             backfaceVisibility: 'hidden',
-            background: '#2d3748',
+            background: faceBg,
             borderRadius: 6,
             display: 'flex',
             alignItems: 'center',
@@ -106,9 +113,6 @@ function TileSolid({
           >
             {isFree ? 'FREE' : song!.title}
           </span>
-          {isRevealed && (
-            <span style={{ position: 'absolute', top: 4, right: 6, color: '#48bb78', fontSize: 14 }}>✓</span>
-          )}
         </div>
         {/* Back: artist/band — tap tile to flip and see */}
         <div
@@ -116,7 +120,7 @@ function TileSolid({
             position: 'absolute',
             inset: 0,
             backfaceVisibility: 'hidden',
-            background: '#1a202c',
+            background: backBg,
             borderRadius: 6,
             display: 'flex',
             alignItems: 'center',

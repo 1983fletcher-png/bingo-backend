@@ -196,7 +196,8 @@ export default function Play() {
       setJoinState((prev) => (prev ? { ...prev, songPool } : null));
     });
 
-    s.on('game:revealed', ({ revealed: rev }: { revealed: Song[] }) => {
+    s.on('game:revealed', (payload: { revealed?: Song[] }) => {
+      const rev = Array.isArray(payload?.revealed) ? payload.revealed : [];
       setJoinState((prev) => (prev ? { ...prev, revealed: rev } : null));
     });
 

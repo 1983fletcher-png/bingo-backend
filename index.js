@@ -1089,9 +1089,15 @@ io.on('connection', (socket) => {
   socket.on('host:reveal', ({ code, song }) => {
     const game = getGame(code);
     if (!game || game.hostId !== socket.id) return;
-    if (!song || game.revealed.includes(song)) return;
-    game.revealed.push(song);
-    io.to(`game:${game.code}`).emit('game:revealed', { song, revealed: game.revealed });
+    if (!song || typeof song.artist !== 'string' || typeof song.title !== 'string') return;
+    const normalized = { artist: String(song.artist).trim(), title: String(song.title).trim() };
+    const alreadyRevealed = game.revealed.some(
+      (s) => s.artist === normalized.artist && s.title === normalized.title
+    );
+    if (alreadyRevealed) return;
+    game.revealed.push(normalized);
+    const revealedCopy = game.revealed.map((s) => ({ artist: s.artist, title: s.title }));
+    io.to(`game:${game.code}`).emit('game:revealed', { revealed: revealedCopy });
   });
 
   socket.on('host:start', ({ code }) => {
