@@ -209,7 +209,7 @@ export default function Play() {
       });
     });
 
-    s.on('game:trivia-reveal', (payload: { questionIndex?: number; correctAnswer?: string }) => {
+    s.on('game:trivia-reveal', () => {
       setJoinState((prev) => {
         if (!prev?.trivia) return prev;
         return { ...prev, trivia: { ...prev.trivia, revealed: true } };
