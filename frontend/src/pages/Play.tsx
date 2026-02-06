@@ -10,7 +10,11 @@ import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
 import '../styles/join.css';
 
-/** Trivia player view: current question, answer input, then correct answer when revealed. Synced with display. */
+/**
+ * Trivia player view: current question, answer input, then correct answer when revealed. Synced with display.
+ * TODO (future): Support multiple answer types per question — not just text input. Add multiple choice, single-select,
+ * true/false, etc., depending on question type so hosts can use the right format for training and quizzes.
+ */
 function TriviaPlayerView({
   eventConfig,
   gameTitle,

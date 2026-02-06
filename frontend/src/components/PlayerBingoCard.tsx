@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import type { BingoCard as BingoCardType, Song } from '../types/game';
 import { songKey } from '../types/game';
 
-const TILE_MIN_HEIGHT = 64;
+const TILE_MIN_HEIGHT = 72;
 const TILE_GAP = 8;
 
 interface PlayerBingoCardProps {
@@ -26,7 +26,7 @@ function useFlipped() {
   return { flipped, toggle };
 }
 
-/** Two solid faces: front = title (or FREE), back = artist. Opaque flip, no transparency. */
+/** Front = song title only. Tap to flip and see the artist/band on the back. */
 function TileSolid({
   item,
   isRevealed,
@@ -71,11 +71,11 @@ function TileSolid({
           position: 'relative',
           width: '100%',
           height: '100%',
-          minHeight: TILE_MIN_HEIGHT - 20,
+          minHeight: TILE_MIN_HEIGHT - 16,
           transformStyle: 'preserve-3d',
         }}
       >
-        {/* Front face: title (or FREE) — solid */}
+        {/* Front: song title only */}
         <div
           style={{
             position: 'absolute',
@@ -94,12 +94,13 @@ function TileSolid({
         >
           <span
             style={{
-              display: 'block',
               width: '100%',
-              overflowX: 'auto',
-              overflowY: 'hidden',
-              whiteSpace: 'nowrap',
-              WebkitOverflowScrolling: 'touch',
+              lineHeight: 1.25,
+              wordBreak: 'break-word',
+              overflow: 'hidden',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
             }}
             title={isFree ? undefined : song!.title}
           >
@@ -109,7 +110,7 @@ function TileSolid({
             <span style={{ position: 'absolute', top: 4, right: 6, color: '#48bb78', fontSize: 14 }}>✓</span>
           )}
         </div>
-        {/* Back face: artist only — solid */}
+        {/* Back: artist/band — tap tile to flip and see */}
         <div
           style={{
             position: 'absolute',
@@ -128,9 +129,10 @@ function TileSolid({
           {!isFree && (
             <span
               style={{
-                overflowX: 'auto',
-                overflowY: 'hidden',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
+                maxWidth: '100%',
                 WebkitOverflowScrolling: 'touch',
               }}
               title={song!.artist}
@@ -167,7 +169,7 @@ export default function PlayerBingoCard({
         <h2 style={{ margin: '0 0 8px 0', fontSize: 18 }}>{eventTitle}</h2>
       )}
       <p style={{ fontSize: 12, color: '#a0aec0', marginBottom: 12 }}>
-        Tap a square to flip: title → artist. Get 5 in a row to win.
+        Your card shows the song title. Tap a tile to flip it and see the artist or band. Get 5 in a row to win.
       </p>
       <div
         style={{
