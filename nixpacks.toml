@@ -1,0 +1,5 @@
+# Don't install Chromium/GTK apt stack. The app doesn't use Puppeteer at runtime
+# (only in scripts/scrape-site.js for local runs). This avoids 265-package install
+# and build timeouts on Railway.
+[phases.setup]
+aptPkgs = ["ca-certificates"]

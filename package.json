@@ -19,10 +19,12 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "nanoid": "^5.0.4",
-    "puppeteer": "^24.15.0",
     "pdf-parse": "^2.4.5",
     "pdfjs-dist": "^4.10.38",
     "sharp": "^0.33.5",
     "socket.io": "^4.6.1"
+  },
+  "optionalDependencies": {
+    "puppeteer": "^24.15.0"
   }
 }
