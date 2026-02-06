@@ -24,7 +24,7 @@
       "id": "scientists_inventors",
       "title": "Scientists & Inventors",
       "description": "Biographies and breakthroughs—trivia-ready.",
-      "tags": ["Nikola Tesla", "tesla", "inventor", "electricity", "AC", "Tesla coil", "wireless", "radio", "biography", "scientists", "einstein", "relativity", "physics"]
+      "tags": ["Nikola Tesla", "tesla", "inventor", "electricity", "AC", "Tesla coil", "wireless", "radio", "biography", "scientists", "Albert Einstein", "einstein", "relativity", "physics", "Isaac Newton", "Newton", "gravity", "Thomas Edison", "Edison", "light bulb", "phonograph", "Menlo Park"]
     },
     {
       "id": "biology_nature",
@@ -37,6 +37,12 @@
       "title": "Animals",
       "description": "Mammals, birds, and the animal kingdom.",
       "tags": ["mammals", "mammal", "animals", "elephant", "dog", "cat", "birds", "bird", "migration", "flight"]
+    },
+    {
+      "id": "geography",
+      "title": "Geography",
+      "description": "Places, regions, maps, and the world.",
+      "tags": ["geography", "place", "region", "continent", "country", "map", "maps", "climate", "landforms", "earth", "world", "culture", "travel", "location"]
     }
   ]
 }

@@ -2,8 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
 import LearningPageView from '../components/LearningPageView';
-import TimeTravelWormholeView from '../components/TimeTravelWormholeView';
-import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage } from '../types/learningEngine';
+import CraftsStemHub from '../components/CraftsStemHub';
+import CraftsStemProjectView from '../components/CraftsStemProjectView';
+import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage, albertEinsteinPage, isaacNewtonPage, thomasEdisonPage } from '../types/learningEngine';
+import { generatedPageToLearningPage } from '../lib/learningEngineValidation';
+import { slimeEnginePage } from '../data/learningEnginePages/slimePage';
+import { northCarolinaEnginePage } from '../data/learningEnginePages/northCarolinaPage';
+import NorthCarolinaExplorationView from '../components/NorthCarolinaExplorationView';
 import type { VolcanoImage, VolcanoImageRegistry } from '../types/volcanoImages';
 import volcanoImagesRegistry from '../data/volcano-images.json';
 import '../styles/learn.css';
@@ -17,7 +22,17 @@ const API_BASE =
 const STATIC_LEARNING_PAGES: Record<string, { page: typeof bakingSodaVolcanoPage }> = {
   'baking-soda-volcano': { page: bakingSodaVolcanoPage },
   'time-travel': { page: timeTravelPage },
+  'time-travel-wormhole': { page: timeTravelPage },
   'nikola-tesla': { page: nikolaTeslaPage },
+  'albert-einstein': { page: albertEinsteinPage },
+  'isaac-newton': { page: isaacNewtonPage },
+  'thomas-edison': { page: thomasEdisonPage },
+};
+
+/** Learning Engine–generated pages (fixed backbone: sections, tiers, cross-links, trivia). Converted to LearningPage for render. */
+const ENGINE_PAGES: Record<string, { page: ReturnType<typeof generatedPageToLearningPage> }> = {
+  'slime': { page: generatedPageToLearningPage(slimeEnginePage) },
+  'north-carolina': { page: generatedPageToLearningPage(northCarolinaEnginePage) },
 };
 
 function getVolcanoImagesForSlug(slug: string): VolcanoImage[] {
@@ -49,10 +64,11 @@ export default function LearnCard() {
   const [layer, setLayer] = useState<'child' | 'learner' | 'explorer' | 'deepDive'>('learner');
 
   const staticPage = id ? STATIC_LEARNING_PAGES[id] : null;
+  const enginePage = id ? ENGINE_PAGES[id] : null;
 
   useEffect(() => {
-    if (!id || staticPage) {
-      if (staticPage) setLoading(false);
+    if (!id || staticPage || enginePage) {
+      if (staticPage || enginePage) setLoading(false);
       return;
     }
     let cancelled = false;
@@ -64,12 +80,36 @@ export default function LearnCard() {
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, [id, staticPage]);
+  }, [id, staticPage, enginePage]);
 
-  if (id === 'time-travel-wormhole') {
+  if (id === 'crafts-stem') {
     return (
       <div className="learn-page">
-        <TimeTravelWormholeView />
+        <CraftsStemHub />
+      </div>
+    );
+  }
+
+  if (id?.startsWith('crafts-stem-')) {
+    const slug = id.replace(/^crafts-stem-/, '');
+    return (
+      <div className="learn-page">
+        <CraftsStemProjectView slug={slug} />
+      </div>
+    );
+  }
+
+  if (id === 'north-carolina' && enginePage) {
+    return <NorthCarolinaExplorationView page={enginePage.page} />;
+  }
+
+  if (enginePage) {
+    return (
+      <div className="learn-page">
+        <Link to="/learn" className="learn-page__back">
+          ← Back to Learn & Grow
+        </Link>
+        <LearningPageView page={enginePage.page} />
       </div>
     );
   }

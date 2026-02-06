@@ -496,14 +496,26 @@ export const bakingSodaVolcanoPage: LearningPage = {
 export const TIME_TRAVEL_PAGE_ID = "culture.movies.time-travel.practical-implications";
 
 export const timeTravelImageSlots: ImageSlot[] = [
-  { slotId: "hero.time-travel", sectionId: "intro.hook", role: "hero", required: true, preferredOrientation: "landscape", description: "Iconic time-travel or clock imagery that draws the reader in" },
-  { slotId: "context.science", sectionId: "science.reality", role: "context", required: false, description: "Relativity, spacetime, or time dilation — NASA/educational" },
-  { slotId: "context.bttf", sectionId: "film.back-to-the-future", role: "context", required: true, description: "Back to the Future / DeLorean — licensed (e.g. CC-by) only" },
-  { slotId: "context.culture", sectionId: "film.culture", role: "context", required: false, description: "Hitchhiker's Guide or other time-travel film/culture" },
-  { slotId: "context.cause", sectionId: "cause.ripples", role: "context", required: false, description: "Cause and effect or butterfly effect — film still or diagram" },
-  { slotId: "context.tesla", sectionId: "history.tesla", role: "context", required: false, description: "Nikola Tesla (the inventor) — public domain portrait" },
-  { slotId: "diagram.paradox", sectionId: "paradoxes", role: "diagram", required: false, description: "Paradox illustration or timeline diagram" },
-  { slotId: "context.practical", sectionId: "practical.forward", role: "context", required: false, description: "Forward-looking or choice imagery" },
+  { slotId: "hero.time-travel", sectionId: "intro.hook", role: "hero", required: true, preferredOrientation: "landscape", description: "Iconic time-travel or clock imagery" },
+  { slotId: "context.science", sectionId: "science.reality", role: "context", required: false, description: "Relativity, spacetime, NASA" },
+  { slotId: "context.bttf", sectionId: "film.back-to-the-future", role: "context", required: true, description: "Back to the Future / DeLorean" },
+  { slotId: "context.hot-tub", sectionId: "film.hot-tub-time-machine", role: "context", required: false, description: "Hot Tub Time Machine film" },
+  { slotId: "context.time-machine", sectionId: "film.time-machine", role: "context", required: false, description: "The Time Machine (Wells on screen)" },
+  { slotId: "context.looper", sectionId: "film.looper", role: "context", required: false, description: "Looper (2012)" },
+  { slotId: "context.edge", sectionId: "film.edge-of-tomorrow", role: "context", required: false, description: "Edge of Tomorrow" },
+  { slotId: "context.culture", sectionId: "film.culture", role: "context", required: false, description: "Time travel in film & culture" },
+  { slotId: "context.doctor-who", sectionId: "tv.doctor-who", role: "context", required: false, description: "Doctor Who" },
+  { slotId: "context.dark", sectionId: "tv.dark", role: "context", required: false, description: "Dark (Netflix)" },
+  { slotId: "context.umbrella", sectionId: "tv.umbrella", role: "context", required: false, description: "The Umbrella Academy" },
+  { slotId: "context.wells", sectionId: "literature.wells", role: "context", required: false, description: "H.G. Wells The Time Machine" },
+  { slotId: "context.outlander", sectionId: "literature.outlander", role: "context", required: false, description: "Outlander / Diana Gabaldon" },
+  { slotId: "context.king", sectionId: "literature.king", role: "context", required: false, description: "Stephen King 11/22/63" },
+  { slotId: "context.comics-music", sectionId: "literature.comics-music", role: "context", required: false, description: "Comics, music, Twain" },
+  { slotId: "context.cause", sectionId: "cause.ripples", role: "context", required: false, description: "Cause and effect, butterfly effect" },
+  { slotId: "context.tesla", sectionId: "history.tesla", role: "context", required: false, description: "Nikola Tesla (inventor)" },
+  { slotId: "diagram.paradox", sectionId: "paradoxes", role: "diagram", required: false, description: "Paradox diagram" },
+  { slotId: "context.fun-facts", sectionId: "fun.facts", role: "context", required: false, description: "Time travel fun facts" },
+  { slotId: "context.practical", sectionId: "practical.forward", role: "context", required: false, description: "Forward-looking imagery" },
 ];
 
 const timeTravelSections: LearningSection[] = [
@@ -572,8 +584,78 @@ const timeTravelSections: LearningSection[] = [
     ],
   },
   {
+    id: "film.hot-tub-time-machine",
+    title: "Hot Tub Time Machine (2010)",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "A cult comedy that sends four friends back to 1986 via a malfunctioning hot tub at a ski lodge. Directed by Steve Pink, written by Josh Heald, and starring John Cusack, Craig Robinson, Rob Corddry, and Clark Duke, the film plays time travel for laughs while still respecting cause-and-effect gags: small changes in the past ripple into the future (and the sequel, Hot Tub Time Machine 2, 2015).",
+      },
+      {
+        type: "callout",
+        emphasis: "fun-fact",
+        content:
+          "The movie leans into '80s nostalgia — hair metal, Cold War, and the moment one character must choose whether to repeat or change his past. It's a reminder that time-travel stories can be silly and sincere at once. Sources: IMDb, Wikipedia.",
+      },
+    ],
+  },
+  {
+    id: "film.time-machine",
+    title: "The Time Machine (1960, 2002)",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "H.G. Wells' 1895 novel was adapted for the screen in 1960 (George Pal) and 2002 (Simon Wells). Both explore a scientist who builds a machine and travels far into the future, discovering evolved (and divided) humanity. The 1960 version is a classic; the 2002 version adds modern effects and a clearer emotional arc.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Wells' vision — time as a fourth dimension, and the future as a place of social commentary — set the template for much of science fiction. Sources: IMDb, Wikipedia (The Time Machine), Gutenberg (original novel).",
+      },
+    ],
+  },
+  {
+    id: "film.looper",
+    title: "Looper (2012)",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Rian Johnson's thriller stars Joseph Gordon-Levitt and Bruce Willis as the same man at different ages: assassins in the past kill targets sent from the future. When the older version escapes, the younger must hunt himself — and the film leans into paradoxes, identity, and moral choice.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Looper doesn't over-explain its rules; it uses time travel to explore fate, free will, and sacrifice. Sources: IMDb, Wikipedia (Looper).",
+      },
+    ],
+  },
+  {
+    id: "film.edge-of-tomorrow",
+    title: "Edge of Tomorrow (2014)",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Tom Cruise and Emily Blunt star in a sci-fi action film based on the Japanese light novel All You Need Is Kill. When Cruise's character dies in battle against aliens, he wakes up the previous day — again and again. A time loop lets him improve each cycle, a twist that echoes Groundhog Day and makes 'learning from failure' literal.",
+      },
+      {
+        type: "callout",
+        emphasis: "fun-fact",
+        content:
+          "The film is a tight blend of time-loop logic and blockbuster spectacle. Sources: IMDb, Wikipedia (Edge of Tomorrow).",
+      },
+    ],
+  },
+  {
     id: "film.culture",
-    title: "Time Travel in Film & Culture",
+    title: "More Time Travel in Film & Culture",
     intent: "real-world",
     contentBlocks: [
       {
@@ -596,6 +678,135 @@ const timeTravelSections: LearningSection[] = [
         type: "paragraph",
         content:
           "This is the pool that feeds trivia and fan theory: who said what, which film had which rules, and how did they handle cause and effect? Knowledge here is filmography — cited to Wikipedia, IMDb, and official sources.",
+      },
+    ],
+  },
+  {
+    id: "tv.doctor-who",
+    title: "Doctor Who (1963–present)",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "The quintessential time-travel TV show. The Doctor travels through time and space in the TARDIS, encountering historical figures, alien civilizations, and paradoxes. The series has explored fixed points, alternate timelines, and the ethics of changing history for decades.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Sources: BBC (Doctor Who), Wikipedia (Doctor Who).",
+      },
+    ],
+  },
+  {
+    id: "tv.dark",
+    title: "Dark (2017–2020)",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Netflix's German series is a tightly woven time-travel drama: multiple generations, multiple time periods, and causal loops where the past and future depend on each other. Family secrets, a missing child, and a cave that connects 1953, 1986, 2019, and beyond.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Dark rewards careful viewing and has become a reference point for 'whatever happened, happened' and bootstrap paradoxes. Sources: IMDb (Dark), Wikipedia.",
+      },
+    ],
+  },
+  {
+    id: "tv.umbrella",
+    title: "The Umbrella Academy",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "The superhero series (based on Gerard Way's comics) weaves time travel into its plot: the Commission, time assassins, and attempts to change the past that spiral into apocalypses and alternate timelines. Season 2 and 3 lean heavily into cause, effect, and the cost of fixing history.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Sources: IMDb (The Umbrella Academy), Wikipedia.",
+      },
+    ],
+  },
+  {
+    id: "literature.wells",
+    title: "The Time Machine — H.G. Wells (1895)",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "The novel that helped define time travel in fiction. Wells' Time Traveller builds a machine and journeys to the far future, finding humanity split into the Eloi and the Morlocks. It's speculative science, social critique, and a thought experiment about evolution and class.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Wells didn't invent the idea of time travel, but he gave it a durable, scientific framing. Sources: Project Gutenberg (The Time Machine), Wikipedia (The Time Machine).",
+      },
+    ],
+  },
+  {
+    id: "literature.outlander",
+    title: "Outlander — Diana Gabaldon",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Diana Gabaldon's Outlander series (first novel 1991) follows Claire Randall, a World War II nurse who steps through standing stones in Scotland in 1945 and finds herself in 1743. There she meets Jamie Fraser; their love story unfolds across the Jacobite rising, the American Revolution, and decades of time-crossed lives.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "The books blend historical fiction, romance, and time travel with meticulous research. Claire's medical knowledge and modern perspective clash with the past; the question of whether history can (or should) be changed underlies the later novels. The Starz TV adaptation (2014–) has brought the series to a wide audience.",
+      },
+      {
+        type: "callout",
+        emphasis: "fun-fact",
+        content:
+          "Gabaldon's time-travel mechanism — the stones, the ability to hear their 'buzz' — is unique. The series is a touchstone for time-travel romance and historical accuracy. Sources: Diana Gabaldon's official site, Wikipedia (Outlander), Starz.",
+      },
+    ],
+  },
+  {
+    id: "literature.king",
+    title: "11/22/63 — Stephen King (2011)",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "A high-school teacher finds a portal to 1958 and decides to prevent the assassination of John F. Kennedy. King's novel explores the weight of changing history: the past 'pushes back,' and every fix has unintended consequences. The miniseries (2016) stars James Franco.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Sources: Stephen King official site, Wikipedia (11/22/63), IMDb (miniseries).",
+      },
+    ],
+  },
+  {
+    id: "literature.comics-music",
+    title: "Comics, Music & More",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "bullet-list",
+        content: [
+          "A Connecticut Yankee in King Arthur's Court — Mark Twain (1889): humor and satire; a Yankee displaced in time.",
+          "X-Men: Days of Future Past — Wolverine's consciousness sent back to prevent a dystopian future.",
+          "DC Flashpoint — The Flash alters the past and creates an alternate timeline.",
+          "Huey Lewis and the News, \"The Power of Love\" — Back to the Future's theme; Pink Floyd, \"Time\" — the passing of time and mortality.",
+        ],
+      },
+      {
+        type: "paragraph",
+        content:
+          "Time travel appears across media; these entries are starting points for deeper exploration. Sources: Project Gutenberg (Twain), Marvel, DC, Wikipedia.",
       },
     ],
   },
@@ -673,6 +884,31 @@ const timeTravelSections: LearningSection[] = [
     ],
   },
   {
+    id: "fun.facts",
+    title: "Time Travel Fun & Mind-Bending Facts",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "callout",
+        emphasis: "fun-fact",
+        content:
+          "Einstein's theories of relativity laid the foundation for modern scientific thinking about time dilation. Source: Nobel Prize (nobelprize.org).",
+      },
+      {
+        type: "callout",
+        emphasis: "fun-fact",
+        content:
+          "The grandfather paradox asks: what happens if you prevent your own grandparents from meeting? Philosophers and physicists still debate it. Source: Stanford Encyclopedia of Philosophy.",
+      },
+      {
+        type: "callout",
+        emphasis: "fun-fact",
+        content:
+          "Time loops in storytelling often represent lessons learned and the opportunity to correct mistakes — from Groundhog Day to Dark to video games.",
+      },
+    ],
+  },
+  {
     id: "practical.forward",
     title: "You Probably Can't Go Back. So What?",
     intent: "real-world",
@@ -690,20 +926,46 @@ const timeTravelSections: LearningSection[] = [
       },
     ],
   },
+  {
+    id: "citations.resources",
+    title: "Sources & Further Reading",
+    intent: "real-world",
+    contentBlocks: [
+      { type: "divider", content: "" },
+      {
+        type: "bullet-list",
+        content: [
+          "NASA Scientific Visualization Studio — relativity, time dilation (svs.gsfc.nasa.gov).",
+          "Wikipedia — Back to the Future, Doctor Who, Dark, Outlander, Looper, Edge of Tomorrow, H.G. Wells, Diana Gabaldon, 11/22/63.",
+          "IMDb — film and TV credits, release dates.",
+          "Project Gutenberg — The Time Machine (Wells), A Connecticut Yankee (Twain).",
+          "Nobel Prize — Einstein, relativity (nobelprize.org).",
+          "Stanford Encyclopedia of Philosophy — time travel paradoxes.",
+          "Diana Gabaldon — official site and Outlander series.",
+          "BBC — Doctor Who (bbc.co.uk/programmes/b006q2x0).",
+        ],
+      },
+      {
+        type: "paragraph",
+        content:
+          "Every claim on this page is traceable to the sources above. Images: public domain or CC-licensed only; see image credits.",
+      },
+    ],
+  },
 ];
 
-/** Time Travel learning page — movies, cause & effect, ripples, butterfly effect, and practical takeaway. Golden standard: blocked, fun, cited. */
+/** Time Travel learning page — deep dive: film, TV, literature (incl. Outlander), science, paradoxes, cited. */
 export const timeTravelPage: LearningPage = {
   id: TIME_TRAVEL_PAGE_ID,
   slug: "/learn/time-travel",
 
-  title: "Time Travel and Its Practical Implications",
-  subtitle: "How movies and media imagine time travel, cause and effect, ripples, and the butterfly effect — plus the question that actually matters.",
+  title: "Time Travel: A Deep Dive",
+  subtitle: "Film, TV, literature — from Back to the Future and Outlander to Doctor Who and Dark. Science, paradoxes, sources, and the question that matters.",
 
   audience: "general",
   tone: "mixed",
 
-  topics: ["time travel", "movies", "film", "media", "science fiction", "Back to the Future", "Hitchhiker's Guide to the Galaxy", "cause and effect", "butterfly effect"],
+  topics: ["time travel", "movies", "film", "TV", "literature", "Outlander", "Diana Gabaldon", "Doctor Who", "Dark", "Back to the Future", "Hot Tub Time Machine", "Looper", "Edge of Tomorrow", "cause and effect", "butterfly effect", "sci-fi"],
   concepts: ["relativity", "time dilation", "filmography", "cause and effect", "ripples", "butterfly effect", "paradoxes", "practical implications"],
 
   sections: attachImageSlotsToPage(timeTravelSections, timeTravelImageSlots),
@@ -913,6 +1175,147 @@ export const nikolaTeslaPage: LearningPage = {
     updatedAt: new Date().toISOString(),
     sourcesVerified: true,
   },
+};
+
+/* ============================================================
+   ALBERT EINSTEIN — BIOGRAPHY PAGE
+   ============================================================ */
+export const ALBERT_EINSTEIN_PAGE_ID = "biography.scientists.albert-einstein";
+
+export const einsteinImageSlots: ImageSlot[] = [
+  { slotId: "hero-image", sectionId: "intro.hook", role: "hero", required: true, preferredOrientation: "portrait", description: "Einstein portrait — PD/CC only" },
+  { slotId: "early-life-1", sectionId: "early-life", role: "context", required: false, description: "Early life, Switzerland, patent office" },
+  { slotId: "relativity-1", sectionId: "contributions.relativity", role: "context", required: false, description: "Relativity, E=mc², spacetime" },
+  { slotId: "legacy-1", sectionId: "legacy", role: "context", required: false, description: "Nobel, modern physics, legacy" },
+  { slotId: "citations-1", sectionId: "citations.resources", role: "context", required: false, description: "Sources" },
+];
+
+const einsteinSections: LearningSection[] = [
+  { id: "intro.hook", title: "Albert Einstein (1879–1955)", intent: "hook", contentBlocks: [
+    { type: "paragraph", content: "The father of modern physics. Albert Einstein rewrote our understanding of space, time, and energy with special and general relativity — and became a global symbol of scientific genius and humanist thought." },
+    { type: "callout", emphasis: "fun-fact", content: "Born: Ulm, Germany, 1879. Died: Princeton, USA, 1955. Nobel Prize in Physics 1921 (photoelectric effect). Key contributions: special relativity, general relativity, E=mc², Brownian motion, photon. Sources: Nobel Prize, Britannica, Einstein Archives." },
+  ]},
+  { id: "early-life", title: "Early Life & the Patent Office", intent: "explanation", contentBlocks: [
+    { type: "divider", content: "" },
+    { type: "paragraph", content: "Einstein was born in Ulm and grew up in Munich and Switzerland. He struggled with rigid schooling but excelled in math and physics. After graduating from ETH Zurich he worked at the Swiss patent office in Bern — a day job that left him time to think. In 1905, his \"miracle year,\" he published papers on the photoelectric effect, Brownian motion, and special relativity." },
+    { type: "paragraph", content: "Sources: Britannica, Einstein Archives, Nobel Prize." },
+  ]},
+  { id: "contributions.relativity", title: "Relativity & E=mc²", intent: "explanation", contentBlocks: [
+    { type: "paragraph", content: "Special relativity (1905) showed that space and time are linked: the speed of light is constant, and time dilates and lengths contract at high speeds. General relativity (1915) described gravity as the curvature of spacetime. E=mc² — energy equals mass times the speed of light squared — revealed that mass and energy are interchangeable, with huge implications for nuclear physics and cosmology." },
+    { type: "paragraph", content: "Sources: Nobel Prize, Britannica, Stanford Encyclopedia of Philosophy." },
+  ]},
+  { id: "legacy", title: "Legacy & Influence", intent: "real-world", contentBlocks: [
+    { type: "divider", content: "" },
+    { type: "paragraph", content: "Einstein's work underpins GPS, nuclear energy, and our understanding of black holes and the expanding universe. He was also a vocal pacifist and advocate for civil rights. His name is synonymous with genius; his papers and letters are preserved in the Einstein Archives." },
+    { type: "paragraph", content: "Sources: Caltech, Princeton, Einstein Archives." },
+  ]},
+  { id: "citations.resources", title: "Citations & Resources", intent: "real-world", contentBlocks: [
+    { type: "divider", content: "" },
+    { type: "bullet-list", content: ["Nobel Prize — Albert Einstein (nobelprize.org).", "Encyclopedia Britannica — Albert Einstein.", "Einstein Archives — Caltech / Hebrew University.", "Stanford Encyclopedia of Philosophy — Einstein."] },
+  ]},
+];
+
+export const albertEinsteinPage: LearningPage = {
+  id: ALBERT_EINSTEIN_PAGE_ID,
+  slug: "/learn/albert-einstein",
+  title: "Albert Einstein",
+  subtitle: "The father of relativity — space, time, and E=mc².",
+  audience: "general",
+  tone: "mixed",
+  topics: ["Albert Einstein", "relativity", "physics", "Nobel Prize", "E=mc²", "scientists", "biography"],
+  concepts: ["special relativity", "general relativity", "photoelectric effect", "spacetime", "gravity"],
+  sections: attachImageSlotsToPage(einsteinSections, einsteinImageSlots),
+  metadata: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), sourcesVerified: true },
+};
+
+/* ============================================================
+   ISAAC NEWTON — BIOGRAPHY PAGE
+   ============================================================ */
+export const ISAAC_NEWTON_PAGE_ID = "biography.scientists.isaac-newton";
+
+export const newtonImageSlots: ImageSlot[] = [
+  { slotId: "hero-image", sectionId: "intro.hook", role: "hero", required: true, preferredOrientation: "portrait", description: "Newton portrait — PD/CC only" },
+  { slotId: "early-life-1", sectionId: "early-life", role: "context", required: false, description: "Early life, Cambridge" },
+  { slotId: "contributions-1", sectionId: "contributions.laws", role: "context", required: false, description: "Laws of motion, gravity" },
+  { slotId: "legacy-1", sectionId: "legacy", role: "context", required: false, description: "Legacy" },
+];
+
+const newtonSections: LearningSection[] = [
+  { id: "intro.hook", title: "Isaac Newton (1643–1727)", intent: "hook", contentBlocks: [
+    { type: "paragraph", content: "One of the greatest scientists in history. Isaac Newton formulated the laws of motion and universal gravitation, built the first practical reflecting telescope, and laid the foundations of calculus — shaping physics and mathematics for centuries." },
+    { type: "callout", emphasis: "fun-fact", content: "Born: Woolsthorpe, England, 1643. Died: London, 1727. Key works: Principia Mathematica (1687), Opticks. Contributions: three laws of motion, law of universal gravitation, calculus (with Leibniz), optics. Sources: Britannica, Royal Society." },
+  ]},
+  { id: "early-life", title: "Early Life & Cambridge", intent: "explanation", contentBlocks: [
+    { type: "divider", content: "" },
+    { type: "paragraph", content: "Newton was born in Woolsthorpe. He studied at Trinity College, Cambridge, and later held the Lucasian Chair of Mathematics. The story of the apple falling (whether literal or not) symbolizes his insight that the same force that pulls the apple also holds the Moon in orbit." },
+    { type: "paragraph", content: "Sources: Britannica, Royal Society." },
+  ]},
+  { id: "contributions.laws", title: "Laws of Motion & Universal Gravitation", intent: "explanation", contentBlocks: [
+    { type: "paragraph", content: "In Principia Mathematica Newton stated three laws of motion: inertia, F=ma, and action-reaction. He showed that gravity is a universal force between masses, explaining planetary orbits and tides. His work unified earthly and celestial mechanics and stood until Einstein's relativity refined it at extreme scales." },
+    { type: "paragraph", content: "Sources: Britannica, Stanford Encyclopedia of Philosophy." },
+  ]},
+  { id: "legacy", title: "Legacy", intent: "real-world", contentBlocks: [
+    { type: "divider", content: "" },
+    { type: "paragraph", content: "Newtonian mechanics still describes most of everyday physics. Calculus (developed independently by Leibniz) is essential to engineering and science. Newton was also Master of the Royal Mint and president of the Royal Society. Sources: Britannica, Royal Society." },
+  ]},
+];
+
+export const isaacNewtonPage: LearningPage = {
+  id: ISAAC_NEWTON_PAGE_ID,
+  slug: "/learn/isaac-newton",
+  title: "Isaac Newton",
+  subtitle: "Laws of motion, universal gravitation, and the foundations of classical physics.",
+  audience: "general",
+  tone: "mixed",
+  topics: ["Isaac Newton", "physics", "gravity", "calculus", "Principia", "scientists", "biography"],
+  concepts: ["laws of motion", "universal gravitation", "calculus", "optics"],
+  sections: attachImageSlotsToPage(newtonSections, newtonImageSlots),
+  metadata: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), sourcesVerified: true },
+};
+
+/* ============================================================
+   THOMAS EDISON — BIOGRAPHY PAGE
+   ============================================================ */
+export const THOMAS_EDISON_PAGE_ID = "biography.scientists.thomas-edison";
+
+export const edisonImageSlots: ImageSlot[] = [
+  { slotId: "hero-image", sectionId: "intro.hook", role: "hero", required: true, preferredOrientation: "portrait", description: "Edison portrait — PD/CC only" },
+  { slotId: "early-life-1", sectionId: "early-life", role: "context", required: false, description: "Early life, Menlo Park" },
+  { slotId: "inventions-1", sectionId: "inventions.lightbulb", role: "context", required: false, description: "Light bulb, phonograph" },
+  { slotId: "legacy-1", sectionId: "legacy", role: "context", required: false, description: "Legacy" },
+];
+
+const edisonSections: LearningSection[] = [
+  { id: "intro.hook", title: "Thomas Edison (1847–1931)", intent: "hook", contentBlocks: [
+    { type: "paragraph", content: "The Wizard of Menlo Park. Thomas Edison held over a thousand U.S. patents and gave the world the practical incandescent light bulb, the phonograph, and the motion picture camera — plus the first industrial research lab, where invention became a team sport." },
+    { type: "callout", emphasis: "fun-fact", content: "Born: Milan, Ohio, 1847. Died: West Orange, New Jersey, 1931. Key inventions: practical incandescent lamp, phonograph, kinetoscope, DC power systems. Known for: Menlo Park lab, \"War of the Currents\" with Tesla (AC vs. DC). Sources: Britannica, Edison Papers, NPS." },
+  ]},
+  { id: "early-life", title: "Early Life & Menlo Park", intent: "explanation", contentBlocks: [
+    { type: "divider", content: "" },
+    { type: "paragraph", content: "Edison had little formal schooling; he was largely self-taught and worked as a telegraph operator before opening a lab in Menlo Park, New Jersey. There he and his team turned invention into a repeatable process — testing thousands of materials for the light bulb filament and refining the phonograph and early motion pictures." },
+    { type: "paragraph", content: "Sources: Edison Papers, NPS (Edison National Historical Park)." },
+  ]},
+  { id: "inventions.lightbulb", title: "The Light Bulb, Phonograph & Motion Pictures", intent: "explanation", contentBlocks: [
+    { type: "paragraph", content: "Edison did not invent the first light bulb, but he made it practical and long-lasting — and built the power systems to light cities. The phonograph (1877) was the first device to record and play back sound. The kinetoscope and early film work helped birth the movie industry. His DC power systems competed with Tesla's AC; AC eventually won for long-distance transmission." },
+    { type: "paragraph", content: "Sources: Britannica, IEEE, Smithsonian." },
+  ]},
+  { id: "legacy", title: "Legacy", intent: "real-world", contentBlocks: [
+    { type: "divider", content: "" },
+    { type: "paragraph", content: "Edison's model of the industrial research lab influenced how innovation is done today. His name is on General Electric's origins and on countless patents. The rivalry with Tesla (AC vs. DC) is part of engineering history. Sources: Britannica, Edison Papers, IEEE." },
+  ]},
+];
+
+export const thomasEdisonPage: LearningPage = {
+  id: THOMAS_EDISON_PAGE_ID,
+  slug: "/learn/thomas-edison",
+  title: "Thomas Edison",
+  subtitle: "The Wizard of Menlo Park — light bulb, phonograph, and the birth of industrial R&D.",
+  audience: "general",
+  tone: "mixed",
+  topics: ["Thomas Edison", "inventor", "light bulb", "phonograph", "Menlo Park", "scientists", "biography"],
+  concepts: ["incandescent lamp", "phonograph", "DC power", "War of the Currents"],
+  sections: attachImageSlotsToPage(edisonSections, edisonImageSlots),
+  metadata: { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), sourcesVerified: true },
 };
 
 /* ============================================================

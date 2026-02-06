@@ -20,9 +20,10 @@ We focus on **a few categories and a few cards per category** so each one is don
 | Order | Category | Scope | Status |
 |-------|----------|--------|--------|
 | 1 | **Plants (horticulture)** | Botany, gardening, food plants, how they grow. | ✅ First flagship card done. |
-| 2 | **Crafts** | Science-through-craft; fun, do-at-home activities. Tied to STEM. | Next. |
-| 3 | **Animals** | Biology, behavior, ecosystems. Tied to science and plants. | After Crafts. |
-| 4 | **Life skills** | Essential life things: safety, cooking basics, health, how things work. | After Animals. |
+| 2 | **Crafts** | Science-through-craft; fun, do-at-home activities. Tied to STEM. | In progress (Crafts & STEM hub + Learning Engine). |
+| 3 | **Geography** | Places, regions, maps, climate, landforms. Same Learning Engine structure (10 sections, tiers, cross-links, trivia). | **Next section.** Schema and Learn Center ready. |
+| 4 | **Animals** | Biology, behavior, ecosystems. Tied to science and plants. | After Geography. |
+| 5 | **Life skills** | Essential life things: safety, cooking basics, health, how things work. | After Animals. |
 
 Science, biology, and STEM thread through Plants → Crafts → Animals → Life skills. Every card links to **more advanced systems** (e.g. "Learn more" → university or government resources). See **docs/LEARN-AND-GROW-CITATION-AUTHORITIES.md** for preferred institutions (Harvard, MIT, Princeton, USDA, NSF, cooperative extension, museums, etc.) and how we cite and link.
 

@@ -1,10 +1,10 @@
 /**
- * Learn & Grow — readable contrast, categories, cards. Uses design-system vars.
+ * Learn & Grow — clear hierarchy, trivia-style hunt, design-system vars.
  */
 .learn-page {
   min-height: 100vh;
-  padding: 24px;
-  max-width: 900px;
+  padding: 28px 24px 48px;
+  max-width: 820px;
   margin: 0 auto;
   background: var(--bg);
   color: var(--text);
@@ -12,10 +12,11 @@
 
 .learn-page__back {
   display: inline-block;
-  margin-bottom: 24px;
-  color: var(--text-secondary);
-  font-size: 0.9375rem;
+  margin-bottom: 20px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 .learn-page__back:hover {
@@ -23,17 +24,19 @@
 }
 
 .learn-page__title {
-  margin: 0 0 8px;
-  font-size: 1.75rem;
+  margin: 0 0 6px;
+  font-size: 1.625rem;
   font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--text);
 }
 
 .learn-page__intro {
   color: var(--text-secondary);
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   line-height: 1.55;
-  font-size: 1rem;
+  font-size: 0.9375rem;
+  max-width: 52ch;
 }
 
 .learn-page__loading,
@@ -59,20 +62,20 @@
 .learn-sections {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 18px;
 }
 
 .learn-section-pill {
-  padding: 10px 18px;
+  padding: 8px 16px;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
 
 .learn-section-pill:hover {
@@ -326,54 +329,55 @@
 
 .learn-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
 }
 
 .learn-card-link {
   display: block;
-  padding: 20px;
+  padding: 18px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 10px;
   text-decoration: none;
   color: inherit;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
 }
 
 .learn-card-link:hover {
   color: inherit;
   text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   border-color: var(--accent);
 }
 
 .learn-card-link__title {
-  margin: 0 0 8px;
-  font-size: 1.1rem;
+  margin: 0 0 6px;
+  font-size: 1.0625rem;
   font-weight: 600;
   color: var(--text);
+  line-height: 1.3;
 }
 
 .learn-card-link__summary {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
   line-height: 1.45;
 }
 
 .learn-card-link__tags {
-  margin-top: 12px;
+  margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
 }
 
 .learn-card-link__tag {
-  padding: 4px 10px;
-  background: var(--surface-hover, rgba(0,0,0,0.06));
+  padding: 3px 8px;
+  background: var(--surface-hover, rgba(0, 0, 0, 0.05));
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 500;

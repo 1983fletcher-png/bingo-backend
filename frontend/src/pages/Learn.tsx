@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
-import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage } from '../types/learningEngine';
+import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage, albertEinsteinPage, isaacNewtonPage, thomasEdisonPage } from '../types/learningEngine';
+import { slimeEnginePage } from '../data/learningEnginePages/slimePage';
+import { northCarolinaEnginePage } from '../data/learningEnginePages/northCarolinaPage';
 import sectionsConfig from '../data/learn-sections.json';
 import '../styles/learn.css';
 
@@ -13,6 +15,24 @@ const API_BASE =
 type CardSummary = { id: string; title: string; summary: string; tags?: string[] };
 
 const STATIC_CARDS: CardSummary[] = [
+  {
+    id: 'crafts-stem',
+    title: 'Crafts & STEM',
+    summary: '25 household-friendly projects: chemistry, physics, and hands-on making. Science, variations, safety, and age ranges.',
+    tags: ['experiment', 'chemistry', 'physics', 'hands_on', 'trivia_ready', 'science experiments', 'crafts'],
+  },
+  {
+    id: 'slime',
+    title: slimeEnginePage.title,
+    summary: slimeEnginePage.subtitle ?? 'Polymers and non-Newtonian fluids you can hold.',
+    tags: slimeEnginePage.topics ?? ['slime', 'chemistry', 'crafts', 'STEM'],
+  },
+  {
+    id: 'north-carolina',
+    title: northCarolinaEnginePage.title,
+    summary: northCarolinaEnginePage.subtitle ?? 'Three worlds in one state — mountains, piedmont, and a coast that never sits still.',
+    tags: northCarolinaEnginePage.topics ?? ['geography', 'place', 'region', 'North Carolina'],
+  },
   {
     id: 'baking-soda-volcano',
     title: bakingSodaVolcanoPage.title,
@@ -26,16 +46,28 @@ const STATIC_CARDS: CardSummary[] = [
     tags: timeTravelPage.topics,
   },
   {
-    id: 'time-travel-wormhole',
-    title: 'Time Travel Wormhole',
-    summary: 'Explore time travel in film, TV, literature, comics, and music—curated entries and fun facts.',
-    tags: ['Time Travel', 'Sci-Fi', 'Movies', 'TV', 'Comics', 'Music', 'Literature'],
-  },
-  {
     id: 'nikola-tesla',
     title: nikolaTeslaPage.title,
     summary: nikolaTeslaPage.subtitle ?? 'The man who electrified the world.',
     tags: nikolaTeslaPage.topics,
+  },
+  {
+    id: 'albert-einstein',
+    title: albertEinsteinPage.title,
+    summary: albertEinsteinPage.subtitle ?? 'The father of relativity.',
+    tags: albertEinsteinPage.topics,
+  },
+  {
+    id: 'isaac-newton',
+    title: isaacNewtonPage.title,
+    summary: isaacNewtonPage.subtitle ?? 'Laws of motion and universal gravitation.',
+    tags: isaacNewtonPage.topics,
+  },
+  {
+    id: 'thomas-edison',
+    title: thomasEdisonPage.title,
+    summary: thomasEdisonPage.subtitle ?? 'The Wizard of Menlo Park.',
+    tags: thomasEdisonPage.topics,
   },
 ];
 

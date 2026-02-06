@@ -161,7 +161,22 @@
         "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:N.Tesla.JPG" },
         "dimensions": { "width": 505, "height": 650 },
         "createdAt": "2026-02-01T00:00:00.000Z"
-      }
+      },
+      { "id": "time-travel-section-4", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Spacetime and time travel in fiction", "caption": "Science and storytelling.", "usage": { "role": "section", "priority": 3 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-5", "volcanoSlug": "time-travel", "src": { "lg": "https://upload.wikimedia.org/wikipedia/commons/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/960px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/640px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg" }, "alt": "DeLorean", "caption": "Time travel on screen.", "usage": { "role": "section", "priority": 4 }, "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg" }, "dimensions": { "width": 1474, "height": 1063 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-6", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Time and space", "caption": "Relativity.", "usage": { "role": "section", "priority": 5 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-7", "volcanoSlug": "time-travel", "src": { "lg": "https://upload.wikimedia.org/wikipedia/commons/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/960px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/640px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg" }, "alt": "Film and culture", "caption": "Time travel in film.", "usage": { "role": "section", "priority": 6 }, "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg" }, "dimensions": { "width": 1474, "height": 1063 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-8", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "TV and series", "caption": "Time travel on TV.", "usage": { "role": "section", "priority": 7 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-9", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Literature", "caption": "Time travel in books.", "usage": { "role": "section", "priority": 8 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-10", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Outlander and Diana Gabaldon", "caption": "Outlander — time travel and history.", "usage": { "role": "section", "priority": 9 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-11", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Stephen King 11/22/63", "caption": "Alternate history.", "usage": { "role": "section", "priority": 10 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-12", "volcanoSlug": "time-travel", "src": { "lg": "https://upload.wikimedia.org/wikipedia/commons/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/960px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/640px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg" }, "alt": "Comics and music", "caption": "Time across media.", "usage": { "role": "section", "priority": 11 }, "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg" }, "dimensions": { "width": 1474, "height": 1063 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-13", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Cause and effect", "caption": "Butterfly effect.", "usage": { "role": "section", "priority": 12 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-14", "volcanoSlug": "time-travel", "src": { "lg": "https://upload.wikimedia.org/wikipedia/commons/2/20/N.Tesla.JPG", "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/640px-N.Tesla.JPG", "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/330px-N.Tesla.JPG" }, "alt": "Nikola Tesla", "caption": "Tesla and time in fiction.", "usage": { "role": "section", "priority": 13 }, "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:N.Tesla.JPG" }, "dimensions": { "width": 505, "height": 650 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-15", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Fun facts", "caption": "Time travel facts.", "usage": { "role": "section", "priority": 14 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-16", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Moving forward", "caption": "The future is yours.", "usage": { "role": "section", "priority": 15 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-17", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Sources", "caption": "Cited.", "usage": { "role": "section", "priority": 16 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
+      { "id": "time-travel-section-18", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Further reading", "caption": "Learn more.", "usage": { "role": "section", "priority": 17 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" }
     ],
     "gallery": [],
     "diagram": []
@@ -181,6 +196,72 @@
         "usage": { "role": "hero", "priority": 0 },
         "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:N.Tesla.JPG" },
         "dimensions": { "width": 505, "height": 650 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      }
+    ],
+    "section": [],
+    "gallery": [],
+    "diagram": []
+  },
+  "albert-einstein": {
+    "hero": [
+      {
+        "id": "albert-einstein-hero",
+        "volcanoSlug": "albert-einstein",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Albert_Einstein_Head.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Albert_Einstein_Head.jpg/640px-Albert_Einstein_Head.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Albert_Einstein_Head.jpg/330px-Albert_Einstein_Head.jpg"
+        },
+        "alt": "Albert Einstein, portrait",
+        "caption": "Albert Einstein — the father of relativity.",
+        "usage": { "role": "hero", "priority": 0 },
+        "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head.jpg" },
+        "dimensions": { "width": 674, "height": 817 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      }
+    ],
+    "section": [],
+    "gallery": [],
+    "diagram": []
+  },
+  "isaac-newton": {
+    "hero": [
+      {
+        "id": "isaac-newton-hero",
+        "volcanoSlug": "isaac-newton",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/3/39/GodfreyKneller-IsaacNewton-1689.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/GodfreyKneller-IsaacNewton-1689.jpg/640px-GodfreyKneller-IsaacNewton-1689.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/GodfreyKneller-IsaacNewton-1689.jpg/330px-GodfreyKneller-IsaacNewton-1689.jpg"
+        },
+        "alt": "Isaac Newton, portrait by Godfrey Kneller (1689)",
+        "caption": "Isaac Newton — laws of motion and universal gravitation.",
+        "usage": { "role": "hero", "priority": 0 },
+        "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:GodfreyKneller-IsaacNewton-1689.jpg" },
+        "dimensions": { "width": 768, "height": 1024 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      }
+    ],
+    "section": [],
+    "gallery": [],
+    "diagram": []
+  },
+  "thomas-edison": {
+    "hero": [
+      {
+        "id": "thomas-edison-hero",
+        "volcanoSlug": "thomas-edison",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Thomas_Edison2.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Thomas_Edison2.jpg/640px-Thomas_Edison2.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Thomas_Edison2.jpg/330px-Thomas_Edison2.jpg"
+        },
+        "alt": "Thomas Edison, portrait",
+        "caption": "Thomas Edison — the Wizard of Menlo Park.",
+        "usage": { "role": "hero", "priority": 0 },
+        "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Thomas_Edison2.jpg" },
+        "dimensions": { "width": 585, "height": 768 },
         "createdAt": "2026-02-01T00:00:00.000Z"
       }
     ],
