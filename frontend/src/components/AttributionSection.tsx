@@ -25,6 +25,12 @@ export function AttributionSection({
           <li key={img.id}>
             {img.license.source}
             {img.license.attribution && ` — ${img.license.attribution}`}
+            {img.license.attributionName &&
+              (img.license.attributionUrl ? (
+                <> — <a href={img.license.attributionUrl} target="_blank" rel="noopener noreferrer">{img.license.attributionName}</a></>
+              ) : (
+                ` — ${img.license.attributionName}`
+              ))}
             {' · '}
             <a href={img.license.sourceUrl} target="_blank" rel="noopener noreferrer">
               Source

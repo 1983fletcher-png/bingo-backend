@@ -9,8 +9,13 @@ export type LicenseType = "public-domain" | "cc-by" | "cc-by-sa";
 export interface ImageLicense {
   type: LicenseType;
   source: string; // "NASA" | "USGS" | "Wikimedia" | etc.
-  attribution?: string;
   sourceUrl: string;
+  /** Short credit text (for CC BY / CC BY-SA). */
+  attribution?: string;
+  /** Creator or institution name (for attribution). */
+  attributionName?: string;
+  /** Link to creator or source page (for attribution). */
+  attributionUrl?: string;
 }
 
 export type VolcanoImageRole = "hero" | "section" | "gallery" | "diagram";

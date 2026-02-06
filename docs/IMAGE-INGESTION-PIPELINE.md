@@ -20,9 +20,14 @@ Source → Validate (license) → Normalize (future: resize) → Upload to R2 �
 - **lib/imageIngest.js**
   - `ingestImage({ imageUrl, metadata })`: generic learning image; key `learning-images/{hash}.{ext}`.
   - `ingestVolcanoImage({ imageUrl, volcanoSlug, role, priority?, caption?, metadata })`: key `volcanoes/{slug}/{role}/{id}.{ext}`; sets R2 **Metadata** (volcano, license, source, attribution, role); returns **VolcanoImage**-shaped record (id, volcanoSlug, r2, src.lg/md/sm, alt, usage, license, dimensions, createdAt).
-- **Trusted sources:** NASA, USGS, Wikimedia Commons (verify per image), NOAA, si.edu, loc.gov.
+- **Trusted sources:** Master whitelist in **[docs/IMAGE-SOURCE-WHITELIST.md](IMAGE-SOURCE-WHITELIST.md)**; enforced via `TRUSTED_SOURCES` in `lib/imageIngest.js` (government, museums, Wikimedia, Openverse, Archive, Unsplash/Pexels/Pixabay, etc.). Reject any domain not on the list.
 - **Required metadata per image:** `license: { type: 'public-domain' | 'cc-by' | 'cc-by-sa', source, attribution?, sourceUrl }` — if you can’t fill this out, image is rejected.
 - **scripts/register-volcano-image.js** — Reads one VolcanoImage JSON from stdin, appends to `frontend/src/data/volcano-images.json` under slug and role.
+- **scripts/ingest-volcano-images.js** — **R2-ready batch script:** downloads from trusted URLs, validates [ingestion checklist](INGESTION-CHECKLIST.md) (min width 800px, metadata), converts to WebP (sharp), uploads to R2 with metadata, dedup by hash, merges into `frontend/src/data/volcano-images.json`. Run: `node scripts/ingest-volcano-images.js` (edit `imagesToIngest` array first).
+
+## Ingestion checklist (must-pass)
+
+See **[docs/INGESTION-CHECKLIST.md](INGESTION-CHECKLIST.md)** for the full list. Summary: source legality, metadata completeness, min width 800px, WebP conversion, role assignment, R2 key structure, hash dedup.
 
 ## R2 assumptions (you’re already here)
 

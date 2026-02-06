@@ -1,7 +1,69 @@
 {
   "baking-soda-volcano": {
-    "hero": [],
-    "section": [],
+    "hero": [
+      {
+        "id": "baking-soda-volcano-hero-6009a09fa1c38c57",
+        "volcanoSlug": "baking-soda-volcano",
+        "r2": {
+          "bucket": "playroom-images",
+          "key": "volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp",
+          "publicUrl": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp"
+        },
+        "src": {
+          "lg": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp",
+          "md": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp",
+          "sm": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp"
+        },
+        "alt": "Reykjanes Peninsula volcanic eruption in Iceland, November 2024",
+        "caption": "Satellite view of eruption — connects real volcanoes to the baking soda experiment.",
+        "usage": {
+          "role": "hero",
+          "priority": 0
+        },
+        "license": {
+          "type": "public-domain",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Reykjanes_Peninsula_Eruption,_Iceland_-_November_24th,_2024_(54160954317).jpg"
+        },
+        "dimensions": {
+          "width": 4965,
+          "height": 2581
+        },
+        "createdAt": "2026-02-06T05:49:56.649Z"
+      }
+    ],
+    "section": [
+      {
+        "id": "baking-soda-volcano-section-b6030452ee91c1ce",
+        "volcanoSlug": "baking-soda-volcano",
+        "r2": {
+          "bucket": "playroom-images",
+          "key": "volcanoes/baking-soda-volcano/section/b6030452ee91c1ce.webp",
+          "publicUrl": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/section/b6030452ee91c1ce.webp"
+        },
+        "src": {
+          "lg": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/section/b6030452ee91c1ce.webp",
+          "md": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/section/b6030452ee91c1ce.webp",
+          "sm": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/section/b6030452ee91c1ce.webp"
+        },
+        "alt": "La Cumbre volcano lava flow, Galápagos Islands",
+        "caption": "Lava flow from La Cumbre — real volcanic activity.",
+        "usage": {
+          "role": "section",
+          "priority": 0
+        },
+        "license": {
+          "type": "public-domain",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:La_Cumbre_Volcano_lava_flow,_Fernandina_Island,_Galápagos_Islands,_Ecuador_-_30_April_2024_(53694865943).jpg"
+        },
+        "dimensions": {
+          "width": 7140,
+          "height": 9719
+        },
+        "createdAt": "2026-02-06T05:50:00.908Z"
+      }
+    ],
     "gallery": [],
     "diagram": []
   }

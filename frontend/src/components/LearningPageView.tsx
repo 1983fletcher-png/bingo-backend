@@ -7,7 +7,6 @@ import type {
   LearningPage,
   LearningSection,
   ContentBlock,
-  ImageSlot,
   LearningImageAsset,
 } from '../types/learningEngine';
 import type { VolcanoImage } from '../types/volcanoImages';
