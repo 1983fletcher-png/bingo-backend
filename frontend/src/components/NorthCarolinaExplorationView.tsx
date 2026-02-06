@@ -20,6 +20,10 @@ import {
   NORTH_CAROLINA_ACTORS,
   NORTH_CAROLINA_LOCATIONS,
   BLUE_RIDGE_PARKWAY_FEATURE,
+  type NCLocation,
+  type NCFilm,
+  type NCMusician,
+  type NCActor,
 } from "../data/learningEnginePages/northCarolinaContent";
 import { getNCImageByPlaceholderId } from "../data/northCarolinaImages";
 import {
@@ -424,7 +428,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
           <div className="nc-regions__explore">
             <p className="nc-regions__explore-intro">Want to go explore? Check these out — official sites have full info, maps, and conditions.</p>
             <ul className="nc-regions__explore-list">
-              {NORTH_CAROLINA_LOCATIONS.filter((loc) => loc.officialUrl).slice(0, 8).map((loc) => (
+              {NORTH_CAROLINA_LOCATIONS.filter((loc: NCLocation) => loc.officialUrl).slice(0, 8).map((loc: NCLocation) => (
                 <li key={loc.id} className="nc-regions__explore-item">
                   <a href={loc.officialUrl} target="_blank" rel="noopener noreferrer" className="nc-regions__explore-link">
                     {loc.name}
@@ -458,7 +462,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
               )}
             </figure>
             <div className="nc-parkway__body">
-              {BLUE_RIDGE_PARKWAY_FEATURE.summary.map((para, i) => (
+              {BLUE_RIDGE_PARKWAY_FEATURE.summary.map((para: string, i: number) => (
                 <p key={i} className="nc-parkway__para">{para}</p>
               ))}
               {BLUE_RIDGE_PARKWAY_FEATURE.officialUrl && (
@@ -584,7 +588,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
             <>
               <h3 className="nc-block__subtitle">Films shot or set in North Carolina</h3>
               <div className="nc-entertainment nc-entertainment--films">
-                {NORTH_CAROLINA_FILMS.map((film) => {
+                {NORTH_CAROLINA_FILMS.map((film: NCFilm) => {
                   const filmImg = film.imagePlaceholder ? getNCImageByPlaceholderId(film.imagePlaceholder) : undefined;
                   return (
                   <article key={film.id} className="nc-entertainment-item nc-entertainment-item--film">
@@ -606,12 +610,12 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
                       <p className="nc-entertainment-item__meta">
                         {film.year > 0 ? film.year : "Various"} · {film.ncConnection}
                       </p>
-                      {film.body.map((para, i) => (
+                      {film.body.map((para: string, i: number) => (
                         <p key={i} className="nc-entertainment-item__para">{para}</p>
                       ))}
                       {film.triviaSeeds && film.triviaSeeds.length > 0 && (
                         <ul className="nc-entertainment-item__trivia" aria-label="Trivia seeds">
-                          {film.triviaSeeds.map((seed, i) => (
+                          {film.triviaSeeds.map((seed: string, i: number) => (
                             <li key={i}>{seed}</li>
                           ))}
                         </ul>
@@ -628,7 +632,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
             <>
               <h3 className="nc-block__subtitle">Musicians from North Carolina</h3>
               <div className="nc-entertainment nc-entertainment--musicians">
-                {NORTH_CAROLINA_MUSICIANS.map((musician) => {
+                {NORTH_CAROLINA_MUSICIANS.map((musician: NCMusician) => {
                   const musicianImg = musician.imagePlaceholder ? getNCImageByPlaceholderId(musician.imagePlaceholder) : undefined;
                   return (
                   <article key={musician.id} className="nc-entertainment-item nc-entertainment-item--musician">
@@ -645,7 +649,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
                     <div className="nc-entertainment-item__body">
                       <h4 className="nc-entertainment-item__title">{musician.name}</h4>
                       <p className="nc-entertainment-item__meta">{musician.origin} · {musician.genre}</p>
-                      {musician.bio.map((para, i) => (
+                      {musician.bio.map((para: string, i: number) => (
                         <p key={i} className="nc-entertainment-item__para">{para}</p>
                       ))}
                       {musician.notableWorks && musician.notableWorks.length > 0 && (
@@ -665,7 +669,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
             <>
               <h3 className="nc-block__subtitle">Actors from North Carolina</h3>
               <div className="nc-entertainment nc-entertainment--actors">
-                {NORTH_CAROLINA_ACTORS.map((actor) => {
+                {NORTH_CAROLINA_ACTORS.map((actor: NCActor) => {
                   const actorImg = actor.imagePlaceholder ? getNCImageByPlaceholderId(actor.imagePlaceholder) : undefined;
                   return (
                   <article key={actor.id} className="nc-entertainment-item nc-entertainment-item--actor">
@@ -706,7 +710,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
             Waterfalls you can walk behind, film locations, and landmarks — with where they are, how to get there, and the history behind them.
           </p>
           <div className="nc-locations">
-            {NORTH_CAROLINA_LOCATIONS.map((loc) => {
+            {NORTH_CAROLINA_LOCATIONS.map((loc: NCLocation) => {
               const locImg = loc.imagePlaceholder ? getNCImageByPlaceholderId(loc.imagePlaceholder) : undefined;
               return (
               <article key={loc.id} className="nc-location">
@@ -725,7 +729,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
                   <p className="nc-location__region">{loc.region}</p>
                   {loc.knownFor && <p className="nc-location__known-for">{loc.knownFor}</p>}
                   <span className="nc-location__type" aria-label="Type">{loc.type.replace("_", " ")}</span>
-                  {loc.description.map((para, i) => (
+                  {loc.description.map((para: string, i: number) => (
                     <p key={i} className="nc-location__para">{para}</p>
                   ))}
                   <div className="nc-location__how">
@@ -746,7 +750,7 @@ export default function NorthCarolinaExplorationView({ page, ncImages = [] }: No
                   )}
                   {loc.triviaSeeds && loc.triviaSeeds.length > 0 && (
                     <ul className="nc-location__trivia" aria-label="Trivia seeds">
-                      {loc.triviaSeeds.map((seed, i) => (
+                      {loc.triviaSeeds.map((seed: string, i: number) => (
                         <li key={i}>{seed}</li>
                       ))}
                     </ul>
