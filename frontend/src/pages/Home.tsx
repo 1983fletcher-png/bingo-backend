@@ -116,8 +116,8 @@ export default function Home() {
             <Link to="/create" className="landing__hero-card">
               <span className="landing__hero-card-title">Create a page</span>
               <span className="landing__hero-card-desc">
-                Menus, promos, and flyers for screens and print. Build food and
-                drink menus, event promos, welcome boards, and specials.
+                Hospitality &amp; venues, education &amp; learning, care &amp; wellness,
+                business &amp; corporate, and general pages—menus, promos, flyers, and more.
               </span>
             </Link>
             <Link to="/learn" className="landing__hero-card">

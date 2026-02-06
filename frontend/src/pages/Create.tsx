@@ -1,5 +1,6 @@
 /**
- * Create a page – template family selection (Hospitality, Education, Care, Business, General).
+ * Create a page – template family selection.
+ * All five tabs are active: Hospitality, Education & Learning, Care & Wellness, Business & Corporate, General Page.
  */
 import { Link } from 'react-router-dom';
 import '../styles/create.css';

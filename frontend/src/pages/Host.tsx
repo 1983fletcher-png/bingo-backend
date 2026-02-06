@@ -197,25 +197,33 @@ export default function Host() {
       .catch(() => setBackendReachable(false));
   }, [apiBase]);
 
-  const createGame = (gameType: 'music-bingo' | 'classic-bingo' | 'trivia', pack?: TriviaPack | null) => {
+  const createGame = (mode: CreateMode, pack?: TriviaPack | null) => {
     if (!socket) return;
     setGame(null);
     setTriviaPackForGame(null);
     setCreateError(null);
     setCreatePending(true);
-    const initialEventConfig: EventConfig =
-      gameType === 'trivia'
-        ? { ...eventConfig, gameTitle: pack?.title ?? 'Trivia' }
-        : { ...eventConfig, gameTitle: eventConfig.gameTitle || (gameType === 'classic-bingo' ? 'Classic Bingo' : 'The Playroom') };
-    if (gameType === 'trivia' && pack) {
+    const isTriviaLike = mode === 'trivia' || mode === 'icebreakers' || mode === 'edutainment' || mode === 'team-building';
+    const defaultTitles: Record<string, string> = {
+      'trivia': 'Trivia',
+      'icebreakers': 'Icebreakers',
+      'edutainment': 'Edutainment',
+      'team-building': 'Team Building',
+      'classic-bingo': 'Classic Bingo',
+      'music-bingo': 'The Playroom',
+    };
+    const initialEventConfig: EventConfig = isTriviaLike
+      ? { ...eventConfig, gameTitle: pack?.title ?? defaultTitles[mode] }
+      : { ...eventConfig, gameTitle: eventConfig.gameTitle || (mode === 'classic-bingo' ? 'Classic Bingo' : 'The Playroom') };
+    if (isTriviaLike && pack) {
       setTriviaPackForGame(pack);
       socket.emit('host:create', {
         baseUrl: window.location.origin,
-        gameType: 'trivia',
+        gameType: mode,
         eventConfig: { ...initialEventConfig, gameTitle: pack.title },
         questions: pack.questions,
       });
-    } else if (gameType === 'trivia') {
+    } else if (mode === 'trivia') {
       const fallback = defaultTriviaPacks.find(p => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
       setTriviaPackForGame(fallback);
       socket.emit('host:create', {
@@ -224,10 +232,17 @@ export default function Host() {
         eventConfig: { ...initialEventConfig, gameTitle: fallback.title },
         questions: fallback.questions,
       });
+    } else if (isTriviaLike) {
+      socket.emit('host:create', {
+        baseUrl: window.location.origin,
+        gameType: mode,
+        eventConfig: { ...initialEventConfig, gameTitle: pack?.title ?? defaultTitles[mode] },
+        questions: pack?.questions ?? [],
+      });
     } else {
       socket.emit('host:create', {
         baseUrl: window.location.origin,
-        gameType: gameType as 'music-bingo' | 'classic-bingo',
+        gameType: mode as 'music-bingo' | 'classic-bingo',
         eventConfig: initialEventConfig,
       });
     }
@@ -531,7 +546,7 @@ export default function Host() {
         }
         createGame('music-bingo');
       } else if (createMode === 'classic-bingo') createGame('classic-bingo');
-      else createGame('trivia', packForMode as TriviaPack);
+      else createGame(createMode, packForMode as TriviaPack);
     };
 
     const createButtonLabel =

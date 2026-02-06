@@ -926,11 +926,24 @@ function getGame(code) {
   return id ? games.get(id) : null;
 }
 
+const TRIVIA_LIKE_TYPES = ['trivia', 'icebreakers', 'edutainment', 'team-building'];
+
 function createGame(opts = {}) {
   let code;
   do { code = nanoidCode(); } while (games.has(code));
-  const gameType = opts.gameType === 'trivia' ? 'trivia' : (opts.gameType === 'classic-bingo' ? 'classic-bingo' : 'music-bingo');
-  const defaultTitle = gameType === 'trivia' ? 'Trivia' : (gameType === 'classic-bingo' ? 'Classic Bingo' : 'Playroom');
+  const requested = opts.gameType;
+  const gameType = requested === 'classic-bingo' ? 'classic-bingo'
+    : TRIVIA_LIKE_TYPES.includes(requested) ? requested
+    : 'music-bingo';
+  const defaultTitles = {
+    'trivia': 'Trivia',
+    'icebreakers': 'Icebreakers',
+    'edutainment': 'Edutainment',
+    'team-building': 'Team Building',
+    'classic-bingo': 'Classic Bingo',
+    'music-bingo': 'Playroom'
+  };
+  const defaultTitle = defaultTitles[gameType] || 'Playroom';
   const game = {
     code,
     hostId: null,
@@ -955,8 +968,8 @@ function createGame(opts = {}) {
     },
     // Roll Call leaderboard (stubbed): playerId -> { bestTimeMs, displayName }
     rollCallScores: new Map(),
-    // Trivia state (when gameType === 'trivia')
-    trivia: gameType === 'trivia' ? {
+    // Trivia state (when gameType is trivia-like: trivia, icebreakers, edutainment, team-building)
+    trivia: TRIVIA_LIKE_TYPES.includes(gameType) ? {
       packId: opts.packId || '',
       questions: Array.isArray(opts.questions) ? opts.questions : [],
       currentIndex: 0,
@@ -1000,12 +1013,14 @@ function getRollCallLeaderboard(game) {
 
 io.on('connection', (socket) => {
   socket.on('host:create', ({ baseUrl, gameType, packId, questions, eventConfig } = {}) => {
-    const isTrivia = gameType === 'trivia';
-    const resolvedType = isTrivia ? 'trivia' : (gameType === 'classic-bingo' ? 'classic-bingo' : 'music-bingo');
+    const isTriviaLike = ['trivia', 'icebreakers', 'edutainment', 'team-building'].includes(gameType);
+    const resolvedType = gameType === 'classic-bingo' ? 'classic-bingo'
+      : isTriviaLike ? gameType
+      : 'music-bingo';
     const game = createGame({
       gameType: resolvedType,
-      packId: isTrivia ? (packId || '') : undefined,
-      questions: isTrivia ? (Array.isArray(questions) ? questions : []) : undefined,
+      packId: isTriviaLike ? (packId || '') : undefined,
+      questions: isTriviaLike ? (Array.isArray(questions) ? questions : []) : undefined,
       eventConfig: eventConfig && typeof eventConfig === 'object' ? eventConfig : undefined
     });
     game.hostId = socket.id;

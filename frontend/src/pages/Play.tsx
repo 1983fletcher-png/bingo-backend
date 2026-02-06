@@ -18,6 +18,7 @@ import '../styles/join.css';
 function TriviaPlayerView({
   eventConfig,
   gameTitle,
+  gameTypeLabel,
   currentIndex,
   totalQuestions,
   currentQuestion,
@@ -28,6 +29,7 @@ function TriviaPlayerView({
 }: {
   eventConfig: { gameTitle?: string; venueName?: string; logoUrl?: string | null; [key: string]: unknown };
   gameTitle: string;
+  gameTypeLabel: string;
   currentIndex: number;
   totalQuestions: number;
   currentQuestion?: string;
@@ -50,7 +52,7 @@ function TriviaPlayerView({
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
-      <GameViewHeader config={eventConfig} gameTypeLabel="Trivia" />
+      <GameViewHeader config={eventConfig} gameTypeLabel={gameTypeLabel} />
       <div style={{ padding: 24, flex: 1 }}>
         <h2 style={{ margin: '0 0 4px', fontSize: 18, color: 'var(--text-muted)' }}>{gameTitle}</h2>
         <p style={{ margin: '0 0 16px', fontSize: 14, color: 'var(--text-muted)' }}>
@@ -90,6 +92,20 @@ function TriviaPlayerView({
 }
 
 const PLAYROOM_JOIN_KEY = (c: string) => `playroom_join_${c.trim().toUpperCase()}`;
+
+/** Map server gameType to the label shown in the player header (which room we're in). */
+function getGameTypeLabel(gameType: string | undefined): string {
+  if (!gameType) return 'Game';
+  switch (gameType) {
+    case 'music-bingo': return 'Music Bingo';
+    case 'classic-bingo': return 'Classic Bingo';
+    case 'trivia': return 'Trivia';
+    case 'icebreakers': return 'Icebreakers';
+    case 'edutainment': return 'Edutainment';
+    case 'team-building': return 'Team Building';
+    default: return gameType.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+}
 
 interface JoinState {
   code: string;
@@ -250,7 +266,8 @@ export default function Play() {
   }, [code, rejoining, socket?.connected, socket]);
 
   // Game-started state: compute once per render, hooks must run unconditionally (before any early return)
-  const gameType = joinState?.gameType || 'music-bingo';
+  const gameType = joinState?.gameType;
+  const gameTypeLabel = getGameTypeLabel(gameType);
   const songPool = joinState?.songPool ?? [];
   const revealed = joinState?.revealed ?? [];
   const displayName = name || 'Anonymous';
@@ -355,13 +372,12 @@ export default function Play() {
   };
 
   if ((gameType === 'music-bingo' || gameType === 'classic-bingo') && joinState?.started) {
-    const bingoLabel = gameType === 'classic-bingo' ? 'Classic Bingo' : 'Music Bingo';
     return (
       <>
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
           <GameViewHeader
             config={joinState.eventConfig}
-            gameTypeLabel={bingoLabel}
+            gameTypeLabel={gameTypeLabel}
             onOpenMenu={(url, useIframe) => setMenuOverlay(useIframe ? { url, useIframe: true } : null)}
           />
           {card && card.length > 0 ? (
@@ -400,8 +416,8 @@ export default function Play() {
     );
   }
 
-  // Trivia: show current question, answer input, and (when revealed) correct answer — synced with display
-  if (joinState?.started && gameType === 'trivia') {
+  // Trivia (and trivia-based: icebreakers, edutainment, team-building use same flow; header shows actual game type from server)
+  if (joinState?.started && (gameType === 'trivia' || gameType === 'icebreakers' || gameType === 'edutainment' || gameType === 'team-building')) {
     const trivia = joinState.trivia;
     const questions = trivia?.questions ?? [];
     const currentIndex = trivia?.currentIndex ?? 0;
@@ -410,7 +426,8 @@ export default function Play() {
     return (
       <TriviaPlayerView
         eventConfig={joinState.eventConfig}
-        gameTitle={joinState?.eventConfig?.gameTitle || 'Trivia'}
+        gameTitle={joinState?.eventConfig?.gameTitle || gameTypeLabel}
+        gameTypeLabel={gameTypeLabel}
         currentIndex={currentIndex}
         totalQuestions={questions.length}
         currentQuestion={currentQ?.question}
@@ -423,10 +440,9 @@ export default function Play() {
   }
 
   // Other / unknown game type
-  const fallbackLabel = joinState?.gameType ? joinState.gameType.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : 'Game';
   return (
     <div style={{ padding: 24, minHeight: '100vh', background: 'var(--bg)' }}>
-      <GameViewHeader config={joinState?.eventConfig} gameTypeLabel={fallbackLabel} />
+      <GameViewHeader config={joinState?.eventConfig} gameTypeLabel={gameTypeLabel} />
       <div style={{ padding: '24px 0' }}>
         <h2 style={{ margin: '0 0 8px' }}>{joinState?.eventConfig?.gameTitle || fallbackLabel}</h2>
         <p style={{ margin: 0, color: 'var(--text-secondary)' }}>The game has started.</p>
