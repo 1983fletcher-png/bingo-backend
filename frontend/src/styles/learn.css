@@ -915,3 +915,144 @@
   font-weight: 600;
   color: var(--text-secondary);
 }
+
+/* ========== Baking Soda Volcano — depth tiers & Go Deeper (golden standard) ========== */
+.learn-page--baking-soda-exploration .learn-page-view {
+  margin-bottom: 0;
+}
+
+.volcano-depth-tiers {
+  margin-top: 40px;
+}
+
+.volcano-depth-tiers__intro {
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+}
+
+.volcano-depth-tiers__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.volcano-depth-tiers__card {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.volcano-depth-tiers__card--open {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.volcano-depth-tiers__card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  width: 100%;
+  padding: 16px 20px;
+  text-align: left;
+  font: inherit;
+  color: var(--text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.volcano-depth-tiers__card-head:hover {
+  background: var(--surface-hover, rgba(0, 0, 0, 0.03));
+}
+
+.volcano-depth-tiers__card-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.volcano-depth-tiers__card-tagline {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+.volcano-depth-tiers__card-toggle {
+  margin-left: auto;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+.volcano-depth-tiers__card-body {
+  padding: 0 20px 20px;
+}
+
+.volcano-depth-tiers__card-body[hidden] {
+  display: none;
+}
+
+.volcano-depth-tiers__card-body .learn-content-block {
+  margin-top: 0;
+  padding-top: 4px;
+}
+
+.volcano-depth-tiers__related {
+  margin-top: 12px;
+  font-size: 0.9375rem;
+}
+
+.volcano-depth-tiers__related a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.volcano-depth-tiers__related a:hover {
+  text-decoration: underline;
+}
+
+.volcano-go-deeper {
+  margin-top: 32px;
+}
+
+.volcano-go-deeper__trigger {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  text-align: left;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.volcano-go-deeper__trigger:hover {
+  border-color: var(--accent);
+  background: var(--surface-hover, rgba(0, 0, 0, 0.03));
+}
+
+.volcano-go-deeper__content {
+  margin-top: 16px;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.volcano-go-deeper__content[hidden] {
+  display: none;
+}
+
+.volcano-go-deeper__content .learn-content-block {
+  margin-bottom: 12px;
+}
+
+.volcano-go-deeper__content .learn-content-block:last-child {
+  margin-bottom: 0;
+}

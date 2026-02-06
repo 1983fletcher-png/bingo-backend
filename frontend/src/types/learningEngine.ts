@@ -217,6 +217,14 @@ export const volcanoImageSlots: ImageSlot[] = [
     maxImages: 3,
     description: "Side-by-side comparison of experiment vs real volcanoes",
   },
+  {
+    slotId: "comparison.real-volcano-2",
+    sectionId: "real-world.connections",
+    role: "comparison",
+    required: false,
+    maxImages: 1,
+    description: "Second real volcano image for comparison",
+  },
 ];
 
 /* ============================================================
@@ -448,6 +456,18 @@ const bakingSodaVolcanoSections: LearningSection[] = [
     ],
   },
   {
+    id: "depth.tiers",
+    title: "How Deep Do You Want to Go?",
+    intent: "overview",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "You can stay on the surface — make it, watch it erupt, done — or dive deeper. Three levels: Quick win (just do it), Explorer (change variables and compare), Deep dive (real chemistry and real volcanoes).",
+      },
+    ],
+  },
+  {
     id: "real-world.connections",
     title: "How This Connects to the Real World",
     intent: "real-world",
@@ -456,6 +476,27 @@ const bakingSodaVolcanoSections: LearningSection[] = [
         type: "paragraph",
         content:
           "This same gas-producing reaction is used in baking, fire extinguishers, and emergency safety systems.",
+      },
+    ],
+  },
+  {
+    id: "further.exploration",
+    title: "Go Deeper",
+    intent: "deep-dive",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "When you're ready for more: the full equation, how real volcanoes work, and how to turn this into a science-fair project.",
+      },
+      {
+        type: "bullet-list",
+        content: [
+          "The full reaction: NaHCO₃ (baking soda) + CH₃COOH (vinegar) → CO₂ (gas) + H₂O (water) + sodium acetate. The gas is what you see.",
+          "Real volcanoes: magma and pressure under the Earth's crust, not acid-base chemistry — but the idea of pressure building until something erupts is the same.",
+          "Try different amounts of baking soda and vinegar; measure how long the eruption lasts or how high the foam goes. That's real data.",
+          "Compare with other reactions: lemon juice + baking soda, citric acid + baking soda. Which makes the most foam?",
+        ],
       },
     ],
   },
@@ -483,6 +524,43 @@ export const bakingSodaVolcanoPage: LearningPage = {
     sourcesVerified: true,
   },
 };
+
+/** Tier definitions for "How deep do you want to go?" — surface → explorer → deep dive. */
+export interface BakingSodaVolcanoTier {
+  id: "quick_win" | "explorer" | "deep_dive";
+  title: string;
+  tagline: string;
+  description: string;
+  /** Optional: related topic slug for cross-link. */
+  relatedTopicId?: string;
+}
+
+export const BAKING_SODA_VOLCANO_TIERS: BakingSodaVolcanoTier[] = [
+  {
+    id: "quick_win",
+    title: "Quick Win",
+    tagline: "Make it and watch it erupt.",
+    description:
+      "Follow the steps: build your volcano, add baking soda, pour vinegar. The payoff is immediate — foam spills over like lava. No variables to change; just 'I made it, and it works.' Perfect for a first try or a rainy afternoon.",
+    relatedTopicId: "crafts-stem",
+  },
+  {
+    id: "explorer",
+    title: "Explorer",
+    tagline: "Change one thing and see what happens.",
+    description:
+      "Use more or less baking soda or vinegar. Add dish soap or food coloring. Try a taller volcano or a wider crater. Compare: Which combination makes the biggest eruption? The longest-lasting foam? Build cause-and-effect thinking: 'When I added more vinegar, the reaction was faster.'",
+    relatedTopicId: "slime",
+  },
+  {
+    id: "deep_dive",
+    title: "Deep Dive",
+    tagline: "Real chemistry and real volcanoes.",
+    description:
+      "The full equation: acid + base → CO₂ + water + salt. Why does gas take more space? How do real volcanoes work — and how is that different from this reaction? Connect to baking, fire extinguishers, and Earth science. Optional: measure eruption height or duration and turn it into a science-fair project.",
+    relatedTopicId: "north-carolina",
+  },
+];
 
 /* ============================================================
    TIME TRAVEL — FILM, SCIENCE, AND PRACTICAL IMPLICATIONS

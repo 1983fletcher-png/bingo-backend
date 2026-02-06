@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
 import LearningPageView from '../components/LearningPageView';
+import BakingSodaVolcanoExplorationView from '../components/BakingSodaVolcanoExplorationView';
 import CraftsStemHub from '../components/CraftsStemHub';
 import CraftsStemProjectView from '../components/CraftsStemProjectView';
 import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage, albertEinsteinPage, isaacNewtonPage, thomasEdisonPage } from '../types/learningEngine';
@@ -9,6 +10,7 @@ import { generatedPageToLearningPage } from '../lib/learningEngineValidation';
 import { slimeEnginePage } from '../data/learningEnginePages/slimePage';
 import { northCarolinaEnginePage } from '../data/learningEnginePages/northCarolinaPage';
 import NorthCarolinaExplorationView from '../components/NorthCarolinaExplorationView';
+import NC_IMAGES from '../data/northCarolinaImages';
 import type { VolcanoImage, VolcanoImageRegistry } from '../types/volcanoImages';
 import volcanoImagesRegistry from '../data/volcano-images.json';
 import '../styles/learn.css';
@@ -100,7 +102,7 @@ export default function LearnCard() {
   }
 
   if (id === 'north-carolina' && enginePage) {
-    return <NorthCarolinaExplorationView page={enginePage.page} />;
+    return <NorthCarolinaExplorationView page={enginePage.page} ncImages={NC_IMAGES} />;
   }
 
   if (enginePage) {
@@ -117,6 +119,13 @@ export default function LearnCard() {
   if (staticPage) {
     const volcanoSlug = id && (volcanoImagesRegistry as VolcanoImageRegistry)[id] ? id : null;
     const volcanoImages = volcanoSlug ? getVolcanoImagesForSlug(volcanoSlug) : undefined;
+    if (id === 'baking-soda-volcano') {
+      return (
+        <div className="learn-page">
+          <BakingSodaVolcanoExplorationView page={staticPage.page} volcanoImages={volcanoImages ?? []} />
+        </div>
+      );
+    }
     return (
       <div className="learn-page">
         <Link to="/learn" className="learn-page__back">

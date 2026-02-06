@@ -34,7 +34,94 @@
     ],
     "section": [
       {
-        "id": "baking-soda-volcano-section-b6030452ee91c1ce",
+        "id": "baking-soda-volcano-context-reaction",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/97/Baking_soda_and_vinegar.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/960px-Baking_soda_and_vinegar.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/480px-Baking_soda_and_vinegar.jpg"
+        },
+        "alt": "Baking soda and vinegar reacting — foam and bubbles from the same chemistry as the volcano experiment",
+        "caption": "Clear image showing the volcano mid-reaction: acid + base → CO₂ gas → foam.",
+        "usage": { "role": "section", "priority": 0 },
+        "license": {
+          "type": "cc-by",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baking_soda_and_vinegar.jpg",
+          "attribution": "CC BY 2.0",
+          "attributionName": "katerha (Flickr)",
+          "attributionUrl": "https://www.flickr.com/photos/katerha/5703151566/"
+        },
+        "dimensions": { "width": 2336, "height": 1557 },
+        "createdAt": "2026-02-06T00:00:00.000Z"
+      },
+      {
+        "id": "baking-soda-volcano-reference-flatlay",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/8/81/Sodium_bicarbonate.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Sodium_bicarbonate.jpg/960px-Sodium_bicarbonate.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Sodium_bicarbonate.jpg/480px-Sodium_bicarbonate.jpg"
+        },
+        "alt": "Baking soda (sodium bicarbonate) — one of the key materials for the experiment",
+        "caption": "Flat lay of materials: baking soda is a key ingredient.",
+        "usage": { "role": "section", "priority": 1 },
+        "license": {
+          "type": "public-domain",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sodium_bicarbonate.jpg"
+        },
+        "dimensions": { "width": 1722, "height": 1029 },
+        "createdAt": "2026-02-06T00:00:00.000Z"
+      },
+      {
+        "id": "baking-soda-volcano-step-erupt",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/97/Baking_soda_and_vinegar.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/960px-Baking_soda_and_vinegar.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/480px-Baking_soda_and_vinegar.jpg"
+        },
+        "alt": "Eruption step — pour vinegar into baking soda and watch the foam",
+        "caption": "Build & erupt: add vinegar and watch the reaction take over.",
+        "usage": { "role": "section", "priority": 2 },
+        "license": {
+          "type": "cc-by",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baking_soda_and_vinegar.jpg",
+          "attribution": "CC BY 2.0",
+          "attributionName": "katerha (Flickr)",
+          "attributionUrl": "https://www.flickr.com/photos/katerha/5703151566/"
+        },
+        "dimensions": { "width": 2336, "height": 1557 },
+        "createdAt": "2026-02-06T00:00:00.000Z"
+      }
+    ],
+    "gallery": [
+      {
+        "id": "baking-soda-volcano-gallery-step",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/97/Baking_soda_and_vinegar.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/960px-Baking_soda_and_vinegar.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/480px-Baking_soda_and_vinegar.jpg"
+        },
+        "alt": "Baking soda and vinegar reaction — eruption in action",
+        "caption": "Step: the foamy eruption in action.",
+        "usage": { "role": "gallery", "priority": 0 },
+        "license": {
+          "type": "cc-by",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baking_soda_and_vinegar.jpg",
+          "attribution": "CC BY 2.0",
+          "attributionName": "katerha (Flickr)",
+          "attributionUrl": "https://www.flickr.com/photos/katerha/5703151566/"
+        },
+        "dimensions": { "width": 2336, "height": 1557 },
+        "createdAt": "2026-02-06T00:00:00.000Z"
+      },
+      {
+        "id": "baking-soda-volcano-comparison-real",
         "volcanoSlug": "baking-soda-volcano",
         "r2": {
           "bucket": "playroom-images",
@@ -46,25 +133,40 @@
           "md": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/section/b6030452ee91c1ce.webp",
           "sm": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/section/b6030452ee91c1ce.webp"
         },
-        "alt": "La Cumbre volcano lava flow, Galápagos Islands",
-        "caption": "Lava flow from La Cumbre — real volcanic activity.",
-        "usage": {
-          "role": "section",
-          "priority": 0
-        },
+        "alt": "La Cumbre volcano lava flow, Galápagos Islands — real volcanic activity",
+        "caption": "Side-by-side comparison: real volcanoes — lava flow from La Cumbre.",
+        "usage": { "role": "gallery", "priority": 1 },
         "license": {
           "type": "public-domain",
           "source": "Wikimedia Commons",
           "sourceUrl": "https://commons.wikimedia.org/wiki/File:La_Cumbre_Volcano_lava_flow,_Fernandina_Island,_Galápagos_Islands,_Ecuador_-_30_April_2024_(53694865943).jpg"
         },
-        "dimensions": {
-          "width": 7140,
-          "height": 9719
-        },
+        "dimensions": { "width": 7140, "height": 9719 },
         "createdAt": "2026-02-06T05:50:00.908Z"
+      },
+      {
+        "id": "baking-soda-volcano-comparison-stromboli",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/93/Stromboli_Eruption.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Stromboli_Eruption.jpg/960px-Stromboli_Eruption.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Stromboli_Eruption.jpg/480px-Stromboli_Eruption.jpg"
+        },
+        "alt": "Stromboli volcano eruption, Italy — real volcanic activity",
+        "caption": "Real volcanoes: Stromboli eruption (Aeolian Islands, Italy).",
+        "usage": { "role": "gallery", "priority": 2 },
+        "license": {
+          "type": "cc-by-sa",
+          "source": "Wikimedia Commons",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stromboli_Eruption.jpg",
+          "attribution": "CC BY-SA 3.0",
+          "attributionName": "Wolfgang Beyer",
+          "attributionUrl": "https://commons.wikimedia.org/wiki/User:Wolfgangbeyer"
+        },
+        "dimensions": { "width": 939, "height": 1400 },
+        "createdAt": "2026-02-06T00:00:00.000Z"
       }
     ],
-    "gallery": [],
     "diagram": [
       {
         "id": "baking-soda-volcano-diagram-reaction",
