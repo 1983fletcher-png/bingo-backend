@@ -2,34 +2,32 @@
   "baking-soda-volcano": {
     "hero": [
       {
-        "id": "baking-soda-volcano-hero-6009a09fa1c38c57",
+        "id": "baking-soda-volcano-hero-experiment",
         "volcanoSlug": "baking-soda-volcano",
-        "r2": {
-          "bucket": "playroom-images",
-          "key": "volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp",
-          "publicUrl": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp"
-        },
         "src": {
-          "lg": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp",
-          "md": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp",
-          "sm": "https://pub-ffb463ec54c94a2aa4b38c40a5d067d1.r2.dev/volcanoes/baking-soda-volcano/hero/6009a09fa1c38c57.webp"
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/97/Baking_soda_and_vinegar.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/960px-Baking_soda_and_vinegar.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/480px-Baking_soda_and_vinegar.jpg"
         },
-        "alt": "Reykjanes Peninsula volcanic eruption in Iceland, November 2024",
-        "caption": "Satellite view of eruption — connects real volcanoes to the baking soda experiment.",
+        "alt": "Baking soda and vinegar volcano experiment — foam erupting from the reaction (the real experiment)",
+        "caption": "The actual experiment: baking soda and vinegar react to make foam that erupts like a mini volcano. This is what you're building.",
         "usage": {
           "role": "hero",
           "priority": 0
         },
         "license": {
-          "type": "public-domain",
+          "type": "cc-by",
           "source": "Wikimedia Commons",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Reykjanes_Peninsula_Eruption,_Iceland_-_November_24th,_2024_(54160954317).jpg"
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baking_soda_and_vinegar.jpg",
+          "attribution": "CC BY 2.0",
+          "attributionName": "katerha (Flickr)",
+          "attributionUrl": "https://www.flickr.com/photos/katerha/5703151566/"
         },
         "dimensions": {
-          "width": 4965,
-          "height": 2581
+          "width": 2336,
+          "height": 1557
         },
-        "createdAt": "2026-02-06T05:49:56.649Z"
+        "createdAt": "2026-02-06T00:00:00.000Z"
       }
     ],
     "section": [
