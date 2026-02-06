@@ -78,22 +78,22 @@
         "id": "baking-soda-volcano-step-erupt",
         "volcanoSlug": "baking-soda-volcano",
         "src": {
-          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/97/Baking_soda_and_vinegar.jpg",
-          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/960px-Baking_soda_and_vinegar.jpg",
-          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/480px-Baking_soda_and_vinegar.jpg"
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/8/83/Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg/960px-Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg/480px-Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg"
         },
-        "alt": "Eruption step — pour vinegar into baking soda and watch the foam",
-        "caption": "Build & erupt: add vinegar and watch the reaction take over.",
+        "alt": "Vinegar bottle — add vinegar to baking soda to trigger the eruption",
+        "caption": "Have your vinegar ready — you'll add it to the baking soda to trigger the reaction.",
         "usage": { "role": "section", "priority": 2 },
         "license": {
-          "type": "cc-by",
+          "type": "cc-by-sa",
           "source": "Wikimedia Commons",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baking_soda_and_vinegar.jpg",
-          "attribution": "CC BY 2.0",
-          "attributionName": "katerha (Flickr)",
-          "attributionUrl": "https://www.flickr.com/photos/katerha/5703151566/"
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vintage_vinegar_bottle_-_2023-06_-02_-_Andy_Mabbett.jpg",
+          "attribution": "CC BY-SA 4.0",
+          "attributionName": "Andy Mabbett (Pigsonthewing)",
+          "attributionUrl": "https://commons.wikimedia.org/wiki/User:Pigsonthewing"
         },
-        "dimensions": { "width": 2336, "height": 1557 },
+        "dimensions": { "width": 2592, "height": 3872 },
         "createdAt": "2026-02-06T00:00:00.000Z"
       }
     ],
@@ -102,22 +102,22 @@
         "id": "baking-soda-volcano-gallery-step",
         "volcanoSlug": "baking-soda-volcano",
         "src": {
-          "lg": "https://upload.wikimedia.org/wikipedia/commons/9/97/Baking_soda_and_vinegar.jpg",
-          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/960px-Baking_soda_and_vinegar.jpg",
-          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Baking_soda_and_vinegar.jpg/480px-Baking_soda_and_vinegar.jpg"
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/4/43/Erupting_volcano_fountain_%283816196422%29.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Erupting_volcano_fountain_%283816196422%29.jpg/960px-Erupting_volcano_fountain_%283816196422%29.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Erupting_volcano_fountain_%283816196422%29.jpg/480px-Erupting_volcano_fountain_%283816196422%29.jpg"
         },
-        "alt": "Baking soda and vinegar reaction — eruption in action",
-        "caption": "Step: the foamy eruption in action.",
+        "alt": "Erupting volcano-style fountain — water and pressure in action",
+        "caption": "An erupting fountain — another way to see pressure and flow, like your foam eruption.",
         "usage": { "role": "gallery", "priority": 0 },
         "license": {
           "type": "cc-by",
           "source": "Wikimedia Commons",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Baking_soda_and_vinegar.jpg",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Erupting_volcano_fountain_(3816196422).jpg",
           "attribution": "CC BY 2.0",
-          "attributionName": "katerha (Flickr)",
-          "attributionUrl": "https://www.flickr.com/photos/katerha/5703151566/"
+          "attributionName": "Brian Snelson (Flickr, exfordy)",
+          "attributionUrl": "https://www.flickr.com/photos/exfordy/3816196422/"
         },
-        "dimensions": { "width": 2336, "height": 1557 },
+        "dimensions": { "width": 2106, "height": 3336 },
         "createdAt": "2026-02-06T00:00:00.000Z"
       },
       {
