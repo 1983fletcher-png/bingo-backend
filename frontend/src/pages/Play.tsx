@@ -444,7 +444,7 @@ export default function Play() {
     <div style={{ padding: 24, minHeight: '100vh', background: 'var(--bg)' }}>
       <GameViewHeader config={joinState?.eventConfig} gameTypeLabel={gameTypeLabel} />
       <div style={{ padding: '24px 0' }}>
-        <h2 style={{ margin: '0 0 8px' }}>{joinState?.eventConfig?.gameTitle || fallbackLabel}</h2>
+        <h2 style={{ margin: '0 0 8px' }}>{joinState?.eventConfig?.gameTitle || gameTypeLabel}</h2>
         <p style={{ margin: 0, color: 'var(--text-secondary)' }}>The game has started.</p>
       </div>
     </div>
