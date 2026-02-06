@@ -19,7 +19,7 @@ import '../styles/learn.css';
 /** Map registry license type to learning engine source type. */
 function toSourceType(licenseType: string): ImageSourceType {
   if (licenseType === 'public-domain' || licenseType === 'cc0') return 'public_domain';
-  if (licenseType === 'cc-by') return 'cc_by';
+  if (licenseType === 'cc-by' || licenseType === 'cc-by-sa') return 'cc_by';
   return 'public_domain';
 }
 

@@ -237,65 +237,50 @@
     ],
     "section": [
       {
-        "id": "time-travel-section-nasa-science",
+        "id": "time-travel-section-science",
         "volcanoSlug": "time-travel",
         "src": {
-          "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg",
-          "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg",
-          "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg"
+          "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a012200/a012216/Merger_Fixed_Still.png",
+          "md": "https://svs.gsfc.nasa.gov/vis/a010000/a012200/a012216/Merger_Fixed_Still.png",
+          "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a012200/a012216/Merger_Fixed_Still_print.jpg"
         },
-        "alt": "NASA general relativity visualization — spacetime and time dilation",
-        "caption": "Science says time can stretch and bend. Going backward is another story.",
+        "alt": "NASA visualization: gravitational waves from merging black holes — spacetime curvature",
+        "caption": "What science actually says: time dilation, GPS, and no evidence for going backward. Gravitational waves and spacetime. NASA SVS 13197.",
         "usage": { "role": "section", "priority": 0 },
-        "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" },
+        "license": { "type": "public-domain", "source": "NASA Scientific Visualization Studio", "sourceUrl": "https://svs.gsfc.nasa.gov/13197" },
         "dimensions": { "width": 1920, "height": 1080 },
         "createdAt": "2026-02-01T00:00:00.000Z"
       },
       {
-        "id": "time-travel-section-delorean",
+        "id": "time-travel-section-stories",
+        "volcanoSlug": "time-travel",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/4/41/One-sided_spacetime_curvatures.png",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/One-sided_spacetime_curvatures.png/960px-One-sided_spacetime_curvatures.png",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/One-sided_spacetime_curvatures.png/640px-One-sided_spacetime_curvatures.png"
+        },
+        "alt": "Spacetime curvature diagram — rubber-sheet model of gravity (positive and negative mass)",
+        "caption": "Fiction fills the gap: rule sets, paradoxes, cause and effect. Spacetime and gravity — where stories get their ideas. Tokamac / Wikimedia Commons, CC BY-SA 4.0.",
+        "usage": { "role": "section", "priority": 1 },
+        "license": { "type": "cc-by-sa", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:One-sided_spacetime_curvatures.png", "attributionName": "Tokamac", "attributionUrl": "https://commons.wikimedia.org/wiki/User:Tokamac" },
+        "dimensions": { "width": 980, "height": 425 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      },
+      {
+        "id": "time-travel-section-film-change",
         "volcanoSlug": "time-travel",
         "src": {
           "lg": "https://upload.wikimedia.org/wikipedia/commons/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg",
           "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/960px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg",
           "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/640px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg"
         },
-        "alt": "DeLorean time machine from Back to the Future Part III at Comic-Con",
-        "caption": "The DeLorean — the time machine that became a cultural icon.",
-        "usage": { "role": "section", "priority": 1 },
-        "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg", "attribution": "Ewen Roberts", "attributionName": "Ewen Roberts", "attributionUrl": "https://www.flickr.com/photos/donabelandewen/5959689611/" },
+        "alt": "DeLorean time machine from Back to the Future Part III",
+        "caption": "Change the past, change the future: Back to the Future, The Butterfly Effect, Hot Tub Time Machine. Ewen Roberts / Wikimedia Commons, CC BY.",
+        "usage": { "role": "section", "priority": 2 },
+        "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg", "attributionName": "Ewen Roberts", "attributionUrl": "https://www.flickr.com/photos/donabelandewen/5959689611/" },
         "dimensions": { "width": 1474, "height": 1063 },
         "createdAt": "2026-02-01T00:00:00.000Z"
-      },
-      {
-        "id": "time-travel-section-tesla",
-        "volcanoSlug": "time-travel",
-        "src": {
-          "lg": "https://upload.wikimedia.org/wikipedia/commons/2/20/N.Tesla.JPG",
-          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/640px-N.Tesla.JPG",
-          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/330px-N.Tesla.JPG"
-        },
-        "alt": "Nikola Tesla (the inventor), circa 1896, age 40",
-        "caption": "Nikola Tesla — the inventor, not the car company — whose ideas still fuel 'what if' stories.",
-        "usage": { "role": "section", "priority": 2 },
-        "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:N.Tesla.JPG" },
-        "dimensions": { "width": 505, "height": 650 },
-        "createdAt": "2026-02-01T00:00:00.000Z"
-      },
-      { "id": "time-travel-section-4", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Spacetime and time travel in fiction", "caption": "Science and storytelling.", "usage": { "role": "section", "priority": 3 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-5", "volcanoSlug": "time-travel", "src": { "lg": "https://upload.wikimedia.org/wikipedia/commons/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/960px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/640px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg" }, "alt": "DeLorean", "caption": "Time travel on screen.", "usage": { "role": "section", "priority": 4 }, "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg" }, "dimensions": { "width": 1474, "height": 1063 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-6", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Time and space", "caption": "Relativity.", "usage": { "role": "section", "priority": 5 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-7", "volcanoSlug": "time-travel", "src": { "lg": "https://upload.wikimedia.org/wikipedia/commons/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/960px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/640px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg" }, "alt": "Film and culture", "caption": "Time travel in film.", "usage": { "role": "section", "priority": 6 }, "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg" }, "dimensions": { "width": 1474, "height": 1063 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-8", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "TV and series", "caption": "Time travel on TV.", "usage": { "role": "section", "priority": 7 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-9", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Literature", "caption": "Time travel in books.", "usage": { "role": "section", "priority": 8 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-10", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Outlander and Diana Gabaldon", "caption": "Outlander — time travel and history.", "usage": { "role": "section", "priority": 9 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-11", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Stephen King 11/22/63", "caption": "Alternate history.", "usage": { "role": "section", "priority": 10 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-12", "volcanoSlug": "time-travel", "src": { "lg": "https://upload.wikimedia.org/wikipedia/commons/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/960px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg", "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/640px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg" }, "alt": "Comics and music", "caption": "Time across media.", "usage": { "role": "section", "priority": 11 }, "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg" }, "dimensions": { "width": 1474, "height": 1063 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-13", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Cause and effect", "caption": "Butterfly effect.", "usage": { "role": "section", "priority": 12 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-14", "volcanoSlug": "time-travel", "src": { "lg": "https://upload.wikimedia.org/wikipedia/commons/2/20/N.Tesla.JPG", "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/640px-N.Tesla.JPG", "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/330px-N.Tesla.JPG" }, "alt": "Nikola Tesla", "caption": "Tesla and time in fiction.", "usage": { "role": "section", "priority": 13 }, "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:N.Tesla.JPG" }, "dimensions": { "width": 505, "height": 650 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-15", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Fun facts", "caption": "Time travel facts.", "usage": { "role": "section", "priority": 14 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-16", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Moving forward", "caption": "The future is yours.", "usage": { "role": "section", "priority": 15 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-17", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Sources", "caption": "Cited.", "usage": { "role": "section", "priority": 16 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" },
-      { "id": "time-travel-section-18", "volcanoSlug": "time-travel", "src": { "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg", "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg" }, "alt": "Further reading", "caption": "Learn more.", "usage": { "role": "section", "priority": 17 }, "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" }, "dimensions": { "width": 1920, "height": 1080 }, "createdAt": "2026-02-01T00:00:00.000Z" }
+      }
     ],
     "gallery": [],
     "diagram": []

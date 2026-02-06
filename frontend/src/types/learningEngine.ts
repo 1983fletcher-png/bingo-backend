@@ -646,434 +646,274 @@ export const BAKING_SODA_VOLCANO_TIERS: BakingSodaVolcanoTier[] = [
 
 export const TIME_TRAVEL_PAGE_ID = "culture.movies.time-travel.practical-implications";
 
+/** Only 4 image slots: hero + 3 section images. No duplicates; each slot has one distinct, legible image (NASA SVS or Commons PD/CC). */
 export const timeTravelImageSlots: ImageSlot[] = [
-  { slotId: "hero.time-travel", sectionId: "intro.hook", role: "hero", required: true, preferredOrientation: "landscape", description: "Iconic time-travel or clock imagery" },
-  { slotId: "context.science", sectionId: "science.reality", role: "context", required: false, description: "Relativity, spacetime, NASA" },
-  { slotId: "context.bttf", sectionId: "film.back-to-the-future", role: "context", required: true, description: "Back to the Future / DeLorean" },
-  { slotId: "context.hot-tub", sectionId: "film.hot-tub-time-machine", role: "context", required: false, description: "Hot Tub Time Machine film" },
-  { slotId: "context.time-machine", sectionId: "film.time-machine", role: "context", required: false, description: "The Time Machine (Wells on screen)" },
-  { slotId: "context.looper", sectionId: "film.looper", role: "context", required: false, description: "Looper (2012)" },
-  { slotId: "context.edge", sectionId: "film.edge-of-tomorrow", role: "context", required: false, description: "Edge of Tomorrow" },
-  { slotId: "context.culture", sectionId: "film.culture", role: "context", required: false, description: "Time travel in film & culture" },
-  { slotId: "context.doctor-who", sectionId: "tv.doctor-who", role: "context", required: false, description: "Doctor Who" },
-  { slotId: "context.dark", sectionId: "tv.dark", role: "context", required: false, description: "Dark (Netflix)" },
-  { slotId: "context.umbrella", sectionId: "tv.umbrella", role: "context", required: false, description: "The Umbrella Academy" },
-  { slotId: "context.wells", sectionId: "literature.wells", role: "context", required: false, description: "H.G. Wells The Time Machine" },
-  { slotId: "context.outlander", sectionId: "literature.outlander", role: "context", required: false, description: "Outlander / Diana Gabaldon" },
-  { slotId: "context.king", sectionId: "literature.king", role: "context", required: false, description: "Stephen King 11/22/63" },
-  { slotId: "context.comics-music", sectionId: "literature.comics-music", role: "context", required: false, description: "Comics, music, Twain" },
-  { slotId: "context.cause", sectionId: "cause.ripples", role: "context", required: false, description: "Cause and effect, butterfly effect" },
-  { slotId: "context.tesla", sectionId: "history.tesla", role: "context", required: false, description: "Nikola Tesla (inventor)" },
-  { slotId: "diagram.paradox", sectionId: "paradoxes", role: "diagram", required: false, description: "Paradox diagram" },
-  { slotId: "context.fun-facts", sectionId: "fun.facts", role: "context", required: false, description: "Time travel fun facts" },
-  { slotId: "context.practical", sectionId: "practical.forward", role: "context", required: false, description: "Forward-looking imagery" },
+  { slotId: "hero.time-travel", sectionId: "intro.hook", role: "hero", required: true, preferredOrientation: "landscape", description: "Hero: spacetime / relativity — NASA SVS" },
+  { slotId: "context.science", sectionId: "science.reality", role: "context", required: false, description: "Science: time dilation / relativity — NASA or Commons" },
+  { slotId: "context.stories", sectionId: "stories.imagine", role: "context", required: false, description: "Stories: rule sets, paradoxes — Commons spacetime" },
+  { slotId: "context.film-change", sectionId: "film.change-past", role: "context", required: false, description: "Film: Change the past — DeLorean (Commons CC BY)" },
 ];
 
 const timeTravelSections: LearningSection[] = [
   {
     id: "intro.hook",
-    title: "What If You Could Go Back?",
+    title: "Why Time, Choice, and 'What If?'",
     intent: "hook",
     contentBlocks: [
       {
         type: "paragraph",
         content:
-          "A time machine. One choice. The past — or the future. It's one of the oldest questions in stories: what would you do if you could go back in time? Change one moment? Fix one mistake? Or jump ahead to see how it all turns out?",
-      },
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "This section is about movies and media. We're talking about how films and stories imagine time travel — cause and effect, ripples, the butterfly effect — and what makes each interpretation fun. Factual in the sense of 'based on these movies,' not real-life time machines. Think of it as a touch on learning about film and how different stories tackle the same big what-if.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "From Back to the Future to The Hitchhiker's Guide to the Galaxy, time travel is everywhere on screen. Here we go deep on the stories, how they handle cause and effect, and the question that still matters: what do you do with the time you've actually got?",
+          "Humans obsess over time, choice, consequence, and 'what if.' Could we change the past? See the future? That tension — between what science allows and what stories imagine — is what makes time travel a bottomless well for curiosity, trivia, and debate.",
       },
     ],
   },
   {
     id: "science.reality",
-    title: "What Science Actually Says (Then: What Movies Do)",
+    title: "What Science Actually Says",
     intent: "explanation",
     contentBlocks: [
-      { type: "divider", content: "" },
       {
         type: "paragraph",
         content:
-          "Real physics doesn't give us a DeLorean. It does give us something strange: time dilation. Einstein's relativity says time runs slower for fast-moving or strongly gravitating things. GPS satellites correct for it. Astronauts age a tiny bit less than we do. So 'time travel' into the future is real in a narrow sense; going backward isn't something science supports.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "NASA and experiments like Gravity Probe B have confirmed these effects. We're not doing pseudoscience — we're citing real relativity, then turning to the movies that ask the big what-if and make up their own rules.",
-      },
-    ],
-  },
-  {
-    id: "film.back-to-the-future",
-    title: "Back to the Future & the DeLorean",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "The DeLorean DMC-12 is a real car. The moment Doc Brown turns it into a time machine (1985) is pure cinema. Back to the Future (1985), directed by Robert Zemeckis, written by Zemeckis and Bob Gale, became a trilogy: 1985, 1989 (Part II), 1990 (Part III).",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Marty McFly, Doc, the flux capacitor, 88 miles per hour — the filmography is a cornerstone of time-travel pop culture. The movie's take on cause and effect is iconic: change something in the past and the future ripples. Marty's family photo fades when his parents don't meet; fix the past and the future snaps back. The DeLorean has appeared at Universal Studios and in countless fan tributes.",
+          "Einstein's relativity gives us time dilation: time runs slower for fast-moving or strongly gravitating things. Gravity and speed affect time. GPS satellites have to correct for it; astronauts age a tiny bit less than we do. So 'time travel' into the future is real in a narrow sense.",
       },
       {
         type: "callout",
-        emphasis: "fun-fact",
+        emphasis: "highlight",
         content:
-          "The time machine is a character. It's why the DeLorean still shows up in memes, trivia, and 'what would you do with a time machine?' conversations decades later. Sources: Wikipedia (Back to the Future), IMDb, Universal.",
+          "There is no scientific evidence for traveling backward in time. Science supports time stretching and bending forward; going back is the domain of fiction.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Sources: NASA Scientific Visualization Studio (spacetime, relativity); Nobel Prize (Einstein, relativity).",
       },
     ],
   },
   {
-    id: "film.hot-tub-time-machine",
-    title: "Hot Tub Time Machine (2010)",
+    id: "stories.imagine",
+    title: "How Stories Imagine Time Travel",
+    intent: "overview",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Fiction fills the gap science can't. Different stories invent different 'rules' — and those rules are what make trivia, debate, and fandom possible. Rule sets, paradoxes, and cause & effect are the language of time-travel storytelling.",
+      },
+    ],
+  },
+  {
+    id: "film.change-past",
+    title: "A. Change the Past, Change the Future",
     intent: "real-world",
     contentBlocks: [
       {
         type: "paragraph",
         content:
-          "A cult comedy that sends four friends back to 1986 via a malfunctioning hot tub at a ski lodge. Directed by Steve Pink, written by Josh Heald, and starring John Cusack, Craig Robinson, Rob Corddry, and Clark Duke, the film plays time travel for laughs while still respecting cause-and-effect gags: small changes in the past ripple into the future (and the sequel, Hot Tub Time Machine 2, 2015).",
-      },
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "The movie leans into '80s nostalgia — hair metal, Cold War, and the moment one character must choose whether to repeat or change his past. It's a reminder that time-travel stories can be silly and sincere at once. Sources: IMDb, Wikipedia.",
-      },
-    ],
-  },
-  {
-    id: "film.time-machine",
-    title: "The Time Machine (1960, 2002)",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "H.G. Wells' 1895 novel was adapted for the screen in 1960 (George Pal) and 2002 (Simon Wells). Both explore a scientist who builds a machine and travels far into the future, discovering evolved (and divided) humanity. The 1960 version is a classic; the 2002 version adds modern effects and a clearer emotional arc.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Wells' vision — time as a fourth dimension, and the future as a place of social commentary — set the template for much of science fiction. Sources: IMDb, Wikipedia (The Time Machine), Gutenberg (original novel).",
-      },
-    ],
-  },
-  {
-    id: "film.looper",
-    title: "Looper (2012)",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "Rian Johnson's thriller stars Joseph Gordon-Levitt and Bruce Willis as the same man at different ages: assassins in the past kill targets sent from the future. When the older version escapes, the younger must hunt himself — and the film leans into paradoxes, identity, and moral choice.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Looper doesn't over-explain its rules; it uses time travel to explore fate, free will, and sacrifice. Sources: IMDb, Wikipedia (Looper).",
-      },
-    ],
-  },
-  {
-    id: "film.edge-of-tomorrow",
-    title: "Edge of Tomorrow (2014)",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "Tom Cruise and Emily Blunt star in a sci-fi action film based on the Japanese light novel All You Need Is Kill. When Cruise's character dies in battle against aliens, he wakes up the previous day — again and again. A time loop lets him improve each cycle, a twist that echoes Groundhog Day and makes 'learning from failure' literal.",
-      },
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "The film is a tight blend of time-loop logic and blockbuster spectacle. Sources: IMDb, Wikipedia (Edge of Tomorrow).",
-      },
-    ],
-  },
-  {
-    id: "film.culture",
-    title: "More Time Travel in Film & Culture",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "Different movies interpret time travel in different ways. Some let you change the past and watch the future rewrite itself. Others say the past is fixed — whatever happened, happened. Some give you a single timeline; others branch into parallel worlds. That variety is what makes film and media so fun to dig into.",
+          "In these stories, altering the past rewrites the future. Small or big changes ripple forward (or backward).",
       },
       {
         type: "bullet-list",
         content: [
-          "The Hitchhiker's Guide to the Galaxy (Douglas Adams; 2005 film) — time, space, and the absurd; the Guide is a kind of handbook for the cosmos.",
-          "The Terminator (1984) — machines from the future; fate vs. choice; every action has consequences.",
-          "Bill & Ted's Excellent Adventure (1989) — comedy, history, and a phone booth; cause and effect played for laughs.",
-          "Groundhog Day (1993) — one day on repeat; a different kind of loop; change yourself, not the past.",
-          "The Butterfly Effect (2004) — small changes, huge ripples; the title says it all.",
-          "Twelve Monkeys (1995), Looper (2012), Tenet (2020) — each sets its own rules and paradoxes.",
+          "Back to the Future (Film, 1985–1990). Mechanism: DeLorean, flux capacitor, 88 mph. Rule set: change the past and the present/future updates (Marty's photo fades; fix the past and it snaps back). Core concept: cause and effect, family photo as timeline indicator. Trivia: flux capacitor, 'Great Scott!', 1.21 gigawatts.",
+          "The Butterfly Effect (Film, 2004). Mechanism: reading journals / revisiting traumatic moments. Rule set: small changes in the past create huge, often tragic ripples. Core concept: butterfly effect in the title. Trivia: multiple endings; each 'fix' creates new problems.",
+          "Hot Tub Time Machine (Film, 2010). Mechanism: malfunctioning hot tub at a ski lodge. Rule set: same idea — change the past, the future changes; played for comedy. Trivia: '80s nostalgia, sequel in 2015.",
         ],
       },
+    ],
+  },
+  {
+    id: "film.fixed-timelines",
+    title: "B. Fixed Timelines — 'What Happened, Happened'",
+    intent: "real-world",
+    contentBlocks: [
       {
         type: "paragraph",
         content:
-          "This is the pool that feeds trivia and fan theory: who said what, which film had which rules, and how did they handle cause and effect? Knowledge here is filmography — cited to Wikipedia, IMDb, and official sources.",
+          "The past is fixed. You can't really change it; your trip was always part of events. No overwriting — just revelation.",
+      },
+      {
+        type: "bullet-list",
+        content: [
+          "Twelve Monkeys (Film, 1995). Mechanism: sending prisoners from the future into the past. Rule set: the past is largely fixed; the hero was always part of the events. Core concept: causal loop, pandemic, 'whatever happened, happened.' Trivia: Terry Gilliam; Bruce Willis, Brad Pitt.",
+          "Dark (TV, 2017–2020). Mechanism: cave, wormholes, 33-year cycles. Rule set: tightly fixed; every action is part of the loop. Core concept: bootstrap paradoxes, family across time. Trivia: German Netflix; fans debate every detail.",
+          "Arrival (Film, 2016). Mechanism: alien language that changes perception of time. Rule set: time perception, not literal travel; past and future experienced at once. Core concept: Sapir–Whorf meets time. Trivia: Denis Villeneuve; linguistics and choice.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "film.time-loops",
+    title: "C. Time Loops",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "One day (or period) repeats. The protagonist learns, changes, or breaks the loop.",
+      },
+      {
+        type: "bullet-list",
+        content: [
+          "Groundhog Day (Film, 1993). Mechanism: unexplained — Phil wakes up to the same day. Rule set: only he remembers; loop until he grows. Core concept: change yourself, not the past. Trivia: 'I'm a god'; how many loops is still debated.",
+          "Edge of Tomorrow (Film, 2014). Mechanism: alien blood resets the day on death. Rule set: loop until mission succeeds; 'live, die, repeat.' Core concept: time loop as training. Trivia: based on All You Need Is Kill; Tom Cruise, Emily Blunt.",
+          "Russian Doll (TV, 2019–2022). Mechanism: death resets to the same party. Rule set: loop with subtle shifts; multiple characters can be in loops. Core concept: trauma, friendship, breaking the cycle. Trivia: Natasha Lyonne; two seasons.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "film.branching",
+    title: "D. Branching / Multiverse Timelines",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Changing the past doesn't overwrite — it branches. Alternate timelines or multiverses coexist.",
+      },
+      {
+        type: "bullet-list",
+        content: [
+          "Avengers: Endgame (Film, 2019). Mechanism: Pym particles, quantum realm, time heists. Rule set: branching timelines; 'whatever it takes'; returning stones to close branches. Core concept: multiverse, alternate Caps and Lokis. Trivia: 'I am Iron Man'; time-travel rules explained in-film.",
+          "Loki (TV, 2021–). Mechanism: TVA, time variance, multiverse. Rule set: sacred timeline vs. branches; variants, He Who Remains. Core concept: who controls time? Trivia: Kang, variants, season 2.",
+          "The Flash / Flashpoint (TV & comics). Mechanism: speed force, running through time. Rule set: altering the past creates Flashpoint and new timelines. Core concept: one change, cascading consequences. Trivia: DC; Flashpoint paradox, alternate Batman.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "film.mind-bending",
+    title: "E. Mind-Bending / Rule-Heavy",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Dense rules, paradoxes baked in, or time that runs backward. For fans who love to untangle the logic.",
+      },
+      {
+        type: "bullet-list",
+        content: [
+          "Looper (Film, 2012). Mechanism: future sends targets to the past for assassination. Rule set: closing your own loop; paradoxes are part of the plot. Core concept: identity, sacrifice, cause and effect. Trivia: Joseph Gordon-Levitt, Bruce Willis; 'loopers.'",
+          "Tenet (Film, 2020). Mechanism: inversion — objects and people moving backward in time. Rule set: 'whatever happened, happened'; entropy inversion. Core concept: don't try to understand it, feel it. Trivia: Christopher Nolan; palindrome, inversion.",
+          "Primer (Film, 2004). Mechanism: box that allows limited time travel. Rule set: multiple copies of selves, strict causality; famously complex. Core concept: low-budget, high-logic. Trivia: ~$7,000 budget; timeline diagrams online.",
+        ],
       },
     ],
   },
   {
     id: "tv.doctor-who",
-    title: "Doctor Who (1963–present)",
+    title: "Television Spotlight: Doctor Who",
     intent: "real-world",
     contentBlocks: [
       {
         type: "paragraph",
         content:
-          "The quintessential time-travel TV show. The Doctor travels through time and space in the TARDIS, encountering historical figures, alien civilizations, and paradoxes. The series has explored fixed points, alternate timelines, and the ethics of changing history for decades.",
+          "The Doctor travels through time and space in the TARDIS ('bigger on the inside'). Decades of stories have used fixed points, alternate timelines, and the ethics of changing history. Unique time rule: the TARDIS is a character; some events are 'fixed,' others can be rewritten; regeneration allows the show to continue across eras.",
       },
       {
         type: "paragraph",
         content:
-          "Sources: BBC (Doctor Who), Wikipedia (Doctor Who).",
+          "Why fans debate: fixed points vs. mutable history; whether the Doctor can or should change key events; canon across classic and modern Who. Trivia: 1963–present; multiple Doctors; 'wibbly-wobbly, timey-wimey.'",
       },
     ],
   },
   {
     id: "tv.dark",
-    title: "Dark (2017–2020)",
+    title: "Television Spotlight: Dark",
     intent: "real-world",
     contentBlocks: [
       {
         type: "paragraph",
         content:
-          "Netflix's German series is a tightly woven time-travel drama: multiple generations, multiple time periods, and causal loops where the past and future depend on each other. Family secrets, a missing child, and a cave that connects 1953, 1986, 2019, and beyond.",
+          "Netflix's German series: a missing child, a cave, and 33-year cycles linking 1953, 1986, 2019, and beyond. Unique time rule: 'what happened, happened' — causal loops and bootstrap paradoxes; the same people appear across generations.",
       },
       {
         type: "paragraph",
         content:
-          "Dark rewards careful viewing and has become a reference point for 'whatever happened, happened' and bootstrap paradoxes. Sources: IMDb (Dark), Wikipedia.",
+          "Why fans debate: family trees, who is whose younger/older self, and whether the ending allows a true escape. Trivia: three seasons; requires careful viewing and sometimes a chart.",
+      },
+    ],
+  },
+  {
+    id: "tv.outlander",
+    title: "Television Spotlight: Outlander",
+    intent: "real-world",
+    contentBlocks: [
+      {
+        type: "paragraph",
+        content:
+          "Claire Randall steps through standing stones in Scotland (1945 → 1743) and meets Jamie Fraser. Unique time rule: the stones 'call' some people; travel is tied to place and sometimes sacrifice; history can be affected but with cost. Based on Diana Gabaldon's novels.",
+      },
+      {
+        type: "paragraph",
+        content:
+          "Why fans debate: whether history is fixed or changeable; the rules of the stones; historical accuracy vs. romance. Trivia: Starz; multiple books and seasons; time travel as destiny.",
       },
     ],
   },
   {
     id: "tv.umbrella",
-    title: "The Umbrella Academy",
+    title: "Television Spotlight: The Umbrella Academy",
     intent: "real-world",
     contentBlocks: [
       {
         type: "paragraph",
         content:
-          "The superhero series (based on Gerard Way's comics) weaves time travel into its plot: the Commission, time assassins, and attempts to change the past that spiral into apocalypses and alternate timelines. Season 2 and 3 lean heavily into cause, effect, and the cost of fixing history.",
+          "Superpowered siblings, the Commission (time police), and apocalypses. Unique time rule: changing the past creates new timelines and apocalypses; time assassins enforce 'correct' history; paradoxes drive the plot.",
       },
       {
         type: "paragraph",
         content:
-          "Sources: IMDb (The Umbrella Academy), Wikipedia.",
+          "Why fans debate: how many timelines, who caused which apocalypse, and whether the Commission can be trusted. Trivia: based on Gerard Way's comics; multiple seasons of cause-and-effect chaos.",
       },
     ],
   },
   {
-    id: "literature.wells",
-    title: "The Time Machine — H.G. Wells (1895)",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "The novel that helped define time travel in fiction. Wells' Time Traveller builds a machine and journeys to the far future, finding humanity split into the Eloi and the Morlocks. It's speculative science, social critique, and a thought experiment about evolution and class.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Wells didn't invent the idea of time travel, but he gave it a durable, scientific framing. Sources: Project Gutenberg (The Time Machine), Wikipedia (The Time Machine).",
-      },
-    ],
-  },
-  {
-    id: "literature.outlander",
-    title: "Outlander — Diana Gabaldon",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "Diana Gabaldon's Outlander series (first novel 1991) follows Claire Randall, a World War II nurse who steps through standing stones in Scotland in 1945 and finds herself in 1743. There she meets Jamie Fraser; their love story unfolds across the Jacobite rising, the American Revolution, and decades of time-crossed lives.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "The books blend historical fiction, romance, and time travel with meticulous research. Claire's medical knowledge and modern perspective clash with the past; the question of whether history can (or should) be changed underlies the later novels. The Starz TV adaptation (2014–) has brought the series to a wide audience.",
-      },
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "Gabaldon's time-travel mechanism — the stones, the ability to hear their 'buzz' — is unique. The series is a touchstone for time-travel romance and historical accuracy. Sources: Diana Gabaldon's official site, Wikipedia (Outlander), Starz.",
-      },
-    ],
-  },
-  {
-    id: "literature.king",
-    title: "11/22/63 — Stephen King (2011)",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "paragraph",
-        content:
-          "A high-school teacher finds a portal to 1958 and decides to prevent the assassination of John F. Kennedy. King's novel explores the weight of changing history: the past 'pushes back,' and every fix has unintended consequences. The miniseries (2016) stars James Franco.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Sources: Stephen King official site, Wikipedia (11/22/63), IMDb (miniseries).",
-      },
-    ],
-  },
-  {
-    id: "literature.comics-music",
-    title: "Comics, Music & More",
+    id: "literature.books",
+    title: "Literature & Books",
     intent: "real-world",
     contentBlocks: [
       {
         type: "bullet-list",
         content: [
-          "A Connecticut Yankee in King Arthur's Court — Mark Twain (1889): humor and satire; a Yankee displaced in time.",
-          "X-Men: Days of Future Past — Wolverine's consciousness sent back to prevent a dystopian future.",
-          "DC Flashpoint — The Flash alters the past and creates an alternate timeline.",
-          "Huey Lewis and the News, \"The Power of Love\" — Back to the Future's theme; Pink Floyd, \"Time\" — the passing of time and mortality.",
+          "The Time Machine — H.G. Wells (1895). The scientist builds a machine and travels to the far future; Eloi and Morlocks. Foundational for time travel as a fourth dimension. Public-domain; Project Gutenberg, Wikimedia Commons for cover art.",
+          "11/22/63 — Stephen King (2011). Portal to 1958; preventing JFK's assassination; the past 'pushes back.' Alternate history and consequence.",
+          "Outlander — Diana Gabaldon (1991–). Claire and the stones; 1743 Scotland; romance and history. Source of the TV series.",
+          "A Connecticut Yankee in King Arthur's Court — Mark Twain (1889). A Yankee displaced in time; satire and humor. Public-domain.",
         ],
       },
-      {
-        type: "paragraph",
-        content:
-          "Time travel appears across media; these entries are starting points for deeper exploration. Sources: Project Gutenberg (Twain), Marvel, DC, Wikipedia.",
-      },
     ],
   },
   {
-    id: "cause.ripples",
-    title: "Cause, Effect & the Butterfly Effect",
-    intent: "explanation",
-    contentBlocks: [
-      { type: "divider", content: "" },
-      {
-        type: "paragraph",
-        content:
-          "In time-travel stories, cause and effect get twisted. You do one thing in the past — and the future ripples. Sometimes a tiny change has huge consequences. That's the butterfly effect: the idea that a small cause can lead to a massive effect somewhere else, or later.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Movies run with it. Back to the Future shows Marty's present changing when the past changes — his family, the town, the photo. The Terminator is about preventing a future by changing the past (or trying to). The Butterfly Effect (2004) puts it in the title: the protagonist keeps going back to fix things and each fix ripples into new problems.",
-      },
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "The fun is in the rules each film sets. Does changing the past overwrite the future? Create a new branch? Or is the past locked so that your trip was 'always' part of what happened? Different movies, different answers — and that's what makes comparing them so interesting.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Ripples and butterfly effects are a way films explore responsibility: if you could change one moment, would you? And what else might change with it?",
-      },
-    ],
-  },
-  {
-    id: "history.tesla",
-    title: "Nikola Tesla: Man, Myth & Time",
-    intent: "explanation",
+    id: "comics.games.music",
+    title: "Comics, Games, Music",
+    intent: "real-world",
     contentBlocks: [
       {
-        type: "paragraph",
-        content:
-          "Nikola Tesla — the inventor (1856–1943), not the car company — was a real person: AC power, the Tesla coil, countless patents. He's often woven into time-travel and sci-fi lore because his ideas felt ahead of their time.",
-      },
-      {
-        type: "paragraph",
-        content:
-          "Some stories imagine him building devices that bend time or space. That's fiction. The fascination is real: he shows up in time-travel and alternate-history discussions as the 'what if' of invention — the line between real science and legend. We include him here so it's clear we're talking about the historical figure. Sources: Wikipedia (Nikola Tesla), Smithsonian, historical archives.",
+        type: "bullet-list",
+        content: [
+          "X-Men: Days of Future Past — Wolverine's consciousness sent to the past to prevent a dystopian future; branching timelines in comics and film.",
+          "DC Flashpoint — The Flash alters the past; Flashpoint paradox and alternate DC universe.",
+          "Doctor Who audio dramas — Big Finish and others; extended time-travel stories in audio.",
+          "Music tied to time themes (thematic, not literal time travel): e.g. 'The Power of Love' (Back to the Future), 'Time' (Pink Floyd) — about the passing of time and mortality.",
+        ],
       },
     ],
   },
   {
-    id: "paradoxes",
-    title: "Paradoxes & How Films Resolve Them",
+    id: "paradoxes.concepts",
+    title: "Paradoxes & Concepts (Trivia Gold)",
     intent: "deep-dive",
     contentBlocks: [
       {
-        type: "paragraph",
-        content:
-          "The grandfather paradox: if you go back and change the past, do you erase the future that sent you back? Films and books each set their own rules. Some use parallel timelines so the old future still 'exists' somewhere. Some say the past is fixed — whatever happened happened — so there's no paradox. Others let one timeline overwrite another.",
-      },
-      {
         type: "bullet-list",
         content: [
-          "Back to the Future — changing the past rewrites the present; the photo and the town change in real time.",
-          "Twelve Monkeys — the past is largely fixed; the hero was always part of the events.",
-          "Looper — branches and paradoxes are part of the plot; the film leans into the mess.",
-          "Tenet — time inversion and 'whatever happened, happened' in a high-concept package.",
+          "Grandfather paradox: If you go back and prevent your grandparents from meeting, do you cease to exist? Stories resolve it with branching timelines, fixed pasts, or 'whatever happened, happened.'",
+          "Bootstrap paradox: An object or information has no origin — it exists because it was brought from the future. (e.g. who wrote the tune?) Dark and Doctor Who use this heavily.",
+          "Butterfly effect: A small change in the past leads to huge, often unintended consequences. The Butterfly Effect (2004), Back to the Future, and many others.",
         ],
-      },
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "The fun is in the puzzle. Trivia loves 'how did this movie resolve the paradox?' and 'what would you do if you had one trip?' — which leads to the last question.",
-      },
-    ],
-  },
-  {
-    id: "fun.facts",
-    title: "Time Travel Fun & Mind-Bending Facts",
-    intent: "real-world",
-    contentBlocks: [
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "Einstein's theories of relativity laid the foundation for modern scientific thinking about time dilation. Source: Nobel Prize (nobelprize.org).",
-      },
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "The grandfather paradox asks: what happens if you prevent your own grandparents from meeting? Philosophers and physicists still debate it. Source: Stanford Encyclopedia of Philosophy.",
-      },
-      {
-        type: "callout",
-        emphasis: "fun-fact",
-        content:
-          "Time loops in storytelling often represent lessons learned and the opportunity to correct mistakes — from Groundhog Day to Dark to video games.",
-      },
-    ],
-  },
-  {
-    id: "practical.forward",
-    title: "You Probably Can't Go Back. So What?",
-    intent: "real-world",
-    contentBlocks: [
-      { type: "divider", content: "" },
-      {
-        type: "paragraph",
-        content:
-          "Logically, you probably aren't going to get a time machine. So the practical implication isn't about changing the past — it's about the future. What do you do moving forward to get a good future? What do you fix, build, or choose now?",
-      },
-      {
-        type: "paragraph",
-        content:
-          "That's the turn we leave you with. The stories are fun. The science is real where we've cited it. The movies are a great way to think about cause, effect, and ripples. And the question that actually matters: how do you want the next chapter to go?",
       },
     ],
   },
@@ -1082,42 +922,39 @@ const timeTravelSections: LearningSection[] = [
     title: "Sources & Further Reading",
     intent: "real-world",
     contentBlocks: [
-      { type: "divider", content: "" },
       {
         type: "bullet-list",
         content: [
-          "NASA Scientific Visualization Studio — relativity, time dilation (svs.gsfc.nasa.gov).",
-          "Wikipedia — Back to the Future, Doctor Who, Dark, Outlander, Looper, Edge of Tomorrow, H.G. Wells, Diana Gabaldon, 11/22/63.",
+          "NASA Scientific Visualization Studio — spacetime, relativity (svs.gsfc.nasa.gov).",
+          "Nobel Prize — Einstein, relativity (nobelprize.org).",
+          "Wikipedia — Back to the Future, Doctor Who, Dark, Outlander, Looper, Tenet, Primer, 11/22/63, The Time Machine, Flashpoint, Avengers: Endgame, Loki.",
           "IMDb — film and TV credits, release dates.",
           "Project Gutenberg — The Time Machine (Wells), A Connecticut Yankee (Twain).",
-          "Nobel Prize — Einstein, relativity (nobelprize.org).",
-          "Stanford Encyclopedia of Philosophy — time travel paradoxes.",
-          "Diana Gabaldon — official site and Outlander series.",
-          "BBC — Doctor Who (bbc.co.uk/programmes/b006q2x0).",
+          "BBC — Doctor Who. Diana Gabaldon — official site. Stanford Encyclopedia of Philosophy — time travel paradoxes.",
         ],
       },
       {
         type: "paragraph",
         content:
-          "Every claim on this page is traceable to the sources above. Images: public domain or CC-licensed only; see image credits.",
+          "Every claim on this page is traceable to the sources above. Images: NASA SVS or Wikimedia Commons (public domain / CC) only; film/TV images omitted where no compliant image exists.",
       },
     ],
   },
 ];
 
-/** Time Travel learning page — deep dive: film, TV, literature (incl. Outlander), science, paradoxes, cited. */
+/** Time Travel learning page — interactive knowledge hub: science, film/TV by model, TV spotlights, literature, paradoxes. Cited; no speculation as fact. */
 export const timeTravelPage: LearningPage = {
   id: TIME_TRAVEL_PAGE_ID,
   slug: "/learn/time-travel",
 
   title: "Time Travel: A Deep Dive",
-  subtitle: "Film, TV, literature — from Back to the Future and Outlander to Doctor Who and Dark. Science, paradoxes, sources, and the question that matters.",
+  subtitle: "Science, stories, and the rules that make trivia and fandom possible. For kids, teens, adults, educators, and curious fans.",
 
   audience: "general",
   tone: "mixed",
 
-  topics: ["time travel", "movies", "film", "TV", "literature", "Outlander", "Diana Gabaldon", "Doctor Who", "Dark", "Back to the Future", "Hot Tub Time Machine", "Looper", "Edge of Tomorrow", "cause and effect", "butterfly effect", "sci-fi"],
-  concepts: ["relativity", "time dilation", "filmography", "cause and effect", "ripples", "butterfly effect", "paradoxes", "practical implications"],
+  topics: ["time travel", "movies", "film", "TV", "Doctor Who", "Dark", "Outlander", "Umbrella Academy", "Back to the Future", "paradoxes", "butterfly effect", "relativity"],
+  concepts: ["time dilation", "fixed timelines", "time loops", "branching", "grandfather paradox", "bootstrap paradox", "rule sets"],
 
   sections: attachImageSlotsToPage(timeTravelSections, timeTravelImageSlots),
 
