@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Figure Page Template",
+  "description": "Dynamic template for scientist/biography pages. Reusable for any figure; image slots auto-populate from ingestion pipeline.",
+  "type": "object",
+  "required": ["figure", "lifespan"],
+  "properties": {
+    "figure": { "type": "string", "description": "Full name of the person" },
+    "lifespan": { "type": "string", "example": "1856-1943" },
+    "slug": { "type": "string", "description": "URL-safe id; default = slugify(figure)" },
+    "heroImage": { "type": "string", "description": "R2 URL for hero image" },
+    "quickFacts": {
+      "type": "object",
+      "properties": {
+        "born": { "type": "string" },
+        "died": { "type": "string" },
+        "majorContributions": { "type": "array", "items": { "type": "string" } },
+        "knownFor": { "type": "string" }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "keywords": { "type": "array", "items": { "type": "string" }, "description": "Search keywords for image fetcher" },
+          "conceptKeywords": { "type": "array", "items": { "type": "string" }, "description": "Required terms in alt/description for validation" },
+          "role": { "type": "string", "enum": ["hero", "section"] },
+          "images": { "type": "array", "items": { "type": "string" } },
+          "subSections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "title": { "type": "string" },
+                "content": { "type": "string" },
+                "images": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "license": { "type": "string" }
+        }
+      }
+    },
+    "triviaTags": { "type": "array", "items": { "type": "string" } },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "altText": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "concepts": { "type": "array", "items": { "type": "string" } },
+          "sourceName": { "type": "string" },
+          "sourceUrl": { "type": "string" },
+          "license": { "type": "string" },
+          "r2Url": { "type": "string" }
+        }
+      }
+    }
+  }
+}

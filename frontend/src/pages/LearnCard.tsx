@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
 import LearningPageView from '../components/LearningPageView';
-import { bakingSodaVolcanoPage } from '../types/learningEngine';
+import TimeTravelWormholeView from '../components/TimeTravelWormholeView';
+import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage } from '../types/learningEngine';
 import type { VolcanoImage, VolcanoImageRegistry } from '../types/volcanoImages';
 import volcanoImagesRegistry from '../data/volcano-images.json';
 import '../styles/learn.css';
@@ -15,6 +16,8 @@ const API_BASE =
 /** Canonical learning pages (slug segment or id) render from static schema, not API. */
 const STATIC_LEARNING_PAGES: Record<string, { page: typeof bakingSodaVolcanoPage }> = {
   'baking-soda-volcano': { page: bakingSodaVolcanoPage },
+  'time-travel': { page: timeTravelPage },
+  'nikola-tesla': { page: nikolaTeslaPage },
 };
 
 function getVolcanoImagesForSlug(slug: string): VolcanoImage[] {
@@ -63,8 +66,16 @@ export default function LearnCard() {
     return () => { cancelled = true; };
   }, [id, staticPage]);
 
+  if (id === 'time-travel-wormhole') {
+    return (
+      <div className="learn-page">
+        <TimeTravelWormholeView />
+      </div>
+    );
+  }
+
   if (staticPage) {
-    const volcanoSlug = id === 'baking-soda-volcano' ? 'baking-soda-volcano' : null;
+    const volcanoSlug = id && (volcanoImagesRegistry as VolcanoImageRegistry)[id] ? id : null;
     const volcanoImages = volcanoSlug ? getVolcanoImagesForSlug(volcanoSlug) : undefined;
     return (
       <div className="learn-page">

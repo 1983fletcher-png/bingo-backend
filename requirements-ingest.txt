@@ -1,0 +1,9 @@
+# Python deps for scripts/ingest_figure_images.py (dynamic legal image ingestion)
+# Use: python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements-ingest.txt
+
+requests>=2.28.0
+boto3>=1.26.0
+Pillow>=9.0.0
+
+# Optional: for HTML scraping if you add more sources
+# beautifulsoup4>=4.11.0

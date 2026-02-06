@@ -24,7 +24,8 @@ export interface VolcanoImage {
   id: string;
   volcanoSlug: string;
 
-  r2: {
+  /** Present when image is stored in R2; omitted for static/original assets (e.g. diagrams). */
+  r2?: {
     bucket: string;
     key: string;
     publicUrl: string;

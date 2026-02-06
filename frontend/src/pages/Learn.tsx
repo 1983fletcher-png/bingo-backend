@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchJson } from '../lib/safeFetch';
-import { bakingSodaVolcanoPage } from '../types/learningEngine';
+import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage } from '../types/learningEngine';
 import '../styles/learn.css';
 
 const API_BASE =
@@ -19,15 +19,37 @@ const STATIC_CARDS: CardSummary[] = [
     summary: bakingSodaVolcanoPage.subtitle ?? 'A small eruption that teaches big science.',
     tags: bakingSodaVolcanoPage.topics,
   },
+  {
+    id: 'time-travel',
+    title: timeTravelPage.title,
+    summary: timeTravelPage.subtitle ?? 'Movies, science, and what you do with the time you\'ve got.',
+    tags: timeTravelPage.topics,
+  },
+  {
+    id: 'time-travel-wormhole',
+    title: 'Time Travel Wormhole',
+    summary: 'Explore time travel in film, TV, literature, comics, and music—curated entries and fun facts.',
+    tags: ['Time Travel', 'Sci-Fi', 'Movies', 'TV', 'Comics', 'Music', 'Literature'],
+  },
+  {
+    id: 'nikola-tesla',
+    title: nikolaTeslaPage.title,
+    summary: nikolaTeslaPage.subtitle ?? 'The man who electrified the world.',
+    tags: nikolaTeslaPage.topics,
+  },
 ];
 
 const CATEGORIES: { id: string; label: string; description: string }[] = [
   { id: 'biology', label: 'Biology & Nature', description: 'Plants, botany, gardening, and how living things grow and work.' },
   { id: 'crafts-stem', label: 'Crafts & Gentle STEM', description: 'Hands-on activities and simple science you can do at home.' },
   { id: 'animals', label: 'Animals', description: 'From backyard wildlife to ocean giants — trusted facts about the animal kingdom.' },
+  { id: 'movies-culture', label: 'Time Travel & Culture', description: 'Movies, filmography, science fiction, and the big what-if — with real science and a practical twist.' },
+  { id: 'scientists-inventors', label: 'Scientists & Inventors', description: 'Biographies and contributions of history\'s great inventors and scientists — cited, engaging, trivia-ready.' },
 ];
 
 function getCategoryId(card: CardSummary): string {
+  if (card.id === 'nikola-tesla' || card.tags?.some((t) => ['Nikola Tesla', 'inventor', 'biography', 'scientists'].includes(t))) return 'scientists-inventors';
+  if (card.id === 'time-travel-wormhole' || card.id === 'time-travel' || card.tags?.some((t) => ['time travel', 'movies', 'science fiction', "Hitchhiker's Guide to the Galaxy", 'Back to the Future'].includes(t))) return 'movies-culture';
   if (card.id === 'baking-soda-volcano' || (card.tags?.some((t) => t === 'science experiments' || t === 'chemistry'))) return 'crafts-stem';
   if (card.id === 'plants-and-how-they-grow' || card.tags?.some((t) => ['plants', 'botany', 'gardening'].includes(t))) return 'biology';
   if (card.id === 'crafts-and-gentle-stem' || (card.tags?.some((t) => ['crafts', 'STEM'].includes(t)) && card.title.toLowerCase().includes('craft'))) return 'crafts-stem';
@@ -57,7 +79,7 @@ export default function Learn() {
   }, []);
 
   const cardsByCategory = useMemo(() => {
-    const map: Record<string, CardSummary[]> = { biology: [], 'crafts-stem': [], animals: [] };
+    const map: Record<string, CardSummary[]> = { biology: [], 'crafts-stem': [], animals: [], 'movies-culture': [], 'scientists-inventors': [] };
     for (const card of cards) {
       const cat = getCategoryId(card);
       if (map[cat]) map[cat].push(card);

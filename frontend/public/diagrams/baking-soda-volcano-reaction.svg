@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" width="800" height="420" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Baking soda and vinegar reaction</title>
+  <desc id="diagram-desc">Diagram: Vinegar (acid) plus baking soda (base) react to produce carbon dioxide gas, which creates the foamy eruption.</desc>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#1d1d1f"/>
+    </marker>
+    <linearGradient id="volcanoGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#6b5344"/>
+      <stop offset="100%" stop-color="#8b7355"/>
+    </linearGradient>
+    <linearGradient id="foamGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#e8e8e8"/>
+      <stop offset="100%" stop-color="#f5f5f5"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="420" fill="#fafafa"/>
+  <!-- Title -->
+  <text x="400" y="32" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="#1d1d1f">The reaction</text>
+  <!-- Left: Vinegar (acid) -->
+  <g>
+    <rect x="40" y="70" width="140" height="80" rx="8" fill="#e3f2fd" stroke="#1d1d1f" stroke-width="1.5"/>
+    <text x="110" y="108" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#1d1d1f">Vinegar</text>
+    <text x="110" y="132" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#424245">(acid)</text>
+  </g>
+  <!-- Plus -->
+  <text x="200" y="118" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#1d1d1f">+</text>
+  <!-- Baking soda (base) -->
+  <g>
+    <rect x="230" y="70" width="140" height="80" rx="8" fill="#fff3e0" stroke="#1d1d1f" stroke-width="1.5"/>
+    <text x="300" y="108" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#1d1d1f">Baking soda</text>
+    <text x="300" y="132" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#424245">(base)</text>
+  </g>
+  <!-- Arrow 1 -->
+  <path d="M390 110 L455 110" stroke="#1d1d1f" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <!-- CO2 gas -->
+  <g>
+    <ellipse cx="520" cy="95" rx="28" ry="22" fill="none" stroke="#2e7d32" stroke-width="2"/>
+    <ellipse cx="555" cy="105" rx="26" ry="20" fill="none" stroke="#2e7d32" stroke-width="2"/>
+    <ellipse cx="585" cy="92" rx="24" ry="18" fill="none" stroke="#2e7d32" stroke-width="2"/>
+    <text x="552" y="145" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#1d1d1f">CO? gas</text>
+  </g>
+  <!-- Arrow 2 -->
+  <path d="M615 110 L675 110" stroke="#1d1d1f" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <!-- Foam eruption (simple volcano + foam) -->
+  <g>
+    <!-- Volcano shape -->
+    <path d="M720 380 L740 220 L760 220 L780 380 Z" fill="url(#volcanoGrad)" stroke="#1d1d1f" stroke-width="1.5"/>
+    <!-- Foam overflowing -->
+    <ellipse cx="750" cy="200" rx="45" ry="25" fill="url(#foamGrad)" stroke="#9e9e9e" stroke-width="1"/>
+    <ellipse cx="750" cy="185" rx="35" ry="18" fill="url(#foamGrad)" stroke="#9e9e9e" stroke-width="1"/>
+    <text x="750" y="415" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#424245">Foam eruption</text>
+  </g>
+  <!-- Equation (secondary, below) -->
+  <text x="400" y="260" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#424245">NaHCO&#8323; + CH&#8323;COOH &#8594; CO&#8322; + H&#8322;O + sodium acetate</text>
+  <!-- One-line takeaway -->
+  <text x="400" y="295" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="500" fill="#1d1d1f">The gas needs space ? ?  ?so it pushes up and out.</text>
+</svg>

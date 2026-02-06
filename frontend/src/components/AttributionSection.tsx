@@ -31,10 +31,14 @@ export function AttributionSection({
               ) : (
                 ` — ${img.license.attributionName}`
               ))}
-            {' · '}
-            <a href={img.license.sourceUrl} target="_blank" rel="noopener noreferrer">
-              Source
-            </a>
+            {img.license.sourceUrl && (
+              <>
+                {' · '}
+                <a href={img.license.sourceUrl} target="_blank" rel="noopener noreferrer">
+                  Source
+                </a>
+              </>
+            )}
           </li>
         ))}
       </ul>

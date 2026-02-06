@@ -1,0 +1,59 @@
+{
+  "figure": "Nikola Tesla",
+  "lifespan": "1856-1943",
+  "slug": "nikola-tesla",
+  "quickFacts": {
+    "born": "Smiljan, Austrian Empire (modern Croatia), 1856",
+    "died": "New York City, USA, 1943",
+    "majorContributions": [
+      "Alternating Current (AC)",
+      "Tesla coil",
+      "Radio (disputed vs Marconi)",
+      "Induction motor",
+      "Wireless transmission concepts"
+    ],
+    "knownFor": "Visionary inventions, eccentric genius, long-term influence on modern electrical engineering"
+  },
+  "sections": [
+    {
+      "id": "hero",
+      "title": "Portrait",
+      "role": "hero",
+      "keywords": ["Nikola Tesla portrait", "Tesla inventor"],
+      "conceptKeywords": ["tesla", "nikola", "portrait", "inventor"]
+    },
+    {
+      "id": "early-life",
+      "title": "Early Life & Influences",
+      "content": "Tesla showed early signs of genius, fascinated by electricity and machines.",
+      "keywords": ["Nikola Tesla birthplace", "Smiljan Tesla", "Tesla childhood"],
+      "conceptKeywords": ["tesla", "smiljan", "birthplace", "croatia"]
+    },
+    {
+      "id": "inventions-ac",
+      "title": "Alternating Current (AC)",
+      "content": "Tesla's AC motor revolutionized power transmission.",
+      "keywords": ["Tesla AC motor", "alternating current diagram", "Tesla induction motor"],
+      "conceptKeywords": ["AC", "motor", "alternating", "tesla"]
+    },
+    {
+      "id": "inventions-tesla-coil",
+      "title": "Tesla Coil",
+      "content": "The Tesla Coil demonstrated high-voltage, high-frequency electricity.",
+      "keywords": ["Tesla coil", "Tesla coil experiment", "high voltage Tesla"],
+      "conceptKeywords": ["tesla coil", "coil", "high voltage"]
+    },
+    {
+      "id": "legacy",
+      "title": "Legacy & Modern Influence",
+      "content": "Tesla's work underpins much of modern electrical engineering.",
+      "keywords": ["AC power grid", "electricity transmission", "power lines"],
+      "conceptKeywords": ["power", "grid", "electricity", "transmission"]
+    }
+  ],
+  "sources": [
+    { "title": "Nikola Tesla - Encyclopedia Britannica", "url": "https://www.britannica.com/biography/Nikola-Tesla", "license": "CC BY-SA" },
+    { "title": "Tesla Society Archives", "url": "https://www.teslasociety.com/", "license": "Public Domain" }
+  ],
+  "triviaTags": ["AC", "Tesla Coil", "Wireless Power", "Inventor", "Eccentric Genius"]
+}

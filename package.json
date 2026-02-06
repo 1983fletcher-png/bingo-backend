@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "smoke:observances": "node scripts/smoke-observances.js"
+    "smoke:observances": "node scripts/smoke-observances.js",
+    "ingest:tesla": "node scripts/ingest-tesla-biography.js",
+    "ingest:figure": "node scripts/ingest-figure-dynamic.js"
   },
   "engines": {
     "node": ">=18"

@@ -65,6 +65,127 @@
       }
     ],
     "gallery": [],
+    "diagram": [
+      {
+        "id": "baking-soda-volcano-diagram-reaction",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "/diagrams/baking-soda-volcano-reaction.svg",
+          "md": "/diagrams/baking-soda-volcano-reaction.svg",
+          "sm": "/diagrams/baking-soda-volcano-reaction.svg"
+        },
+        "alt": "Diagram: vinegar (acid) and baking soda (base) react to make CO₂ gas, which causes the foamy eruption",
+        "caption": "The reaction — acid + base → CO₂ gas → foam.",
+        "usage": { "role": "diagram", "priority": 0 },
+        "license": { "type": "public-domain", "source": "Playroom (original)", "sourceUrl": "" },
+        "dimensions": { "width": 800, "height": 420 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      },
+      {
+        "id": "baking-soda-volcano-diagram-pressure",
+        "volcanoSlug": "baking-soda-volcano",
+        "src": {
+          "lg": "/diagrams/baking-soda-volcano-pressure.svg",
+          "md": "/diagrams/baking-soda-volcano-pressure.svg",
+          "sm": "/diagrams/baking-soda-volcano-pressure.svg"
+        },
+        "alt": "Diagram: CO₂ gas forms in the mixture, takes more space than liquid, pressure builds and pushes foam upward",
+        "caption": "Gas needs more space — pressure builds and escapes up.",
+        "usage": { "role": "diagram", "priority": 1 },
+        "license": { "type": "public-domain", "source": "Playroom (original)", "sourceUrl": "" },
+        "dimensions": { "width": 800, "height": 380 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      }
+    ]
+  },
+  "time-travel": {
+    "hero": [
+      {
+        "id": "time-travel-hero-nasa-relativity",
+        "volcanoSlug": "time-travel",
+        "src": {
+          "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg",
+          "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg",
+          "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg"
+        },
+        "alt": "NASA visualization of general relativity: camera approaching a black hole event horizon",
+        "caption": "Real physics: general relativity and spacetime. Time behaves strangely near extreme gravity.",
+        "usage": { "role": "hero", "priority": 0 },
+        "license": { "type": "public-domain", "source": "NASA Scientific Visualization Studio", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" },
+        "dimensions": { "width": 1920, "height": 1080 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      }
+    ],
+    "section": [
+      {
+        "id": "time-travel-section-nasa-science",
+        "volcanoSlug": "time-travel",
+        "src": {
+          "lg": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg",
+          "md": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg",
+          "sm": "https://svs.gsfc.nasa.gov/vis/a010000/a014500/a014576/14576_BHPlunge_Explain_Still.jpg"
+        },
+        "alt": "NASA general relativity visualization — spacetime and time dilation",
+        "caption": "Science says time can stretch and bend. Going backward is another story.",
+        "usage": { "role": "section", "priority": 0 },
+        "license": { "type": "public-domain", "source": "NASA SVS", "sourceUrl": "https://svs.gsfc.nasa.gov/14576" },
+        "dimensions": { "width": 1920, "height": 1080 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      },
+      {
+        "id": "time-travel-section-delorean",
+        "volcanoSlug": "time-travel",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/960px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg/640px-Back_To_the_Future_Part_III_DeLorean_-_5959689611_%28cropped%29.jpg"
+        },
+        "alt": "DeLorean time machine from Back to the Future Part III at Comic-Con",
+        "caption": "The DeLorean — the time machine that became a cultural icon.",
+        "usage": { "role": "section", "priority": 1 },
+        "license": { "type": "cc-by", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Back_To_the_Future_Part_III_DeLorean_-_5959689611_(cropped).jpg", "attribution": "Ewen Roberts", "attributionName": "Ewen Roberts", "attributionUrl": "https://www.flickr.com/photos/donabelandewen/5959689611/" },
+        "dimensions": { "width": 1474, "height": 1063 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      },
+      {
+        "id": "time-travel-section-tesla",
+        "volcanoSlug": "time-travel",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/2/20/N.Tesla.JPG",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/640px-N.Tesla.JPG",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/330px-N.Tesla.JPG"
+        },
+        "alt": "Nikola Tesla (the inventor), circa 1896, age 40",
+        "caption": "Nikola Tesla — the inventor, not the car company — whose ideas still fuel 'what if' stories.",
+        "usage": { "role": "section", "priority": 2 },
+        "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:N.Tesla.JPG" },
+        "dimensions": { "width": 505, "height": 650 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      }
+    ],
+    "gallery": [],
+    "diagram": []
+  },
+  "nikola-tesla": {
+    "hero": [
+      {
+        "id": "nikola-tesla-hero-portrait",
+        "volcanoSlug": "nikola-tesla",
+        "src": {
+          "lg": "https://upload.wikimedia.org/wikipedia/commons/2/20/N.Tesla.JPG",
+          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/640px-N.Tesla.JPG",
+          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/N.Tesla.JPG/330px-N.Tesla.JPG"
+        },
+        "alt": "Nikola Tesla (the inventor), circa 1896, age 40",
+        "caption": "Nikola Tesla — the man who electrified the world.",
+        "usage": { "role": "hero", "priority": 0 },
+        "license": { "type": "public-domain", "source": "Wikimedia Commons", "sourceUrl": "https://commons.wikimedia.org/wiki/File:N.Tesla.JPG" },
+        "dimensions": { "width": 505, "height": 650 },
+        "createdAt": "2026-02-01T00:00:00.000Z"
+      }
+    ],
+    "section": [],
+    "gallery": [],
     "diagram": []
   }
 }

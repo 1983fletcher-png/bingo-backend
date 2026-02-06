@@ -1,0 +1,168 @@
+{
+  "section": "Time Travel",
+  "heroImage": "R2_URL_TO_WORMHOLE_IMAGE",
+  "intro": {
+    "text": "Time travel isn't just science fiction—it's a doorway into imagination, storytelling, and the 'what ifs' of human curiosity. From literature to film, music to comics, people have been fascinated by moving through time, bending cause and effect, and exploring parallel possibilities. Here's your wormhole: dive in, and discover the history, stories, and culture of time travel.",
+    "imageSlots": ["R2_URL_INTRO_IMAGE_1", "R2_URL_INTRO_IMAGE_2"]
+  },
+  "categories": [
+    {
+      "id": "film",
+      "title": "Time Travel in Film",
+      "description": "Movies have popularized time travel like nothing else. Here's a curated list of classics, cult hits, and must-see adventures.",
+      "entries": [
+        {
+          "title": "Back to the Future (1985)",
+          "description": "Marty McFly and Doc Brown travel through time in a DeLorean. Introduces cultural awareness of cause and effect and paradoxes like the 'grandfather paradox'.",
+          "themes": ["Butterfly Effect", "Causality", "Family Paradox"],
+          "imageSlots": ["R2_URL_BTTF_IMAGE"],
+          "sourceLinks": ["https://www.imdb.com/title/tt0088763/"]
+        },
+        {
+          "title": "The Time Machine (1960, 2002)",
+          "description": "H.G. Wells' vision brought to screen. Explores future societies, evolution, and human curiosity about our destiny.",
+          "themes": ["Speculative Futures", "Social Commentary", "Chronology"],
+          "imageSlots": ["R2_URL_TIMEMACHINE_IMAGE"],
+          "sourceLinks": ["https://www.imdb.com/title/tt0054387/"]
+        },
+        {
+          "title": "Looper (2012)",
+          "description": "A futuristic thriller where assassins kill targets sent from the future. Explores personal identity, destiny, and moral dilemmas.",
+          "themes": ["Predestination", "Temporal Paradoxes", "Ethics"],
+          "imageSlots": ["R2_URL_LOOPER_IMAGE"],
+          "sourceLinks": ["https://www.imdb.com/title/tt1276104/"]
+        },
+        {
+          "title": "Edge of Tomorrow (2014)",
+          "description": "Sci-fi action with a Groundhog Day loop twist. Highlights the utility of repeating events to perfect outcomes and strategic learning.",
+          "themes": ["Time Loops", "Cause and Effect", "Learning from Failure"],
+          "imageSlots": ["R2_URL_EDGE_OF_TOMORROW_IMAGE"],
+          "sourceLinks": ["https://www.imdb.com/title/tt1631867/"]
+        }
+      ]
+    },
+    {
+      "id": "tv",
+      "title": "Time Travel in Television",
+      "description": "Series have explored time travel in episodic and serial formats, often combining scientific and emotional storytelling.",
+      "entries": [
+        {
+          "title": "Doctor Who (1963–present)",
+          "description": "The quintessential time-travel TV show. Explores multiple timelines, alien civilizations, and moral dilemmas across centuries.",
+          "themes": ["Temporal Ethics", "Historical Impact", "Alien Civilizations"],
+          "imageSlots": ["R2_URL_DOCTORWHO_IMAGE"],
+          "sourceLinks": ["https://www.bbc.co.uk/programmes/b006q2x0"]
+        },
+        {
+          "title": "Dark (2017–2020)",
+          "description": "German series exploring time loops and family entanglements. Brilliantly intricate, it demonstrates causal connections across generations.",
+          "themes": ["Causality Loops", "Family Paradox", "Temporal Entanglement"],
+          "imageSlots": ["R2_URL_DARK_IMAGE"],
+          "sourceLinks": ["https://www.imdb.com/title/tt5753856/"]
+        },
+        {
+          "title": "The Umbrella Academy",
+          "description": "Incorporates time travel into superhero dynamics, showing how attempts to change the past have unintended consequences.",
+          "themes": ["Superpowers + Time Travel", "Butterfly Effect", "Multiverse"],
+          "imageSlots": ["R2_URL_UMBRELLA_IMAGE"],
+          "sourceLinks": ["https://www.imdb.com/title/tt1312171/"]
+        }
+      ]
+    },
+    {
+      "id": "literature",
+      "title": "Time Travel in Literature",
+      "description": "Writers imagined time travel long before movies made it mainstream.",
+      "entries": [
+        {
+          "title": "The Time Machine – H.G. Wells (1895)",
+          "description": "Pioneer work of science fiction exploring human evolution and societal predictions. A must-read for understanding time travel as a thought experiment.",
+          "themes": ["Speculative Science", "Social Critique", "Chronology"],
+          "imageSlots": ["R2_URL_WELLS_IMAGE"],
+          "sourceLinks": ["https://www.gutenberg.org/ebooks/35"]
+        },
+        {
+          "title": "A Connecticut Yankee in King Arthur's Court – Mark Twain (1889)",
+          "description": "Introduces humor and satire into time travel, exploring technological displacement and historical anachronisms.",
+          "themes": ["Humor", "Anachronisms", "Social Satire"],
+          "imageSlots": ["R2_URL_TWAIN_IMAGE"],
+          "sourceLinks": ["https://www.gutenberg.org/ebooks/86"]
+        },
+        {
+          "title": "11/22/63 – Stephen King (2011)",
+          "description": "A modern thriller exploring assassination prevention, alternate history, and personal consequences of altering events.",
+          "themes": ["Alternate History", "Moral Dilemmas", "Cause and Effect"],
+          "imageSlots": ["R2_URL_KING_IMAGE"],
+          "sourceLinks": ["https://www.stephenking.com/library/novel/112263.html"]
+        }
+      ]
+    },
+    {
+      "id": "comics",
+      "title": "Time Travel in Comics & Graphic Novels",
+      "description": "From superheroes to alternate universes, time travel is a favorite trope for comic creators.",
+      "entries": [
+        {
+          "title": "X-Men: Days of Future Past",
+          "description": "Classic Marvel storyline where Wolverine's consciousness is sent back to prevent a dystopian future.",
+          "themes": ["Time Loops", "Alternate Futures", "Heroic Intervention"],
+          "imageSlots": ["R2_URL_XMEN_IMAGE"],
+          "sourceLinks": ["https://www.marvel.com/comics/series/14986/x-men_days_of_future_past_1981_-_1982"]
+        },
+        {
+          "title": "DC: Flashpoint",
+          "description": "The Flash alters the past and accidentally creates an alternate timeline, demonstrating paradoxes and ripple effects.",
+          "themes": ["Alternate Timeline", "Butterfly Effect", "Consequences"],
+          "imageSlots": ["R2_URL_FLASHPOINT_IMAGE"],
+          "sourceLinks": ["https://www.dccomics.com/graphic-novels/flashpoint"]
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "title": "Time Travel in Music & Songs",
+      "description": "Musicians have explored the theme of time travel, nostalgia, and alternate realities through lyrics and storytelling.",
+      "entries": [
+        {
+          "title": "\"Back to the Future\" – Huey Lewis and the News",
+          "description": "The iconic theme song of the Back to the Future franchise, blending narrative with pop culture.",
+          "themes": ["Cultural Icon", "Film Theme"],
+          "imageSlots": ["R2_URL_HUEY_IMAGE"],
+          "sourceLinks": ["https://en.wikipedia.org/wiki/Huey_Lewis_and_the_News"]
+        },
+        {
+          "title": "\"Time\" – Pink Floyd",
+          "description": "Explores philosophical concepts of time passing and human mortality.",
+          "themes": ["Philosophical Reflection", "Passing of Time"],
+          "imageSlots": ["R2_URL_PINKFLOYD_IMAGE"],
+          "sourceLinks": ["https://en.wikipedia.org/wiki/Time_(Pink_Floyd_song)"]
+        }
+      ]
+    },
+    {
+      "id": "fun-facts",
+      "title": "Time Travel Fun & Mind-Bending Facts",
+      "description": "Add some curiosity-sparking tidbits for trivia and interactive play:",
+      "entries": [
+        {
+          "fact": "Einstein's theories of relativity laid the foundation for modern scientific thinking about time dilation.",
+          "source": "https://www.nobelprize.org/prizes/physics/1921/einstein/facts/"
+        },
+        {
+          "fact": "The grandfather paradox asks: what happens if you prevent your own grandparents from meeting?",
+          "source": "https://plato.stanford.edu/entries/time-travel-paradox/"
+        },
+        {
+          "fact": "Time loops in storytelling often represent lessons learned and the opportunity to correct mistakes, a favorite in films and video games.",
+          "source": "https://www.theverge.com/2020/6/15/21291771/dark-time-travel-tv-show-review-netflix"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "tags": ["Time Travel", "Sci-Fi", "Movies", "TV", "Comics", "Music", "Literature", "Paradox", "Alternate History"],
+    "pageId": "time_travel_wormhole",
+    "created": "2026-02-06",
+    "author": "Learn & Grow Team"
+  }
+}

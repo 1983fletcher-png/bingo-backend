@@ -8,11 +8,93 @@ import type {
   LearningSection,
   ContentBlock,
   LearningImageAsset,
+  ImageSlot,
+  ImageSourceType,
 } from '../types/learningEngine';
 import type { VolcanoImage } from '../types/volcanoImages';
 import { VolcanoImage as VolcanoImageComponent } from './VolcanoImage';
 import { AttributionSection } from './AttributionSection';
 import '../styles/learn.css';
+
+/** Map registry license type to learning engine source type. */
+function toSourceType(licenseType: string): ImageSourceType {
+  if (licenseType === 'public-domain' || licenseType === 'cc0') return 'public_domain';
+  if (licenseType === 'cc-by') return 'cc_by';
+  return 'public_domain';
+}
+
+/** Convert one VolcanoImage to LearningImageAsset for a given slot. */
+function volcanoToLearningAsset(
+  img: VolcanoImage,
+  slot: ImageSlot,
+  learningPageId: string
+): LearningImageAsset {
+  const url = img.src?.lg ?? img.r2?.publicUrl ?? '';
+  const licenseType = img.license?.type ?? 'public-domain';
+  const attributionRequired = licenseType !== 'public-domain';
+  return {
+    id: img.id,
+    url,
+    thumbnailUrl: img.src?.sm ?? url,
+    altText: img.alt,
+    sourceType: toSourceType(licenseType),
+    sourceName: img.license?.source ?? 'Unknown',
+    sourceUrl: img.license?.sourceUrl ?? '',
+    license: attributionRequired ? 'CC BY 4.0' : 'Public Domain',
+    attributionRequired,
+    tags: [],
+    concepts: [],
+    verified: true,
+    learningPageId,
+    sectionId: slot.sectionId,
+    slotId: slot.slotId,
+    role: slot.role,
+  };
+}
+
+/** Slots that accept "section" registry images (context, reference, step). */
+const SECTION_SLOT_ROLES = ['context', 'reference', 'step'];
+/** Slots that accept "gallery" registry images. */
+const GALLERY_SLOT_ROLES = ['step', 'comparison'];
+
+/** Build slotId → assets from volcano registry; assign by role so diagrams go to diagram slots, etc. */
+function buildImagesBySlotFromVolcano(
+  page: LearningPage,
+  volcanoImages: VolcanoImage[]
+): Record<string, LearningImageAsset[]> {
+  const allSlots = page.sections.flatMap((s) => s.imageSlots ?? []).filter((slot) => slot.role !== 'hero');
+  const diagramSlots = allSlots.filter((s) => s.role === 'diagram');
+  const sectionSlots = allSlots.filter((s) => SECTION_SLOT_ROLES.includes(s.role));
+  const gallerySlots = allSlots.filter((s) => GALLERY_SLOT_ROLES.includes(s.role));
+
+  const sectionImages = volcanoImages.filter((img) => img.usage.role === 'section');
+  const diagramImages = volcanoImages.filter((img) => img.usage.role === 'diagram');
+  const galleryImages = volcanoImages.filter((img) => img.usage.role === 'gallery');
+
+  const bySlot: Record<string, LearningImageAsset[]> = {};
+  sectionImages.forEach((img, i) => {
+    const slot = sectionSlots[i];
+    if (!slot) return;
+    const list = bySlot[slot.slotId] ?? [];
+    list.push(volcanoToLearningAsset(img, slot, page.id));
+    bySlot[slot.slotId] = list;
+  });
+  diagramImages.forEach((img, i) => {
+    const slot = diagramSlots[i];
+    if (!slot) return;
+    const list = bySlot[slot.slotId] ?? [];
+    list.push(volcanoToLearningAsset(img, slot, page.id));
+    bySlot[slot.slotId] = list;
+  });
+  galleryImages.forEach((img, i) => {
+    const slot = gallerySlots[i];
+    if (!slot) return;
+    const list = bySlot[slot.slotId] ?? [];
+    list.push(volcanoToLearningAsset(img, slot, page.id));
+    bySlot[slot.slotId] = list;
+  });
+  return bySlot;
+}
 
 function renderContentBlock(block: ContentBlock, index: number) {
   const key = `block-${index}`;
@@ -119,6 +201,10 @@ export default function LearningPageView({
   volcanoImages = [],
 }: LearningPageViewProps) {
   const heroImages = volcanoImages.filter((img) => img.usage.role === 'hero');
+  const resolvedImagesBySlotId: Record<string, LearningImageAsset[]> = {
+    ...buildImagesBySlotFromVolcano(page, volcanoImages),
+    ...imagesBySlotId,
+  };
 
   return (
     <article className="learn-page learn-page-view">
@@ -135,7 +221,7 @@ export default function LearningPageView({
               <VolcanoImageComponent
                 key={img.id}
                 image={img}
-                sizes="(max-width: 768px) 100vw, 80vw"
+                sizes="(max-width: 768px) 100vw, 560px"
                 className="learn-page-view__hero-img"
               />
             ))}
@@ -144,7 +230,7 @@ export default function LearningPageView({
 
       <div className="learn-page-view__sections">
         {page.sections.map((section) => (
-          <SectionContent key={section.id} section={section} imagesBySlotId={imagesBySlotId} />
+          <SectionContent key={section.id} section={section} imagesBySlotId={resolvedImagesBySlotId} />
         ))}
       </div>
 

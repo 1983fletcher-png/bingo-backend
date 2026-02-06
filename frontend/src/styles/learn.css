@@ -277,13 +277,13 @@
 .learn-page-view__sections {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 32px;
 }
 
 .learn-page-view__section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .learn-page-view__section-title {
@@ -343,8 +343,12 @@
 .learn-page-view__slot-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.learn-page-view__slot {
+  max-width: 560px;
 }
 
 .learn-page-view__slot-placeholder {
@@ -361,23 +365,43 @@
 }
 
 .learn-page-view__figure {
-  margin: 16px 0 0;
+  margin: 0;
   padding: 0;
 }
 
 .learn-page-view__img {
+  display: block;
   width: 100%;
   max-width: 100%;
+  max-height: 340px;
   height: auto;
-  border-radius: 8px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Diagrams: show full image (contain), don’t crop — one clear idea per visual */
+.learn-page-view__slot[data-role="diagram"] .learn-page-view__img {
+  max-height: 420px;
+  object-fit: contain;
+  background: var(--surface);
 }
 
 .learn-page-view__caption {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 0.875rem;
   color: var(--text-secondary);
-  line-height: 1.4;
+  line-height: 1.45;
+  padding-right: 4px;
+}
+
+.learn-page-view__hero .volcano-image__caption {
+  margin-top: 10px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
 }
 
 .learn-page-view__caption a {
@@ -389,21 +413,28 @@
   text-decoration: underline;
 }
 
-/* Hero block (registry images) */
+/* Hero block (registry images) — storyboard-sized, not full bleed */
 .learn-page-view__hero {
   margin-bottom: 28px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .learn-page-view__hero-img {
+  margin: 0;
   width: 100%;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  border: 1px solid var(--border);
 }
 
-.learn-page-view__hero-img figure {
-  margin: 0;
+.learn-page-view__hero-img img {
+  display: block;
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .volcano-image__caption {
@@ -423,9 +454,9 @@
 }
 
 /* Image credits (legal requirement) */
-.attribution {
-  margin-top: 40px;
-  padding-top: 24px;
+.learn-page-view__attribution.attribution {
+  margin-top: 48px;
+  padding-top: 28px;
   border-top: 1px solid var(--border);
 }
 
@@ -451,4 +482,178 @@
 
 .attribution a:hover {
   text-decoration: underline;
+}
+
+/* Time Travel Wormhole — category catalog */
+.wormhole .learn-page__back {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.wormhole .learn-page__back:hover {
+  color: var(--accent);
+}
+
+.wormhole__hero {
+  max-width: 560px;
+  margin: 0 auto 28px;
+}
+
+.wormhole__hero-img {
+  display: block;
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.wormhole__intro {
+  margin-bottom: 32px;
+}
+
+.wormhole__intro-text {
+  margin: 0 0 16px;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.wormhole__intro-images {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.wormhole__intro-img {
+  max-width: 280px;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.wormhole__categories {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.wormhole__category {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wormhole__category-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--border);
+}
+
+.wormhole__category-desc {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.wormhole__entries {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.wormhole__entry {
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.wormhole__entry-title {
+  margin: 0 0 8px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.wormhole__entry-desc {
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.wormhole__themes {
+  margin: 0 0 10px;
+  padding-left: 20px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.wormhole__themes li {
+  margin-bottom: 2px;
+}
+
+.wormhole__entry-images {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.wormhole__entry-img {
+  max-width: 240px;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.wormhole__sources {
+  margin-top: 10px;
+}
+
+.wormhole__source-link {
+  font-size: 0.875rem;
+  color: var(--accent);
+  text-decoration: none;
+  margin-right: 12px;
+}
+
+.wormhole__source-link:hover {
+  text-decoration: underline;
+}
+
+.wormhole__entry--fact {
+  border-left: 4px solid var(--accent);
+}
+
+.wormhole__entry-fact {
+  margin: 0 0 6px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.wormhole__footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.wormhole__tags-label {
+  font-weight: 600;
+  color: var(--text-secondary);
 }
