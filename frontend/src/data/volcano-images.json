@@ -99,28 +99,6 @@
     ],
     "gallery": [
       {
-        "id": "baking-soda-volcano-gallery-step",
-        "volcanoSlug": "baking-soda-volcano",
-        "src": {
-          "lg": "https://upload.wikimedia.org/wikipedia/commons/4/43/Erupting_volcano_fountain_%283816196422%29.jpg",
-          "md": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Erupting_volcano_fountain_%283816196422%29.jpg/960px-Erupting_volcano_fountain_%283816196422%29.jpg",
-          "sm": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Erupting_volcano_fountain_%283816196422%29.jpg/480px-Erupting_volcano_fountain_%283816196422%29.jpg"
-        },
-        "alt": "Erupting volcano-style fountain — water and pressure in action",
-        "caption": "An erupting fountain — another way to see pressure and flow, like your foam eruption.",
-        "usage": { "role": "gallery", "priority": 0 },
-        "license": {
-          "type": "cc-by",
-          "source": "Wikimedia Commons",
-          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Erupting_volcano_fountain_(3816196422).jpg",
-          "attribution": "CC BY 2.0",
-          "attributionName": "Brian Snelson (Flickr, exfordy)",
-          "attributionUrl": "https://www.flickr.com/photos/exfordy/3816196422/"
-        },
-        "dimensions": { "width": 2106, "height": 3336 },
-        "createdAt": "2026-02-06T00:00:00.000Z"
-      },
-      {
         "id": "baking-soda-volcano-comparison-real",
         "volcanoSlug": "baking-soda-volcano",
         "r2": {

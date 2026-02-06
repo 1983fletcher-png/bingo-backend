@@ -49,13 +49,14 @@ function volcanoToLearningAsset(
     sectionId: slot.sectionId,
     slotId: slot.slotId,
     role: slot.role,
+    caption: img.caption,
   };
 }
 
 /** Slots that accept "section" registry images (context, reference, step). */
 const SECTION_SLOT_ROLES = ['context', 'reference', 'step'];
-/** Slots that accept "gallery" registry images. */
-const GALLERY_SLOT_ROLES = ['step', 'comparison'];
+/** Slots that accept "gallery" registry images. Gold standard: gallery = comparison only (real-world analogies); step images come from section only so Do/Observe shows true process_step. */
+const GALLERY_SLOT_ROLES = ['comparison'];
 
 /** Build slotId → assets from volcano registry; assign by role so diagrams go to diagram slots, etc. */
 function buildImagesBySlotFromVolcano(
@@ -158,15 +159,14 @@ function SectionContent({
                     <figure key={img.id} className="learn-page-view__figure">
                       <img src={img.url} alt={img.altText} className="learn-page-view__img" />
                       <figcaption className="learn-page-view__caption">
-                        {img.attributionRequired ? (
-                          <span>
-                            {img.altText} — {img.sourceName},{' '}
+                        {img.caption ?? img.altText}
+                        {img.attributionRequired && (
+                          <span className="learn-page-view__caption-credit">
+                            {' '}— {img.sourceName},{' '}
                             <a href={img.sourceUrl} target="_blank" rel="noopener noreferrer">
                               source
                             </a>
                           </span>
-                        ) : (
-                          img.altText
                         )}
                       </figcaption>
                     </figure>

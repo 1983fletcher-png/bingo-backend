@@ -133,6 +133,8 @@ export interface LearningImageAsset extends ImageAsset {
   slotId: string;
   role: ImageSlotRole;
   verified: true;
+  /** Gold standard: caption explaining why this image exists (learning support). */
+  caption?: string;
 }
 
 /** Validate that an image's slot attachment matches a defined slot. Rejects free-floating images. */
