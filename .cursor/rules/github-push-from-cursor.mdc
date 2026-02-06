@@ -5,8 +5,24 @@ alwaysApply: true
 
 # Push from Cursor: use the token
 
+## Master notation (GitHub auth error → use token from .env)
+
+**When you get a GitHub error** (e.g. `fatal: could not read Username for 'https://github.com': Device not configured` or any push/auth failure):
+
+1. **Token location:** This repo’s **`.env`** file at the project root. Variable name: **`GITHUB_TOKEN`**.
+2. **What to do:** Do **not** retry plain `git push`. Source the token and run the token-based push script:
+   - From repo root: `set -a && source .env && set +a && ./scripts/git-push-with-token.sh`
+   - Or: `export GITHUB_TOKEN=$(grep ^GITHUB_TOKEN= .env | cut -d= -f2-) && ./scripts/git-push-with-token.sh`
+3. The script reads **GITHUB_TOKEN** from the environment (or .env) and pushes via `https://TOKEN@github.com/...`, so the push succeeds without interactive login.
+
+**Remember:** The token lives in **.env**; use **scripts/git-push-with-token.sh** (with token in env) whenever a push fails due to GitHub auth.
+
+---
+
 **Failure when using plain push:**  
 `fatal: could not read Username for 'https://github.com': Device not configured`
+
+**Note for the agent:** When you see this (or similar GitHub auth/credential errors), **revert to the repo’s .env file** where **GITHUB_TOKEN** lives, and use the token-based push flow below—do not keep trying a plain `git push`.
 
 Git tries to prompt for a username; in Cursor there is no interactive terminal, so the push fails. **Fix:** use the **GitHub token** so the push goes directly to GitHub (no username prompt).
 

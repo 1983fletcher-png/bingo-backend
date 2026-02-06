@@ -1,0 +1,40 @@
+---
+description: Image-first gold standard for Learn & Grow — legal sourcing, slots, layers. Apply before writing or rendering educational content.
+alwaysApply: true
+---
+
+# Image-First Gold Standard
+
+Educational content must meet strict legal, scientific, and quality standards. **Before writing or rendering content, complete image ingestion successfully.**
+
+## Image sourcing rules
+
+- Use **only** public domain, CC0, or explicitly open educational sources.
+- **Prioritize**: government and academic sources (NASA, USGS, NOAA, Smithsonian, NPS, Wikimedia PD).
+- **Never** scrape Google Images, Pinterest, or unverified sites.
+
+## Image requirements
+
+- Every image must be **unique** (no duplicates or near-duplicates on the page).
+- Each image must include: **source name**, **source URL**, **license type**, **category**, and **subject tags**.
+- **Reject** images with watermarks, low resolution, or unclear licensing.
+
+## Image slot logic
+
+- Define **required image slots** based on topic depth:
+  - Minimum **3** slots per page.
+  - Typical **5–7** slots; expandable for deep topics.
+- If an image slot **cannot be filled legally**, retry alternate sources (e.g. different Wikimedia file, another PD/CC source).
+- If **still unresolved**, mark the page as **incomplete** and **stop generation** — do not ship with missing or unverified images.
+
+## Learning layers
+
+- Tag images for **early**, **intermediate**, and **advanced** learners where applicable.
+- Ensure visuals support **explanation clarity** at each level.
+
+## Do not
+
+- **Guess**, **reuse** (same image in multiple slots without intent), or **fabricate** images or sources.
+- Proceed with placeholder or unlicensed images.
+
+If requirements cannot be met, **request clarification** instead of proceeding.
