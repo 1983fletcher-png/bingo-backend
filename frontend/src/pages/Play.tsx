@@ -10,6 +10,81 @@ import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
 import '../styles/join.css';
 
+/** Trivia player view: current question, answer input, then correct answer when revealed. Synced with display. */
+function TriviaPlayerView({
+  eventConfig,
+  gameTitle,
+  currentIndex,
+  totalQuestions,
+  currentQuestion,
+  correctAnswer,
+  revealed,
+  socket,
+  code,
+}: {
+  eventConfig: { gameTitle?: string; venueName?: string; logoUrl?: string | null; [key: string]: unknown };
+  gameTitle: string;
+  currentIndex: number;
+  totalQuestions: number;
+  currentQuestion?: string;
+  correctAnswer?: string;
+  revealed: boolean;
+  socket: Socket | null;
+  code: string;
+}) {
+  const [myAnswer, setMyAnswer] = useState('');
+  useEffect(() => {
+    setMyAnswer('');
+  }, [currentIndex]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (socket && code.trim() && myAnswer.trim()) {
+      socket.emit('player:trivia-answer', { code: code.trim().toUpperCase(), questionIndex: currentIndex, answer: myAnswer.trim() });
+    }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
+      <GameViewHeader config={eventConfig} gameTypeLabel="Trivia" />
+      <div style={{ padding: 24, flex: 1 }}>
+        <h2 style={{ margin: '0 0 4px', fontSize: 18, color: 'var(--text-muted)' }}>{gameTitle}</h2>
+        <p style={{ margin: '0 0 16px', fontSize: 14, color: 'var(--text-muted)' }}>
+          Question {currentIndex + 1} of {totalQuestions || 1}
+        </p>
+        {currentQuestion ? (
+          <>
+            <p style={{ margin: '0 0 20px', fontSize: 20, fontWeight: 600, lineHeight: 1.4 }}>{currentQuestion}</p>
+            {!revealed ? (
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="Your answer"
+                  value={myAnswer}
+                  onChange={(e) => setMyAnswer(e.target.value)}
+                  className="join-page__input"
+                  style={{ marginBottom: 12, width: '100%', maxWidth: 400 }}
+                  autoComplete="off"
+                />
+                <button type="submit" className="join-page__btn" disabled={!myAnswer.trim() || !socket}>
+                  Submit answer
+                </button>
+              </form>
+            ) : (
+              <div style={{ padding: '16px 20px', background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>Correct answer</p>
+                <p style={{ margin: '8px 0 0', fontSize: 18, fontWeight: 600 }}>{correctAnswer ?? '—'}</p>
+              </div>
+            )}
+          </>
+        ) : (
+          <p style={{ margin: 0, color: 'var(--text-secondary)' }}>The game has started. Waiting for the next question…</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const PLAYROOM_JOIN_KEY = (c: string) => `playroom_join_${c.trim().toUpperCase()}`;
 
 interface JoinState {
@@ -43,6 +118,12 @@ interface JoinState {
   gameType?: string;
   freeSpace?: boolean;
   winCondition?: string;
+  /** Trivia: current question index, questions list, and whether answer is revealed */
+  trivia?: {
+    currentIndex: number;
+    questions: { question: string; correctAnswer?: string }[];
+    revealed?: boolean;
+  };
 }
 
 export default function Play() {
@@ -115,6 +196,26 @@ export default function Play() {
       setJoinState((prev) => (prev ? { ...prev, revealed: rev } : null));
     });
 
+    s.on('game:trivia-state', (payload: { currentIndex?: number; questions?: { question: string; correctAnswer?: string }[]; revealed?: boolean }) => {
+      if (!payload || typeof payload !== 'object') return;
+      setJoinState((prev) => {
+        if (!prev) return null;
+        const trivia = {
+          currentIndex: payload.currentIndex ?? prev.trivia?.currentIndex ?? 0,
+          questions: payload.questions ?? prev.trivia?.questions ?? [],
+          revealed: payload.revealed ?? prev.trivia?.revealed,
+        };
+        return { ...prev, trivia };
+      });
+    });
+
+    s.on('game:trivia-reveal', (payload: { questionIndex?: number; correctAnswer?: string }) => {
+      setJoinState((prev) => {
+        if (!prev?.trivia) return prev;
+        return { ...prev, trivia: { ...prev.trivia, revealed: true } };
+      });
+    });
+
     return () => {
       s.off('join:ok');
       s.off('join:error');
@@ -124,6 +225,8 @@ export default function Play() {
       s.off('game:roll-call-leaderboard');
       s.off('game:songs-updated');
       s.off('game:revealed');
+      s.off('game:trivia-state');
+      s.off('game:trivia-reveal');
     };
   }, [code]);
 
@@ -292,18 +395,25 @@ export default function Play() {
     );
   }
 
-  // Trivia: show header with game type and answer prompt
+  // Trivia: show current question, answer input, and (when revealed) correct answer — synced with display
   if (joinState?.started && gameType === 'trivia') {
+    const trivia = joinState.trivia;
+    const questions = trivia?.questions ?? [];
+    const currentIndex = trivia?.currentIndex ?? 0;
+    const revealed = trivia?.revealed === true;
+    const currentQ = questions[currentIndex];
     return (
-      <>
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
-          <GameViewHeader config={joinState.eventConfig} gameTypeLabel="Trivia" />
-          <div style={{ padding: 24, flex: 1 }}>
-            <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>{joinState?.eventConfig?.gameTitle || 'Trivia'}</h2>
-            <p style={{ margin: 0, color: 'var(--text-secondary)' }}>The game has started. Answer on your phone.</p>
-          </div>
-        </div>
-      </>
+      <TriviaPlayerView
+        eventConfig={joinState.eventConfig}
+        gameTitle={joinState?.eventConfig?.gameTitle || 'Trivia'}
+        currentIndex={currentIndex}
+        totalQuestions={questions.length}
+        currentQuestion={currentQ?.question}
+        correctAnswer={currentQ?.correctAnswer}
+        revealed={revealed}
+        socket={socket}
+        code={code ?? ''}
+      />
     );
   }
 

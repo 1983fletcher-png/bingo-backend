@@ -73,6 +73,9 @@ export default function Host() {
   const [waitingRoomTheme, setWaitingRoomTheme] = useState<string>('default');
   const [createPending, setCreatePending] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [triviaCurrentIndex, setTriviaCurrentIndex] = useState(0);
+  const [triviaRevealed, setTriviaRevealed] = useState(false);
   const createTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prebuiltSongsRef = useRef<Song[] | null>(null);
   // Event & venue: full config, scrape, venue profiles
@@ -114,6 +117,7 @@ export default function Host() {
       createTimeoutRef.current = null;
       setCreatePending(false);
       setCreateError(null);
+      setGameStarted(false);
       setGame(payload);
       setHostMessage(payload.waitingRoom?.hostMessage || 'Starting soon…');
       setWaitingRoomTheme(payload.waitingRoom?.theme || 'default');
@@ -147,9 +151,15 @@ export default function Host() {
       }
     });
 
-    s.on('game:trivia-state', (payload: { questions?: TriviaQuestion[] }) => {
+    s.on('game:started', () => setGameStarted(true));
+
+    s.on('game:trivia-state', (payload: { questions?: TriviaQuestion[]; currentIndex?: number; revealed?: boolean }) => {
       if (Array.isArray(payload.questions)) setTriviaQuestions(payload.questions);
+      if (typeof payload.currentIndex === 'number') setTriviaCurrentIndex(payload.currentIndex);
+      if (typeof payload.revealed === 'boolean') setTriviaRevealed(payload.revealed);
     });
+
+    s.on('game:trivia-reveal', () => setTriviaRevealed(true));
 
     s.on('game:songs-updated', ({ songPool: pool }: { songPool: Song[] }) => {
       setSongPool(Array.isArray(pool) ? pool : []);
@@ -167,11 +177,13 @@ export default function Host() {
       s.off('connect');
       s.off('disconnect');
       s.off('game:created');
+      s.off('game:started');
       s.off('game:event-config-updated');
       s.off('game:waiting-room-updated');
       s.off('game:songs-updated');
       s.off('game:revealed');
       s.off('game:trivia-state');
+      s.off('game:trivia-reveal');
     };
   }, []);
 
@@ -772,16 +784,16 @@ export default function Host() {
             <hr className="host-room__left-divider" />
             <span className="host-room__link-label">Quick actions</span>
             <div className="host-room__link-group">
-              <a href={`/join/${game.code}`} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
-                Preview
+              <a href={`/join/${game.code}`} target="_blank" rel="noopener noreferrer" className="host-room__link-btn" title="Same experience as scanning the QR code — for testing or sharing to your phone">
+                Player view
               </a>
-              <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
-                Display
+              <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn" title="Open this on the TV or projector — shows QR and game content">
+                Display (TV)
               </a>
             </div>
-            <p className="host-room__display-hint">Open Display on your TV so the code and QR are visible to the room.</p>
+            <p className="host-room__display-hint">Players scan the QR or use the link above. Open <strong>Display (TV)</strong> on your projector so everyone sees the code and questions.</p>
             <div className="host-room__actions">
-              <button type="button" onClick={() => setGame(null)} className="host-room__btn-secondary">
+              <button type="button" onClick={() => { setGame(null); setGameStarted(false); }} className="host-room__btn-secondary">
                 End game
               </button>
               <Link to="/" className="host-room__back-link">← Back</Link>
@@ -852,6 +864,51 @@ export default function Host() {
                 )}
               </div>
             </section>
+
+            {gameStarted && game?.gameType === 'trivia' && (
+              <section className="host-room__when" aria-label="Trivia controls">
+                <h2 className="host-room__when-title">Trivia controls</h2>
+                <p className="host-room__when-hint">Show the question on the display, then reveal the answer when ready. Use Next question to advance.</p>
+                <div style={{ marginBottom: 16, padding: 16, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
+                  <p style={{ margin: '0 0 8px', fontSize: 13, color: 'var(--text-muted)' }}>
+                    Question {triviaCurrentIndex + 1} of {triviaQuestions.length || 1}
+                  </p>
+                  <p style={{ margin: 0, fontSize: 18, fontWeight: 600, lineHeight: 1.4 }}>
+                    {triviaQuestions[triviaCurrentIndex]?.question ?? '—'}
+                  </p>
+                  {triviaRevealed && triviaQuestions[triviaCurrentIndex]?.correctAnswer && (
+                    <p style={{ margin: '12px 0 0', paddingTop: 12, borderTop: '1px solid var(--border)', fontSize: 16, color: 'var(--accent)' }}>
+                      Answer: {triviaQuestions[triviaCurrentIndex].correctAnswer}
+                    </p>
+                  )}
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                  {!triviaRevealed ? (
+                    <button
+                      type="button"
+                      className="host-room__start-btn"
+                      onClick={() => socket?.emit('host:trivia-reveal', { code: game.code })}
+                      disabled={!socket?.connected || !game?.code}
+                    >
+                      Reveal answer
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="host-room__start-btn"
+                      onClick={() => {
+                        socket?.emit('host:trivia-next', { code: game.code });
+                        setTriviaRevealed(false);
+                      }}
+                      disabled={!socket?.connected || !game?.code}
+                      title={triviaQuestions.length > 0 && triviaCurrentIndex >= triviaQuestions.length - 1 ? 'This is the last question' : undefined}
+                    >
+                      Next question
+                    </button>
+                  )}
+                </div>
+              </section>
+            )}
 
             <details className="host-room__details">
               <summary className="host-room__details-summary">Event &amp; venue details</summary>
