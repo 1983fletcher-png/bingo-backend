@@ -12,7 +12,7 @@
     "scrape:site": "node scripts/scrape-site.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.983.0",
@@ -23,8 +23,5 @@
     "pdfjs-dist": "^4.10.38",
     "sharp": "^0.33.5",
     "socket.io": "^4.6.1"
-  },
-  "optionalDependencies": {
-    "puppeteer": "^24.15.0"
   }
 }

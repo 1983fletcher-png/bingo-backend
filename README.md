@@ -114,7 +114,7 @@ The frontend uses `VITE_SOCKET_URL` in production to connect to this backend. Wi
 
 - `GET /health` — Health check (e.g. for Railway/Render).
 - `GET /api/public-url` — Returns `PUBLIC_ORIGIN` if set.
-- `GET /api/scrape-site?url=...` — Scrapes a URL for logo/theme (optional).
+- `GET /api/scrape-site?url=...` — Scrapes a URL for logo/theme (optional). The CLI `npm run scrape:site <url>` uses Puppeteer; run `npm install puppeteer` once locally (Puppeteer is not installed on Railway).
 - **`POST /api/generate-songs`** — AI Music Bingo song list (75 songs, theme-aware). Body: `{ prompt?, familyFriendly?, count?, apiKey? }`. API key can also be sent as header `x-openai-api-key` or set as env `OPENAI_API_KEY`. Returns `{ songs: [{ artist, title }], raw }`.
 - **Menu & theming (Phases A–C):** `GET /api/parse-menu-from-url?url=...`, `POST /api/parse-menu-from-file` (body: `{ file, mimeType }` — accepts **PDF, plain text, HTML, CSV**; image OCR roadmap). Observances: `GET /api/observances/upcoming`, `GET /api/observances/calendar`. See **docs/PHASE-C-THEMING-AND-CALENDAR.md**, **docs/ACCEPT-ANYTHING-VISION.md**.
 

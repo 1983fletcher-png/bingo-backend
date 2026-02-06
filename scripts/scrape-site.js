@@ -7,8 +7,8 @@
  * replaces URLs with R2 public URLs (when R2_PUBLIC_BASE_URL is set).
  *
  * Requirements:
- *   - Node 18+
- *   - npm install puppeteer
+ *   - Node 20+
+ *   - Puppeteer (local only; not installed on Railway): run `npm install puppeteer` once, then `npm run scrape:site`
  *   - .env: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME,
  *     R2_PUBLIC_BASE_URL (see lib/r2.js / .env.example)
  *
