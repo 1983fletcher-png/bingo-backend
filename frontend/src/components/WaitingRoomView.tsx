@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import RollCallGame from './RollCallGame';
 import WaitingRoomTiltMaze from './WaitingRoomTiltMaze';
 import StretchyLogoFidget from './StretchyLogoFidget';
@@ -65,6 +66,7 @@ export default function WaitingRoomView({
   rollCallLeaderboard,
   onRollCallWin,
 }: WaitingRoomViewProps) {
+  const [gameKey, setGameKey] = useState(0);
   const themeName = waitingRoom.theme || 'default';
   const theme = themeColors[themeName] || themeColors.default;
   const map = pickMapForGame(gameCode);
@@ -105,33 +107,52 @@ export default function WaitingRoomView({
 
       {waitingRoom.game === 'roll-call' && (
         <>
-          {themeName === 'fidget' ? (
-            <>
-              <p style={{ fontSize: 14, marginBottom: 8 }}>
-                Stretch game — drag to stretch and bounce. Default is Playroom; use venue/scraped logo or load your own below.
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+            {themeName === 'fidget' ? (
+              <p style={{ fontSize: 14, margin: 0 }}>
+                Stretch game — drag to stretch and bounce.
               </p>
+            ) : (
+              <p style={{ fontSize: 14, margin: 0 }}>
+                Tilt your device or use arrow keys to roll the marble to the goal.
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => setGameKey((k) => k + 1)}
+              style={{
+                padding: '8px 14px',
+                fontSize: 14,
+                fontWeight: 600,
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 8,
+                color: 'var(--text)',
+                cursor: 'pointer',
+              }}
+            >
+              Restart game
+            </button>
+          </div>
+          <div style={{ minHeight: 'min(55vh, 420px)', display: 'flex', flexDirection: 'column', marginBottom: 8 }}>
+            {themeName === 'fidget' ? (
               <StretchyLogoFidget
+                key={gameKey}
                 imageSource={stretchySource}
                 venueLogoUrl={venueLogoUrl}
                 customImageUrl={customImageUrl}
               />
-            </>
-          ) : (
-            <>
-              <p style={{ fontSize: 14, marginBottom: 8 }}>
-                Tilt your device or use arrow keys to roll the marble to the goal.
-              </p>
-              {useTilt ? (
-                <WaitingRoomTiltMaze
-                  themeKey={themeName as 'classic' | 'eighties' | 'trivia'}
-                  overlay={themeName === 'trivia' ? 'brain' : 'music'}
-                  onWin={onRollCallWin}
-                />
-              ) : (
-                <RollCallGame map={map} theme={theme} onWin={onRollCallWin} />
-              )}
-            </>
-          )}
+            ) : useTilt ? (
+              <WaitingRoomTiltMaze
+                key={gameKey}
+                themeKey={themeName as 'classic' | 'eighties' | 'trivia'}
+                overlay={themeName === 'trivia' ? 'brain' : 'music'}
+                onWin={onRollCallWin}
+              />
+            ) : (
+              <RollCallGame key={gameKey} map={map} theme={theme} onWin={onRollCallWin} />
+            )}
+          </div>
         </>
       )}
 

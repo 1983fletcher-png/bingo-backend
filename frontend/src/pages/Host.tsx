@@ -32,7 +32,7 @@ interface GameCreated {
   trivia?: { questions: TriviaQuestion[] };
 }
 
-type HostTab = 'waiting' | 'call' | 'questions';
+type HostTab = 'waiting' | 'call' | 'questions' | 'controls';
 
 export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building';
 
@@ -177,7 +177,10 @@ export default function Host() {
       }
     });
 
-    s.on('game:started', () => setGameStarted(true));
+    s.on('game:started', () => {
+      setGameStarted(true);
+      setActiveTab((prev) => (prev === 'waiting' ? 'controls' : prev));
+    });
 
     s.on('game:trivia-state', (payload: { questions?: TriviaQuestion[]; currentIndex?: number; revealed?: boolean }) => {
       if (Array.isArray(payload.questions)) setTriviaQuestions(payload.questions);
@@ -294,7 +297,8 @@ export default function Host() {
 
   const startEvent = () => {
     if (!socket || !game) return;
-    if (game.gameType === 'trivia') {
+    const isTriviaLikeType = game.gameType === 'trivia' || game.gameType === 'icebreakers' || game.gameType === 'edutainment' || game.gameType === 'team-building';
+    if (isTriviaLikeType) {
       socket.emit('host:trivia-start', { code: game.code });
     } else {
       socket.emit('host:start', { code: game.code });
@@ -765,10 +769,11 @@ export default function Host() {
     );
   }
 
-  const isTrivia = game.gameType === 'trivia';
-  const tabs: { id: HostTab; label: string }[] = isTrivia
+  const isTriviaLike = game.gameType === 'trivia' || game.gameType === 'icebreakers' || game.gameType === 'edutainment' || game.gameType === 'team-building';
+  const tabs: { id: HostTab; label: string }[] = isTriviaLike
     ? [
         { id: 'waiting', label: 'Waiting room' },
+        { id: 'controls', label: 'Host controls' },
         { id: 'questions', label: 'Questions' },
       ]
     : [
@@ -905,66 +910,6 @@ export default function Host() {
                 )}
               </div>
             </section>
-
-            {gameStarted && game?.gameType === 'trivia' && (
-              <section className="host-room__when" aria-label="Trivia controls">
-                <h2 className="host-room__when-title">Trivia controls</h2>
-                <p className="host-room__when-hint">Show the question on the display, then reveal the answer when ready. Use Next question to advance.</p>
-                <div style={{ marginBottom: 16, padding: 16, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
-                  <p style={{ margin: '0 0 8px', fontSize: 13, color: 'var(--text-muted)' }}>
-                    Question {triviaCurrentIndex + 1} of {triviaQuestions.length || 1}
-                    {triviaQuestions[triviaCurrentIndex]?.category && (
-                      <span style={{ marginLeft: 8 }}> · {triviaQuestions[triviaCurrentIndex].category}</span>
-                    )}
-                  </p>
-                  {triviaQuestions[triviaCurrentIndex]?.hostNotes && (
-                    <p style={{ margin: '0 0 10px', fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic', borderLeft: '3px solid var(--border)', paddingLeft: 10 }}>
-                      Host: {triviaQuestions[triviaCurrentIndex].hostNotes}
-                    </p>
-                  )}
-                  <p style={{ margin: 0, fontSize: 18, fontWeight: 600, lineHeight: 1.4 }}>
-                    {triviaQuestions[triviaCurrentIndex]?.question ?? '—'}
-                  </p>
-                  {triviaRevealed && triviaQuestions[triviaCurrentIndex]?.correctAnswer && (
-                    <>
-                      <p style={{ margin: '12px 0 0', paddingTop: 12, borderTop: '1px solid var(--border)', fontSize: 16, color: 'var(--accent)' }}>
-                        Answer: {triviaQuestions[triviaCurrentIndex].correctAnswer}
-                      </p>
-                      {triviaQuestions[triviaCurrentIndex]?.funFact && (
-                        <p style={{ margin: '10px 0 0', fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.45 }}>
-                          Fun fact: {triviaQuestions[triviaCurrentIndex].funFact}
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-                  {!triviaRevealed ? (
-                    <button
-                      type="button"
-                      className="host-room__start-btn"
-                      onClick={() => socket?.emit('host:trivia-reveal', { code: game.code })}
-                      disabled={!socket?.connected || !game?.code}
-                    >
-                      Reveal answer
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="host-room__start-btn"
-                      onClick={() => {
-                        socket?.emit('host:trivia-next', { code: game.code });
-                        setTriviaRevealed(false);
-                      }}
-                      disabled={!socket?.connected || !game?.code}
-                      title={triviaQuestions.length > 0 && triviaCurrentIndex >= triviaQuestions.length - 1 ? 'This is the last question' : undefined}
-                    >
-                      Next question
-                    </button>
-                  )}
-                </div>
-              </section>
-            )}
 
             <details className="host-room__details">
               <summary className="host-room__details-summary">Event &amp; venue details</summary>
@@ -1153,6 +1098,102 @@ export default function Host() {
               <p style={{ color: '#a0aec0' }}>No questions. Reset to full pack to add some.</p>
             )}
           </div>
+        )}
+
+        {activeTab === 'controls' && isTriviaLike && (
+          <section className="host-controls" aria-label="Host controls">
+            {!gameStarted ? (
+              <div className="host-controls__prompt">
+                <h2 className="host-controls__title">Host controls</h2>
+                <p className="host-controls__hint">
+                  Click <strong>Start the game</strong> in the <strong>Waiting room</strong> tab to begin. Then return here to ask each question, reveal the answer, share a fun fact, and move to the next.
+                </p>
+                <button
+                  type="button"
+                  className="host-room__start-btn"
+                  onClick={() => setActiveTab('waiting')}
+                >
+                  Go to Waiting room
+                </button>
+              </div>
+            ) : isTriviaLike ? (
+              <>
+                <h2 className="host-controls__title">Run the game</h2>
+                <p className="host-controls__hint">
+                  Show the question on the <strong>Display (TV)</strong>. When ready, reveal the answer, share a fun tip if you have one, and advance to the next question.
+                </p>
+                <div className="host-controls__card">
+                  <div className="host-controls__meta">
+                    <span className="host-controls__counter">
+                      Question {triviaCurrentIndex + 1} of {triviaQuestions.length || 1}
+                    </span>
+                    {triviaQuestions[triviaCurrentIndex]?.category && (
+                      <span className="host-controls__category">{triviaQuestions[triviaCurrentIndex].category}</span>
+                    )}
+                  </div>
+                  {triviaQuestions[triviaCurrentIndex]?.hostNotes && (
+                    <div className="host-controls__host-notes">
+                      <strong>Host:</strong> {triviaQuestions[triviaCurrentIndex].hostNotes}
+                    </div>
+                  )}
+                  <p className="host-controls__question">
+                    {triviaQuestions[triviaCurrentIndex]?.question ?? '—'}
+                  </p>
+                  {triviaRevealed && (
+                    <div className="host-controls__revealed">
+                      <p className="host-controls__answer">
+                        Answer: {triviaQuestions[triviaCurrentIndex]?.correctAnswer ?? '—'}
+                      </p>
+                      {triviaQuestions[triviaCurrentIndex]?.funFact && (
+                        <p className="host-controls__fun-fact">
+                          Fun fact: {triviaQuestions[triviaCurrentIndex].funFact}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="host-controls__actions">
+                  {!triviaRevealed ? (
+                    <button
+                      type="button"
+                      className="host-controls__btn host-controls__btn--primary"
+                      onClick={() => socket?.emit('host:trivia-reveal', { code: game.code })}
+                      disabled={!socket?.connected || !game?.code}
+                    >
+                      Reveal answer
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="host-controls__btn host-controls__btn--secondary"
+                        onClick={() => {
+                          socket?.emit('host:trivia-next', { code: game.code });
+                          setTriviaRevealed(false);
+                        }}
+                        disabled={!socket?.connected || !game?.code}
+                        title={triviaQuestions.length > 0 && triviaCurrentIndex >= triviaQuestions.length - 1 ? 'This is the last question' : undefined}
+                      >
+                        Next question
+                      </button>
+                      {triviaCurrentIndex < triviaQuestions.length - 1 && (
+                        <span className="host-controls__next-hint">
+                          {triviaQuestions.length - triviaCurrentIndex - 1} left
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="host-controls__prompt">
+                <h2 className="host-controls__title">Host controls</h2>
+                <p className="host-controls__hint">
+                  Run controls for this game type are coming soon. Use the Waiting room to start and manage the game.
+                </p>
+              </div>
+            )}
+          </section>
         )}
 
         {activeTab === 'call' && (

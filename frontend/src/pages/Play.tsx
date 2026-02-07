@@ -157,11 +157,13 @@ export default function Play() {
   const [factSong, setFactSong] = useState<Song | null>(null);
   const [showFact, setShowFact] = useState(false);
   const [menuOverlay, setMenuOverlay] = useState<{ url: string; useIframe: boolean } | null>(null);
+  const [socketConnected, setSocketConnected] = useState(false);
   const hasRejoinEmitted = useRef(false);
 
   // Restore session so refresh keeps player in the same room
   useEffect(() => {
     if (!code?.trim()) return;
+    hasRejoinEmitted.current = false;
     const key = PLAYROOM_JOIN_KEY(code);
     try {
       const raw = sessionStorage.getItem(key);
@@ -178,6 +180,9 @@ export default function Play() {
   useEffect(() => {
     const s = getSocket();
     setSocket(s);
+    setSocketConnected(s.connected);
+    s.on('connect', () => setSocketConnected(true));
+    s.on('disconnect', () => setSocketConnected(false));
 
     s.on('join:ok', (payload: JoinState) => {
       setJoinState(payload);
@@ -187,6 +192,7 @@ export default function Play() {
     });
 
     s.on('join:error', (payload: { message?: string }) => {
+      hasRejoinEmitted.current = false;
       if (code?.trim()) try { sessionStorage.removeItem(PLAYROOM_JOIN_KEY(code)); } catch { /* ignore */ }
       setRejoining(false);
       setError(payload?.message || 'Could not join. Check the code or try again.');
@@ -238,6 +244,8 @@ export default function Play() {
     });
 
     return () => {
+      s.off('connect');
+      s.off('disconnect');
       s.off('join:ok');
       s.off('join:error');
       s.off('game:started');
@@ -251,9 +259,9 @@ export default function Play() {
     };
   }, [code]);
 
-  // Rejoin with stored session on refresh
+  // Rejoin with stored session on refresh — run when socket connects so we don't get stuck on "Rejoining game…"
   useEffect(() => {
-    if (!code?.trim() || !rejoining || !socket?.connected || hasRejoinEmitted.current) return;
+    if (!code?.trim() || !rejoining || !socketConnected || !socket || hasRejoinEmitted.current) return;
     try {
       const raw = sessionStorage.getItem(PLAYROOM_JOIN_KEY(code));
       if (!raw) return;
@@ -263,7 +271,7 @@ export default function Play() {
     } catch {
       /* ignore */
     }
-  }, [code, rejoining, socket?.connected, socket]);
+  }, [code, rejoining, socketConnected, socket]);
 
   // Game-started state: compute once per render, hooks must run unconditionally (before any early return)
   const gameType = joinState?.gameType;
@@ -321,7 +329,9 @@ export default function Play() {
       return (
         <div className="join-welcome">
           <div className="join-welcome__rejoining">
-            <p style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}>Rejoining game…</p>
+            <p style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600 }}>
+              {socketConnected ? 'Rejoining game…' : 'Connecting…'}
+            </p>
             <p style={{ margin: '8px 0 0', color: 'var(--text-muted)' }}>Room: {code}</p>
           </div>
         </div>
