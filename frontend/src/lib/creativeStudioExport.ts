@@ -13,7 +13,7 @@ export interface ExportItem {
 }
 
 export interface ExportBlock {
-  type: 'section' | 'title';
+  type: 'section' | 'title' | 'subtitle';
   content: string;
   items?: ExportItem[];
 }
@@ -36,16 +36,20 @@ function buildExportHtml(
 
   blocks.forEach((block) => {
     if (block.type === 'title') {
-      bodyParts.push(`<h1 class="cs-export-title">${escapeHtml(block.content)}</h1>`);
+      bodyParts.push(`<h1 class="cs-export-title cs-export-title--center">${escapeHtml(block.content)}</h1>`);
+      return;
+    }
+    if (block.type === 'subtitle') {
+      bodyParts.push(`<p class="cs-export-subtitle">${escapeHtml(block.content)}</p>`);
       return;
     }
     if (block.type === 'section' && block.items) {
       bodyParts.push(`<h2 class="cs-export-section">${escapeHtml(block.content)}</h2>`);
       block.items.forEach((item) => {
         if (mode === 'MENU') {
-          const price = item.price ? ` <span class="cs-export-price">${escapeHtml(item.price)}</span>` : '';
+          const priceRow = item.price ? `<div class="cs-export-item-price">${escapeHtml(item.price)}</div>` : '';
           bodyParts.push(
-            `<div class="cs-export-item"><strong>${escapeHtml(item.name)}</strong><p>${escapeHtml(item.description)}</p>${price}</div>`
+            `<div class="cs-export-item cs-export-item--menu"><div class="cs-export-item-name">${escapeHtml(item.name)}</div>${item.description ? `<div class="cs-export-item-desc">${escapeHtml(item.description)}</div>` : ''}${priceRow}</div>`
           );
         } else if (mode === 'TRAINING_STUDY') {
           bodyParts.push(
@@ -78,16 +82,22 @@ function buildExportHtml(
   <style>
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 24px; color: #1a202c; background: #fff; line-height: 1.5; }
-    .cs-export-title { font-size: 1.75rem; margin: 0 0 1rem; font-weight: 700; }
-    .cs-export-section { font-size: 1.25rem; margin: 1.25rem 0 0.5rem; font-weight: 600; color: #2d3748; }
+    .cs-export-title { font-size: 1.75rem; margin: 0 0 0.5rem; font-weight: 700; }
+    .cs-export-title--center { text-align: center; }
+    .cs-export-subtitle { text-align: center; font-size: 0.9375rem; color: #4a5568; margin: 0 0 1.5rem; }
+    .cs-export-section { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; font-weight: 600; color: #2d3748; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.25rem; }
     .cs-export-item { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0; }
     .cs-export-item:last-child { border-bottom: none; }
     .cs-export-item strong { display: block; margin-bottom: 2px; }
     .cs-export-item p { margin: 0; color: #4a5568; }
-    .cs-export-price { font-weight: 600; color: #2b6cb0; }
+    .cs-export-item--menu .cs-export-item-name { font-weight: 700; font-size: 1.0625rem; margin-bottom: 2px; }
+    .cs-export-item--menu .cs-export-item-desc { font-size: 0.9375rem; color: #4a5568; margin-bottom: 4px; }
+    .cs-export-item--menu .cs-export-item-price { font-weight: 600; font-size: 1rem; }
+    .cs-export-item-price { font-weight: 600; color: #1a365d; }
     .cs-export-blank { color: #a0aec0 !important; }
     .cs-export-trivia { margin-bottom: 1rem; padding: 0.75rem; background: #f7fafc; border-radius: 8px; }
     .cs-export-trivia ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+    .cs-export-section--training, .cs-export-section--test, .cs-export-section--trivia { margin-top: 1.5rem; }
     ${forPrint ? '@media print { body { padding: 16px; } }' : ''}
   </style>
 </head>

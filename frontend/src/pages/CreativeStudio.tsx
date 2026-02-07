@@ -34,37 +34,82 @@ interface TitleBlock {
   content: string;
 }
 
-type ContentBlock = SectionBlock | TitleBlock;
+interface SubtitleBlock {
+  type: 'subtitle';
+  content: string;
+}
 
-/** Extract price from end of string: $12, $12.99, 12.99, €10. Returns [restOfText, price or null]. */
+type ContentBlock = SectionBlock | TitleBlock | SubtitleBlock;
+
+/** Normalize price to $X.XX format for display. */
+function normalizePrice(raw: string | null): string | null {
+  if (raw == null || raw.trim() === '') return null;
+  const s = raw.replace(/\s/g, '').trim();
+  const numMatch = s.match(/([€$])?(\d+(?:\.\d{1,2})?)/);
+  if (!numMatch) return null;
+  const num = numMatch[2];
+  const hasDecimals = /\.\d{1,2}$/.test(num);
+  const formatted = hasDecimals ? num : `${num}.00`;
+  return (numMatch[1] === '€' ? '€' : '$') + formatted;
+}
+
+/** Extract price from end of string: $12, 12.99, €10. Returns [restOfText, normalized price or null]. */
 function extractPrice(text: string): [string, string | null] {
   const trimmed = text.trim();
-  // Match $ or € followed by digits and optional .xx at end of string
-  const match = trimmed.match(/\s+([$€]?\s*\d+(?:\.\d{1,2})?)\s*$/);
+  // Price at end: optional $/€, digits, optional .xx; or " - $12" style
+  const match = trimmed.match(/\s*[-–—]?\s*([$€]?\s*\d+(?:\.\d{1,2})?)\s*$/);
   if (match) {
-    const price = match[1].replace(/\s/g, '').trim();
-    const rest = trimmed.slice(0, match.index).trim();
+    const rest = trimmed.slice(0, trimmed.length - match[0].length).trim();
+    const price = normalizePrice(match[1].replace(/\s/g, ''));
     return [rest, price];
   }
   return [trimmed, null];
 }
 
-/** True if line looks like a section heading. */
-function isSectionLine(line: string): boolean {
-  const lower = line.toLowerCase().trim();
-  if (lower.startsWith('##') || lower.startsWith('section:') || lower === '---') return true;
-  if (lower.includes('section') || lower.includes('menu')) return true;
-  if (/^#{1,3}\s+.+/.test(line.trim())) return true; // markdown ## or ###
+/** Skip lines that are clearly not menu content: phone numbers, zip, random digits, cruft. */
+function isLikelyNoise(line: string): boolean {
+  const t = line.trim();
+  if (t.length <= 1) return true;
+  // Mostly digits (e.g. 91017, phone, zip)
+  const digits = (t.match(/\d/g) || []).length;
+  if (digits >= 4 && digits >= t.length * 0.6) return true;
+  if (/^\d{5}(-\d{4})?$/.test(t)) return true; // zip
+  if (/^[\d\s\-\.\(\)]{10,}$/.test(t)) return true; // phone-like
+  // Common web junk
+  const lower = t.toLowerCase();
+  if (lower.startsWith('©') || lower.includes('all rights reserved')) return true;
+  if (lower === 'click here' || lower === 'read more' || lower === 'learn more') return true;
+  if (/^https?:\/\//.test(t) && t.length > 60) return true; // long URL
+  if (/^[\d\s,]+$/.test(t) && t.length > 8) return true; // number list only
   return false;
 }
 
-/** Normalize section title: strip "Section:" prefix, ##, etc. */
+/** True if line looks like a section heading (menu category). */
+function isSectionLine(line: string): boolean {
+  const lower = line.toLowerCase().trim();
+  if (lower.startsWith('##') || lower.startsWith('section:') || lower === '---') return true;
+  if (/\b(section|menu|hours|open)\b/.test(lower) && line.length < 50) return true;
+  if (/^#{1,3}\s+\S+/.test(line.trim())) return true;
+  // Common category words
+  if (/\b(drinks|food|appetizers|entrees|mains|sides|desserts|beer|cocktails|wine|specials)\b/.test(lower) && line.length < 40) return true;
+  return false;
+}
+
+/** True if line is venue subtitle: food truck, "food by X", "hours", etc. */
+function isSubtitleLine(line: string): boolean {
+  const lower = line.toLowerCase().trim();
+  if (lower.includes('food truck') || lower.includes('food by') || lower.includes('food from')) return true;
+  if (lower.startsWith('hours') || lower.startsWith('open ') || lower === 'hours') return true;
+  return false;
+}
+
+/** Normalize section title for display. */
 function normalizeSectionTitle(line: string): string {
   let s = line.trim();
   const lower = s.toLowerCase();
   if (lower.startsWith('section:')) s = s.slice(8).trim();
   if (lower.startsWith('menu:')) s = s.slice(5).trim();
-  s = s.replace(/^#+\s*/, '').trim(); // ## Title
+  s = s.replace(/^#+\s*/, '').trim();
   if (s === '---') s = 'Section';
   return s || line.trim();
 }
@@ -73,9 +118,11 @@ function parseContent(rawText: string): ContentBlock[] {
   const lines = rawText
     .split(/\r?\n/)
     .map((l) => l.trim())
-    .filter((l) => l.length > 0);
+    .filter((l) => l.length > 0)
+    .filter((l) => !isLikelyNoise(l));
   const blocks: ContentBlock[] = [];
   let currentSection: SectionBlock | null = null;
+  let seenFirstTitle = false;
 
   for (const line of lines) {
     if (isSectionLine(line)) {
@@ -86,10 +133,10 @@ function parseContent(rawText: string): ContentBlock[] {
     }
 
     if (currentSection) {
-      // Item: "Name - Description" or "Name - Description - $12" or "Name"
-      const [namePart, ...rest] = line.split(/\s*-\s*/).map((s) => s.trim());
-      const name = namePart ?? '';
-      const descAndPrice = rest.join(' - ');
+      const [namePart, ...rest] = line.split(/\s*[-–—]\s*/).map((s) => s.trim());
+      const name = (namePart ?? '').trim();
+      if (name.length === 0) continue;
+      const descAndPrice = rest.join(' – ').trim();
       const [description, price] = extractPrice(descAndPrice);
       currentSection.items.push({
         type: 'item',
@@ -101,8 +148,19 @@ function parseContent(rawText: string): ContentBlock[] {
       continue;
     }
 
-    // No section yet: treat as title
-    blocks.push({ type: 'title', content: line });
+    if (!seenFirstTitle) {
+      blocks.push({ type: 'title', content: line });
+      seenFirstTitle = true;
+      continue;
+    }
+
+    if (isSubtitleLine(line)) {
+      blocks.push({ type: 'subtitle', content: line });
+      continue;
+    }
+
+    // Another title-like line before any section: treat as subtitle (e.g. venue tagline)
+    blocks.push({ type: 'subtitle', content: line });
   }
 
   return blocks;
@@ -192,35 +250,35 @@ export default function CreativeStudio() {
   };
 
   function renderBlock(block: ContentBlock, idx: number): React.ReactNode {
+    const key = `${idx}-${block.content}`;
     switch (mode) {
       case 'MENU':
         if (block.type === 'section') {
           return (
-            <div className="creative-studio__section creative-studio__section--menu" key={`${idx}-${block.content}`}>
+            <div className="creative-studio__section creative-studio__section--menu" key={key}>
               <h2 className="creative-studio__section-title">{block.content}</h2>
               {block.items.map((item, i) => (
-                <div className="creative-studio__item" key={i}>
-                  <strong>{item.name}</strong>
-                  <p>{item.description}</p>
-                  {item.price != null && <span>${item.price}</span>}
+                <div className="creative-studio__item creative-studio__item--menu" key={i}>
+                  <div className="creative-studio__item-name">{item.name}</div>
+                  {item.description && <div className="creative-studio__item-desc">{item.description}</div>}
+                  {item.price != null && <div className="creative-studio__item-price">{item.price}</div>}
                 </div>
               ))}
             </div>
           );
         }
         if (block.type === 'title') {
-          return (
-            <h1 className="creative-studio__title" key={`${idx}-${block.content}`}>
-              {block.content}
-            </h1>
-          );
+          return <h1 className="creative-studio__title creative-studio__title--center" key={key}>{block.content}</h1>;
+        }
+        if (block.type === 'subtitle') {
+          return <p className="creative-studio__subtitle" key={key}>{block.content}</p>;
         }
         return null;
 
       case 'TRAINING_STUDY':
         if (block.type === 'section') {
           return (
-            <div className="creative-studio__section creative-studio__section--training" key={`${idx}-${block.content}`}>
+            <div className="creative-studio__section creative-studio__section--training" key={key}>
               <h2 className="creative-studio__section-title">{block.content}</h2>
               {block.items.map((item, i) => (
                 <div className="creative-studio__item" key={i}>
@@ -231,19 +289,14 @@ export default function CreativeStudio() {
             </div>
           );
         }
-        if (block.type === 'title') {
-          return (
-            <h1 className="creative-studio__title" key={`${idx}-${block.content}`}>
-              {block.content}
-            </h1>
-          );
-        }
+        if (block.type === 'title') return <h1 className="creative-studio__title" key={key}>{block.content}</h1>;
+        if (block.type === 'subtitle') return <p className="creative-studio__subtitle" key={key}>{block.content}</p>;
         return null;
 
       case 'TRAINING_TEST':
         if (block.type === 'section') {
           return (
-            <div className="creative-studio__section creative-studio__section--test" key={`${idx}-${block.content}`}>
+            <div className="creative-studio__section creative-studio__section--test" key={key}>
               <h2 className="creative-studio__section-title">{block.content}</h2>
               {block.items.map((item, i) => (
                 <div className="creative-studio__item" key={i}>
@@ -254,19 +307,14 @@ export default function CreativeStudio() {
             </div>
           );
         }
-        if (block.type === 'title') {
-          return (
-            <h1 className="creative-studio__title" key={`${idx}-${block.content}`}>
-              {block.content}
-            </h1>
-          );
-        }
+        if (block.type === 'title') return <h1 className="creative-studio__title" key={key}>{block.content}</h1>;
+        if (block.type === 'subtitle') return <p className="creative-studio__subtitle" key={key}>{block.content}</p>;
         return null;
 
       case 'TRIVIA':
         if (block.type === 'section') {
           return (
-            <div className="creative-studio__section creative-studio__section--trivia" key={`${idx}-${block.content}`}>
+            <div className="creative-studio__section creative-studio__section--trivia" key={key}>
               <h2 className="creative-studio__section-title">{block.content}</h2>
               {block.items.map((item, i) => (
                 <div className="creative-studio__trivia-block" key={i}>
@@ -282,13 +330,8 @@ export default function CreativeStudio() {
             </div>
           );
         }
-        if (block.type === 'title') {
-          return (
-            <h1 className="creative-studio__title" key={`${idx}-${block.content}`}>
-              {block.content}
-            </h1>
-          );
-        }
+        if (block.type === 'title') return <h1 className="creative-studio__title" key={key}>{block.content}</h1>;
+        if (block.type === 'subtitle') return <p className="creative-studio__subtitle" key={key}>{block.content}</p>;
         return null;
 
       default:
@@ -317,7 +360,7 @@ export default function CreativeStudio() {
       </header>
 
       <section className="creative-studio__paste" aria-label="Paste or drop content">
-        <p className="creative-studio__paste-label">Paste your menu or drop text here:</p>
+        <p className="creative-studio__paste-label">Paste your menu or drop text here. We keep: venue title, food truck / hours line, section headings (e.g. Drinks, Food), and items with name – description – price. Random numbers and web cruft are stripped.</p>
         <textarea
           className="creative-studio__textarea"
           value={rawInput}

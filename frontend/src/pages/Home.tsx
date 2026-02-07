@@ -114,10 +114,9 @@ export default function Home() {
               </span>
             </Link>
             <Link to="/create" className="landing__hero-card">
-              <span className="landing__hero-card-title">Create a page</span>
+              <span className="landing__hero-card-title">Creative Studio</span>
               <span className="landing__hero-card-desc">
-                Hospitality &amp; venues, education &amp; learning, care &amp; wellness,
-                business &amp; corporate, and general pages—menus, promos, flyers, and more.
+                Create a custom page. Menus, training materials, promos, flyers, and more.
               </span>
             </Link>
             <Link to="/learn" className="landing__hero-card">

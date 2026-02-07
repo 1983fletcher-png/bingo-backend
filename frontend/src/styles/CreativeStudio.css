@@ -160,8 +160,48 @@
   color: var(--text);
 }
 
+.creative-studio__title--center {
+  text-align: center;
+  margin-bottom: var(--space-3);
+}
+
+.creative-studio__subtitle {
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--text-secondary, #4a5568);
+  margin: 0 0 var(--space-4);
+}
+
 .creative-studio__section {
   margin-bottom: var(--space-4);
+}
+
+/* MENU: item name, description, price on its own line */
+.creative-studio__item--menu .creative-studio__item-name {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  margin-bottom: 2px;
+}
+
+.creative-studio__item--menu .creative-studio__item-desc {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.creative-studio__item--menu .creative-studio__item-price {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--accent, #1a365d);
+}
+
+/* Training / Test / Trivia: clear section separation */
+.creative-studio__section--training,
+.creative-studio__section--test,
+.creative-studio__section--trivia {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border, #2d3748);
 }
 
 .creative-studio__section:last-child {
