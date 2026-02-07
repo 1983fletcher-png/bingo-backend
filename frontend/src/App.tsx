@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Display from './pages/Display';
 import JoinEntry from './pages/JoinEntry';
 import Create from './pages/Create';
+import CreativeStudio from './pages/CreativeStudio';
 import CreateHospitality from './pages/CreateHospitality';
 import { CreateMenuBuilder } from './pages/CreateMenuBuilder';
 import { CreateEventBuilder } from './pages/CreateEventBuilder';
@@ -37,7 +38,8 @@ export default function App() {
       <Route path="/display/:code" element={<Display />} />
       <Route path="/join" element={<JoinEntry />} />
       <Route path="/join/:code" element={<Play />} />
-      <Route path="/create" element={<Create />} />
+      <Route path="/create" element={<CreativeStudio />} />
+      <Route path="/create/templates" element={<Create />} />
       <Route path="/create/hospitality" element={<CreateHospitality />} />
       <Route path="/create/hospitality/menu" element={<CreateMenuBuilder />} />
       <Route path="/create/hospitality/specials" element={<CreateMenuBuilder />} />

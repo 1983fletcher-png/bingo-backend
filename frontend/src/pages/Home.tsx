@@ -121,7 +121,7 @@ export default function Home() {
               </span>
             </Link>
             <Link to="/learn" className="landing__hero-card">
-              <span className="landing__hero-card-title">Learn &amp; Grow</span>
+              <span className="landing__hero-card-title">Learn &amp; Grow Library</span>
               <span className="landing__hero-card-desc">
                 Trusted, cited learning cards: plants, animals, crafts, science.
                 Calm, layered content for curious minds.
