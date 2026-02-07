@@ -16,6 +16,7 @@ import CreatePlaceholder from './pages/CreatePlaceholder';
 import Learn from './pages/Learn';
 import LearnCard from './pages/LearnCard';
 import ActivityCalendar from './pages/ActivityCalendar';
+import TriviaBuilder from './pages/TriviaBuilder';
 
 function useShowThemeToggle() {
   const path = useLocation().pathname;
@@ -32,6 +33,7 @@ export default function App() {
       <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/host" element={<Host />} />
+      <Route path="/host/build/trivia" element={<TriviaBuilder />} />
       <Route path="/display/:code" element={<Display />} />
       <Route path="/join" element={<JoinEntry />} />
       <Route path="/join/:code" element={<Play />} />

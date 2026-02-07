@@ -11,6 +11,7 @@ import { edutainmentPacks, defaultEdutainmentPack } from '../data/edutainmentPac
 import { teamBuildingPacks, defaultTeamBuildingPack } from '../data/teamBuildingActivities';
 import { musicBingoGames } from '../data/musicBingoGames';
 import { printBingoCards } from '../lib/printBingoCards';
+import { PLAYROOM_HOST_CREATED_KEY } from './TriviaBuilder';
 import { buildTriviaQuizPrintDocument, buildFlashcardsPrintDocument } from '../lib/printMaterials';
 import { fetchJson, normalizeBackendUrl } from '../lib/safeFetch';
 import type { Song, EventConfig, VenueProfile } from '../types/game';
@@ -104,6 +105,31 @@ export default function Host() {
     const mode = createModeFromUrl(typeFromUrl);
     if (mode !== createMode) setCreateMode(mode);
   }, [typeFromUrl]);
+
+  // Restore game when returning from Trivia Builder (Create & host)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(PLAYROOM_HOST_CREATED_KEY);
+      if (!raw) return;
+      const payload = JSON.parse(raw) as GameCreated;
+      sessionStorage.removeItem(PLAYROOM_HOST_CREATED_KEY);
+      setGame(payload);
+      setHostMessage(payload.waitingRoom?.hostMessage || 'Starting soon…');
+      setWaitingRoomTheme(payload.waitingRoom?.theme || 'default');
+      setSongPool(Array.isArray(payload.songPool) ? payload.songPool : []);
+      setRevealed(Array.isArray(payload.revealed) ? payload.revealed : []);
+      if (payload.eventConfig && typeof payload.eventConfig === 'object') {
+        setEventConfigState((prev) => ({ ...prev, ...payload.eventConfig }));
+      }
+      if (payload.trivia?.questions?.length) {
+        setTriviaQuestions(payload.trivia.questions);
+      } else {
+        setTriviaQuestions([]);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
     const s = getSocket();
@@ -600,13 +626,13 @@ export default function Host() {
           >
             Classic Bingo
           </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'trivia' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('trivia')}
+          <Link
+            to="/host/build/trivia"
+            className="host-create__game-type-btn"
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
             Trivia
-          </button>
+          </Link>
           <button
             type="button"
             className={`host-create__game-type-btn ${createMode === 'icebreakers' ? 'host-create__game-type-btn--on' : ''}`}
@@ -887,14 +913,29 @@ export default function Host() {
                 <div style={{ marginBottom: 16, padding: 16, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
                   <p style={{ margin: '0 0 8px', fontSize: 13, color: 'var(--text-muted)' }}>
                     Question {triviaCurrentIndex + 1} of {triviaQuestions.length || 1}
+                    {triviaQuestions[triviaCurrentIndex]?.category && (
+                      <span style={{ marginLeft: 8 }}> · {triviaQuestions[triviaCurrentIndex].category}</span>
+                    )}
                   </p>
+                  {triviaQuestions[triviaCurrentIndex]?.hostNotes && (
+                    <p style={{ margin: '0 0 10px', fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic', borderLeft: '3px solid var(--border)', paddingLeft: 10 }}>
+                      Host: {triviaQuestions[triviaCurrentIndex].hostNotes}
+                    </p>
+                  )}
                   <p style={{ margin: 0, fontSize: 18, fontWeight: 600, lineHeight: 1.4 }}>
                     {triviaQuestions[triviaCurrentIndex]?.question ?? '—'}
                   </p>
                   {triviaRevealed && triviaQuestions[triviaCurrentIndex]?.correctAnswer && (
-                    <p style={{ margin: '12px 0 0', paddingTop: 12, borderTop: '1px solid var(--border)', fontSize: 16, color: 'var(--accent)' }}>
-                      Answer: {triviaQuestions[triviaCurrentIndex].correctAnswer}
-                    </p>
+                    <>
+                      <p style={{ margin: '12px 0 0', paddingTop: 12, borderTop: '1px solid var(--border)', fontSize: 16, color: 'var(--accent)' }}>
+                        Answer: {triviaQuestions[triviaCurrentIndex].correctAnswer}
+                      </p>
+                      {triviaQuestions[triviaCurrentIndex]?.funFact && (
+                        <p style={{ margin: '10px 0 0', fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.45 }}>
+                          Fun fact: {triviaQuestions[triviaCurrentIndex].funFact}
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
@@ -1066,38 +1107,45 @@ export default function Host() {
               {triviaQuestions.map((q, idx) => (
                 <li
                   key={`${idx}-${q.question.slice(0, 30)}`}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '8px 0',
-                    borderBottom: '1px solid #2d3748',
-                  }}
+                  style={{ borderBottom: '1px solid #2d3748' }}
                 >
-                  <span style={{ flex: 1, fontSize: 14 }}>{q.question}</span>
-                  <button
-                    type="button"
-                    onClick={() => moveTriviaQuestion(idx, 'up')}
-                    disabled={idx === 0}
-                    style={{ padding: '4px 8px', fontSize: 12 }}
-                  >
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => moveTriviaQuestion(idx, 'down')}
-                    disabled={idx === triviaQuestions.length - 1}
-                    style={{ padding: '4px 8px', fontSize: 12 }}
-                  >
-                    ↓
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleTriviaQuestion(idx)}
-                    style={{ padding: '4px 8px', fontSize: 12, color: '#fc8181' }}
-                  >
-                    Remove
-                  </button>
+                  <details style={{ padding: '8px 0' }}>
+                    <summary style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', listStyle: 'none' }}>
+                      <span style={{ flex: 1, fontSize: 14 }}>{q.question}</span>
+                      {(q.hostNotes || q.funFact || q.category) && (
+                        <span style={{ fontSize: 11, color: '#718096' }}>Notes</span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); moveTriviaQuestion(idx, 'up'); }}
+                        disabled={idx === 0}
+                        style={{ padding: '4px 8px', fontSize: 12 }}
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); moveTriviaQuestion(idx, 'down'); }}
+                        disabled={idx === triviaQuestions.length - 1}
+                        style={{ padding: '4px 8px', fontSize: 12 }}
+                      >
+                        ↓
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); toggleTriviaQuestion(idx); }}
+                        style={{ padding: '4px 8px', fontSize: 12, color: '#fc8181' }}
+                      >
+                        Remove
+                      </button>
+                    </summary>
+                    <div style={{ padding: '8px 0 8px 12px', fontSize: 13, color: '#a0aec0', borderLeft: '2px solid #2d3748', marginLeft: 4 }}>
+                      {q.category && <p style={{ margin: '0 0 4px' }}><strong>Category:</strong> {q.category}</p>}
+                      {q.hostNotes && <p style={{ margin: '0 0 4px' }}><strong>Host:</strong> {q.hostNotes}</p>}
+                      {q.funFact && <p style={{ margin: 0 }}><strong>Fun fact:</strong> {q.funFact}</p>}
+                      {!q.category && !q.hostNotes && !q.funFact && <p style={{ margin: 0 }}>No notes for this question.</p>}
+                    </div>
+                  </details>
                 </li>
               ))}
             </ul>

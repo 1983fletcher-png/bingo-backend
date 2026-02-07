@@ -1,0 +1,35 @@
+---
+description: Trivia + Learning Platform — content primitives, blocks, rounds, sessions, AI rules
+globs: frontend/src/**/trivia*, frontend/src/**/edutainment*, frontend/src/data/trivia*, frontend/src/data/edutainment*, index.js, docs/TRIVIA*.md, docs/*LEARNING*.md
+alwaysApply: false
+---
+
+# Trivia + Learning: Engagement Engine
+
+**Full spec:** `docs/TRIVIA-LEARNING-PLATFORM-DESIGN.md`
+
+## What This Is
+
+A **modular engagement engine**, not just trivia. Same content must work for: host screen, TV display, audience devices, and **fully printed packets**. Competition is optional; learning and discussion are first-class.
+
+## Content Primitives (Mandatory)
+
+- **FACT**: Verifiable statement + at least one reliable source; tagged (category, difficulty, age, tone).
+- **QUESTION**: Built from one or more facts. Types: multiple choice, T/F, write-in, list, matching, ordering, fill-in-blank, guess-the-number, picture ID, scenario/discussion, opinion poll. Supports scoring or no scoring; partial credit where appropriate.
+- **INSIGHT**: Reinforcement — why the answer matters, why people get it wrong, real-world application.
+
+## Structure
+
+- **Block**: 5–15 min unit (1–3 questions, or fact+prompt, or scenario+discussion). Reusable, printable, host-readable.
+- **Round**: Energy container — pace, tone, interaction mode, scoring style. Archetypes: Easy Warm-Up, Mixed, Lists/Matching, Reasoning, Lightning.
+- **Session**: Time-based recipe. Bar default: ~2 hr, 45–50 questions, 3 breaks; also support 20/30/60 min and passive TV loop.
+
+## AI Rules (Non-Negotiable)
+
+- AI may: draft from **verified** facts, adjust difficulty/tone, suggest prompts, flag ambiguity.
+- AI may **not**: publish unverified facts, invent sources, override human approval, guess when uncertain.
+- All factual content: cross-checked, source-backed, flagged if uncertain.
+
+## When Generating a Pack
+
+Output: pack title, audience, tone, session length, round structure; **per question**: text, type, accepted answer(s), difficulty, category, optional fun fact / discussion prompt / host notes. Format: clean, printable, host-readable, device-agnostic.

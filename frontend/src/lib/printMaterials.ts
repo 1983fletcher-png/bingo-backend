@@ -29,6 +29,20 @@ export function buildTriviaQuizPrintDocument(
     )
     .join('');
 
+  const hasAnswerKey = questions.some((q) => q.correctAnswer || q.hostNotes || q.funFact);
+  const answerKeyRows = hasAnswerKey
+    ? questions
+        .map(
+          (q, i) => `
+    <tr>
+      <td class="num">${i + 1}.</td>
+      <td class="ans">${escapeHtml(q.correctAnswer)}</td>
+      <td class="notes">${[q.hostNotes, q.funFact].filter(Boolean).map((n) => escapeHtml(n!)).join(' — ')}</td>
+    </tr>`
+        )
+        .join('')
+    : '';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,11 +51,14 @@ export function buildTriviaQuizPrintDocument(
   <style>
     body { font-family: system-ui, sans-serif; margin: 16px; font-size: 14px; color: #111; max-width: 700px; margin: 0 auto; padding: 16px; }
     h1 { font-size: 18px; margin-bottom: 8px; }
+    h2 { font-size: 14px; margin-top: 24px; margin-bottom: 8px; color: #333; }
     table { width: 100%; border-collapse: collapse; }
     .num { width: 28px; vertical-align: top; padding: 8px 4px 8px 0; }
     .q { padding: 8px 0; }
     .line { width: 200px; padding-left: 12px; color: #666; }
-    @media print { body { padding: 12px; } }
+    .ans { padding: 6px 0; font-weight: 600; }
+    .notes { padding: 6px 0; font-size: 12px; color: #555; }
+    @media print { body { padding: 12px; } .answer-key { page-break-before: always; } }
   </style>
 </head>
 <body>
@@ -50,6 +67,14 @@ export function buildTriviaQuizPrintDocument(
   <table>
     ${items}
   </table>
+  ${answerKeyRows ? `
+  <div class="answer-key">
+    <h2>Answer key (host only)</h2>
+    <table>
+      ${answerKeyRows}
+    </table>
+  </div>
+  ` : ''}
 </body>
 </html>`;
 }
@@ -65,7 +90,7 @@ export function buildFlashcardsPrintDocument(
       (q, i) => `
     <div class="card">
       <div class="front"><span class="card-num">${i + 1}</span> ${escapeHtml(q.question)}</div>
-      <div class="back"><span class="card-num">${i + 1}</span> ${escapeHtml(q.correctAnswer)}</div>
+      <div class="back"><span class="card-num">${i + 1}</span> ${escapeHtml(q.correctAnswer)}${q.funFact ? `<br><span class="fun-fact">${escapeHtml(q.funFact)}</span>` : ''}</div>
     </div>`
     )
     .join('');
@@ -83,6 +108,7 @@ export function buildFlashcardsPrintDocument(
     .front, .back { padding: 12px; min-height: 70px; border-bottom: 1px dashed #999; }
     .back { border-bottom: none; background: #f5f5f5; }
     .card-num { font-weight: 700; margin-right: 6px; color: #555; }
+    .fun-fact { font-size: 10px; color: #555; display: block; margin-top: 6px; }
     @media print {
       .card { break-inside: avoid; }
       .front, .back { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
