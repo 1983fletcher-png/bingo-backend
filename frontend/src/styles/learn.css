@@ -1056,3 +1056,227 @@
 .volcano-go-deeper__content .learn-content-block:last-child {
   margin-bottom: 0;
 }
+
+/* World Flags — hub and detail */
+.world-flags-hub__intro {
+  max-width: 56ch;
+}
+
+.world-flags-hub__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.world-flags-hub__search {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  font-size: 0.9375rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.world-flags-hub__region {
+  padding: 10px 14px;
+  font-size: 0.9375rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.world-flags-hub__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.world-flags-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.world-flags-card:hover {
+  color: inherit;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--accent);
+}
+
+.world-flags-card__img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.world-flags-card__name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.world-flags-card__region {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.world-flag-detail__header {
+  margin-bottom: 28px;
+}
+
+.world-flag-detail__flag {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.world-flag-detail__title {
+  margin: 0 0 12px;
+}
+
+.world-flag-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+.world-flag-detail__meta span {
+  display: block;
+}
+
+.world-flag-detail__section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.world-flag-detail__section-title {
+  margin: 0 0 12px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.world-flag-detail__origin {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.world-flag-detail__sources {
+  margin-top: 28px;
+}
+
+.world-flag-detail__sources-intro {
+  margin: 0 0 10px;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.world-flag-detail__sources-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.9375rem;
+}
+
+.world-flag-detail__sources-list li {
+  margin-bottom: 4px;
+}
+
+.world-flag-detail__source-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.world-flag-detail__source-link:hover {
+  text-decoration: underline;
+}
+
+.world-flag-detail__attribution {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.world-flag-detail__attribution-note {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.world-flag-detail__attribution-provider {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.world-flag-detail__attribution-provider a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.world-flag-detail__attribution-provider a:hover {
+  text-decoration: underline;
+}
+
+/* Hub: Research & attribution block */
+.world-flags-hub__research {
+  margin-top: 40px;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-size: 0.9375rem;
+}
+
+.world-flags-hub__research-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.world-flags-hub__research p {
+  margin: 0 0 10px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.world-flags-hub__research p:last-child {
+  margin-bottom: 0;
+}
+
+.world-flags-hub__research a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.world-flags-hub__research a:hover {
+  text-decoration: underline;
+}

@@ -69,6 +69,12 @@ const STATIC_CARDS: CardSummary[] = [
     summary: thomasEdisonPage.subtitle ?? 'The Wizard of Menlo Park.',
     tags: thomasEdisonPage.topics,
   },
+  {
+    id: 'world-flags',
+    title: 'World Flags',
+    summary: 'Every country’s flag with origin, meaning, capital, region, and languages. Pictures and facts for learning and trivia.',
+    tags: ['flags', 'world flags', 'geography', 'countries', 'capital', 'regions', 'trivia_ready'],
+  },
 ];
 
 type Section = { id: string; title: string; description?: string; tags: string[] };

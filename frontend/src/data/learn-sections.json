@@ -12,37 +12,154 @@
       "id": "stem_crafts",
       "title": "STEM & Crafts",
       "description": "Experiments, engineering, and hands-on fun.",
-      "tags": ["experiment", "chemistry", "hands_on", "hands-on", "volcano", "trivia_ready", "engineering", "circuits", "rockets", "build", "coding", "programming", "logic", "science experiments"]
+      "tags": [
+        "experiment",
+        "chemistry",
+        "hands_on",
+        "hands-on",
+        "volcano",
+        "trivia_ready",
+        "engineering",
+        "circuits",
+        "rockets",
+        "build",
+        "coding",
+        "programming",
+        "logic",
+        "science experiments"
+      ]
     },
     {
       "id": "time_travel_media",
       "title": "Time Travel & Media",
       "description": "Films, TV, books, and the science of time.",
-      "tags": ["time travel", "Back to the Future", "sci-fi", "movies", "film", "TV", "Doctor Who", "Dark", "series", "Literature", "Comics", "Music", "media", "science fiction", "Hitchhiker's Guide to the Galaxy", "cause and effect", "butterfly effect"]
+      "tags": [
+        "time travel",
+        "Back to the Future",
+        "sci-fi",
+        "movies",
+        "film",
+        "TV",
+        "Doctor Who",
+        "Dark",
+        "series",
+        "Literature",
+        "Comics",
+        "Music",
+        "media",
+        "science fiction",
+        "Hitchhiker's Guide to the Galaxy",
+        "cause and effect",
+        "butterfly effect"
+      ]
     },
     {
       "id": "scientists_inventors",
       "title": "Scientists & Inventors",
       "description": "Biographies and breakthroughs—trivia-ready.",
-      "tags": ["Nikola Tesla", "tesla", "inventor", "electricity", "AC", "Tesla coil", "wireless", "radio", "biography", "scientists", "Albert Einstein", "einstein", "relativity", "physics", "Isaac Newton", "Newton", "gravity", "Thomas Edison", "Edison", "light bulb", "phonograph", "Menlo Park"]
+      "tags": [
+        "Nikola Tesla",
+        "tesla",
+        "inventor",
+        "electricity",
+        "AC",
+        "Tesla coil",
+        "wireless",
+        "radio",
+        "biography",
+        "scientists",
+        "Albert Einstein",
+        "einstein",
+        "relativity",
+        "physics",
+        "Isaac Newton",
+        "Newton",
+        "gravity",
+        "Thomas Edison",
+        "Edison",
+        "light bulb",
+        "phonograph",
+        "Menlo Park"
+      ]
     },
     {
       "id": "biology_nature",
       "title": "Biology & Nature",
       "description": "Plants, ecosystems, and life science.",
-      "tags": ["plants", "botany", "photosynthesis", "gardening", "growth", "ecosystems", "forest", "ocean", "desert", "habitat", "microbiology", "bacteria", "virus", "fungi", "biology"]
+      "tags": [
+        "plants",
+        "botany",
+        "photosynthesis",
+        "gardening",
+        "growth",
+        "ecosystems",
+        "forest",
+        "ocean",
+        "desert",
+        "habitat",
+        "microbiology",
+        "bacteria",
+        "virus",
+        "fungi",
+        "biology"
+      ]
     },
     {
       "id": "animals",
       "title": "Animals",
       "description": "Mammals, birds, and the animal kingdom.",
-      "tags": ["mammals", "mammal", "animals", "elephant", "dog", "cat", "birds", "bird", "migration", "flight"]
+      "tags": [
+        "mammals",
+        "mammal",
+        "animals",
+        "elephant",
+        "dog",
+        "cat",
+        "birds",
+        "bird",
+        "migration",
+        "flight"
+      ]
+    },
+    {
+      "id": "world_flags",
+      "title": "World Flags",
+      "description": "Every country's flag: origin, meaning, capital, region, and languages.",
+      "tags": [
+        "flags",
+        "world flags",
+        "countries",
+        "capital",
+        "regions",
+        "geography",
+        "country"
+      ]
     },
     {
       "id": "geography",
       "title": "Geography",
       "description": "Places, regions, maps, and the world.",
-      "tags": ["geography", "place", "region", "continent", "country", "map", "maps", "climate", "landforms", "earth", "world", "culture", "travel", "location"]
+      "tags": [
+        "geography",
+        "place",
+        "region",
+        "continent",
+        "country",
+        "map",
+        "maps",
+        "climate",
+        "landforms",
+        "earth",
+        "world",
+        "culture",
+        "travel",
+        "location",
+        "flags",
+        "world flags",
+        "countries",
+        "capital",
+        "regions"
+      ]
     }
   ]
 }

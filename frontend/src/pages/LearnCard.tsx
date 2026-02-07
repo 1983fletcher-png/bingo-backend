@@ -5,6 +5,8 @@ import LearningPageView from '../components/LearningPageView';
 import BakingSodaVolcanoExplorationView from '../components/BakingSodaVolcanoExplorationView';
 import CraftsStemHub from '../components/CraftsStemHub';
 import CraftsStemProjectView from '../components/CraftsStemProjectView';
+import WorldFlagsHub from '../components/WorldFlagsHub';
+import WorldFlagDetailView from '../components/WorldFlagDetailView';
 import { bakingSodaVolcanoPage, timeTravelPage, nikolaTeslaPage, albertEinsteinPage, isaacNewtonPage, thomasEdisonPage } from '../types/learningEngine';
 import { generatedPageToLearningPage } from '../lib/learningEngineValidation';
 import { slimeEnginePage } from '../data/learningEnginePages/slimePage';
@@ -88,6 +90,23 @@ export default function LearnCard() {
     return (
       <div className="learn-page">
         <CraftsStemHub />
+      </div>
+    );
+  }
+
+  if (id === 'world-flags') {
+    return (
+      <div className="learn-page">
+        <WorldFlagsHub />
+      </div>
+    );
+  }
+
+  if (id?.startsWith('world-flags-')) {
+    const countryCode = id.replace(/^world-flags-/, '');
+    return (
+      <div className="learn-page">
+        <WorldFlagDetailView code={countryCode} />
       </div>
     );
   }
