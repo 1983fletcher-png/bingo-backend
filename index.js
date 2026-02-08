@@ -14,6 +14,7 @@ import { fetchTrustedSources } from './lib/trustedSources.js';
 import { enrichTrack, getChartStyleList } from './lib/musicDataLayer.js';
 import { getObservancesForYear, getUpcoming, CATEGORIES } from './lib/holidaysAndObservancesUS.js';
 import { isR2Configured, uploadToR2 } from './lib/r2.js';
+import * as roomStore from './server/roomStore.js';
 
 /**
  * Extract text from a PDF buffer. Tries pdf-parse first (best fidelity), then Mozilla PDF.js fallback
@@ -1286,6 +1287,112 @@ io.on('connection', (socket) => {
     if (t.revealed || questionIndex !== t.currentIndex) return;
     if (!t.answers[socket.id]) t.answers[socket.id] = {};
     t.answers[socket.id][questionIndex] = answer;
+  });
+
+  // --- Trivia Room (canonical state machine: WAITING_ROOM → READY_CHECK → ACTIVE_ROUND → REVEAL → …) ---
+  socket.on('room:join', ({ roomId, role, playerId, displayName, isAnonymous, hostToken } = {}) => {
+    const rid = (roomId || '').trim();
+    const r = roomStore.getRoom(rid);
+    if (!r) {
+      socket.emit('room:error', { message: 'Room not found', code: 'ROOM_NOT_FOUND' });
+      return;
+    }
+    socket.join(`room:${rid}`);
+    socket.roomId = rid;
+    socket.roomRole = role || 'player';
+    if (role === 'host') {
+      if (r.hostToken && hostToken === r.hostToken) r.hostId = socket.id;
+      else if (r.hostId === '') r.hostId = socket.id;
+    }
+    if (role === 'player' && playerId && displayName !== undefined) {
+      roomStore.upsertPlayer(rid, {
+        playerId,
+        displayName: String(displayName),
+        isAnonymous: Boolean(isAnonymous),
+      });
+    }
+    const snapshot = roomStore.buildRoomSnapshot(rid);
+    if (snapshot) socket.emit('room:snapshot', snapshot);
+  });
+
+  socket.on('room:host-create', ({ pack, settings } = {}) => {
+    if (!pack || !pack.id) {
+      socket.emit('room:error', { message: 'Pack required', code: 'PACK_REQUIRED' });
+      return;
+    }
+    const room = roomStore.createRoom({
+      pack,
+      hostId: socket.id,
+      settings: settings && typeof settings === 'object' ? settings : undefined,
+    });
+    socket.join(`room:${room.roomId}`);
+    socket.roomId = room.roomId;
+    socket.roomRole = 'host';
+    const snapshot = roomStore.buildRoomSnapshot(room.roomId);
+    if (snapshot) socket.emit('room:snapshot', snapshot);
+    socket.emit('room:created', { roomId: room.roomId, hostToken: room.hostToken });
+  });
+
+  socket.on('room:host-set-state', ({ roomId, nextState } = {}) => {
+    const rid = (roomId || '').trim();
+    const r = roomStore.getRoom(rid);
+    if (!r || r.hostId !== socket.id) {
+      socket.emit('room:error', { message: 'Not host or room not found', code: 'UNAUTHORIZED' });
+      return;
+    }
+    const ok = roomStore.updateRoomState(rid, nextState);
+    if (!ok) {
+      socket.emit('room:error', { message: 'Invalid state transition', code: 'INVALID_STATE' });
+      return;
+    }
+    const snapshot = roomStore.buildRoomSnapshot(rid);
+    if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
+  });
+
+  socket.on('room:host-next', ({ roomId } = {}) => {
+    const rid = (roomId || '').trim();
+    const r = roomStore.getRoom(rid);
+    if (!r || r.hostId !== socket.id) return;
+    const advanced = roomStore.advanceToNextQuestion(rid);
+    if (advanced) {
+      const snapshot = roomStore.buildRoomSnapshot(rid);
+      if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
+    } else {
+      roomStore.updateRoomState(rid, 'LEADERBOARD');
+      const snapshot = roomStore.buildRoomSnapshot(rid);
+      if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
+    }
+  });
+
+  socket.on('room:host-toggle-setting', ({ roomId, key, value } = {}) => {
+    const rid = (roomId || '').trim();
+    const r = roomStore.getRoom(rid);
+    if (!r || r.hostId !== socket.id) return;
+    roomStore.updateRoomSetting(rid, key, value);
+    const snapshot = roomStore.buildRoomSnapshot(rid);
+    if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
+  });
+
+  socket.on('room:submit-response', ({ roomId, questionId, playerId, payload } = {}) => {
+    const rid = (roomId || '').trim();
+    const r = roomStore.getRoom(rid);
+    if (!r) return;
+    const q = r.pack?.questions?.find((qu) => qu.id === questionId);
+    if (!q) return;
+    if (r.state !== 'ACTIVE_ROUND' || r.runtime.currentQuestionIndex !== r.pack.questions.findIndex((qu) => qu.id === questionId)) return;
+    const points = q.scoring?.basePoints ?? 1;
+    let isCorrect = false;
+    if (q.type === 'mc' || q.type === 'tf') {
+      const correctId = q.answer?.correct;
+      isCorrect = String(payload?.optionId || payload).trim() === String(correctId).trim();
+    } else if (q.type === 'short' && q.answer && 'primary' in q.answer) {
+      const raw = String(payload?.text || payload || '').trim().toLowerCase();
+      const accepted = [q.answer.primary.toLowerCase(), ...(q.answer.acceptedVariants || []).map((v) => v.toLowerCase())];
+      isCorrect = accepted.includes(raw);
+    }
+    roomStore.recordResponse(rid, questionId, playerId, payload, isCorrect ? points : 0, isCorrect);
+    const snapshot = roomStore.buildRoomSnapshot(rid);
+    if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
   });
 
   socket.on('disconnect', () => {
