@@ -1,6 +1,6 @@
 /**
  * Host Trivia creation flow: Game type → Play a Pack → Pack picker → Preview → Host options → Start Hosting.
- * Creates room via room:host-create and redirects to /room/:roomId?role=host.
+ * Creates a code-based game via host:create (same as Icebreakers/Bingo) and redirects to /host for the full host screen.
  */
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
@@ -8,14 +8,33 @@ import { getSocket } from '../lib/socket';
 import { getTriviaRoomPacks } from '../data/triviaRoomPacks';
 import type { TriviaPackModel, TriviaQuestionModel, RoomSettings } from '../lib/models';
 import type { Socket } from 'socket.io-client';
+import { PLAYROOM_HOST_CREATED_KEY } from './TriviaBuilder';
 import '../styles/host-create.css';
 
-const ROOM_HOST_KEY = 'playroom_room_host';
+/** Same key as Host.tsx so resume and startEvent work */
+const HOST_TOKEN_KEY = (code: string) => `playroom:hostToken:${code}`;
 
-function saveHostToken(roomId: string, hostToken: string) {
-  try {
-    localStorage.setItem(ROOM_HOST_KEY, JSON.stringify({ roomId, hostToken }));
-  } catch (_) {}
+/** Convert TriviaPackModel questions to the shape host:create expects (question, correctAnswer, options?, points). */
+function packToHostCreateQuestions(pack: TriviaPackModel): { question: string; correctAnswer: string; options?: string[]; points?: number }[] {
+  return (pack.questions || []).map((q) => {
+    const points = q.scoring?.basePoints ?? 1;
+    const ans = q.answer as unknown as Record<string, unknown>;
+    let correctAnswer = '';
+    let options: string[] | undefined;
+    if (ans.options && Array.isArray(ans.options) && typeof ans.correct === 'string') {
+      const opts = ans.options as { id: string; text: string }[];
+      options = opts.map((o) => o.text);
+      const correctOpt = opts.find((o) => o.id === ans.correct);
+      correctAnswer = correctOpt?.text ?? String(ans.correct);
+    } else if (typeof ans.primary === 'string') {
+      correctAnswer = ans.primary;
+    } else if (q.type === 'tf' && (ans.correct === 'true' || ans.correct === 'false')) {
+      correctAnswer = ans.correct === 'true' ? 'True' : 'False';
+    } else {
+      correctAnswer = String(ans.correct ?? '');
+    }
+    return { question: q.prompt, correctAnswer, options, points };
+  });
 }
 
 type Step = 'type' | 'pack' | 'preview' | 'options';
@@ -53,19 +72,27 @@ export default function HostCreateTrivia() {
   useEffect(() => {
     const s = getSocket();
     setSocket(s);
-    const onCreated = (data: { roomId: string; hostToken?: string }) => {
-      if (data.roomId && data.hostToken) saveHostToken(data.roomId, data.hostToken);
+    const onGameCreated = (payload: { code?: string; hostToken?: string; joinUrl?: string; gameType?: string; eventConfig?: object; waitingRoom?: object; songPool?: unknown[]; revealed?: unknown[]; trivia?: { questions?: unknown[] } }) => {
       setCreating(false);
-      navigate(`/room/${data.roomId}?role=host`, { replace: true });
+      if (!payload?.code) return;
+      if (payload.hostToken) {
+        try {
+          localStorage.setItem(HOST_TOKEN_KEY(payload.code), payload.hostToken);
+        } catch (_) {}
+      }
+      try {
+        sessionStorage.setItem(PLAYROOM_HOST_CREATED_KEY, JSON.stringify(payload));
+      } catch (_) {}
+      navigate('/host', { replace: true });
     };
     const onError = (e: { message?: string }) => {
-      setError(e?.message || 'Failed to create room');
+      setError(e?.message || 'Failed to create game');
       setCreating(false);
     };
-    s.on('room:created', onCreated);
+    s.on('game:created', onGameCreated);
     s.on('room:error', onError);
     return () => {
-      s.off('room:created', onCreated);
+      s.off('game:created', onGameCreated);
       s.off('room:error', onError);
     };
   }, [navigate]);
@@ -74,9 +101,13 @@ export default function HostCreateTrivia() {
     if (!selectedPack || !socket?.connected) return;
     setError(null);
     setCreating(true);
-    socket.emit('room:host-create', {
-      pack: selectedPack,
-      settings,
+    const questions = packToHostCreateQuestions(selectedPack);
+    socket.emit('host:create', {
+      baseUrl: typeof window !== 'undefined' ? window.location.origin : undefined,
+      gameType: 'trivia',
+      packId: selectedPack.id,
+      eventConfig: { gameTitle: selectedPack.title },
+      questions,
     });
   };
 

@@ -3,7 +3,7 @@
  * Same room code/QR for waiting → game → end; state from ROOM_SNAPSHOT.
  */
 import { useEffect, useState, useRef } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import type { Socket } from 'socket.io-client';
 import type { RoomSnapshotPayload, RoomModel, PlayerModel, TriviaQuestionModel } from '../lib/models';
@@ -65,6 +65,19 @@ function randomFunnyName(): string {
   return FUNNY_NAMES[Math.floor(Math.random() * FUNNY_NAMES.length)];
 }
 
+/** Get the correct-answer display text for host/display when revealed (mc/tf: option text; short: primary). */
+function getAnswerDisplayText(q: TriviaQuestionModel | null): string {
+  if (!q?.answer) return '';
+  const ans = q.answer as unknown as Record<string, unknown>;
+  if (ans.options && Array.isArray(ans.options) && typeof ans.correct === 'string') {
+    const opt = (ans.options as { id: string; text: string }[]).find((o) => o.id === ans.correct);
+    return opt?.text ?? String(ans.correct);
+  }
+  if (typeof ans.primary === 'string') return ans.primary;
+  if (q.type === 'tf' && (ans.correct === 'true' || ans.correct === 'false')) return ans.correct === 'true' ? 'True' : 'False';
+  return String(ans.correct ?? '');
+}
+
 // —— Host panel (operations-grade controls) ——
 function HostPanel({
   room,
@@ -98,11 +111,19 @@ function HostPanel({
     if (socket?.connected) socket.emit('room:host-next', { roomId });
   };
 
+  const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/room/${roomId}` : '';
+
   return (
     <div style={{ padding: 24, maxWidth: 720, margin: '0 auto' }}>
       <h1 style={{ margin: '0 0 8px', fontSize: 24 }}>Host — {pack?.title || 'Trivia'}</h1>
       <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 14 }}>
         Room <strong>{roomId}</strong> · {room.state} · {players.length} player(s) · {responsesCount} responses
+      </p>
+      <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--text-muted)', wordBreak: 'break-all' }}>
+        Players join: <strong>{joinUrl}</strong>
+      </p>
+      <p style={{ margin: '8px 0 0', fontSize: 14 }}>
+        <Link to="/host?type=trivia">← Back to host</Link>
       </p>
 
       <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -151,6 +172,11 @@ function HostPanel({
       {currentQuestion && (room.state === 'ACTIVE_ROUND' || room.state === 'REVEAL') && (
         <div style={{ marginTop: 24, padding: 16, background: 'var(--surface)', borderRadius: 12 }}>
           <p style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>{currentQuestion.prompt}</p>
+          {room.state === 'REVEAL' && (
+            <p style={{ margin: '16px 0 0', padding: '12px 16px', background: 'var(--accent)', color: '#111', borderRadius: 8, fontSize: 20, fontWeight: 700 }}>
+              Answer: {getAnswerDisplayText(currentQuestion)}
+            </p>
+          )}
         </div>
       )}
 
@@ -272,6 +298,7 @@ function DisplayPanel({
     ? (currentQuestion.answer as { correct: string }).correct
     : null;
   const showCorrect = room.state === 'REVEAL';
+  const answerText = showCorrect ? getAnswerDisplayText(currentQuestion) : '';
 
   return (
     <div style={{ padding: 32, minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -301,6 +328,11 @@ function DisplayPanel({
                 </div>
               ))}
             </div>
+          )}
+          {showCorrect && answerText && options.length === 0 && (
+            <p style={{ margin: 0, padding: '24px 32px', background: 'var(--accent)', color: '#111', borderRadius: 12, fontSize: 'clamp(24px, 3vw, 36px)', fontWeight: 700 }}>
+              Answer: {answerText}
+            </p>
           )}
         </>
       ) : (

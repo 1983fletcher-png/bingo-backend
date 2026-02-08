@@ -67,9 +67,23 @@ const VALID_STATES = new Set([
   'REVEAL', 'LEADERBOARD', 'REVIEW', 'END_ROOM'
 ]);
 
+/** Allowed transitions: from -> to (so REVEAL only from ACTIVE_ROUND, etc.). */
+const ALLOWED_TRANSITIONS = {
+  ROOM_CREATED: ['WAITING_ROOM'],
+  WAITING_ROOM: ['READY_CHECK', 'END_ROOM'],
+  READY_CHECK: ['ACTIVE_ROUND', 'WAITING_ROOM'],
+  ACTIVE_ROUND: ['REVEAL', 'LEADERBOARD'],
+  REVEAL: ['LEADERBOARD', 'ACTIVE_ROUND'],
+  LEADERBOARD: ['ACTIVE_ROUND', 'REVIEW', 'END_ROOM'],
+  REVIEW: ['LEADERBOARD', 'END_ROOM'],
+  END_ROOM: [],
+};
+
 export function updateRoomState(roomId, nextState) {
   const room = triviaRooms.get(roomId);
   if (!room || !VALID_STATES.has(nextState)) return false;
+  const allowed = ALLOWED_TRANSITIONS[room.state];
+  if (!Array.isArray(allowed) || !allowed.includes(nextState)) return false;
   room.state = nextState;
   const now = new Date().toISOString();
   if (nextState === 'ACTIVE_ROUND') room.runtime.questionStartAt = now;
