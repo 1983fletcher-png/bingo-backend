@@ -21,8 +21,11 @@ import type { Socket } from 'socket.io-client';
 const API_BASE = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : window.location.origin);
 const BACKEND_CONFIGURED = !!(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL);
 
+const HOST_TOKEN_KEY = (code: string) => `playroom:hostToken:${code}`;
+
 interface GameCreated {
   code: string;
+  hostToken?: string;
   joinUrl: string;
   gameType: string;
   eventConfig?: EventConfig;
@@ -80,6 +83,7 @@ export default function Host() {
   const [triviaRevealed, setTriviaRevealed] = useState(false);
   const createTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prebuiltSongsRef = useRef<Song[] | null>(null);
+  const gameRef = useRef<GameCreated | null>(null);
   // Event & venue: full config, scrape, venue profiles
   const [eventConfig, setEventConfigState] = useState<EventConfig>(() => ({
     gameTitle: 'Music Bingo',
@@ -133,11 +137,35 @@ export default function Host() {
   }, []);
 
   useEffect(() => {
+    gameRef.current = game;
+  }, [game]);
+
+  useEffect(() => {
     const s = getSocket();
     setSocket(s);
 
-    s.on('connect', () => setConnected(true));
+    s.on('connect', () => {
+      setConnected(true);
+      const current = gameRef.current;
+      if (!current?.code) return;
+      const token = localStorage.getItem(HOST_TOKEN_KEY(current.code));
+      if (!token) return;
+      s.emit('host:resume', { code: current.code, hostToken: token });
+    });
     s.on('disconnect', () => setConnected(false));
+
+    s.on('host:resume:ok', (payload: GameCreated) => {
+      setGame(payload);
+      setSongPool(payload.songPool ?? []);
+      setRevealed(payload.revealed ?? []);
+      setHostMessage(payload.waitingRoom?.hostMessage || 'Starting soon…');
+      setWaitingRoomTheme(payload.waitingRoom?.theme || 'default');
+      if (payload.eventConfig && typeof payload.eventConfig === 'object') {
+        setEventConfigState((prev) => ({ ...prev, ...payload.eventConfig }));
+      }
+      if (payload.trivia?.questions?.length) setTriviaQuestions(payload.trivia.questions);
+      else setTriviaQuestions([]);
+    });
 
     s.on('game:created', (payload: GameCreated) => {
       if (createTimeoutRef.current) clearTimeout(createTimeoutRef.current);
@@ -146,6 +174,13 @@ export default function Host() {
       setCreateError(null);
       setGameStarted(false);
       setGame(payload);
+      if (payload.hostToken && payload.code) {
+        try {
+          localStorage.setItem(HOST_TOKEN_KEY(payload.code), payload.hostToken);
+        } catch {
+          // ignore
+        }
+      }
       setHostMessage(payload.waitingRoom?.hostMessage || 'Starting soon…');
       setWaitingRoomTheme(payload.waitingRoom?.theme || 'default');
       const songsFromServer = Array.isArray(payload.songPool) ? payload.songPool : [];
@@ -160,7 +195,8 @@ export default function Host() {
         setTriviaQuestions([]);
       }
       if (payload.gameType === 'music-bingo' && prebuiltSongsRef.current && prebuiltSongsRef.current.length >= 24) {
-        s.emit('host:set-songs', { code: payload.code, songs: prebuiltSongsRef.current });
+        const token = payload.hostToken ?? (payload.code ? localStorage.getItem(HOST_TOKEN_KEY(payload.code)) : null);
+        s.emit('host:set-songs', { code: payload.code, hostToken: token ?? undefined, songs: prebuiltSongsRef.current });
         setSongPool(prebuiltSongsRef.current);
         prebuiltSongsRef.current = null;
       }
@@ -184,7 +220,7 @@ export default function Host() {
     });
 
     s.on('game:trivia-state', (payload: { questions?: TriviaQuestion[]; currentIndex?: number; revealed?: boolean }) => {
-      if (Array.isArray(payload.questions)) setTriviaQuestions(payload.questions);
+      // Only update index/revealed; keep full questions from game:created (audience payload has no correctAnswer)
       if (typeof payload.currentIndex === 'number') setTriviaCurrentIndex(payload.currentIndex);
       if (typeof payload.revealed === 'boolean') setTriviaRevealed(payload.revealed);
     });
@@ -206,6 +242,7 @@ export default function Host() {
     return () => {
       s.off('connect');
       s.off('disconnect');
+      s.off('host:resume:ok');
       s.off('game:created');
       s.off('game:started');
       s.off('game:event-config-updated');
@@ -298,11 +335,12 @@ export default function Host() {
 
   const startEvent = () => {
     if (!socket || !game) return;
+    const hostToken = game.code ? localStorage.getItem(HOST_TOKEN_KEY(game.code)) : null;
     const isTriviaLikeType = game.gameType === 'trivia' || game.gameType === 'icebreakers' || game.gameType === 'edutainment' || game.gameType === 'team-building';
     if (isTriviaLikeType) {
-      socket.emit('host:trivia-start', { code: game.code });
+      socket.emit('host:trivia-start', { code: game.code, hostToken: hostToken ?? undefined });
     } else {
-      socket.emit('host:start', { code: game.code });
+      socket.emit('host:start', { code: game.code, hostToken: hostToken ?? undefined });
     }
   };
 

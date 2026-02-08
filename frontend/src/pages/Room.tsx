@@ -7,7 +7,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import type { Socket } from 'socket.io-client';
 import type { RoomSnapshotPayload, RoomModel, PlayerModel, TriviaQuestionModel } from '../lib/models';
-import { isStartButtonEnabled } from '../lib/models';
+import { isStartButtonEnabled, isStartReadyCheckEnabled } from '../lib/models';
 import '../styles/join.css';
 
 const ROOM_HOST_KEY = 'playroom_room_host';
@@ -87,7 +87,8 @@ function HostPanel({
 }) {
   const packLoaded = Boolean(pack?.questions?.length);
   const hostConnected = Boolean(socket?.connected);
-  const startEnabled = isStartButtonEnabled(room.state, packLoaded, hostConnected);
+  const startReadyCheckEnabled = isStartReadyCheckEnabled(room.state, packLoaded, hostConnected);
+  const beginRoundEnabled = isStartButtonEnabled(room.state, packLoaded, hostConnected);
 
   const setState = (nextState: RoomModel['state']) => {
     if (socket?.connected) socket.emit('room:host-set-state', { roomId, nextState });
@@ -108,7 +109,7 @@ function HostPanel({
         {room.state === 'WAITING_ROOM' && (
           <button
             className="join-page__btn"
-            disabled={!startEnabled}
+            disabled={!startReadyCheckEnabled}
             onClick={() => setState('READY_CHECK')}
           >
             Start ready check
@@ -117,7 +118,7 @@ function HostPanel({
         {room.state === 'READY_CHECK' && (
           <button
             className="join-page__btn"
-            disabled={!startEnabled}
+            disabled={!beginRoundEnabled}
             onClick={() => setState('ACTIVE_ROUND')}
           >
             Begin round

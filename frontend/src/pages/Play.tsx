@@ -236,10 +236,15 @@ export default function Play() {
       });
     });
 
-    s.on('game:trivia-reveal', () => {
+    s.on('game:trivia-reveal', (payload: { questionIndex?: number; correctAnswer?: string; scores?: Record<string, number> }) => {
       setJoinState((prev) => {
         if (!prev?.trivia) return prev;
-        return { ...prev, trivia: { ...prev.trivia, revealed: true } };
+        const idx = payload.questionIndex ?? prev.trivia.currentIndex ?? 0;
+        const questions = [...(prev.trivia.questions || [])];
+        if (questions[idx] != null && payload.correctAnswer !== undefined) {
+          questions[idx] = { ...questions[idx], correctAnswer: payload.correctAnswer };
+        }
+        return { ...prev, trivia: { ...prev.trivia, questions, revealed: true } };
       });
     });
 

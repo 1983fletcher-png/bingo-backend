@@ -947,6 +947,7 @@ function createGame(opts = {}) {
   const defaultTitle = defaultTitles[gameType] || 'Playroom';
   const game = {
     code,
+    hostToken: nanoidCode() + nanoidCode(),
     hostId: null,
     eventConfig: opts.eventConfig || { gameTitle: defaultTitle, venueName: '', accentColor: '#e94560' },
     players: new Map(),
@@ -983,17 +984,24 @@ function createGame(opts = {}) {
   return game;
 }
 
-function getTriviaPayload(game) {
+function getTriviaPayload(game, opts = {}) {
   if (!game?.trivia) return null;
+  const { forAudience } = opts;
   const t = game.trivia;
   const q = t.questions[t.currentIndex] || null;
+  const questions = forAudience
+    ? t.questions.map((qu) => ({ question: qu.question, options: qu.options }))
+    : t.questions;
+  const currentQuestion = forAudience && q
+    ? { question: q.question, options: q.options, ...(t.revealed && q.correctAnswer != null ? { correctAnswer: q.correctAnswer } : {}) }
+    : q;
   return {
     packId: t.packId,
-    questions: t.questions,
+    questions,
     currentIndex: t.currentIndex,
     revealed: t.revealed,
     scores: t.scores,
-    currentQuestion: q
+    currentQuestion
   };
 }
 
@@ -1010,6 +1018,17 @@ function getRollCallLeaderboard(game) {
     });
   }
   return list.sort((a, b) => a.bestTimeMs - b.bestTimeMs);
+}
+
+/** Old flow: authorize host by socket.id or hostToken (reconnect-safe). */
+function assertHost(game, socket, hostToken) {
+  if (!game) return false;
+  if (game.hostId === socket.id) return true;
+  if (hostToken && hostToken === game.hostToken) {
+    game.hostId = socket.id;
+    return true;
+  }
+  return false;
 }
 
 io.on('connection', (socket) => {
@@ -1030,6 +1049,7 @@ io.on('connection', (socket) => {
     const origin = baseUrl || getBaseUrl(socket);
     const payload = {
       code: game.code,
+      hostToken: game.hostToken,
       joinUrl: `${origin}/join/${game.code}`,
       songPool: game.songPool,
       revealed: game.revealed,
@@ -1040,6 +1060,37 @@ io.on('connection', (socket) => {
       waitingRoom: game.waitingRoom
     };
     if (game.trivia) payload.trivia = getTriviaPayload(game);
+    socket.emit('game:created', payload);
+  });
+
+  socket.on('host:resume', ({ code, hostToken }) => {
+    const game = getGame(code);
+    if (!game) {
+      socket.emit('host:resume:error', { message: 'Game not found' });
+      return;
+    }
+    if (hostToken !== game.hostToken) {
+      socket.emit('host:resume:error', { message: 'Unauthorized' });
+      return;
+    }
+    game.hostId = socket.id;
+    socket.join(`game:${game.code}`);
+    socket.gameCode = game.code;
+    const origin = getBaseUrl(socket);
+    const payload = {
+      code: game.code,
+      hostToken: game.hostToken,
+      joinUrl: `${origin}/join/${game.code}`,
+      songPool: game.songPool,
+      revealed: game.revealed,
+      freeSpace: game.freeSpace,
+      winCondition: game.winCondition,
+      eventConfig: game.eventConfig,
+      gameType: game.gameType,
+      waitingRoom: game.waitingRoom,
+    };
+    if (game.trivia) payload.trivia = getTriviaPayload(game);
+    socket.emit('host:resume:ok', payload);
     socket.emit('game:created', payload);
   });
 
@@ -1058,24 +1109,24 @@ io.on('connection', (socket) => {
     socket.emit('event:preview-ok', payload);
   });
 
-  socket.on('host:set-win-condition', ({ code, winCondition }) => {
+  socket.on('host:set-win-condition', ({ code, hostToken, winCondition }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id) return;
+    if (!game || !assertHost(game, socket, hostToken)) return;
     game.winCondition = winCondition || 'line';
     io.to(`game:${game.code}`).emit('game:win-condition-updated', { winCondition: game.winCondition });
   });
 
-  socket.on('host:set-event-config', ({ code, eventConfig }) => {
+  socket.on('host:set-event-config', ({ code, hostToken, eventConfig }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id) return;
+    if (!game || !assertHost(game, socket, hostToken)) return;
     game.eventConfig = eventConfig && typeof eventConfig === 'object' ? eventConfig : {};
     io.to(`game:${game.code}`).emit('game:event-config-updated', { eventConfig: game.eventConfig });
   });
 
   // Waiting room: host sets mini-game (roll-call, fidget/stretch, or none), theme, and message
-  socket.on('host:set-waiting-room', ({ code, game: wrGame, theme, hostMessage, logoAnimation, stretchyImageSource, stretchyImageUrl, mazeCenterSource, mazeCenterImageUrl }) => {
+  socket.on('host:set-waiting-room', ({ code, hostToken, game: wrGame, theme, hostMessage, logoAnimation, stretchyImageSource, stretchyImageUrl, mazeCenterSource, mazeCenterImageUrl }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id) return;
+    if (!game || !assertHost(game, socket, hostToken)) return;
     if (wrGame !== undefined) game.waitingRoom.game = (wrGame === 'roll-call' || wrGame === 'fidget') ? wrGame : null;
     if (theme !== undefined && typeof theme === 'string') game.waitingRoom.theme = theme;
     if (hostMessage !== undefined && typeof hostMessage === 'string') game.waitingRoom.hostMessage = hostMessage;
@@ -1087,24 +1138,24 @@ io.on('connection', (socket) => {
     io.to(`game:${game.code}`).emit('game:waiting-room-updated', { waitingRoom: game.waitingRoom });
   });
 
-  socket.on('host:set-songs', ({ code, songs }) => {
+  socket.on('host:set-songs', ({ code, hostToken, songs }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id) return;
+    if (!game || !assertHost(game, socket, hostToken)) return;
     game.songPool = Array.isArray(songs) ? songs : [];
     io.to(`game:${game.code}`).emit('game:songs-updated', { songPool: game.songPool });
   });
 
-  socket.on('host:set-trivia-questions', ({ code, questions }) => {
+  socket.on('host:set-trivia-questions', ({ code, hostToken, questions }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id || !game.trivia) return;
+    if (!game || !game.trivia || !assertHost(game, socket, hostToken)) return;
     game.trivia.questions = Array.isArray(questions) ? questions : [];
     const payload = getTriviaPayload(game);
     io.to(`game:${game.code}`).emit('game:trivia-state', payload);
   });
 
-  socket.on('host:reveal', ({ code, song }) => {
+  socket.on('host:reveal', ({ code, hostToken, song }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id) return;
+    if (!game || !assertHost(game, socket, hostToken)) return;
     if (!song || typeof song.artist !== 'string' || typeof song.title !== 'string') return;
     const normalized = { artist: String(song.artist).trim(), title: String(song.title).trim() };
     const alreadyRevealed = game.revealed.some(
@@ -1116,24 +1167,24 @@ io.on('connection', (socket) => {
     io.to(`game:${game.code}`).emit('game:revealed', { revealed: revealedCopy });
   });
 
-  socket.on('host:start', ({ code }) => {
+  socket.on('host:start', ({ code, hostToken }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id) return;
+    if (!game || !assertHost(game, socket, hostToken)) return;
     game.started = true;
     game.welcomeDismissed = false;
     io.to(`game:${game.code}`).emit('game:started', { welcomeDismissed: false });
   });
 
-  socket.on('host:dismiss-welcome', ({ code }) => {
+  socket.on('host:dismiss-welcome', ({ code, hostToken }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id) return;
+    if (!game || !assertHost(game, socket, hostToken)) return;
     game.welcomeDismissed = true;
     io.to(`game:${game.code}`).emit('game:welcome-dismissed', {});
   });
 
-  socket.on('host:reset', ({ code }) => {
+  socket.on('host:reset', ({ code, hostToken }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id) return;
+    if (!game || !assertHost(game, socket, hostToken)) return;
     game.revealed = [];
     game.winner = null;
     game.started = false;
@@ -1163,7 +1214,7 @@ io.on('connection', (socket) => {
       gameType: game.gameType,
       waitingRoom: game.waitingRoom
     };
-    if (game.trivia) joinPayload.trivia = getTriviaPayload(game);
+    if (game.trivia) joinPayload.trivia = getTriviaPayload(game, { forAudience: true });
     // Stubbed Roll Call leaderboard for waiting room
     joinPayload.rollCallLeaderboard = getRollCallLeaderboard(game);
     socket.emit('join:ok', joinPayload);
@@ -1227,38 +1278,41 @@ io.on('connection', (socket) => {
       waitingRoom: game.waitingRoom,
       rollCallLeaderboard: getRollCallLeaderboard(game)
     };
-    if (game.trivia) displayPayload.trivia = getTriviaPayload(game);
+    if (game.trivia) displayPayload.trivia = getTriviaPayload(game, { forAudience: true });
     socket.emit('display:ok', displayPayload);
   });
 
   // --- Trivia ---
-  socket.on('host:trivia-start', ({ code }) => {
+  socket.on('host:trivia-start', ({ code, hostToken }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id || !game.trivia) return;
+    if (!game?.trivia) return;
+    if (!assertHost(game, socket, hostToken)) return;
     game.started = true;
     game.welcomeDismissed = false;
     game.trivia.currentIndex = 0;
     game.trivia.revealed = false;
     io.to(`game:${game.code}`).emit('game:started', { welcomeDismissed: false });
-    const payload = getTriviaPayload(game);
+    const payload = getTriviaPayload(game, { forAudience: true });
     io.to(`game:${game.code}`).emit('game:trivia-state', payload);
   });
 
-  socket.on('host:trivia-next', ({ code }) => {
+  socket.on('host:trivia-next', ({ code, hostToken }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id || !game.trivia) return;
+    if (!game?.trivia) return;
+    if (!assertHost(game, socket, hostToken)) return;
     const t = game.trivia;
     if (t.currentIndex < t.questions.length - 1) {
       t.currentIndex += 1;
       t.revealed = false;
     }
-    const payload = getTriviaPayload(game);
+    const payload = getTriviaPayload(game, { forAudience: true });
     io.to(`game:${game.code}`).emit('game:trivia-state', payload);
   });
 
-  socket.on('host:trivia-reveal', ({ code }) => {
+  socket.on('host:trivia-reveal', ({ code, hostToken }) => {
     const game = getGame(code);
-    if (!game || game.hostId !== socket.id || !game.trivia) return;
+    if (!game?.trivia) return;
+    if (!assertHost(game, socket, hostToken)) return;
     const t = game.trivia;
     const q = t.questions[t.currentIndex];
     if (!q) return;

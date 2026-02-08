@@ -70,8 +70,11 @@ export default function Display() {
       return;
     }
     const s = getSocket();
-    s.emit('display:join', { code: code.trim().toUpperCase() });
-    s.once('display:ok', (payload: { joinUrl?: string; songPool?: Song[]; revealed?: Song[]; eventConfig?: DisplayEventConfig; started?: boolean; gameType?: string; trivia?: { currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean } }) => {
+    const codeUpper = code.trim().toUpperCase();
+    const join = () => s.emit('display:join', { code: codeUpper });
+    join();
+    s.on('connect', join);
+    s.on('display:ok', (payload: { joinUrl?: string; songPool?: Song[]; revealed?: Song[]; eventConfig?: DisplayEventConfig; started?: boolean; gameType?: string; trivia?: { currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean } }) => {
       setJoinUrl(payload.joinUrl || `${window.location.origin}/join/${code}`);
       setSongPool(Array.isArray(payload.songPool) ? payload.songPool : []);
       setRevealed(Array.isArray(payload.revealed) ? payload.revealed : []);
@@ -82,7 +85,7 @@ export default function Display() {
       setTriviaState(payload.trivia && typeof payload.trivia === 'object' ? { currentIndex: payload.trivia.currentIndex ?? 0, questions: payload.trivia.questions ?? [], revealed: (payload.trivia as { revealed?: boolean }).revealed } : null);
       setError(null);
     });
-    s.once('display:error', (payload: { message?: string }) => {
+    s.on('display:error', (payload: { message?: string }) => {
       setError(payload.message || 'Game not found');
     });
     s.on('game:songs-updated', ({ songPool: pool }: { songPool: Song[] }) => {
@@ -101,10 +104,21 @@ export default function Display() {
         }));
       }
     });
-    s.on('game:trivia-reveal', () => {
-      setTriviaState((prev) => (prev ? { ...prev, revealed: true } : null));
+    s.on('game:trivia-reveal', (payload: { questionIndex?: number; correctAnswer?: string }) => {
+      setTriviaState((prev) => {
+        if (!prev) return null;
+        const idx = payload.questionIndex ?? prev.currentIndex ?? 0;
+        const questions = [...(prev.questions || [])];
+        if (questions[idx] != null && payload.correctAnswer !== undefined) {
+          questions[idx] = { ...questions[idx], correctAnswer: payload.correctAnswer };
+        }
+        return { ...prev, questions, revealed: true };
+      });
     });
     return () => {
+      s.off('connect', join);
+      s.off('display:ok');
+      s.off('display:error');
       s.off('game:songs-updated');
       s.off('game:revealed');
       s.off('game:started');

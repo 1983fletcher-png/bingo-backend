@@ -244,8 +244,14 @@ export function canTransitionTo(from: RoomState, to: RoomState): boolean {
   return j === i + 1;
 }
 
+/** "Begin round" enabled when in READY_CHECK with pack and connection */
 export function isStartButtonEnabled(state: RoomState, packLoaded: boolean, hostConnected: boolean): boolean {
   return state === 'READY_CHECK' && packLoaded && hostConnected;
+}
+
+/** "Start ready check" enabled when in WAITING_ROOM with pack and connection */
+export function isStartReadyCheckEnabled(state: RoomState, packLoaded: boolean, hostConnected: boolean): boolean {
+  return state === 'WAITING_ROOM' && packLoaded && hostConnected;
 }
 
 export function isRevealButtonEnabled(state: RoomState): boolean {
