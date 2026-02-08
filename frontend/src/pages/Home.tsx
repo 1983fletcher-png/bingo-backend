@@ -13,7 +13,14 @@ const WHO_ITS_FOR = [
   'HR & Learning',
 ];
 
-const GAME_TYPES = [
+const GAME_TYPES: Array<{
+  id: string;
+  title: string;
+  description: string;
+  to: string;
+  secondaryLabel?: string;
+  secondaryTo?: string;
+}> = [
   {
     id: 'music-bingo',
     title: 'Music Bingo',
@@ -25,8 +32,10 @@ const GAME_TYPES = [
     id: 'trivia',
     title: 'Trivia',
     description:
-      'Packs and custom questions. Multiple choice, true/false. For pubs, teams, and family nights.',
-    to: '/host?type=trivia',
+      'Pick a verified pack and run — or build your own. Multiple choice, true/false. For pubs, teams, and family nights.',
+    to: '/host/create',
+    secondaryLabel: 'Build custom',
+    secondaryTo: '/host?type=trivia',
   },
   {
     id: 'icebreakers',
@@ -200,13 +209,26 @@ export default function Home() {
             Pick a template and go — or customize to your needs.
           </p>
           <div className="landing__games-grid">
-            {GAME_TYPES.map((g) => (
-              <Link key={g.id} to={g.to} className="landing__game-card">
-                <h3 className="landing__game-title">{g.title}</h3>
-                <p className="landing__game-desc">{g.description}</p>
-                <span className="landing__game-cta">Get started →</span>
-              </Link>
-            ))}
+            {GAME_TYPES.map((g) =>
+              g.secondaryTo ? (
+                <div key={g.id} className="landing__game-card" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <Link to={g.to} style={{ flex: 1, textDecoration: 'none', color: 'inherit' }}>
+                    <h3 className="landing__game-title">{g.title}</h3>
+                    <p className="landing__game-desc">{g.description}</p>
+                    <span className="landing__game-cta">Play a pack →</span>
+                  </Link>
+                  <Link to={g.secondaryTo} className="landing__game-cta" style={{ fontSize: 14, opacity: 0.9 }}>
+                    {g.secondaryLabel} →
+                  </Link>
+                </div>
+              ) : (
+                <Link key={g.id} to={g.to} className="landing__game-card">
+                  <h3 className="landing__game-title">{g.title}</h3>
+                  <p className="landing__game-desc">{g.description}</p>
+                  <span className="landing__game-cta">Get started →</span>
+                </Link>
+              )
+            )}
           </div>
         </section>
 
