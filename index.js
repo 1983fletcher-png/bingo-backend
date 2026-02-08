@@ -1046,7 +1046,7 @@ io.on('connection', (socket) => {
     game.hostId = socket.id;
     socket.join(`game:${game.code}`);
     socket.gameCode = game.code;
-    const origin = baseUrl || getBaseUrl(socket);
+    const origin = baseUrl || process.env.PUBLIC_ORIGIN || getBaseUrl(socket);
     const payload = {
       code: game.code,
       hostToken: game.hostToken,
@@ -1076,7 +1076,7 @@ io.on('connection', (socket) => {
     game.hostId = socket.id;
     socket.join(`game:${game.code}`);
     socket.gameCode = game.code;
-    const origin = getBaseUrl(socket);
+    const origin = process.env.PUBLIC_ORIGIN || getBaseUrl(socket);
     const payload = {
       code: game.code,
       hostToken: game.hostToken,

@@ -11,9 +11,7 @@ import type { Socket } from 'socket.io-client';
 import '../styles/join.css';
 
 /**
- * Trivia player view: current question, answer input, then correct answer when revealed. Synced with display.
- * TODO (future): Support multiple answer types per question — not just text input. Add multiple choice, single-select,
- * true/false, etc., depending on question type so hosts can use the right format for training and quizzes.
+ * Trivia player view: current question, multiple choice or text answer, then correct answer when revealed.
  */
 function TriviaPlayerView({
   eventConfig,
@@ -23,6 +21,7 @@ function TriviaPlayerView({
   totalQuestions,
   currentQuestion,
   correctAnswer,
+  options,
   revealed,
   socket,
   code,
@@ -34,21 +33,40 @@ function TriviaPlayerView({
   totalQuestions: number;
   currentQuestion?: string;
   correctAnswer?: string;
+  /** Multiple choice options (when present, show as buttons instead of text input) */
+  options?: string[];
   revealed: boolean;
   socket: Socket | null;
   code: string;
 }) {
   const [myAnswer, setMyAnswer] = useState('');
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [locked, setLocked] = useState(false);
   useEffect(() => {
     setMyAnswer('');
+    setSelectedOption(null);
+    setLocked(false);
   }, [currentIndex]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (socket && code.trim() && myAnswer.trim()) {
-      socket.emit('player:trivia-answer', { code: code.trim().toUpperCase(), questionIndex: currentIndex, answer: myAnswer.trim() });
+    if (socket && code.trim() && (myAnswer.trim() || selectedOption != null)) {
+      const answer = selectedOption != null ? selectedOption : myAnswer.trim();
+      socket.emit('player:trivia-answer', { code: code.trim().toUpperCase(), questionIndex: currentIndex, answer });
+      if (options?.length) setLocked(true);
     }
   };
+
+  const handleSelectOption = (opt: string) => {
+    if (revealed || locked) return;
+    setSelectedOption(opt);
+    if (socket && code.trim()) {
+      socket.emit('player:trivia-answer', { code: code.trim().toUpperCase(), questionIndex: currentIndex, answer: opt });
+      setLocked(true);
+    }
+  };
+
+  const hasOptions = Array.isArray(options) && options.length > 0;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
@@ -62,20 +80,42 @@ function TriviaPlayerView({
           <>
             <p style={{ margin: '0 0 20px', fontSize: 20, fontWeight: 600, lineHeight: 1.4 }}>{currentQuestion}</p>
             {!revealed ? (
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="Your answer"
-                  value={myAnswer}
-                  onChange={(e) => setMyAnswer(e.target.value)}
-                  className="join-page__input"
-                  style={{ marginBottom: 12, width: '100%', maxWidth: 400 }}
-                  autoComplete="off"
-                />
-                <button type="submit" className="join-page__btn" disabled={!myAnswer.trim() || !socket}>
-                  Submit answer
-                </button>
-              </form>
+              hasOptions ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 480 }}>
+                  {options.map((opt) => (
+                    <button
+                      key={opt}
+                      type="button"
+                      className="join-page__btn"
+                      style={{
+                        minHeight: 48,
+                        textAlign: 'left',
+                        justifyContent: 'flex-start',
+                        background: selectedOption === opt ? 'var(--accent)' : 'var(--surface)',
+                      }}
+                      onClick={() => handleSelectOption(opt)}
+                      disabled={locked}
+                    >
+                      {opt} {locked && selectedOption === opt ? ' ✓' : ''}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    placeholder="Your answer"
+                    value={myAnswer}
+                    onChange={(e) => setMyAnswer(e.target.value)}
+                    className="join-page__input"
+                    style={{ marginBottom: 12, width: '100%', maxWidth: 400 }}
+                    autoComplete="off"
+                  />
+                  <button type="submit" className="join-page__btn" disabled={!myAnswer.trim() || !socket}>
+                    Submit answer
+                  </button>
+                </form>
+              )
             ) : (
               <div style={{ padding: '16px 20px', background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)' }}>
                 <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>Correct answer</p>
@@ -92,6 +132,17 @@ function TriviaPlayerView({
 }
 
 const PLAYROOM_JOIN_KEY = (c: string) => `playroom_join_${c.trim().toUpperCase()}`;
+
+/** 2–3 part names for anonymous players so there is always a verifiable display name */
+const FUNNY_NAMES = [
+  'Breezy Otter', 'Cosmic Pretzel Wizard', 'Salty Marshmallow', 'Dapper Penguin',
+  'Cheerful Llama', 'Velvet Thunder', 'Silly Goose', 'Brave Potato', 'Mystic Muffin',
+  'Happy Walrus', 'Clever Koala', 'Swift Sparrow', 'Calm Badger', 'Bold Falcon',
+  'Gentle Moose', 'Wise Owl', 'Lucky Clover', 'Stellar Panda', 'Jolly Raccoon',
+];
+function randomFunnyName(): string {
+  return FUNNY_NAMES[Math.floor(Math.random() * FUNNY_NAMES.length)];
+}
 
 /** Map server gameType to the label shown in the player header (which room we're in). */
 function getGameTypeLabel(gameType: string | undefined): string {
@@ -138,10 +189,10 @@ interface JoinState {
   gameType?: string;
   freeSpace?: boolean;
   winCondition?: string;
-  /** Trivia: current question index, questions list, and whether answer is revealed */
+  /** Trivia: current question index, questions list (with optional options for MC), and whether answer is revealed */
   trivia?: {
     currentIndex: number;
-    questions: { question: string; correctAnswer?: string }[];
+    questions: { question: string; correctAnswer?: string; options?: string[] }[];
     revealed?: boolean;
   };
 }
@@ -307,7 +358,7 @@ export default function Play() {
     e.preventDefault();
     setError('');
     if (!socket || !code?.trim()) return;
-    const displayName = name.trim() || 'Anonymous';
+    const displayName = name.trim() || randomFunnyName();
     setName(displayName);
     try {
       sessionStorage.setItem(PLAYROOM_JOIN_KEY(code), JSON.stringify({ name: displayName }));
@@ -447,6 +498,7 @@ export default function Play() {
         totalQuestions={questions.length}
         currentQuestion={currentQ?.question}
         correctAnswer={currentQ?.correctAnswer}
+        options={currentQ?.options}
         revealed={revealed}
         socket={socket}
         code={code ?? ''}
