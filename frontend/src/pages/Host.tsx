@@ -830,7 +830,8 @@ export default function Host() {
       ];
 
   const displayUrl = `${window.location.origin}/display/${game.code}`;
-  const joinUrlForQR = game.joinUrl || `${window.location.origin}/join/${game.code}`;
+  // Always use current origin so QR and link point to the frontend (player view), not the backend
+  const joinUrlForQR = typeof window !== 'undefined' ? `${window.location.origin}/join/${game.code}` : `/join/${game.code}`;
   const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=10&data=${encodeURIComponent(joinUrlForQR)}`;
 
   const setWaitingRoomGame = (gameVal: 'roll-call' | 'fidget' | null) => {
