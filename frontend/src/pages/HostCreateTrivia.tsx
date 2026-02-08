@@ -3,7 +3,7 @@
  * Creates room via room:host-create and redirects to /room/:roomId?role=host.
  */
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import { getTriviaRoomPacks } from '../data/triviaRoomPacks';
 import type { TriviaPackModel, TriviaQuestionModel, RoomSettings } from '../lib/models';
@@ -33,7 +33,9 @@ const PRESET_LABELS: Record<string, { duration: string; vibe: string; audience: 
 
 export default function HostCreateTrivia() {
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>('type');
+  const [searchParams] = useSearchParams();
+  const fromHost = searchParams.get('trivia') != null || searchParams.get('from') === 'host';
+  const [step, setStep] = useState<Step>(() => (fromHost ? 'pack' : 'type'));
   const [socket, setSocket] = useState<Socket | null>(null);
   const [selectedPack, setSelectedPack] = useState<TriviaPackModel | null>(null);
   const [settings, setSettings] = useState<Partial<RoomSettings>>({
@@ -91,7 +93,7 @@ export default function HostCreateTrivia() {
         >
           Trivia
         </button>
-        <Link to="/host" style={{ display: 'block', marginTop: 16, fontSize: 14 }}>← Back to host</Link>
+        <Link to="/host?type=trivia" style={{ display: 'block', marginTop: 16, fontSize: 14 }}>← Back to host</Link>
       </div>
     );
   }
@@ -126,7 +128,11 @@ export default function HostCreateTrivia() {
           })}
         </div>
         <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
-          <button type="button" className="join-page__btn" onClick={() => setStep('type')}>Back</button>
+          {fromHost ? (
+            <Link to="/host?type=trivia" className="join-page__btn" style={{ textDecoration: 'none', color: 'inherit' }}>← Back to host</Link>
+          ) : (
+            <button type="button" className="join-page__btn" onClick={() => setStep('type')}>Back</button>
+          )}
           <button
             type="button"
             className="join-page__btn"

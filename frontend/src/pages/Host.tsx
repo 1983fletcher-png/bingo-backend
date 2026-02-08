@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import '../styles/host-create.css';
 import { getSocket } from '../lib/socket';
 import HostSongGrid from '../components/HostSongGrid';
@@ -44,6 +44,7 @@ function createModeFromUrl(type: string | null): CreateMode {
 }
 
 export default function Host() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const typeFromUrl = searchParams.get('type');
   const [createMode, setCreateMode] = useState<CreateMode>(() => createModeFromUrl(typeFromUrl));
@@ -64,7 +65,7 @@ export default function Host() {
   const [genError, setGenError] = useState('');
   // Trivia: host's selected/ordered questions; which pack was used to create (for "Reset to full pack")
   const [triviaQuestions, setTriviaQuestions] = useState<TriviaQuestion[]>([]);
-  const [selectedTriviaPackId, setSelectedTriviaPackId] = useState<string>(() => defaultTriviaPacks[0]?.id ?? 'music-general');
+  const [selectedTriviaPackId] = useState<string>(() => defaultTriviaPacks[0]?.id ?? 'music-general');
   const [selectedIcebreakerPackId, setSelectedIcebreakerPackId] = useState<string>(() => defaultIcebreakerPack?.id ?? 'corporate');
   const [selectedEdutainmentPackId, setSelectedEdutainmentPackId] = useState<string>(() => defaultEdutainmentPack?.id ?? 'k5-general');
   const [selectedTeamBuildingPackId, setSelectedTeamBuildingPackId] = useState<string>(() => defaultTeamBuildingPack?.id ?? 'team-building-activities');
@@ -630,13 +631,13 @@ export default function Host() {
           >
             Classic Bingo
           </button>
-          <Link
-            to="/host/build/trivia"
-            className="host-create__game-type-btn"
-            style={{ textDecoration: 'none', color: 'inherit' }}
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'trivia' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('trivia')}
           >
             Trivia
-          </Link>
+          </button>
           <button
             type="button"
             className={`host-create__game-type-btn ${createMode === 'icebreakers' ? 'host-create__game-type-btn--on' : ''}`}
@@ -689,9 +690,23 @@ export default function Host() {
           </p>
         )}
         {createMode === 'trivia' && (
-          <p className="host-create__copy">
-            Pick a pack below. You can remove or reorder questions in the Questions tab after creating. One link for the whole room.
-          </p>
+          <>
+            <p className="host-create__copy">
+              Run a verified Trivia pack with one room code. Players join at the same link for the whole game. Preview questions, set host options, then start hosting.
+            </p>
+            <div className="host-create__content" style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
+              <button
+                type="button"
+                className="host-create__btn-primary"
+                onClick={() => navigate('/host/create?trivia')}
+              >
+                Choose pack & host
+              </button>
+              <Link to="/host/build/trivia" className="host-create__back" style={{ display: 'inline-block' }}>
+                Build custom questions →
+              </Link>
+            </div>
+          </>
         )}
         {createMode === 'icebreakers' && (
           <p className="host-create__copy">
@@ -709,21 +724,13 @@ export default function Host() {
           </p>
         )}
 
-        {isPackMode && (
+        {isPackMode && createMode !== 'trivia' && (
           <div className="host-create__content host-create__packs-wrap">
             <label className="host-create__label">
-              {createMode === 'trivia' && 'Trivia pack'}
               {createMode === 'icebreakers' && 'Icebreaker pack'}
               {createMode === 'edutainment' && 'Edutainment pack'}
               {createMode === 'team-building' && 'Team building pack'}
             </label>
-            {createMode === 'trivia' && (
-              <select className="host-create__select" value={selectedTriviaPackId} onChange={(e) => setSelectedTriviaPackId(e.target.value)}>
-                {defaultTriviaPacks.map((pack) => (
-                  <option key={pack.id} value={pack.id}>{pack.title} ({pack.questions.length} questions)</option>
-                ))}
-              </select>
-            )}
             {createMode === 'icebreakers' && (
               <select className="host-create__select" value={selectedIcebreakerPackId} onChange={(e) => setSelectedIcebreakerPackId(e.target.value)}>
                 {icebreakerPacks.map((pack) => (
@@ -746,7 +753,6 @@ export default function Host() {
               </select>
             )}
             <p className="host-create__hint">
-              {createMode === 'trivia' && 'Packs and custom questions. Multiple choice, true/false.'}
               {createMode === 'icebreakers' && 'Two Truths, Would You Rather, quick energizers.'}
               {createMode === 'edutainment' && 'Learning games by grade band. K–college.'}
               {createMode === 'team-building' && 'Activities by age, occupation, or situation.'}
@@ -754,16 +760,20 @@ export default function Host() {
           </div>
         )}
 
-        <button
-          type="button"
-          className="host-create__btn-primary"
-          onClick={handleCreate}
-          disabled={!canCreate || createPending}
-        >
-          {createPending ? 'Creating…' : createButtonLabel}
-        </button>
-        {createError && <p className="host-create__hint" style={{ color: 'var(--error, #fc8181)' }}>{createError}</p>}
-        {!socket?.connected && <p className="host-create__hint">Waiting for connection…</p>}
+        {createMode !== 'trivia' && (
+          <>
+            <button
+              type="button"
+              className="host-create__btn-primary"
+              onClick={handleCreate}
+              disabled={!canCreate || createPending}
+            >
+              {createPending ? 'Creating…' : createButtonLabel}
+            </button>
+            {createError && <p className="host-create__hint" style={{ color: 'var(--error, #fc8181)' }}>{createError}</p>}
+            {!socket?.connected && <p className="host-create__hint">Waiting for connection…</p>}
+          </>
+        )}
         <Link to="/" className="host-create__back">← Back to home</Link>
       </div>
     );

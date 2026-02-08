@@ -33,7 +33,7 @@ const GAME_TYPES: Array<{
     title: 'Trivia',
     description:
       'Pick a verified pack and run — or build your own. Multiple choice, true/false. For pubs, teams, and family nights.',
-    to: '/host/create',
+    to: '/host/create?trivia',
     secondaryLabel: 'Build custom',
     secondaryTo: '/host?type=trivia',
   },
