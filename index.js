@@ -94,9 +94,14 @@ const nanoidCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 6);
 
 const app = express();
 const httpServer = createServer(app);
+// Allow Netlify (and any) origin so live frontend can connect from theplayroom.netlify.app
 const io = new Server(httpServer, {
-  cors: { origin: true },
-  transports: ['websocket', 'polling']
+  cors: {
+    origin: true,
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
+  transports: ['polling', 'websocket']
 });
 
 app.use(cors());
