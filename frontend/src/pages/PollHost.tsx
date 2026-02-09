@@ -4,7 +4,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getSocket } from '../lib/socket';
+import { getSocket, getSocketBackendLabel, isBackendUrlSet } from '../lib/socket';
 import type { Socket } from 'socket.io-client';
 import { QRCodePanel } from '../components/trivia-room/QRCodePanel';
 import '../styles/join.css';
@@ -46,6 +46,7 @@ export default function PollHost() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [payload, setPayload] = useState<PollPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [connected, setConnected] = useState(false);
 
   const hostToken = pollId ? getStoredHostToken(pollId) : null;
 
@@ -58,13 +59,20 @@ export default function PollHost() {
     if (!pollId) return;
     const s = getSocket();
     setSocket(s);
+    setConnected(s.connected);
     if (hostToken) saveHostToken(pollId, hostToken);
+    const onConnect = () => setConnected(true);
+    const onDisconnect = () => setConnected(false);
     const onUpdate = (p: PollPayload) => setPayload(p);
     const onErr = (e: { message?: string }) => setError(e?.message || 'Error');
+    s.on('connect', onConnect);
+    s.on('disconnect', onDisconnect);
     s.on('poll:update', onUpdate);
     s.on('poll:error', onErr);
     join();
     return () => {
+      s.off('connect', onConnect);
+      s.off('disconnect', onDisconnect);
       s.off('poll:update', onUpdate);
       s.off('poll:error', onErr);
     };
@@ -144,6 +152,18 @@ export default function PollHost() {
         <Link to="/" className="join-page__back">← Back to home</Link>
       </p>
 
+      {!connected && (
+        <div style={{ marginBottom: 16, padding: 12, background: 'var(--warning)', color: '#1a1a1a', borderRadius: 8, fontSize: 14 }}>
+          <p style={{ margin: 0, fontWeight: 600 }}>Not connected to server</p>
+          <p style={{ margin: '6px 0 0', fontSize: 13 }}>
+            Buttons below won&apos;t work until the app connects. This build uses: <strong>{getSocketBackendLabel()}</strong>.
+            {!isBackendUrlSet() && (
+              <span> Set <strong>VITE_SOCKET_URL</strong> in Netlify to your Railway URL and redeploy (build-time variable).</span>
+            )}
+          </p>
+        </div>
+      )}
+
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start', marginBottom: 24 }}>
         <div style={{ flex: '0 0 auto' }}>
           <QRCodePanel joinUrl={joinUrl} label="Scan to vote" size={160} />
@@ -164,18 +184,18 @@ export default function PollHost() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}>
             {payload?.locked ? (
-              <button type="button" className="join-page__btn" onClick={unlock}>Unlock poll</button>
+              <button type="button" className="join-page__btn" onClick={unlock} disabled={!connected}>Unlock poll</button>
             ) : (
-              <button type="button" className="join-page__btn" onClick={lock}>Lock poll</button>
+              <button type="button" className="join-page__btn" onClick={lock} disabled={!connected}>Lock poll</button>
             )}
-            <button type="button" className="join-page__btn" style={{ background: 'var(--surface)', color: 'var(--text)' }} onClick={toggleTicker}>
+            <button type="button" className="join-page__btn" style={{ background: 'var(--surface)', color: 'var(--text)' }} onClick={toggleTicker} disabled={!connected}>
               Live ticker: {payload?.showTicker ? 'On' : 'Off'}
             </button>
-            <button type="button" className="join-page__btn" style={{ background: 'var(--surface)', color: 'var(--text)' }} onClick={clear}>Clear results</button>
-            <button type="button" className="join-page__btn" style={{ background: 'var(--surface)', color: 'var(--text)' }} onClick={reset}>Reset poll</button>
+            <button type="button" className="join-page__btn" style={{ background: 'var(--surface)', color: 'var(--text)' }} onClick={clear} disabled={!connected}>Clear results</button>
+            <button type="button" className="join-page__btn" style={{ background: 'var(--surface)', color: 'var(--text)' }} onClick={reset} disabled={!connected}>Reset poll</button>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" className="join-page__btn" style={{ flex: 1, background: 'var(--surface)', color: 'var(--text)' }} onClick={() => exportData('csv')}>Export CSV</button>
-              <button type="button" className="join-page__btn" style={{ flex: 1, background: 'var(--surface)', color: 'var(--text)' }} onClick={() => exportData('json')}>Export JSON</button>
+              <button type="button" className="join-page__btn" style={{ flex: 1, background: 'var(--surface)', color: 'var(--text)' }} onClick={() => exportData('csv')} disabled={!connected}>Export CSV</button>
+              <button type="button" className="join-page__btn" style={{ flex: 1, background: 'var(--surface)', color: 'var(--text)' }} onClick={() => exportData('json')} disabled={!connected}>Export JSON</button>
             </div>
           </div>
         </div>

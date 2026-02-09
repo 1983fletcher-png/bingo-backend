@@ -4,7 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getSocket } from '../lib/socket';
+import { getSocket, getSocketBackendLabel, isBackendUrlSet } from '../lib/socket';
 
 const POLL_HOST_KEY = 'playroom_poll_host';
 function saveHostToken(pollId: string, hostToken: string) {
@@ -16,8 +16,6 @@ import type { Socket } from 'socket.io-client';
 import '../styles/join.css';
 
 type ResponseType = 'open' | 'multiple';
-
-const BACKEND_SET = !!(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL);
 
 export default function PollCreate() {
   const navigate = useNavigate();
@@ -190,18 +188,22 @@ export default function PollCreate() {
           Display: Top 8 results · Group similar answers · Profanity filter — all on by default.
         </p>
 
-        {!connected && (
-          <div style={{ marginBottom: 16, padding: 12, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
-            <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
-              Connecting to server…
-            </p>
-            {!BACKEND_SET && !import.meta.env.DEV && (
-              <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--warning)' }}>
-                On the live site, set <strong>VITE_SOCKET_URL</strong> in Netlify to your Railway backend URL (no trailing slash), then redeploy. Otherwise the app cannot reach the server.
-              </p>
+        <div style={{ marginBottom: 16, padding: 12, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--text)' }}>
+            {connected ? '● Connected to server' : '○ Connecting to server…'}
+          </p>
+          <p style={{ margin: '6px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
+            This build connects to: <strong>{getSocketBackendLabel()}</strong>
+            {!isBackendUrlSet() && !import.meta.env.DEV && (
+              <span style={{ color: 'var(--warning)' }}> — wrong for production</span>
             )}
-          </div>
-        )}
+          </p>
+          {!isBackendUrlSet() && !import.meta.env.DEV && (
+            <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--warning)' }}>
+              In Netlify → Site configuration → Environment variables, add <strong>VITE_SOCKET_URL</strong> = your Railway URL (no trailing slash). Then Deploys → Trigger deploy (or Clear cache and deploy). The URL is baked in at build time.
+            </p>
+          )}
+        </div>
 
         {error && <p style={{ color: 'var(--error)', marginBottom: 16 }}>{error}</p>}
 
