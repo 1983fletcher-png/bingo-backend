@@ -72,75 +72,64 @@ export default function Home() {
 
   return (
     <div className="landing" style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+      {/* Full-width bar: Playroom left, Activity + Help right */}
       <header className="landing__header">
-        <span className="landing__header-title">The Playroom</span>
-        <nav className="landing__header-nav" aria-label="Main">
-          <button
-            type="button"
-            onClick={() => navigate('/calendar')}
-            className="landing__header-btn"
-          >
-            <span aria-hidden>📅</span>
-            Activity calendar
-          </button>
-          <span className="landing__header-help" aria-hidden>Help (coming soon)</span>
-        </nav>
+        <div className="landing__header-inner">
+          <span className="landing__header-title">The Playroom</span>
+          <nav className="landing__header-nav" aria-label="Main">
+            <button
+              type="button"
+              onClick={() => navigate('/calendar')}
+              className="landing__header-btn"
+            >
+              <span aria-hidden>📅</span>
+              Activity calendar
+            </button>
+            <span className="landing__header-help" aria-hidden>Help (coming soon)</span>
+          </nav>
+        </div>
       </header>
 
-      <main style={{ flex: 1, width: '100%', padding: '0 24px 48px' }}>
-        {/* Hero */}
+      <main className="landing__main">
+        {/* Hero: welcome, tagline, hosted line, one link — then four cards */}
         <section className="landing__hero" aria-label="Welcome">
           <h1 className="landing__hero-title">Welcome to the Playroom</h1>
           <p className="landing__hero-tagline">
-            A shared space for live games, trivia, edutainment, training, and
-            interactive learning — hosted anywhere, played everywhere.
+            A shared space for live games, trivia, edutainment, training, and interactive learning.
           </p>
+          <p className="landing__hero-hosted">Hosted anywhere, played everywhere.</p>
           <p className="landing__hero-support">
-            One room. One link. Everyone&apos;s in — on phones or with printable
-            materials when you need them.
+            One link, one room. One link, everyone&apos;s in — on phones or with printable materials when you need them.
           </p>
-          {/* Primary cards — Interactive Polling + Host, Join, Create, Learn */}
-          <div
-            className="landing__hero-cards"
-            style={{
-              maxWidth: 720,
-              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-              marginBottom: 32,
-            }}
-          >
-            <Link to="/poll/create" className="landing__hero-card">
-              <span className="landing__hero-card-title">Interactive Polling</span>
-              <span className="landing__hero-card-desc">
-                Live crowd input, instant results. One question, one QR — see what the room thinks.
-              </span>
-              <span className="landing__game-cta" style={{ marginTop: 8 }}>Start a poll →</span>
-            </Link>
+          {/* Four cards: Host, Join, Creative Studio, Interactive Polling (Learn & Grow hidden for now) */}
+          <div className="landing__hero-cards">
             <Link to="/host" className="landing__hero-card">
               <span className="landing__hero-card-title">Host a room</span>
               <span className="landing__hero-card-desc">
-                Start a game — music bingo or trivia. Share the QR or link;
-                players join instantly. Control the flow from one screen.
+                Start a game — music bingo or trivia. Share the QR or link; players join from one screen.
               </span>
+              <span className="landing__game-cta">Get started →</span>
             </Link>
             <Link to="/join" className="landing__hero-card">
               <span className="landing__hero-card-title">Join a room</span>
               <span className="landing__hero-card-desc">
-                Enter the game code from your host. Play on your phone or
-                tablet — no app required.
+                Enter the game code. Play on your phone or tablet — no app required.
               </span>
+              <span className="landing__game-cta">Join →</span>
             </Link>
             <Link to="/create" className="landing__hero-card">
               <span className="landing__hero-card-title">Creative Studio</span>
               <span className="landing__hero-card-desc">
-                Create a custom page. Menus, training materials, promos, flyers, and more.
+                Custom pages: menus, promos, flyers, training materials.
               </span>
+              <span className="landing__game-cta">Create →</span>
             </Link>
-            <Link to="/learn" className="landing__hero-card">
-              <span className="landing__hero-card-title">Learn &amp; Grow Library</span>
+            <Link to="/poll/create" className="landing__hero-card">
+              <span className="landing__hero-card-title">Interactive Polling</span>
               <span className="landing__hero-card-desc">
-                Trusted, cited learning cards: plants, animals, crafts, science.
-                Calm, layered content for curious minds.
+                Live crowd input, instant results. One question, one QR.
               </span>
+              <span className="landing__game-cta">Start a poll →</span>
             </Link>
           </div>
         </section>
@@ -154,33 +143,16 @@ export default function Home() {
           <h2 className="landing__section-title">How it works</h2>
           <ol className="landing__how-steps">
             <li className="landing__how-step">
-              <span className="landing__how-num" aria-hidden>
-                1
-              </span>
-              <div>
-                <strong>Create</strong> — Pick a game or build your own. Music
-                Bingo, Trivia, Icebreakers, Edutainment, Team Building, or custom
-                training materials for your company.
-              </div>
+              <span className="landing__how-num" aria-hidden>1</span>
+              <div><strong>Create</strong> — Pick a game or build your own: Music Bingo, Trivia, Icebreakers, Edutainment, Team Building, or custom training.</div>
             </li>
             <li className="landing__how-step">
-              <span className="landing__how-num" aria-hidden>
-                2
-              </span>
-              <div>
-                <strong>Share</strong> — One code or QR for everyone; players
-                join in seconds. Or use printable materials when devices
-                aren&apos;t an option.
-              </div>
+              <span className="landing__how-num" aria-hidden>2</span>
+              <div><strong>Share</strong> — One code or QR; players join in seconds. Printable materials when you need them.</div>
             </li>
             <li className="landing__how-step">
-              <span className="landing__how-num" aria-hidden>
-                3
-              </span>
-              <div>
-                <strong>Play</strong> — Host runs it; players use their phones or
-                printed materials. Simple, fun, no friction.
-              </div>
+              <span className="landing__how-num" aria-hidden>3</span>
+              <div><strong>Play</strong> — Host runs it; everyone plays on phones or print. Simple, no friction.</div>
             </li>
           </ol>
         </section>
@@ -213,7 +185,7 @@ export default function Home() {
         >
           <h2 className="landing__section-title">Game types</h2>
           <p className="landing__section-intro">
-            Pick a template and go — or customize to your needs.
+            Pick a template and go, or customize to your needs.
           </p>
           <div className="landing__games-grid">
             {GAME_TYPES.map((g) =>

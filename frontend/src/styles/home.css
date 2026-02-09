@@ -5,27 +5,34 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 0 24px 48px;
-  max-width: 1000px;
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
 }
 
-/* Solid header bar — title, Activity calendar, Help placeholder */
+/* Full-width bar: Playroom left, Activity + Help right, rounder edges, tight */
 .landing__header {
+  width: 100%;
+  flex-shrink: 0;
+  padding: 10px 16px;
+  padding-left: calc(16px + env(safe-area-inset-left));
+  padding-right: calc(16px + env(safe-area-inset-right));
+}
+
+.landing__header-inner {
+  max-width: 1000px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
-  margin: 0 -24px 0 -24px;
-  padding-left: calc(24px + env(safe-area-inset-left));
-  padding-right: calc(24px + env(safe-area-inset-right));
+  padding: 10px 20px;
   background: var(--surface);
-  border-bottom: 2px solid var(--border);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   box-shadow: var(--shadow-sm);
 }
 
 .landing__header-title {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.02em;
@@ -34,19 +41,20 @@
 .landing__header-nav {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  margin-left: auto;
 }
 
 .landing__header-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 6px;
+  padding: 8px 14px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
@@ -58,63 +66,102 @@
 }
 
 .landing__header-help {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
-  padding: 8px 12px;
+  padding: 6px 10px;
+}
+
+.landing__main {
+  flex: 1;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+  padding-left: calc(24px + env(safe-area-inset-left));
+  padding-right: calc(24px + env(safe-area-inset-right));
 }
 
 .landing__hero {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 540px) {
+  .landing__hero {
+    margin-bottom: 1rem;
+  }
 }
 
 .landing__hero-title {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--text);
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.5rem;
 }
 
 .landing__hero-tagline {
-  font-size: clamp(1rem, 2vw, 1.125rem);
-  line-height: 1.6;
+  font-size: clamp(0.9375rem, 1.8vw, 1.0625rem);
+  line-height: 1.5;
   color: var(--text-secondary);
+  margin: 0 0 0.25rem;
+}
+
+.landing__hero-hosted {
+  font-size: clamp(0.9375rem, 1.5vw, 1rem);
+  font-weight: 600;
+  color: var(--text-muted);
   margin: 0 0 0.5rem;
 }
 
 .landing__hero-support {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: clamp(0.9375rem, 1.5vw, 1rem);
+  font-weight: 500;
   color: var(--text-muted);
-  margin: 0 0 2rem;
+  margin: 0 0 1.5rem;
+}
+
+@media (max-width: 540px) {
+  .landing__hero-title { margin: 0 0 0.35rem; }
+  .landing__hero-tagline { margin: 0 0 0.2rem; }
+  .landing__hero-hosted { margin: 0 0 0.35rem; }
+  .landing__hero-support { margin: 0 0 1rem; }
 }
 
 .landing__hero-cards {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-  max-width: 560px;
-  margin: 0 auto 1.5rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-width: 720px;
+  margin: 0 auto 1.25rem;
   text-align: left;
 }
 
 @media (max-width: 540px) {
   .landing__hero-cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    max-width: 100%;
   }
 }
 
 .landing__hero-card {
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 1.25rem;
-  border-radius: 16px;
+  padding: 1rem 1rem;
+  border-radius: 12px;
   border: 2px solid var(--border);
   text-decoration: none;
   color: inherit;
   background: var(--surface);
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+@media (max-width: 540px) {
+  .landing__hero-card {
+    padding: 0.75rem 0.875rem;
+    border-radius: 10px;
+  }
 }
 
 .landing__hero-card:hover {
@@ -126,17 +173,43 @@
 }
 
 .landing__hero-card-title {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text);
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.25rem;
+}
+
+@media (max-width: 540px) {
+  .landing__hero-card-title {
+    font-size: 0.9375rem;
+  }
 }
 
 .landing__hero-card-desc {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
-  line-height: 1.5;
-  margin: 0;
+  line-height: 1.4;
+  margin: 0 0 0.5rem;
+  flex: 1;
+}
+
+@media (max-width: 540px) {
+  .landing__hero-card-desc {
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+}
+
+.landing__hero-card .landing__game-cta {
+  margin-top: auto;
+  padding-top: 0.35rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 540px) {
+  .landing__hero-card .landing__game-cta {
+    font-size: 0.8125rem;
+  }
 }
 
 .landing__hero-create {
@@ -157,45 +230,78 @@
 
 .landing__section {
   width: 100%;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.75rem;
   text-align: center;
 }
 
+@media (max-width: 540px) {
+  .landing__section {
+    margin-bottom: 1.25rem;
+  }
+}
+
 .landing__section-title {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text);
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.5rem;
+}
+
+@media (max-width: 540px) {
+  .landing__section-title {
+    font-size: 1.1rem;
+  }
 }
 
 .landing__section-intro {
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.9375rem;
+  line-height: 1.5;
   color: var(--text-secondary);
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 1rem;
   max-width: 520px;
 }
 
+@media (max-width: 540px) {
+  .landing__section-intro {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
 .landing__how-steps {
-  margin: 0 auto 2rem;
-  padding: 1.5rem 1.25rem;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1.25rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 12px;
   text-align: left;
   list-style: none;
   max-width: 560px;
 }
 
+@media (max-width: 540px) {
+  .landing__how-steps {
+    padding: 0.875rem 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
 .landing__how-step {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-  font-size: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9375rem;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.45;
+}
+
+@media (max-width: 540px) {
+  .landing__how-step {
+    font-size: 0.875rem;
+    margin-bottom: 0.6rem;
+  }
 }
 
 .landing__how-step:last-child {
@@ -204,14 +310,14 @@
 
 .landing__how-num {
   flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--accent);
   color: #fff;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   border-radius: 50%;
 }
@@ -222,18 +328,28 @@
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.5rem;
   justify-content: center;
 }
 
 .landing__who-item {
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.75rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  font-size: 0.875rem;
+  border-radius: 8px;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--text-secondary);
+}
+
+@media (max-width: 540px) {
+  .landing__who-grid {
+    gap: 0.4rem;
+  }
+  .landing__who-item {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+  }
 }
 
 .landing__games-grid {
