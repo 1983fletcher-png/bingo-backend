@@ -122,3 +122,108 @@ export function buildFlashcardsPrintDocument(
 </body>
 </html>`;
 }
+
+/** Calendar print pack: page 1 = big grid, pages 2+ = planning sheets for days with selections/notes. */
+export type CalendarPrintDay = {
+  day: number;
+  primaryName: string | null;
+};
+export type CalendarPlanningDay = {
+  day: number;
+  dateLabel: string;
+  selectedNames: string[];
+  noteText: string;
+};
+
+export function buildCalendarPrintPack(
+  year: number,
+  _month: number,
+  monthName: string,
+  daysInMonth: number,
+  startWeekday: number,
+  gridDays: CalendarPrintDay[],
+  planningDays: CalendarPlanningDay[]
+): string {
+  const dayCells: string[] = [];
+  for (let i = 0; i < startWeekday; i++) {
+    dayCells.push('<div class="cal-cell cal-cell--empty"></div>');
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const info = gridDays.find((g) => g.day === d);
+    const primary = info?.primaryName ?? '';
+    dayCells.push(`
+      <div class="cal-cell">
+        <div class="cal-day-num">${d}</div>
+        <div class="cal-primary">${escapeHtml(primary)}</div>
+        <div class="cal-blank">&nbsp;</div>
+      </div>`);
+  }
+
+  const planningPages =
+    planningDays.length === 0
+      ? ''
+      : planningDays
+          .map(
+            (p) => `
+    <div class="planning-sheet">
+      <h2 class="planning-date">${escapeHtml(p.dateLabel)}</h2>
+      <div class="planning-section">
+        <strong>Selected observances</strong>
+        <ul>${(p.selectedNames.length ? p.selectedNames : ['(none)']).map((n) => `<li>${escapeHtml(n)}</li>`).join('')}</ul>
+      </div>
+      <div class="planning-section">
+        <strong>Notes</strong>
+        <p class="planning-notes">${p.noteText ? escapeHtml(p.noteText) : '(none)'}</p>
+      </div>
+      <div class="planning-section planning-blank">
+        <strong>Meeting notes</strong>
+        <p class="blank-lines">_________________________________________</p>
+        <p class="blank-lines">_________________________________________</p>
+        <p class="blank-lines">_________________________________________</p>
+        <p class="blank-lines">_________________________________________</p>
+      </div>
+    </div>`
+          )
+          .join('');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${escapeHtml(monthName)} ${year} — Activity Calendar</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; font-size: 14px; color: #111; }
+    .print-pack-page { page-break-after: always; }
+    .print-pack-page:last-child { page-break-after: auto; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; min-height: 90vh; }
+    .cal-cell { border: 1px solid #333; padding: 10px; min-height: 100px; }
+    .cal-cell--empty { border-color: #ccc; background: #f9f9f9; }
+    .cal-day-num { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+    .cal-primary { font-size: 0.75rem; color: #333; }
+    .cal-blank { flex: 1; min-height: 40px; }
+    .cal-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 6px; text-align: center; font-weight: 600; font-size: 0.9rem; }
+    .planning-sheet { padding: 16px 0; page-break-before: always; page-break-inside: avoid; }
+.planning-sheet:first-of-type { page-break-before: auto; }
+    .planning-date { font-size: 1.1rem; margin: 0 0 12px; }
+    .planning-section { margin-bottom: 16px; }
+    .planning-notes { white-space: pre-wrap; margin: 4px 0 0; }
+    .planning-blank .blank-lines { margin: 4px 0; color: #999; }
+    @media print {
+      body { padding: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cal-grid { min-height: 80vh; }
+      .cal-cell { min-height: 90px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-pack-page">
+    <h1 style="margin: 0 0 12px; font-size: 1.25rem;">${escapeHtml(monthName)} ${year} — Calendar</h1>
+    <div class="cal-header">
+      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    </div>
+    <div class="cal-grid">${dayCells.join('')}</div>
+  </div>
+  ${planningPages ? `<div class="print-pack-page">${planningPages}</div>` : ''}
+</body>
+</html>`;
+}
