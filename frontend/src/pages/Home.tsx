@@ -99,15 +99,22 @@ export default function Home() {
             One room. One link. Everyone&apos;s in — on phones or with printable
             materials when you need them.
           </p>
-          {/* Four main cards — 2x2 */}
+          {/* Primary cards — Interactive Polling + Host, Join, Create, Learn */}
           <div
             className="landing__hero-cards"
             style={{
               maxWidth: 720,
-              gridTemplateColumns: 'repeat(2, 1fr)',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
               marginBottom: 32,
             }}
           >
+            <Link to="/poll/create" className="landing__hero-card">
+              <span className="landing__hero-card-title">Interactive Polling</span>
+              <span className="landing__hero-card-desc">
+                Live crowd input, instant results. One question, one QR — see what the room thinks.
+              </span>
+              <span className="landing__game-cta" style={{ marginTop: 8 }}>Start a poll →</span>
+            </Link>
             <Link to="/host" className="landing__hero-card">
               <span className="landing__hero-card-title">Host a room</span>
               <span className="landing__hero-card-desc">

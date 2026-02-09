@@ -15,6 +15,7 @@ import { enrichTrack, getChartStyleList } from './lib/musicDataLayer.js';
 import { getObservancesForYear, getUpcoming, CATEGORIES } from './lib/holidaysAndObservancesUS.js';
 import { isR2Configured, uploadToR2 } from './lib/r2.js';
 import * as roomStore from './server/roomStore.js';
+import * as pollStore from './server/pollStore.js';
 
 /**
  * Extract text from a PDF buffer. Tries pdf-parse first (best fidelity), then Mozilla PDF.js fallback
@@ -1536,6 +1537,83 @@ io.on('connection', (socket) => {
 
     const snapshot = roomStore.buildRoomSnapshot(rid);
     if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
+  });
+
+  // --- Interactive Polling (standalone) ---
+  socket.on('poll:create', ({ question, responseType, options, venueName, logoUrl } = {}) => {
+    const poll = pollStore.createPoll({
+      question: question || '',
+      responseType: responseType === 'multiple' ? 'multiple' : 'open',
+      options: Array.isArray(options) ? options : [],
+      venueName: venueName || '',
+      logoUrl: logoUrl || null,
+    });
+    if (!poll) {
+      socket.emit('poll:error', { message: 'Invalid poll (question required)' });
+      return;
+    }
+    poll.hostId = socket.id;
+    socket.join(`poll:${poll.pollId}`);
+    socket.pollId = poll.pollId;
+    const payload = pollStore.getPayloadForBroadcast(poll.pollId);
+    socket.emit('poll:created', { pollId: poll.pollId, hostToken: poll.hostToken });
+    socket.emit('poll:update', payload);
+  });
+
+  socket.on('poll:join', ({ pollId, role, hostToken } = {}) => {
+    const pid = (pollId || '').trim();
+    const payload = pollStore.joinPoll(pid, role || 'player', socket.id, hostToken);
+    if (!payload) {
+      socket.emit('poll:error', { message: 'Poll not found' });
+      return;
+    }
+    socket.join(`poll:${pid}`);
+    socket.pollId = pid;
+    socket.emit('poll:update', payload);
+  });
+
+  socket.on('poll:submit', ({ pollId, text, optionId } = {}) => {
+    const pid = (pollId || '').trim();
+    const payload = pollStore.submitResponse(pid, { text: text || '', optionId: optionId || '' }, socket.id);
+    if (!payload) return;
+    const full = pollStore.getPayloadForBroadcast(pid);
+    if (full) io.to(`poll:${pid}`).emit('poll:update', full);
+  });
+
+  socket.on('poll:export', ({ pollId, hostToken } = {}) => {
+    const pid = (pollId || '').trim();
+    const data = pollStore.exportPollData(pid, hostToken, socket.id);
+    if (data) socket.emit('poll:export-ok', data);
+    else socket.emit('poll:error', { message: 'Export failed' });
+  });
+
+  socket.on('poll:lock', ({ pollId, hostToken, locked } = {}) => {
+    const pid = (pollId || '').trim();
+    const payload = pollStore.setLocked(pid, locked !== false, hostToken, socket.id);
+    if (!payload) return;
+    const full = pollStore.getPayloadForBroadcast(pid);
+    if (full) io.to(`poll:${pid}`).emit('poll:update', full);
+  });
+
+  socket.on('poll:reset', ({ pollId, hostToken } = {}) => {
+    const pid = (pollId || '').trim();
+    const payload = pollStore.resetPoll(pid, hostToken, socket.id);
+    if (!payload) return;
+    io.to(`poll:${pid}`).emit('poll:update', payload);
+  });
+
+  socket.on('poll:clear', ({ pollId, hostToken } = {}) => {
+    const pid = (pollId || '').trim();
+    const payload = pollStore.clearResults(pid, hostToken, socket.id);
+    if (!payload) return;
+    io.to(`poll:${pid}`).emit('poll:update', payload);
+  });
+
+  socket.on('poll:ticker', ({ pollId, hostToken, show } = {}) => {
+    const pid = (pollId || '').trim();
+    const payload = pollStore.setShowTicker(pid, show !== false, hostToken, socket.id);
+    if (!payload) return;
+    io.to(`poll:${pid}`).emit('poll:update', payload);
   });
 
   socket.on('room:host-dispute-resolve', ({ roomId, questionId, action, variantText } = {}) => {

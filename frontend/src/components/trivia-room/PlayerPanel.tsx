@@ -10,6 +10,7 @@ import { QuestionCard } from './QuestionCard';
 import { AnswerCard } from './AnswerCard';
 import { TimerPill } from './TimerPill';
 import { LeaderboardList } from './LeaderboardList';
+import { getAnswerDisplayText } from './roomUtils';
 
 export interface RoomPlayerPanelProps {
   room: RoomModel;
@@ -112,6 +113,12 @@ export function RoomPlayerPanel({
   const options = currentQuestion?.type === 'mc' && currentQuestion.answer && 'options' in currentQuestion.answer
     ? (currentQuestion.answer.options || [])
     : [];
+  const correctId =
+    currentQuestion?.type === 'mc' && currentQuestion?.answer && 'correct' in currentQuestion.answer
+      ? (currentQuestion.answer as { correct: string }).correct
+      : currentQuestion?.type === 'tf' && currentQuestion?.answer && 'correct' in currentQuestion.answer
+        ? (currentQuestion.answer as { correct: string }).correct
+        : null;
   const isTf = currentQuestion?.type === 'tf';
   const hasShortAnswer = room.state === 'ACTIVE_ROUND' && currentQuestion && !isTf && options.length === 0 && currentQuestion.type !== 'list';
   const isList = currentQuestion?.type === 'list';
@@ -120,6 +127,8 @@ export function RoomPlayerPanel({
     : [];
   const labels = ['A', 'B', 'C', 'D'];
   const showLeaderboard = room.settings?.leaderboardsVisibleToPlayers !== false && leaderboardTop.length > 0;
+  const showReveal = room.state === 'REVEAL' && currentQuestion;
+  const revealAnswerText = showReveal ? getAnswerDisplayText(currentQuestion) : '';
 
   return (
     <div style={{ padding: 24, maxWidth: 480, margin: '0 auto', minHeight: '100vh' }}>
@@ -156,47 +165,67 @@ export function RoomPlayerPanel({
               />
             </div>
           )}
-          {room.state === 'ACTIVE_ROUND' && options.length > 0 && !isTf && (
+          {(room.state === 'ACTIVE_ROUND' || showReveal) && options.length > 0 && !isTf && (
             <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 8px' }}>Tap to choose (you can change until reveal).</p>
+              {room.state === 'ACTIVE_ROUND' && (
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 8px' }}>Tap to choose (you can change until reveal).</p>
+              )}
               {options.map((opt, i) => (
                 <AnswerCard
                   key={opt.id}
                   option={opt}
                   label={labels[i] ?? opt.id}
-                  selected={selectedOption === opt.id}
+                  selected={room.state === 'ACTIVE_ROUND' ? selectedOption === opt.id : !!(showReveal && correctId && opt.id === correctId)}
                   locked={!canChangeAnswer}
                   onTap={() => submitOption(opt.id)}
                   disabled={!canChangeAnswer}
                   size="compact"
+                  revealedCorrect={showReveal ? (opt.id === correctId ? true : false) : undefined}
                 />
               ))}
+              {showReveal && revealAnswerText && (
+                <p style={{ margin: '8px 0 0', fontSize: 14, fontWeight: 700, color: 'var(--accent)' }}>
+                  ✓ {revealAnswerText}
+                </p>
+              )}
             </div>
           )}
-          {room.state === 'ACTIVE_ROUND' && isTf && (
+          {(room.state === 'ACTIVE_ROUND' || showReveal) && isTf && (
             <div style={{ marginTop: 20, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <p style={{ width: '100%', fontSize: 13, color: 'var(--text-muted)', margin: '0 0 8px' }}>Tap True or False (you can change until reveal).</p>
-              {TF_OPTIONS.map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  className="join-page__btn"
-                  style={{
-                    flex: 1,
-                    minWidth: 120,
-                    padding: 16,
-                    fontSize: 18,
-                    fontWeight: 700,
-                    background: selectedOption === opt.id ? 'var(--accent)' : 'var(--surface)',
-                    color: selectedOption === opt.id ? '#fff' : 'var(--text)',
-                    border: selectedOption === opt.id ? '2px solid var(--accent)' : '2px solid var(--border)',
-                  }}
-                  disabled={!canChangeAnswer}
-                  onClick={() => submitOption(opt.id)}
-                >
-                  {opt.text}
-                </button>
-              ))}
+              {room.state === 'ACTIVE_ROUND' && (
+                <p style={{ width: '100%', fontSize: 13, color: 'var(--text-muted)', margin: '0 0 8px' }}>Tap True or False (you can change until reveal).</p>
+              )}
+              {TF_OPTIONS.map((opt) => {
+                const isCorrectReveal = showReveal && correctId === opt.id;
+                const showAsSelected = room.state === 'ACTIVE_ROUND' ? selectedOption === opt.id : isCorrectReveal;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    className="join-page__btn"
+                    style={{
+                      flex: 1,
+                      minWidth: 120,
+                      padding: 16,
+                      fontSize: 18,
+                      fontWeight: 700,
+                      background: showAsSelected ? 'var(--accent)' : 'var(--surface)',
+                      color: showAsSelected ? '#fff' : 'var(--text)',
+                      border: showAsSelected ? '2px solid var(--accent)' : '2px solid var(--border)',
+                      opacity: showReveal && !isCorrectReveal ? 0.6 : 1,
+                    }}
+                    disabled={!canChangeAnswer}
+                    onClick={() => submitOption(opt.id)}
+                  >
+                    {opt.text}
+                  </button>
+                );
+              })}
+              {showReveal && revealAnswerText && (
+                <p style={{ width: '100%', margin: '8px 0 0', fontSize: 14, fontWeight: 700, color: 'var(--accent)' }}>
+                  ✓ {revealAnswerText}
+                </p>
+              )}
             </div>
           )}
           {room.state === 'ACTIVE_ROUND' && isList && listItems.length > 0 && (
@@ -263,7 +292,7 @@ export function RoomPlayerPanel({
             </form>
           )}
           {room.state === 'REVEAL' && (
-            <p style={{ marginTop: 16, color: 'var(--text-muted)' }}>Answer revealed. Next question soon.</p>
+            <p style={{ marginTop: 16, fontSize: 13, color: 'var(--text-muted)' }}>Next question soon.</p>
           )}
         </>
       ) : (
