@@ -5,6 +5,8 @@ import {
   buildCalendarPrintPack,
   type CalendarPrintDay,
   type CalendarPlanningDay,
+  type ObservancesIndexDay,
+  type CalendarPrintStyle,
 } from '../lib/printMaterials';
 
 const API_BASE =
@@ -162,6 +164,8 @@ export default function ActivityCalendar() {
   const [error, setError] = useState<string | null>(null);
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
   const [showOnlySelected, setShowOnlySelected] = useState(false);
+  const [printStyle, setPrintStyle] = useState<CalendarPrintStyle>('neutral');
+  const [showBlankLinesInPrint, setShowBlankLinesInPrint] = useState(true);
 
   const [selectionsByDate, setSelectionsByDate] = useState<Record<number, string[]>>({});
   const [notesByDate, setNotesByDate] = useState<Record<number, string>>({});
@@ -285,6 +289,11 @@ export default function ActivityCalendar() {
         noteText: note,
       });
     }
+    const observancesIndex: ObservancesIndexDay[] = allDaysWithObservances.map((d) => ({
+      day: d,
+      observances: (observancesByDay[d] ?? []).map((o) => ({ name: o.name, category: o.category })),
+      noteText: notesByDate[d] ?? '',
+    }));
     const html = buildCalendarPrintPack(
       year,
       month,
@@ -292,18 +301,27 @@ export default function ActivityCalendar() {
       daysInMonth,
       startWeekday,
       gridDays,
-      planningDays
+      planningDays,
+      {
+        printStyle,
+        observancesIndex,
+        includeBlankLinesUnderObservances: showBlankLinesInPrint,
+      }
     );
-    const w = window.open('', '_blank', 'noopener');
-    if (!w) return;
-    w.document.write(html);
-    w.document.close();
-    w.focus();
-    setTimeout(() => {
-      w.print();
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank', 'noopener');
+    if (!w) {
+      URL.revokeObjectURL(url);
+      return;
+    }
+    w.addEventListener('afterprint', () => {
       w.close();
-    }, 250);
-  }, [year, month, daysInMonth, startWeekday, observancesByDay, selectionsByDate, notesByDate]);
+      URL.revokeObjectURL(url);
+    });
+    w.focus();
+    setTimeout(() => w.print(), 400);
+  }, [year, month, daysInMonth, startWeekday, observancesByDay, selectionsByDate, notesByDate, printStyle, showBlankLinesInPrint, allDaysWithObservances]);
 
   const cellStyle: React.CSSProperties = {
     minHeight: 100,
@@ -379,9 +397,34 @@ export default function ActivityCalendar() {
             →
           </button>
         </div>
-        <button type="button" onClick={handlePrint} style={{ padding: '10px 20px', background: theme.accent, border: 'none', borderRadius: 10, color: theme.bg === NEUTRAL_THEME.bg ? '#fff' : '#fff', cursor: 'pointer', fontWeight: 600 }}>
-          Print calendar
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8' }}>Print style:</span>
+          {(['fun', 'neutral', 'bw'] as const).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setPrintStyle(s)}
+              style={{
+                padding: '6px 12px',
+                borderRadius: 8,
+                border: printStyle === s ? `2px solid ${theme.accent}` : '1px solid transparent',
+                background: printStyle === s ? (theme.accent === NEUTRAL_THEME.accent ? 'rgba(30,41,59,0.1)' : `${theme.accent}25`) : 'transparent',
+                color: printStyle === s ? theme.accent : (theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8'),
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+              }}
+            >
+              {s === 'fun' ? 'Fun' : s === 'neutral' ? 'Neutral' : 'B&W'}
+            </button>
+          ))}
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8' }}>
+            <input type="checkbox" checked={showBlankLinesInPrint} onChange={(e) => setShowBlankLinesInPrint(e.target.checked)} />
+            Blank lines under observances
+          </label>
+          <button type="button" onClick={handlePrint} style={{ padding: '10px 20px', background: theme.accent, border: 'none', borderRadius: 10, color: '#fff', cursor: 'pointer', fontWeight: 600 }}>
+            Print calendar
+          </button>
+        </div>
       </div>
 
       <div className="no-print" style={{ marginBottom: 16 }}>
@@ -553,6 +596,7 @@ export default function ActivityCalendar() {
           {daysToShowInIndex.map((d) => {
             const obs = observancesByDay[d] ?? [];
             const selected = selectionsByDate[d] ?? [];
+            const dayNote = notesByDate[d] ?? '';
             if (obs.length === 0) return null;
             return (
               <div key={d} style={{ marginBottom: 16 }}>
@@ -572,6 +616,25 @@ export default function ActivityCalendar() {
                     );
                   })}
                 </ul>
+                <div style={{ marginTop: 8 }}>
+                  <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8' }}>Notes (included in print)</label>
+                  <input
+                    type="text"
+                    value={dayNote}
+                    onChange={(e) => setNoteForDay(d, e.target.value)}
+                    placeholder="Ideas, plans…"
+                    style={{
+                      width: '100%',
+                      maxWidth: 400,
+                      padding: '8px 10px',
+                      borderRadius: 6,
+                      border: `1px solid ${theme.accent}40`,
+                      background: theme.bg === NEUTRAL_THEME.bg ? '#fff' : 'rgba(0,0,0,0.15)',
+                      color: theme.accent === NEUTRAL_THEME.accent ? '#1e293b' : '#e2e8f0',
+                      fontSize: '0.9rem',
+                    }}
+                  />
+                </div>
               </div>
             );
           })}
