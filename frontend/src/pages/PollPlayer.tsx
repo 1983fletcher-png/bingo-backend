@@ -28,6 +28,7 @@ export default function PollPlayer() {
   const [submitCooldown, setSubmitCooldown] = useState(false);
   const [venueDrawerOpen, setVenueDrawerOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [connectionTimeout, setConnectionTimeout] = useState(false);
 
   const join = useCallback(() => {
     if (!socket?.connected || !pollId) return;
@@ -36,16 +37,22 @@ export default function PollPlayer() {
 
   useEffect(() => {
     if (!pollId) return;
+    setConnectionTimeout(false);
     const s = getSocket();
     setSocket(s);
-    const onUpdate = (p: PollPayload) => {
-      setPayload(p);
-    };
+    const onUpdate = (p: PollPayload) => setPayload(p);
     const onErr = (e: { message?: string }) => setError(e?.message || 'Error');
     s.on('poll:update', onUpdate);
     s.on('poll:error', onErr);
     join();
+    const t = window.setTimeout(() => {
+      setConnectionTimeout((prev) => {
+        if (prev) return prev;
+        return true;
+      });
+    }, 8000);
     return () => {
+      window.clearTimeout(t);
       s.off('poll:update', onUpdate);
       s.off('poll:error', onErr);
     };
@@ -92,7 +99,14 @@ export default function PollPlayer() {
   return (
     <div className="join-page" style={{ maxWidth: 480, margin: '0 auto', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {!payload ? (
-        <p style={{ textAlign: 'center', padding: 48 }}>Connecting…</p>
+        <div style={{ textAlign: 'center', padding: 48 }}>
+          <p>Connecting…</p>
+          {connectionTimeout && (
+            <p style={{ marginTop: 16, fontSize: 14, color: 'var(--text-muted)', maxWidth: 320, marginLeft: 'auto', marginRight: 'auto' }}>
+              Couldn&apos;t load the poll. Check your connection. On the live site, the host may need to set the backend URL (VITE_SOCKET_URL) in Netlify and redeploy.
+            </p>
+          )}
+        </div>
       ) : (
         <>
           <h1 style={{ fontSize: 22, margin: '0 0 24px', lineHeight: 1.3 }}>{payload.question}</h1>

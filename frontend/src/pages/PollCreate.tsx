@@ -17,9 +17,12 @@ import '../styles/join.css';
 
 type ResponseType = 'open' | 'multiple';
 
+const BACKEND_SET = !!(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL);
+
 export default function PollCreate() {
   const navigate = useNavigate();
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [connected, setConnected] = useState(false);
   const [question, setQuestion] = useState('');
   const [responseType, setResponseType] = useState<ResponseType>('open');
   const [options, setOptions] = useState<string[]>(['', '']);
@@ -31,6 +34,9 @@ export default function PollCreate() {
   useEffect(() => {
     const s = getSocket();
     setSocket(s);
+    setConnected(s.connected);
+    const onConnect = () => setConnected(true);
+    const onDisconnect = () => setConnected(false);
     const onCreated = (data: { pollId: string; hostToken: string }) => {
       setSubmitting(false);
       saveHostToken(data.pollId, data.hostToken);
@@ -40,9 +46,13 @@ export default function PollCreate() {
       setSubmitting(false);
       setError(data?.message || 'Failed to create poll');
     };
+    s.on('connect', onConnect);
+    s.on('disconnect', onDisconnect);
     s.on('poll:created', onCreated);
     s.on('poll:error', onErr);
     return () => {
+      s.off('connect', onConnect);
+      s.off('disconnect', onDisconnect);
       s.off('poll:created', onCreated);
       s.off('poll:error', onErr);
     };
@@ -75,7 +85,7 @@ export default function PollCreate() {
       return;
     }
     if (!socket?.connected) {
-      setError('Not connected. Try again.');
+      setError('Not connected to the server. See connection note below.');
       return;
     }
     setSubmitting(true);
@@ -180,12 +190,29 @@ export default function PollCreate() {
           Display: Top 8 results · Group similar answers · Profanity filter — all on by default.
         </p>
 
+        {!connected && (
+          <div style={{ marginBottom: 16, padding: 12, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
+            <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>
+              Connecting to server…
+            </p>
+            {!BACKEND_SET && !import.meta.env.DEV && (
+              <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--warning)' }}>
+                On the live site, set <strong>VITE_SOCKET_URL</strong> in Netlify to your Railway backend URL (no trailing slash), then redeploy. Otherwise the app cannot reach the server.
+              </p>
+            )}
+          </div>
+        )}
+
         {error && <p style={{ color: 'var(--error)', marginBottom: 16 }}>{error}</p>}
 
-        <button type="submit" className="join-page__btn" disabled={submitting}>
-          {submitting ? 'Creating…' : 'Start poll'}
+        <button type="submit" className="join-page__btn" disabled={submitting || !connected}>
+          {submitting ? 'Creating…' : connected ? 'Start poll' : 'Connect to start'}
         </button>
       </form>
+
+      <p style={{ marginTop: 24, fontSize: 12, color: 'var(--text-muted)', maxWidth: 420 }}>
+        Live site? Set <strong>VITE_SOCKET_URL</strong> in Netlify to your Railway backend URL (no trailing slash) and redeploy so the app can connect.
+      </p>
     </div>
   );
 }

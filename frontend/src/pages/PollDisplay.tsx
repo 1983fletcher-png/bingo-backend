@@ -38,6 +38,7 @@ export default function PollDisplay() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [payload, setPayload] = useState<PollPayload | null>(null);
   const [tickerItems, setTickerItems] = useState<string[]>([]);
+  const [connectionTimeout, setConnectionTimeout] = useState(false);
 
   const join = useCallback(() => {
     if (!socket?.connected || !pollId) return;
@@ -46,6 +47,7 @@ export default function PollDisplay() {
 
   useEffect(() => {
     if (!pollId) return;
+    setConnectionTimeout(false);
     const s = getSocket();
     setSocket(s);
     const onUpdate = (p: PollPayload) => {
@@ -56,7 +58,9 @@ export default function PollDisplay() {
     };
     s.on('poll:update', onUpdate);
     join();
+    const t = window.setTimeout(() => setConnectionTimeout(true), 8000);
     return () => {
+      window.clearTimeout(t);
       s.off('poll:update', onUpdate);
     };
   }, [pollId, join]);
@@ -70,7 +74,21 @@ export default function PollDisplay() {
   }
 
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/poll/${pollId}` : '';
-  const qrSrc = joinUrl ? `${QR_API}?size=120x120&margin=4&data=${encodeURIComponent(joinUrl)}` : '';
+  const qrSize = 280;
+  const qrSrc = joinUrl ? `${QR_API}?size=${qrSize}x${qrSize}&margin=8&data=${encodeURIComponent(joinUrl)}` : '';
+
+  if (!payload && connectionTimeout) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48, textAlign: 'center' }}>
+        <div>
+          <p style={{ fontSize: 20, marginBottom: 16 }}>Couldn&apos;t load the poll</p>
+          <p style={{ fontSize: 16, color: 'var(--text-muted)', maxWidth: 400 }}>
+            Check your connection. On the live site, set VITE_SOCKET_URL in Netlify to your backend URL and redeploy.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -85,28 +103,28 @@ export default function PollDisplay() {
       }}
     >
       {payload?.logoUrl && (
-        <img src={payload.logoUrl} alt="" style={{ height: 48, marginBottom: 16, objectFit: 'contain' }} />
+        <img src={payload.logoUrl} alt="" style={{ height: 56, marginBottom: 20, objectFit: 'contain' }} />
       )}
-      <h1 style={{ fontSize: 'clamp(24px, 4vw, 42px)', margin: '0 0 8px', textAlign: 'center', maxWidth: 900 }}>
+      <h1 style={{ fontSize: 'clamp(36px, 8vw, 80px)', margin: '0 0 12px', textAlign: 'center', maxWidth: 1000, lineHeight: 1.2, fontWeight: 700 }}>
         {payload?.question || 'Loading…'}
       </h1>
       {payload?.venueName && (
-        <p style={{ margin: 0, fontSize: 18, color: 'var(--text-muted)' }}>{payload.venueName}</p>
+        <p style={{ margin: 0, fontSize: 'clamp(18px, 2.5vw, 28px)', color: 'var(--text-muted)' }}>{payload.venueName}</p>
       )}
 
-      <div style={{ flex: 1, width: '100%', maxWidth: 900, marginTop: 32, display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'start' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ flex: 1, width: '100%', maxWidth: 1000, marginTop: 40, display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {payload?.grouped?.top8?.map((e, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <span style={{ flex: '0 0 40px', fontWeight: 700, fontSize: 18 }}>#{i + 1}</span>
-              <span style={{ flex: '1 1 200px', fontSize: 'clamp(16px, 2.5vw, 24px)', fontWeight: 600 }}>
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+              <span style={{ flex: '0 0 56px', fontWeight: 700, fontSize: 'clamp(20px, 3vw, 32px)' }}>#{i + 1}</span>
+              <span style={{ flex: '1 1 260px', fontSize: 'clamp(20px, 3.5vw, 36px)', fontWeight: 600 }}>
                 {maskForDisplay(e.label)}
               </span>
-              <span style={{ flex: '0 0 60px', textAlign: 'right', fontWeight: 700 }}>{e.count}</span>
+              <span style={{ flex: '0 0 72px', textAlign: 'right', fontWeight: 700, fontSize: 'clamp(18px, 2.5vw, 28px)' }}>{e.count}</span>
               <div
                 style={{
-                  flex: '0 0 120px',
-                  height: 24,
+                  flex: '0 0 160px',
+                  height: 32,
                   background: 'var(--surface)',
                   borderRadius: 12,
                   overflow: 'hidden',
@@ -118,14 +136,14 @@ export default function PollDisplay() {
                     height: '100%',
                     background: 'var(--accent)',
                     borderRadius: 12,
-                    minWidth: e.count > 0 ? 4 : 0,
+                    minWidth: e.count > 0 ? 8 : 0,
                   }}
                 />
               </div>
             </div>
           ))}
           {payload?.grouped && payload.grouped.otherCount > 0 && (
-            <p style={{ marginTop: 8, fontSize: 18, color: 'var(--text-muted)' }}>
+            <p style={{ marginTop: 12, fontSize: 'clamp(18px, 2.5vw, 26px)', color: 'var(--text-muted)' }}>
               Other answers: {payload.grouped.otherCount}
             </p>
           )}
@@ -153,9 +171,15 @@ export default function PollDisplay() {
         )}
       </div>
 
-      <div style={{ marginTop: 32, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-        <p style={{ margin: 0, fontSize: 14, color: 'var(--text-muted)' }}>Scan to vote</p>
-        {qrSrc && <img src={qrSrc} alt="QR code to vote" style={{ width: 120, height: 120, borderRadius: 8, border: '2px solid var(--border)' }} />}
+      <div style={{ marginTop: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+        <p style={{ margin: 0, fontSize: 'clamp(18px, 2.5vw, 28px)', fontWeight: 600, color: 'var(--text)' }}>Scan to vote</p>
+        {qrSrc && (
+          <img
+            src={qrSrc}
+            alt="QR code to vote"
+            style={{ width: qrSize, height: qrSize, borderRadius: 16, border: '4px solid var(--border)', boxShadow: '0 4px 24px rgba(0,0,0,0.15)' }}
+          />
+        )}
       </div>
     </div>
   );
