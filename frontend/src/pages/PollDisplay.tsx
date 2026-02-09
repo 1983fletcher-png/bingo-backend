@@ -1,6 +1,7 @@
 /**
  * Interactive Polling — Display view (TV / projector).
  * Route: /poll/:pollId/display — Top 8, Other bucket, live ticker, QR at bottom.
+ * Universal casting support: Chromecast, AirPlay, screen mirroring instructions.
  */
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -8,6 +9,136 @@ import { getSocket } from '../lib/socket';
 import '../styles/join.css';
 
 const QR_API = 'https://api.qrserver.com/v1/create-qr-code/';
+
+function CastingHelper({ displayUrl }: { displayUrl: string }) {
+  const [showHelp, setShowHelp] = useState(false);
+  const [isChrome, setIsChrome] = useState(false);
+  const [isSafari, setIsSafari] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const ua = navigator.userAgent.toLowerCase();
+    setIsChrome(ua.includes('chrome') && !ua.includes('edg'));
+    setIsSafari(ua.includes('safari') && !ua.includes('chrome'));
+    setIsMobile(/android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua));
+  }, []);
+
+  return (
+    <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 1000 }}>
+      <button
+        onClick={() => setShowHelp(!showHelp)}
+        style={{
+          padding: '10px 16px',
+          background: 'var(--accent)',
+          color: '#fff',
+          border: 'none',
+          borderRadius: 8,
+          fontSize: 14,
+          fontWeight: 600,
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+        }}
+      >
+        📺 Cast to TV
+      </button>
+      {showHelp && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            right: 0,
+            marginTop: 8,
+            width: 320,
+            maxWidth: '90vw',
+            background: 'var(--bg)',
+            border: '2px solid var(--border)',
+            borderRadius: 12,
+            padding: 20,
+            boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+            fontSize: 13,
+            lineHeight: 1.6,
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Cast to any device</h3>
+            <button
+              onClick={() => setShowHelp(false)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                fontSize: 20,
+                cursor: 'pointer',
+                color: 'var(--text-muted)',
+                padding: 0,
+                width: 24,
+                height: 24,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              ×
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {isChrome && (
+              <div>
+                <strong style={{ display: 'block', marginBottom: 4 }}>Chromecast / Google TV:</strong>
+                <span>Click the cast icon in Chrome toolbar (top right) → select your TV</span>
+              </div>
+            )}
+            {isSafari && (
+              <div>
+                <strong style={{ display: 'block', marginBottom: 4 }}>AirPlay (Apple TV):</strong>
+                <span>Click AirPlay icon in Safari toolbar → select your Apple TV</span>
+              </div>
+            )}
+            {isMobile && (
+              <div>
+                <strong style={{ display: 'block', marginBottom: 4 }}>Screen mirroring:</strong>
+                <span>
+                  {isMobile && /iphone|ipad/i.test(navigator.userAgent)
+                    ? 'Control Center → Screen Mirroring → select device'
+                    : 'Pull down notifications → Cast / Screen mirror → select device'}
+                </span>
+              </div>
+            )}
+            <div>
+              <strong style={{ display: 'block', marginBottom: 4 }}>Smart TV browser:</strong>
+              <span>Open this URL on your TV&apos;s browser:</span>
+              <div
+                style={{
+                  marginTop: 6,
+                  padding: 8,
+                  background: 'var(--surface)',
+                  borderRadius: 6,
+                  fontSize: 11,
+                  wordBreak: 'break-all',
+                  fontFamily: 'monospace',
+                }}
+              >
+                {displayUrl}
+              </div>
+            </div>
+            <div>
+              <strong style={{ display: 'block', marginBottom: 4 }}>Roku / Firestick:</strong>
+              <span>Use browser app (e.g., Web Browser) → enter URL above</span>
+            </div>
+            <div style={{ marginTop: 8, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+              <strong style={{ display: 'block', marginBottom: 4, fontSize: 12, color: 'var(--text-muted)' }}>
+                💡 Tip:
+              </strong>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                This page works on any device. Open it on your TV&apos;s browser, or cast your screen from any device.
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 type PollPayload = {
   pollId: string;
@@ -116,8 +247,10 @@ export default function PollDisplay() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        position: 'relative',
       }}
     >
+      <CastingHelper displayUrl={joinUrl} />
       {payload?.logoUrl && (
         <img src={payload.logoUrl} alt="" style={{ height: 56, marginBottom: 20, objectFit: 'contain' }} />
       )}
