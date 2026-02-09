@@ -912,7 +912,7 @@ export default function Host() {
           <div className="host-room__right">
             <div className="host-room__right-head">
               <h1 className="host-room__right-title">Run the game</h1>
-              <p className="host-room__right-sub">Set what players see while they wait, then start when you’re ready. You can change these anytime.</p>
+              <p className="host-room__right-sub">Set what players see then start when you’re ready. Change options anytime.</p>
             </div>
         <div className="host-room__tabs">
           {tabs.map(({ id, label }) => (

@@ -128,12 +128,13 @@ export default function HostCreateTrivia() {
                 style={{
                   textAlign: 'left',
                   background: selectedPack?.id === pack.id ? 'var(--accent)' : 'var(--surface)',
+                  color: selectedPack?.id === pack.id ? '#fff' : '#111',
                   border: selectedPack?.id === pack.id ? '2px solid var(--accent)' : '1px solid var(--border)',
                 }}
                 onClick={() => setSelectedPack(pack)}
               >
                 <strong>{pack.title}</strong>
-                <span style={{ display: 'block', fontSize: 14, opacity: 0.9 }}>
+                <span style={{ display: 'block', fontSize: 14, opacity: selectedPack?.id === pack.id ? 0.95 : 0.85, color: 'inherit' }}>
                   {meta.duration} · {meta.vibe} · {meta.audience}
                   {pack.verificationLevel === 'verified' ? ' · Verified' : pack.verificationLevel === 'review_required' ? ' · Review required' : ''}
                 </span>
@@ -141,6 +142,7 @@ export default function HostCreateTrivia() {
             );
           })}
         </div>
+        {error && <p style={{ color: 'var(--error)', marginTop: 12 }}>{error}</p>}
         <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
           {fromHost ? (
             <Link to="/host?type=trivia" className="join-page__btn" style={{ textDecoration: 'none', color: 'inherit' }}>← Back to host</Link>
@@ -150,16 +152,17 @@ export default function HostCreateTrivia() {
           <button
             type="button"
             className="join-page__btn"
-            disabled={!selectedPack}
-            onClick={() => setStep('preview')}
+            disabled={!selectedPack || creating || !socket?.connected}
+            onClick={handleStartHosting}
           >
-            Preview pack
+            {creating ? 'Creating…' : 'Start hosting'}
           </button>
         </div>
       </div>
     );
   }
 
+  /* Preview step removed: go straight from pack picker to Start hosting. Options live on the host room page. */
   if (step === 'preview') {
     const pack: TriviaPackModel | undefined = selectedPack ?? packs[0] ?? undefined;
     const questions = (pack?.questions ?? []) as TriviaQuestionModel[];

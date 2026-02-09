@@ -171,6 +171,28 @@ export function computePoints(room, question, submittedAt) {
 }
 
 /**
+ * Remove existing response for (questionId, playerId) and undo its points/counts.
+ * Used when player changes answer before reveal (last submission wins).
+ */
+export function removeResponseForPlayerQuestion(roomId, questionId, playerId) {
+  const room = triviaRooms.get(roomId);
+  if (!room) return null;
+  const idx = room.responses.findIndex(
+    (r) => r.questionId === questionId && r.playerId === playerId
+  );
+  if (idx === -1) return null;
+  const existing = room.responses[idx];
+  room.responses.splice(idx, 1);
+  const p = room.players.get(playerId);
+  if (p) {
+    p.score = Math.max(0, (p.score || 0) - (existing.pointsAwarded || 0));
+    p.answeredCount = Math.max(0, (p.answeredCount || 0) - 1);
+    if (existing.isCorrect) p.correctCount = Math.max(0, (p.correctCount || 0) - 1);
+  }
+  return true;
+}
+
+/**
  * @param {string} roomId
  * @param {string} questionId
  * @param {string} playerId

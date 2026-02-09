@@ -3,6 +3,7 @@ export { AnswerCard } from './AnswerCard';
 export { TimerPill } from './TimerPill';
 export { LeaderboardList } from './LeaderboardList';
 export { QRCodePanel } from './QRCodePanel';
+export { LivePreview } from './LivePreview';
 export { RoomHostPanel } from './HostPanel';
 export { RoomPlayerPanel } from './PlayerPanel';
 export { RoomDisplayPanel } from './DisplayPanel';

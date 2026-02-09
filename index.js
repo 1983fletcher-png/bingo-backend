@@ -1422,7 +1422,7 @@ io.on('connection', (socket) => {
       });
     }
     const snapshot = roomStore.buildRoomSnapshot(rid);
-    if (snapshot) socket.emit('room:snapshot', snapshot);
+    if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
   });
 
   socket.on('room:host-create', ({ pack, settings } = {}) => {
@@ -1490,9 +1490,16 @@ io.on('connection', (socket) => {
     const q = r.pack?.questions?.find((qu) => qu.id === questionId);
     if (!q) return;
     const currentIdx = r.pack.questions.findIndex((qu) => qu.id === questionId);
-    if (r.state !== 'ACTIVE_ROUND' || r.runtime.currentQuestionIndex !== currentIdx) return;
+    const isCurrentQuestion = r.runtime.currentQuestionIndex === currentIdx;
+    const allowSubmit = isCurrentQuestion && (r.state === 'ACTIVE_ROUND' || r.state === 'REVEAL');
+    if (!allowSubmit) return;
+
+    // If player already submitted for this question, remove old response (undo points) so they can change answer until reveal
+    const alreadySubmitted = r.responses.some((resp) => resp.questionId === questionId && resp.playerId === playerId);
+    if (alreadySubmitted) roomStore.removeResponseForPlayerQuestion(rid, questionId, playerId);
 
     let isCorrect = false;
+    let points = 0;
     if (q.type === 'mc' || q.type === 'tf') {
       const correctId = q.answer?.correct;
       isCorrect = String(payload?.optionId || payload).trim() === String(correctId).trim();
@@ -1500,6 +1507,16 @@ io.on('connection', (socket) => {
       const raw = String(payload?.text || payload || '').trim().toLowerCase();
       const accepted = [q.answer.primary.toLowerCase(), ...(q.answer.acceptedVariants || []).map((v) => v.toLowerCase())];
       isCorrect = accepted.includes(raw);
+    } else if (q.type === 'list' && q.answer && 'acceptedItems' in q.answer) {
+      const correctOrder = q.answer.correctOrder || q.answer.acceptedItems || [];
+      const submittedOrder = Array.isArray(payload?.orderedIds) ? payload.orderedIds : [];
+      const perItemPoints = q.answer.perItemPoints ?? 1;
+      let matchCount = 0;
+      for (let i = 0; i < correctOrder.length && i < submittedOrder.length; i++) {
+        if (String(submittedOrder[i]).trim() === String(correctOrder[i]).trim()) matchCount++;
+      }
+      points = matchCount * perItemPoints;
+      isCorrect = matchCount === correctOrder.length && submittedOrder.length === correctOrder.length;
     }
 
     const isLastQuestion = currentIdx === r.pack.questions.length - 1;
@@ -1507,11 +1524,10 @@ io.on('connection', (socket) => {
     const wager = isLastQuestion && r.pack?.finalWagerEnabled && typeof payload?.wager === 'number' && payload.wager >= 0
       ? Math.min(payload.wager, wagerCap) : 0;
 
-    let points = 0;
-    if (isCorrect) {
+    if (q.type !== 'list' && isCorrect) {
       points = roomStore.computePoints(r, q, new Date().toISOString());
       if (wager > 0) points += wager;
-    } else if (wager > 0) {
+    } else if (wager > 0 && !isCorrect) {
       const p = r.players.get(playerId);
       if (p) p.score = Math.max(0, (p.score ?? 0) - wager);
     }

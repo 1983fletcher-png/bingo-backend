@@ -10,6 +10,7 @@ import { QuestionCard } from './QuestionCard';
 import { TimerPill } from './TimerPill';
 import { LeaderboardList } from './LeaderboardList';
 import { QRCodePanel } from './QRCodePanel';
+import { LivePreview } from './LivePreview';
 import { getAnswerDisplayText } from './roomUtils';
 
 export interface RoomHostPanelProps {
@@ -65,39 +66,65 @@ export function RoomHostPanel({
 
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/room/${roomId}?role=player` : '';
 
+  const copyJoinUrl = () => {
+    if (joinUrl) {
+      navigator.clipboard.writeText(joinUrl).catch(() => {});
+    }
+  };
+
   return (
-    <div style={{ padding: 24, maxWidth: 720, margin: '0 auto' }}>
-      <h1 style={{ margin: '0 0 8px', fontSize: 24 }}>Host — {pack?.title || 'Trivia'}</h1>
-      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 14 }}>
-        Room <strong>{roomId}</strong> · {room.state} · {players.length} player(s) · {responsesCount} responses
+    <div className="host-room" style={{ padding: 24, maxWidth: 960, margin: '0 auto' }}>
+      <p style={{ margin: '0 0 12px', fontSize: 14 }}>
+        <Link to="/host?type=trivia" className="host-room__back-link">← Back to host</Link>
       </p>
-      <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--text-muted)', wordBreak: 'break-all' }}>
-        Players join: <strong>{joinUrl}</strong>
-      </p>
-      <p style={{ margin: '8px 0 0', fontSize: 14 }}>
-        <Link to="/host?type=trivia">← Back to host</Link>
-      </p>
-
-      <div style={{ marginTop: 16, display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
-          <input type="checkbox" checked={settings.leaderboardsVisibleToPlayers !== false} onChange={(e) => toggleSetting('leaderboardsVisibleToPlayers', e.target.checked)} />
-          Leaderboard to players
-        </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
-          <input type="checkbox" checked={settings.leaderboardsVisibleOnDisplay !== false} onChange={(e) => toggleSetting('leaderboardsVisibleOnDisplay', e.target.checked)} />
-          Leaderboard on display
-        </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
-          <input type="checkbox" checked={settings.mcTipsEnabled !== false} onChange={(e) => toggleSetting('mcTipsEnabled', e.target.checked)} />
-          MC tips
-        </label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
-          <input type="checkbox" checked={settings.autoAdvanceEnabled === true} onChange={(e) => toggleSetting('autoAdvanceEnabled', e.target.checked)} />
-          Auto-advance
-        </label>
-      </div>
-
-      <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div className="host-room__wrap">
+        <aside className="host-room__left">
+          <span className="host-room__section-label">Share with players</span>
+          <div className="host-room__qr-block">
+            <QRCodePanel joinUrl={joinUrl} label="Scan to join" size={160} />
+            <p className="host-room__qr-hint">Room code</p>
+            <p className="host-room__code">{roomId}</p>
+          </div>
+          <div className="host-room__join-row">
+            <a href={joinUrl} target="_blank" rel="noopener noreferrer" className="host-room__join-url" style={{ flex: '1 1 100%' }}>
+              {joinUrl}
+            </a>
+            <button type="button" className="host-room__copy-btn" onClick={copyJoinUrl}>Copy link</button>
+          </div>
+          <p className="host-room__qr-sub" style={{ marginTop: 0 }}>
+            {players.length} player(s) · {responsesCount} responses · {room.state}
+          </p>
+          <div style={{ marginTop: 16 }}>
+            <span className="host-room__section-label">Options</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+                <input type="checkbox" checked={settings.leaderboardsVisibleToPlayers !== false} onChange={(e) => toggleSetting('leaderboardsVisibleToPlayers', e.target.checked)} />
+                Leaderboard to players
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+                <input type="checkbox" checked={settings.leaderboardsVisibleOnDisplay !== false} onChange={(e) => toggleSetting('leaderboardsVisibleOnDisplay', e.target.checked)} />
+                Leaderboard on display
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+                <input type="checkbox" checked={settings.mcTipsEnabled !== false} onChange={(e) => toggleSetting('mcTipsEnabled', e.target.checked)} />
+                MC tips
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+                <input type="checkbox" checked={settings.autoAdvanceEnabled === true} onChange={(e) => toggleSetting('autoAdvanceEnabled', e.target.checked)} />
+                Auto-advance
+              </label>
+            </div>
+          </div>
+        </aside>
+        <main className="host-room__right">
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
+            <div className="host-room__right-head" style={{ flex: '1 1 200px', minWidth: 0 }}>
+              <h1 className="host-room__right-title">Host — {pack?.title || 'Trivia'}</h1>
+              <p className="host-room__right-sub">Run the game. Preview to the right shows what players and the display see.</p>
+            </div>
+            <LivePreview room={room} currentQuestion={currentQuestion} pack={pack} leaderboardTop={leaderboardTop} />
+          </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {room.state === 'WAITING_ROOM' && (
           <button className="join-page__btn" disabled={!startReadyCheckEnabled} onClick={() => setState('READY_CHECK')}>Start ready check</button>
         )}
@@ -159,9 +186,7 @@ export function RoomHostPanel({
           <LeaderboardList players={leaderboardTop} limit={10} showPercentage />
         </div>
       )}
-
-      <div style={{ marginTop: 24 }}>
-        <QRCodePanel joinUrl={joinUrl} label="Room join QR" size={160} />
+        </main>
       </div>
     </div>
   );

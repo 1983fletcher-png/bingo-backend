@@ -9,6 +9,7 @@ import type { Socket } from 'socket.io-client';
 import type { RoomSnapshotPayload } from '../lib/models';
 import { RoomHostPanel, RoomPlayerPanel, RoomDisplayPanel } from '../components/trivia-room';
 import '../styles/join.css';
+import '../styles/host-create.css';
 
 const ROOM_HOST_KEY = 'playroom_room_host';
 const PLAYER_IDENTITY_KEY = 'playroom_identity';
@@ -60,6 +61,13 @@ function generatePlayerId(): string {
 const FUNNY_NAMES = [
   'Breezy Otter', 'Cosmic Pretzel Wizard', 'Salty Marshmallow', 'Dapper Penguin',
   'Cheerful Llama', 'Velvet Thunder', 'Silly Goose', 'Brave Potato', 'Mystic Muffin',
+  'Wobbly Noodle', 'Captain Crunch', 'Sassy Badger', 'Cheese Wizard', 'Happy Tofu',
+  'Dancing Pickle', 'Sir Loin', 'Baron Von Biscuit', 'Professor Pancake', 'Lady Meringue',
+  'Tiny Titan', 'Cosmic Koala', 'Fancy Ferret', 'Bold Avocado', 'Sneaky Peanut',
+  'Majestic Moose', 'Zesty Zebra', 'Calm Croissant', 'Wild Walrus', 'Gentle Giraffe',
+  'Proud Peacock', 'Swift Sloth', 'Cheerful Chipmunk', 'Bouncy Bean', 'Cozy Cactus',
+  'Radiant Raccoon', 'Jolly Jellyfish', 'Breezy Butterfly', 'Merry Mango', 'Snazzy Snail',
+  'Daring Donut', 'Wise Wombat', 'Peppy Pigeon', 'Bold Banana', 'Sunny Seahorse',
 ];
 function randomFunnyName(): string {
   return FUNNY_NAMES[Math.floor(Math.random() * FUNNY_NAMES.length)];

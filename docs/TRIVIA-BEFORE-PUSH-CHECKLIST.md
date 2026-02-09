@@ -2,6 +2,8 @@
 
 Use this list to confirm the trivia pack/module is ready before you push and verify in your target environment.
 
+**Git push:** The repo uses **`GITHUB_TOKEN`** from the **`.env`** file for authenticated push (see section 4).
+
 ---
 
 ## 1. Code and build — **Done**
@@ -61,7 +63,10 @@ Run through these **once** on a running stack (local or staging) to confirm beha
 
 ## 4. Push and smoke-check
 
-- [ ] **Push** to your repo.
+- [ ] **Push** to your repo.  
+  **Note:** The project uses **`GITHUB_TOKEN`** from the **`.env`** file for authenticated push. From repo root:  
+  `export $(grep -E '^GITHUB_TOKEN=' .env | xargs) && git push "https://${GITHUB_TOKEN}@github.com/1983fletcher-png/bingo-backend.git" main`  
+  (Or set `GITHUB_TOKEN` in your environment and run `git push` if your remote is already configured to use it.)
 - [ ] **Deploy / CI** — Run your usual deploy or CI pipeline.
 - [ ] **Smoke-check** in the target environment (create room, join as player, one round, reveal).
 

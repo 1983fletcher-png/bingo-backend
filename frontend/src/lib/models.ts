@@ -59,7 +59,10 @@ export interface NumericAnswer {
 }
 
 export interface ListAnswer {
+  /** Items to reorder (shown to player in shuffled order). */
   acceptedItems: string[];
+  /** Correct order for grading; defaults to acceptedItems order if omitted. */
+  correctOrder?: string[];
   maxCount: number;
   perItemPoints: number;
 }
