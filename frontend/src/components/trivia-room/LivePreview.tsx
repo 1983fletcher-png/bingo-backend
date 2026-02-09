@@ -15,7 +15,7 @@ export interface LivePreviewProps {
 
 type Tab = 'player' | 'display';
 
-export function LivePreview({ room, currentQuestion, pack, leaderboardTop }: LivePreviewProps) {
+export function LivePreview({ room, currentQuestion, leaderboardTop }: LivePreviewProps) {
   const [tab, setTab] = useState<Tab>('player');
 
   const options = currentQuestion?.type === 'mc' && currentQuestion?.answer && 'options' in currentQuestion.answer
