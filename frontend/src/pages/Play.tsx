@@ -8,11 +8,13 @@ import SongFactPopUp from '../components/SongFactPopUp';
 import { buildCardFromPool } from '../types/game';
 import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
+import { TimerPill } from '../components/trivia-room';
 import '../styles/join.css';
 
 /**
  * Trivia player view: current question, multiple choice or text answer, then correct answer when revealed.
  */
+
 function TriviaPlayerView({
   eventConfig,
   gameTitle,
@@ -25,6 +27,11 @@ function TriviaPlayerView({
   revealed,
   socket,
   code,
+  questionStartAt,
+  timeLimitSec,
+  leaderboardsVisibleToPlayers = true,
+  scores,
+  finalWagerEnabled = false,
 }: {
   eventConfig: { gameTitle?: string; venueName?: string; logoUrl?: string | null; [key: string]: unknown };
   gameTitle: string;
@@ -33,37 +40,57 @@ function TriviaPlayerView({
   totalQuestions: number;
   currentQuestion?: string;
   correctAnswer?: string;
-  /** Multiple choice options (when present, show as buttons instead of text input) */
   options?: string[];
   revealed: boolean;
   socket: Socket | null;
   code: string;
+  questionStartAt?: string | null;
+  timeLimitSec?: number;
+  leaderboardsVisibleToPlayers?: boolean;
+  scores?: Record<string, number>;
+  finalWagerEnabled?: boolean;
 }) {
   const [myAnswer, setMyAnswer] = useState('');
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
+  const [wager, setWager] = useState<number>(0);
+  const isLastQuestion = totalQuestions > 0 && currentIndex === totalQuestions - 1;
+  const wagerCap = 10;
   useEffect(() => {
     setMyAnswer('');
     setSelectedOption(null);
     setLocked(false);
+    setWager(0);
   }, [currentIndex]);
+
+  const emitAnswer = (answer: string, wagerPts?: number) => {
+    if (!socket || !code.trim()) return;
+    const payload: { code: string; questionIndex: number; answer: string; wager?: number } = {
+      code: code.trim().toUpperCase(),
+      questionIndex: currentIndex,
+      answer,
+    };
+    if (isLastQuestion && finalWagerEnabled && (wagerPts ?? wager) > 0) {
+      payload.wager = Math.min(wagerCap, wagerPts ?? wager);
+    }
+    socket.emit('player:trivia-answer', payload);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (socket && code.trim() && (myAnswer.trim() || selectedOption != null)) {
       const answer = selectedOption != null ? selectedOption : myAnswer.trim();
-      socket.emit('player:trivia-answer', { code: code.trim().toUpperCase(), questionIndex: currentIndex, answer });
+      emitAnswer(answer);
       if (options?.length) setLocked(true);
+      else setLocked(true);
     }
   };
 
   const handleSelectOption = (opt: string) => {
     if (revealed || locked) return;
     setSelectedOption(opt);
-    if (socket && code.trim()) {
-      socket.emit('player:trivia-answer', { code: code.trim().toUpperCase(), questionIndex: currentIndex, answer: opt });
-      setLocked(true);
-    }
+    emitAnswer(opt);
+    setLocked(true);
   };
 
   const hasOptions = Array.isArray(options) && options.length > 0;
@@ -73,11 +100,29 @@ function TriviaPlayerView({
       <GameViewHeader config={eventConfig} gameTypeLabel={gameTypeLabel} />
       <div style={{ padding: 24, flex: 1 }}>
         <h2 style={{ margin: '0 0 4px', fontSize: 18, color: 'var(--text-muted)' }}>{gameTitle}</h2>
-        <p style={{ margin: '0 0 16px', fontSize: 14, color: 'var(--text-muted)' }}>
+        <p style={{ margin: '0 0 16px', fontSize: 14, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           Question {currentIndex + 1} of {totalQuestions || 1}
+          {!revealed && questionStartAt != null && (timeLimitSec ?? 0) > 0 && (
+            <TimerPill questionStartAt={questionStartAt} timeLimitSec={timeLimitSec ?? 30} active />
+          )}
         </p>
         {currentQuestion ? (
           <>
+            {!revealed && isLastQuestion && finalWagerEnabled && (
+              <div style={{ marginBottom: 16, padding: 12, background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>Final wager (optional, max {wagerCap} pts)</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={wagerCap}
+                  value={wager || ''}
+                  onChange={(e) => setWager(Math.max(0, Math.min(wagerCap, parseInt(e.target.value, 10) || 0)))}
+                  className="join-page__input"
+                  style={{ width: 80 }}
+                  placeholder="0"
+                />
+              </div>
+            )}
             <p style={{ margin: '0 0 20px', fontSize: 20, fontWeight: 600, lineHeight: 1.4 }}>{currentQuestion}</p>
             {!revealed ? (
               hasOptions ? (
@@ -125,6 +170,19 @@ function TriviaPlayerView({
           </>
         ) : (
           <p style={{ margin: 0, color: 'var(--text-secondary)' }}>The game has started. Waiting for the next question…</p>
+        )}
+        {leaderboardsVisibleToPlayers && scores && Object.keys(scores).length > 0 && (
+          <div style={{ marginTop: 24, padding: 16, background: 'var(--surface)', borderRadius: 12 }}>
+            <p style={{ margin: '0 0 8px', fontSize: 14, color: 'var(--text-muted)' }}>Scores</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {Object.entries(scores)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .map(([id, score]) => (
+                  <span key={id} style={{ fontWeight: 600 }}>{score} pts</span>
+                ))}
+            </div>
+          </div>
         )}
       </div>
     </div>
@@ -194,6 +252,11 @@ interface JoinState {
     currentIndex: number;
     questions: { question: string; correctAnswer?: string; options?: string[] }[];
     revealed?: boolean;
+    settings?: { leaderboardsVisibleToPlayers?: boolean };
+    questionStartAt?: string | null;
+    timeLimitSec?: number;
+    scores?: Record<string, number>;
+    finalWagerEnabled?: boolean;
   };
 }
 
@@ -274,7 +337,7 @@ export default function Play() {
       setJoinState((prev) => (prev ? { ...prev, revealed: rev } : null));
     });
 
-    s.on('game:trivia-state', (payload: { currentIndex?: number; questions?: { question: string; correctAnswer?: string }[]; revealed?: boolean }) => {
+    s.on('game:trivia-state', (payload: { currentIndex?: number; questions?: { question: string; correctAnswer?: string; options?: string[] }[]; revealed?: boolean; settings?: { leaderboardsVisibleToPlayers?: boolean }; questionStartAt?: string | null; timeLimitSec?: number; scores?: Record<string, number>; finalWagerEnabled?: boolean }) => {
       if (!payload || typeof payload !== 'object') return;
       setJoinState((prev) => {
         if (!prev) return null;
@@ -282,6 +345,11 @@ export default function Play() {
           currentIndex: payload.currentIndex ?? prev.trivia?.currentIndex ?? 0,
           questions: payload.questions ?? prev.trivia?.questions ?? [],
           revealed: payload.revealed ?? prev.trivia?.revealed,
+          settings: payload.settings ?? prev.trivia?.settings,
+          questionStartAt: payload.questionStartAt ?? prev.trivia?.questionStartAt,
+          timeLimitSec: payload.timeLimitSec ?? prev.trivia?.timeLimitSec,
+          scores: payload.scores ?? prev.trivia?.scores,
+          finalWagerEnabled: payload.finalWagerEnabled ?? prev.trivia?.finalWagerEnabled,
         };
         return { ...prev, trivia };
       });
@@ -502,6 +570,11 @@ export default function Play() {
         revealed={revealed}
         socket={socket}
         code={code ?? ''}
+        questionStartAt={trivia?.questionStartAt}
+        timeLimitSec={trivia?.timeLimitSec}
+        leaderboardsVisibleToPlayers={trivia?.settings?.leaderboardsVisibleToPlayers !== false}
+        scores={trivia?.scores}
+        finalWagerEnabled={trivia?.finalWagerEnabled === true}
       />
     );
   }

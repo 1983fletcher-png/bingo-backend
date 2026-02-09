@@ -13,6 +13,7 @@ import { musicBingoGames } from '../data/musicBingoGames';
 import { printBingoCards } from '../lib/printBingoCards';
 import { PLAYROOM_HOST_CREATED_KEY } from './TriviaBuilder';
 import { buildTriviaQuizPrintDocument, buildFlashcardsPrintDocument } from '../lib/printMaterials';
+import { TimerPill } from '../components/trivia-room';
 import { fetchJson, normalizeBackendUrl } from '../lib/safeFetch';
 import type { Song, EventConfig, VenueProfile } from '../types/game';
 import { VENUE_PROFILES_KEY } from '../types/game';
@@ -81,6 +82,9 @@ export default function Host() {
   const [gameStarted, setGameStarted] = useState(false);
   const [triviaCurrentIndex, setTriviaCurrentIndex] = useState(0);
   const [triviaRevealed, setTriviaRevealed] = useState(false);
+  const [triviaSettings, setTriviaSettings] = useState({ leaderboardsVisibleToPlayers: true, leaderboardsVisibleOnDisplay: true, autoAdvanceEnabled: false, mcTipsEnabled: true });
+  const [triviaQuestionStartAt, setTriviaQuestionStartAt] = useState<string | null>(null);
+  const [triviaTimeLimitSec, setTriviaTimeLimitSec] = useState<number | null>(null);
   const createTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prebuiltSongsRef = useRef<Song[] | null>(null);
   const gameRef = useRef<GameCreated | null>(null);
@@ -219,10 +223,20 @@ export default function Host() {
       setActiveTab((prev) => (prev === 'waiting' ? 'controls' : prev));
     });
 
-    s.on('game:trivia-state', (payload: { questions?: TriviaQuestion[]; currentIndex?: number; revealed?: boolean }) => {
-      // Only update index/revealed; keep full questions from game:created (audience payload has no correctAnswer)
+    s.on('game:trivia-state', (payload: { questions?: TriviaQuestion[]; currentIndex?: number; revealed?: boolean; settings?: { leaderboardsVisibleToPlayers?: boolean; leaderboardsVisibleOnDisplay?: boolean; autoAdvanceEnabled?: boolean; mcTipsEnabled?: boolean }; questionStartAt?: string | null; timeLimitSec?: number }) => {
       if (typeof payload.currentIndex === 'number') setTriviaCurrentIndex(payload.currentIndex);
       if (typeof payload.revealed === 'boolean') setTriviaRevealed(payload.revealed);
+      if (payload.questionStartAt !== undefined) setTriviaQuestionStartAt(payload.questionStartAt ?? null);
+      if (payload.timeLimitSec !== undefined) setTriviaTimeLimitSec(payload.timeLimitSec ?? null);
+      if (payload.settings && typeof payload.settings === 'object') {
+        setTriviaSettings((prev) => ({
+          ...prev,
+          leaderboardsVisibleToPlayers: payload.settings!.leaderboardsVisibleToPlayers ?? prev.leaderboardsVisibleToPlayers,
+          leaderboardsVisibleOnDisplay: payload.settings!.leaderboardsVisibleOnDisplay ?? prev.leaderboardsVisibleOnDisplay,
+          autoAdvanceEnabled: payload.settings!.autoAdvanceEnabled ?? prev.autoAdvanceEnabled,
+          mcTipsEnabled: payload.settings!.mcTipsEnabled ?? prev.mcTipsEnabled,
+        }));
+      }
     });
 
     s.on('game:trivia-reveal', () => setTriviaRevealed(true));
@@ -1180,14 +1194,79 @@ export default function Host() {
                       <span className="host-controls__category">{triviaQuestions[triviaCurrentIndex].category}</span>
                     )}
                   </div>
-                  {triviaQuestions[triviaCurrentIndex]?.hostNotes && (
+                  {triviaSettings.mcTipsEnabled && triviaQuestions[triviaCurrentIndex]?.hostNotes && (
                     <div className="host-controls__host-notes">
-                      <strong>Host:</strong> {triviaQuestions[triviaCurrentIndex].hostNotes}
+                      <strong>MC tip:</strong> {triviaQuestions[triviaCurrentIndex].hostNotes}
                     </div>
                   )}
                   <p className="host-controls__question">
                     {triviaQuestions[triviaCurrentIndex]?.question ?? '—'}
                   </p>
+                  {game.gameType === 'trivia' && (() => {
+                    const token = game.code ? localStorage.getItem(HOST_TOKEN_KEY(game.code)) : null;
+                    return (
+                      <>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 12, alignItems: 'center' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+                          <input
+                            type="checkbox"
+                            checked={triviaSettings.leaderboardsVisibleToPlayers}
+                            onChange={(e) => {
+                              const v = e.target.checked;
+                              setTriviaSettings((s) => ({ ...s, leaderboardsVisibleToPlayers: v }));
+                              if (socket?.connected && game?.code) {
+                                socket.emit('host:trivia-settings', { code: game.code, hostToken: token ?? undefined, settings: { ...triviaSettings, leaderboardsVisibleToPlayers: v } });
+                              }
+                            }}
+                          />
+                          Leaderboard to players
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+                          <input
+                            type="checkbox"
+                            checked={triviaSettings.leaderboardsVisibleOnDisplay}
+                            onChange={(e) => {
+                              const v = e.target.checked;
+                              setTriviaSettings((s) => ({ ...s, leaderboardsVisibleOnDisplay: v }));
+                              if (socket?.connected && game?.code) {
+                                socket.emit('host:trivia-settings', { code: game.code, hostToken: token ?? undefined, settings: { ...triviaSettings, leaderboardsVisibleOnDisplay: v } });
+                              }
+                            }}
+                          />
+                          Leaderboard on display
+                        </label>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+                          <input
+                            type="checkbox"
+                            checked={triviaSettings.autoAdvanceEnabled}
+                            onChange={(e) => {
+                              const v = e.target.checked;
+                              setTriviaSettings((s) => ({ ...s, autoAdvanceEnabled: v }));
+                              if (socket?.connected && game?.code) {
+                                socket.emit('host:trivia-settings', { code: game.code, hostToken: token ?? undefined, settings: { ...triviaSettings, autoAdvanceEnabled: v } });
+                              }
+                            }}
+                          />
+                          Auto-advance on timer
+                        </label>
+                      </div>
+                      {!triviaRevealed && triviaQuestionStartAt && (triviaTimeLimitSec ?? 0) > 0 && (
+                        <div style={{ marginBottom: 12 }}>
+                          <TimerPill
+                            questionStartAt={triviaQuestionStartAt}
+                            timeLimitSec={triviaTimeLimitSec ?? 30}
+                            active
+                            onExpire={() => {
+                              if (triviaSettings.autoAdvanceEnabled && socket?.connected && game?.code) {
+                                socket.emit('host:trivia-reveal', { code: game.code, hostToken: token ?? undefined });
+                              }
+                            }}
+                          />
+                        </div>
+                      )}
+                      </>
+                    );
+                  })()}
                   {triviaRevealed && (
                     <div className="host-controls__revealed">
                       <p className="host-controls__answer">

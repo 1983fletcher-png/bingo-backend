@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
+    "test:room": "node server/roomStore.test.js",
+    "test:room-flow": "node server/roomFlow.integration.test.js",
+    "test:e2e": "playwright test",
     "smoke:observances": "node scripts/smoke-observances.js",
     "ingest:tesla": "node scripts/ingest-tesla-biography.js",
     "ingest:figure": "node scripts/ingest-figure-dynamic.js",
@@ -13,6 +16,10 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "socket.io-client": "^4.6.1"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.983.0",

@@ -105,6 +105,23 @@ export function advanceToNextQuestion(roomId) {
 }
 
 /**
+ * Ensure displayName is unique in the room; add suffix " (2)", " (3)" etc. if duplicate.
+ */
+function uniqueDisplayName(room, playerId, displayName) {
+  const base = (displayName || 'Player').trim();
+  const used = new Set();
+  for (const [pid, p] of room.players) {
+    if (pid === playerId) continue;
+    used.add((p.displayName || '').trim().toLowerCase());
+  }
+  const baseLower = base.toLowerCase();
+  if (!used.has(baseLower)) return base;
+  let n = 2;
+  while (used.has(`${baseLower} (${n})`)) n++;
+  return `${base} (${n})`;
+}
+
+/**
  * @param {string} roomId
  * @param {{ playerId: string, displayName: string, isAnonymous: boolean }} player
  */
@@ -113,9 +130,12 @@ export function upsertPlayer(roomId, player) {
   if (!room) return null;
   const now = new Date().toISOString();
   const existing = room.players.get(player.playerId);
+  const displayName = existing
+    ? existing.displayName
+    : uniqueDisplayName(room, player.playerId, player.displayName);
   const data = {
     playerId: player.playerId,
-    displayName: player.displayName,
+    displayName,
     isAnonymous: player.isAnonymous ?? false,
     joinedAt: existing?.joinedAt || now,
     lastSeenAt: now,
@@ -125,6 +145,29 @@ export function upsertPlayer(roomId, player) {
   };
   room.players.set(player.playerId, data);
   return data;
+}
+
+/**
+ * Compute points for a correct answer: basePoints + speed bonus (if enabled).
+ * Speed bonus: floor((timeRemainingSec / timeLimitSec) * basePoints), cap at basePoints.
+ */
+export function computePoints(room, question, submittedAt) {
+  const basePoints = question.scoring?.basePoints ?? 1;
+  const speedBonusEnabled =
+    room.settings?.speedBonusEnabled &&
+    (question.scoring?.speedBonusEnabled !== false);
+  if (!speedBonusEnabled || !room.runtime.questionStartAt || !question.timeLimitSec) {
+    return basePoints;
+  }
+  const startMs = new Date(room.runtime.questionStartAt).getTime();
+  const submittedMs = new Date(submittedAt).getTime();
+  const elapsedSec = Math.max(0, Math.floor((submittedMs - startMs) / 1000));
+  const timeRemainingSec = Math.max(0, question.timeLimitSec - elapsedSec);
+  const bonus = Math.floor(
+    (timeRemainingSec / question.timeLimitSec) * basePoints
+  );
+  const cappedBonus = Math.min(bonus, basePoints);
+  return basePoints + cappedBonus;
 }
 
 /**
@@ -184,6 +227,9 @@ export function buildRoomSnapshot(roomId) {
   ).length;
   const leaderboardTop = computeLeaderboard(roomId, 10);
 
+  const runtime = { ...room.runtime };
+  if (currentQuestion?.timeLimitSec != null) runtime.timeLimitSec = currentQuestion.timeLimitSec;
+
   return {
     room: {
       roomId: room.roomId,
@@ -193,7 +239,7 @@ export function buildRoomSnapshot(roomId) {
       packId: room.packId,
       hostId: room.hostId,
       settings: room.settings,
-      runtime: { ...room.runtime },
+      runtime,
     },
     players: playersList,
     currentQuestion: currentQuestion,
@@ -208,6 +254,34 @@ export function updateRoomSetting(roomId, key, value) {
   if (!room || !room.settings) return false;
   if (Object.prototype.hasOwnProperty.call(room.settings, key)) {
     room.settings[key] = value;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Resolve dispute in REVEAL: confirm (no-op), accept_variant (add to question acceptedVariants), void (remove points for this question).
+ */
+export function resolveDispute(roomId, questionId, action, variantText) {
+  const room = triviaRooms.get(roomId);
+  if (!room || room.state !== 'REVEAL') return false;
+  const q = room.pack?.questions?.find((qu) => qu.id === questionId);
+  if (!q) return false;
+
+  if (action === 'confirm') return true;
+  if (action === 'accept_variant' && variantText && typeof variantText === 'string') {
+    if (q.answer && typeof q.answer === 'object' && Array.isArray(q.answer.acceptedVariants)) {
+      const v = variantText.trim();
+      if (v && !q.answer.acceptedVariants.includes(v)) q.answer.acceptedVariants.push(v);
+    }
+    return true;
+  }
+  if (action === 'void') {
+    for (const r of room.responses) {
+      if (r.questionId !== questionId || !r.pointsAwarded) continue;
+      const p = room.players.get(r.playerId);
+      if (p) p.score = Math.max(0, (p.score || 0) - r.pointsAwarded);
+    }
     return true;
   }
   return false;

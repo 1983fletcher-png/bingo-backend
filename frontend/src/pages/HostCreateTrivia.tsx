@@ -1,6 +1,6 @@
 /**
- * Host Trivia creation flow: Game type → Play a Pack → Pack picker → Preview → Host options → Start Hosting.
- * Creates a code-based game via host:create (same as Icebreakers/Bingo) and redirects to /host for the full host screen.
+ * Host Trivia creation flow: Game type → Pack picker → Preview → Host options → Start Hosting.
+ * Creates a Trivia Room via room:host-create and redirects to /room/:roomId?role=host.
  */
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
@@ -8,33 +8,15 @@ import { getSocket } from '../lib/socket';
 import { getTriviaRoomPacks } from '../data/triviaRoomPacks';
 import type { TriviaPackModel, TriviaQuestionModel, RoomSettings } from '../lib/models';
 import type { Socket } from 'socket.io-client';
-import { PLAYROOM_HOST_CREATED_KEY } from './TriviaBuilder';
 import '../styles/host-create.css';
 
-/** Same key as Host.tsx so resume and startEvent work */
-const HOST_TOKEN_KEY = (code: string) => `playroom:hostToken:${code}`;
+/** Same key as Room.tsx so host rejoin works after redirect */
+const ROOM_HOST_KEY = 'playroom_room_host';
 
-/** Convert TriviaPackModel questions to the shape host:create expects (question, correctAnswer, options?, points). */
-function packToHostCreateQuestions(pack: TriviaPackModel): { question: string; correctAnswer: string; options?: string[]; points?: number }[] {
-  return (pack.questions || []).map((q) => {
-    const points = q.scoring?.basePoints ?? 1;
-    const ans = q.answer as unknown as Record<string, unknown>;
-    let correctAnswer = '';
-    let options: string[] | undefined;
-    if (ans.options && Array.isArray(ans.options) && typeof ans.correct === 'string') {
-      const opts = ans.options as { id: string; text: string }[];
-      options = opts.map((o) => o.text);
-      const correctOpt = opts.find((o) => o.id === ans.correct);
-      correctAnswer = correctOpt?.text ?? String(ans.correct);
-    } else if (typeof ans.primary === 'string') {
-      correctAnswer = ans.primary;
-    } else if (q.type === 'tf' && (ans.correct === 'true' || ans.correct === 'false')) {
-      correctAnswer = ans.correct === 'true' ? 'True' : 'False';
-    } else {
-      correctAnswer = String(ans.correct ?? '');
-    }
-    return { question: q.prompt, correctAnswer, options, points };
-  });
+function saveHostToken(roomId: string, hostToken: string) {
+  try {
+    localStorage.setItem(ROOM_HOST_KEY, JSON.stringify({ roomId, hostToken }));
+  } catch (_) {}
 }
 
 type Step = 'type' | 'pack' | 'preview' | 'options';
@@ -66,33 +48,32 @@ export default function HostCreateTrivia() {
   });
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reviewAcknowledged, setReviewAcknowledged] = useState(false);
 
   const packs = getTriviaRoomPacks();
+
+  const needsReviewGate = selectedPack && (
+    selectedPack.verificationLevel === 'review_required' ||
+    (selectedPack.questions ?? []).some((q) => q.flags?.needsReview)
+  );
 
   useEffect(() => {
     const s = getSocket();
     setSocket(s);
-    const onGameCreated = (payload: { code?: string; hostToken?: string; joinUrl?: string; gameType?: string; eventConfig?: object; waitingRoom?: object; songPool?: unknown[]; revealed?: unknown[]; trivia?: { questions?: unknown[] } }) => {
+    const onRoomCreated = (data: { roomId?: string; hostToken?: string }) => {
       setCreating(false);
-      if (!payload?.code) return;
-      if (payload.hostToken) {
-        try {
-          localStorage.setItem(HOST_TOKEN_KEY(payload.code), payload.hostToken);
-        } catch (_) {}
-      }
-      try {
-        sessionStorage.setItem(PLAYROOM_HOST_CREATED_KEY, JSON.stringify(payload));
-      } catch (_) {}
-      navigate('/host', { replace: true });
+      if (!data?.roomId) return;
+      if (data.hostToken) saveHostToken(data.roomId, data.hostToken);
+      navigate(`/room/${data.roomId}?role=host`, { replace: true });
     };
     const onError = (e: { message?: string }) => {
-      setError(e?.message || 'Failed to create game');
+      setError(e?.message || 'Failed to create room');
       setCreating(false);
     };
-    s.on('game:created', onGameCreated);
+    s.on('room:created', onRoomCreated);
     s.on('room:error', onError);
     return () => {
-      s.off('game:created', onGameCreated);
+      s.off('room:created', onRoomCreated);
       s.off('room:error', onError);
     };
   }, [navigate]);
@@ -101,13 +82,15 @@ export default function HostCreateTrivia() {
     if (!selectedPack || !socket?.connected) return;
     setError(null);
     setCreating(true);
-    const questions = packToHostCreateQuestions(selectedPack);
-    socket.emit('host:create', {
-      baseUrl: typeof window !== 'undefined' ? window.location.origin : undefined,
-      gameType: 'trivia',
-      packId: selectedPack.id,
-      eventConfig: { gameTitle: selectedPack.title },
-      questions,
+    socket.emit('room:host-create', {
+      pack: selectedPack,
+      settings: {
+        leaderboardsVisibleToPlayers: settings.leaderboardsVisibleToPlayers ?? true,
+        leaderboardsVisibleOnDisplay: settings.leaderboardsVisibleOnDisplay ?? true,
+        mcTipsEnabled: settings.mcTipsEnabled ?? true,
+        autoAdvanceEnabled: settings.autoAdvanceEnabled ?? false,
+        speedBonusEnabled: settings.speedBonusEnabled ?? false,
+      },
     });
   };
 
@@ -152,7 +135,7 @@ export default function HostCreateTrivia() {
                 <strong>{pack.title}</strong>
                 <span style={{ display: 'block', fontSize: 14, opacity: 0.9 }}>
                   {meta.duration} · {meta.vibe} · {meta.audience}
-                  {pack.verified ? ' · Verified' : ''}
+                  {pack.verificationLevel === 'verified' ? ' · Verified' : pack.verificationLevel === 'review_required' ? ' · Review required' : ''}
                 </span>
               </button>
             );
@@ -185,12 +168,14 @@ export default function HostCreateTrivia() {
         <h1 style={{ margin: '0 0 8px' }}>Pack preview</h1>
         <p style={{ color: 'var(--text-muted)', margin: '0 0 16px' }}>
           {pack?.title} · {questions.length} questions
-          {pack?.verified ? ' · Verified' : ''}
+          {pack?.verificationLevel === 'verified' ? ' · Verified' : pack?.verificationLevel === 'review_required' ? ' · Review required' : ''}
         </p>
         <div style={{ marginBottom: 24, padding: 16, background: 'var(--surface)', borderRadius: 12, maxHeight: 240, overflow: 'auto' }}>
           {questions.slice(0, 10).map((q, i) => (
             <div key={q.id} style={{ marginBottom: 8, fontSize: 14 }}>
               {i + 1}. {q.prompt}
+              {q.flags?.needsReview && <span style={{ marginLeft: 6, fontSize: 12, color: 'var(--accent)' }}>review</span>}
+              {q.sources?.length != null && q.sources.length > 0 && <span style={{ marginLeft: 6, fontSize: 11, color: 'var(--text-muted)' }}>({q.sources.length} source{q.sources.length !== 1 ? 's' : ''})</span>}
             </div>
           ))}
           {questions.length > 10 && (
@@ -251,13 +236,23 @@ export default function HostCreateTrivia() {
           Speed bonus
         </label>
       </div>
+      {needsReviewGate && (
+        <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 16, padding: 12, background: 'var(--surface)', borderRadius: 8 }}>
+          <input
+            type="checkbox"
+            checked={reviewAcknowledged}
+            onChange={(e) => setReviewAcknowledged(e.target.checked)}
+          />
+          I've reviewed flagged questions
+        </label>
+      )}
       {error && <p style={{ color: 'var(--error)', marginTop: 16 }}>{error}</p>}
       <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
         <button type="button" className="join-page__btn" onClick={() => setStep('preview')}>Back</button>
         <button
           type="button"
           className="join-page__btn"
-          disabled={!selectedPack || creating}
+          disabled={!selectedPack || creating || (Boolean(needsReviewGate) && !reviewAcknowledged)}
           onClick={handleStartHosting}
         >
           {creating ? 'Creating…' : 'Start hosting'}

@@ -22,49 +22,49 @@ Existing Music Bingo / Classic Bingo / current Trivia remain on the existing Hos
 - [x] **lib/models.ts** — TriviaPackModel, TriviaQuestionModel, RoomModel, RoomState, PlayerModel, ResponseModel, state transition helpers.
 - [x] **docs/TRIVIA-ROOM-IMPLEMENTATION.md** — This plan.
 
-### Phase 2 — Backend room store & socket
-- [ ] **Room store** (e.g. `server/roomStore.js` or in `index.js`): `getRoom(roomId)`, `createRoom(packId, hostId, settings)`, `updateRoomState(roomId, nextState)`, `upsertPlayer`, `recordResponse`, `computeLeaderboard`. In-memory + optional JSON file for dev.
-- [ ] **Socket events**: `room:join` (JOIN_ROOM) → validate → join socket to `room:${roomId}` → send `room:snapshot` (ROOM_SNAPSHOT). `host:set-state` (HOST_SET_STATE) → update store → broadcast `room:snapshot` or `room:patch`.
-- [ ] **Idempotent rejoin**: On `room:join` with existing playerId, rehydrate and send snapshot so refresh never sticks.
+### Phase 2 — Backend room store & socket ✅
+- [x] **Room store** (`server/roomStore.js`): `getRoom(roomId)`, `createRoom(pack, hostId, settings)`, `updateRoomState`, `upsertPlayer`, `recordResponse`, `computeLeaderboard`, `computePoints`, `resolveDispute`, `updateRoomSetting`. In-memory.
+- [x] **Socket events**: `room:join`, `room:host-create`, `room:host-set-state`, `room:host-next`, `room:host-toggle-setting`, `room:submit-response`, `room:host-dispute-resolve`; broadcast `room:snapshot`.
+- [x] **Idempotent rejoin**: On `room:join` with existing playerId, rehydrate and send snapshot.
 
-### Phase 3 — Routes & role-based room page
-- [ ] **Route** `/host/create` (or `/host/create/trivia`) — Step 1: Game type (Trivia). Step 2: “Play a Trivia Pack” (primary). Step 3: Pack picker (cards). Step 4: Pack preview (expand Q list, sources, Verified badge; CTA Load Pack). Step 5: Host options (leaderboards, MC tips, auto-advance, speed bonus, final wager). CTA “Start Hosting” → create room → redirect to `/room/:roomId?role=host`.
-- [ ] **Route** `/room/:roomId` — Read `role` from query (`?role=host|player|display`). Fetch or subscribe to room snapshot; render HostPanel | PlayerPanel | DisplayPanel.
-- [ ] **QR** points to `/room/:roomId?role=player`.
+### Phase 3 — Routes & role-based room page ✅
+- [x] **Route** `/host/create` — HostCreateTrivia: type → pack picker → preview → options → Start Hosting → `room:host-create` → redirect to `/room/:roomId?role=host`.
+- [x] **Route** `/room/:roomId` — Role from query; HostPanel | PlayerPanel | DisplayPanel.
+- [x] **QR** for Room flow points to `/room/:roomId`; code-based uses `/join/:code`.
 
-### Phase 4 — Pack library & seed data
-- [ ] **Preset types** — All 8 presets (Weekly Bar Classic/Extended, Quick Happy Hour, Display Automated, Theme Night, Family-Friendly, Speed Trivia, Seasonal). Each preset card: duration, vibe, hosting required, audience.
-- [ ] **Seed packs** — At least one pack per preset (or one “Weekly Bar Trivia – Classic”) with full structure: questions with `sources`, `retrievedAt`, `snippet`, `verificationLevel`, `flags`, MC options where applicable.
-- [ ] **Storage** — In-repo JSON seed; later Cloudflare KV/D1 + R2 if needed. Storage abstraction: `getPacks()`, `getPack(id)`.
+### Phase 4 — Pack library & seed data ✅
+- [x] **Preset types** — All 8 presets; stub packs in `stubPacks.ts`; Weekly Bar Classic full.
+- [x] **Seed packs** — Weekly Bar Classic 45 Q with sources; others stubs.
+- [x] **Storage** — `getPacks()`, `getPack(id)` in `triviaRoomPacks/index.ts`.
 
-### Phase 5 — UI components (shared)
-- [ ] **QuestionCard** — Big text, optional media.
-- [ ] **AnswerCard** — MC option card with A/B/C/D badge; tap to select, second tap to lock; press animation.
-- [ ] **TimerPill** — Countdown for ACTIVE_ROUND.
-- [ ] **LeaderboardList** — Rank, name, score, % correct (player); Display top 10 only.
-- [ ] **QRCodePanel** — Room join URL QR for host/display.
+### Phase 5 — UI components (shared) ✅
+- [x] **QuestionCard** — `components/trivia-room/QuestionCard.tsx`.
+- [x] **AnswerCard** — MC with A/B/C/D, tap/lock, press animation.
+- [x] **TimerPill** — Countdown for ACTIVE_ROUND.
+- [x] **LeaderboardList** — Rank, name, score, % correct.
+- [x] **QRCodePanel** — Room join URL QR.
 
-### Phase 6 — Role UIs
-- [ ] **HostPanel** — Big buttons: Start (READY_CHECK→ACTIVE_ROUND or WAITING→READY_CHECK→Begin), Reveal, Next, Show Leaderboard, End. Live counts (players, responses, time). Toggles: leaderboards on/off, MC tips, auto-advance. Dispute tools only in REVEAL: Confirm, Accept variant, Void.
-- [ ] **PlayerPanel** — Top bar: room name, round/question, timer. Question card; answer area (MC stacked cards with lock; short answer input; numeric/list as specified). 44px min tap targets; card press animation.
-- [ ] **DisplayPanel** — Huge question card; 2x2 grid for MC; no correct answer until REVEAL; then highlight correct, fade wrong. Leaderboard top 10.
+### Phase 6 — Role UIs ✅
+- [x] **HostPanel** — Start, Reveal, Next, End; toggles (leaderboards, MC tips, auto-advance); dispute (Confirm, Accept variant, Void); live counts; TimerPill.
+- [x] **PlayerPanel** — Question card, timer, MC/short answer (44px, press animation), leaderboard by setting.
+- [x] **DisplayPanel** — Question card, 2x2 MC, REVEAL highlight, leaderboard by setting, TimerPill.
 
-### Phase 7 — Identity & reconnect
-- [ ] **Anonymous + funny name** — On join: enter name or “Join anonymously”. Anonymous → assign 2–3 word name (e.g. “Breezy Otter”); allow regenerate before lock; duplicate names get suffix. Store playerId + displayName + roomId in localStorage. Rejoin with same identity.
-- [ ] **Reconnect** — Client sends JOIN_ROOM with stored playerId; server returns ROOM_SNAPSHOT; client renders from snapshot. No “stuck loading”.
+### Phase 7 — Identity & reconnect ✅
+- [x] **Anonymous + funny name** — Play and Room; regenerate before lock; store in localStorage.
+- [x] **Reconnect** — room:join with playerId; room:snapshot; no stuck loading.
 
-### Phase 8 — Scoring & dispute
-- [ ] **Scoring** — basePoints by difficulty (easy=1, medium=2, hard=3 or pack-configurable). Speed bonus: `floor((timeRemainingSec / timeLimitSec) * basePoints)`, cap at basePoints. Final wager: players submit wager + answer; correct +wager, incorrect −wager (or 0 per pack).
-- [ ] **Dispute** — REVEAL only: Confirm official answer (show sources), Accept variant (persist to question acceptedVariants), Void question. Accepted variant persists into bank.
+### Phase 8 — Scoring & dispute ✅
+- [x] **Scoring** — basePoints; speed bonus via `computePoints`; final wager in `room:submit-response`.
+- [x] **Dispute** — REVEAL: Confirm, Accept variant (acceptedVariants), Void (subtract points).
 
-### Phase 9 — Trust & verification
-- [ ] **Per-question** — ≥1 source; Verified requires (2 sources OR 1 Tier A) and if timeSensitive then asOfDate or stable phrasing; no ambiguity or host-approved variants.
-- [ ] **Pack Verified** — All questions verified or host accepted review_required. Preview shows badges: Verified | Review required.
-- [ ] **Host** must click “I’ve reviewed flagged questions” before start if any review_required.
+### Phase 9 — Trust & verification ✅
+- [x] **Per-question** — Preview shows source count and “review” badge.
+- [x] **Pack Verified** — Verified | Review required in picker and preview.
+- [x] **Host** — “I've reviewed flagged questions” gate before start when review_required.
 
-### Phase 10 — Display-only & tests
-- [ ] **Display-only pack** — Automated loop: question → timer → answer → fun fact; no join required by default.
-- [ ] **Tests** — Unit: scoring (base, speed bonus, wager). Integration: state transitions (READY_CHECK → ACTIVE_ROUND → REVEAL → …).
+### Phase 10 — Display-only & tests ✅
+- [x] **Display-only pack** — `/display-only/:packId`; automated question → timer → answer → fun fact.
+- [x] **Tests** — `npm run test:room` (server/roomStore.test.js): scoring, state transitions, dispute.
 
 ---
 
@@ -104,6 +104,6 @@ Existing Music Bingo / Classic Bingo / current Trivia remain on the existing Hos
 Use a **room** namespace or prefix so they don’t clash with existing `host:create`, `game:started`:
 
 - **Client → Server:** `room:join`, `room:host-set-state`, `room:submit-response`, `room:host-reveal`, `room:host-next`, `room:host-toggle-setting`, `room:host-dispute-resolve`
-- **Server → Client:** `room:snapshot`, `room:patch`, `room:error`
+- **Server → Client:** `room:snapshot`, `room:error`, `room:created` (on room:host-create only). Full state is sent via `room:snapshot`; `room:patch` is not used.
 
 On any join/reconnect, server sends `room:snapshot` immediately.

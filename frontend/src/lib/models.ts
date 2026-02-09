@@ -138,6 +138,8 @@ export interface RoomRuntime {
   currentQuestionIndex: number;
   roundIndex?: number;
   questionStartAt?: string;
+  /** From current question; used for TimerPill and speed bonus */
+  timeLimitSec?: number;
   revealAt?: string;
   endedAt?: string;
 }

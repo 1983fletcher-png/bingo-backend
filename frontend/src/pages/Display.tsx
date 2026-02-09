@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
+import { TimerPill } from '../components/trivia-room';
 import type { Song } from '../types/game';
 import { songKey } from '../types/game';
 
@@ -54,7 +55,16 @@ export default function Display() {
   const [eventConfig, setEventConfig] = useState<DisplayEventConfig | null>(null);
   const [started, setStarted] = useState(false);
   const [gameType, setGameType] = useState<string>('music-bingo');
-  const [triviaState, setTriviaState] = useState<{ currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number; correctAnswer?: string }[]; revealed?: boolean } | null>(null);
+  type DisplayTriviaQuestion = { question: string; options?: string[]; correctIndex?: number; correctAnswer?: string; hostNotes?: { mcTip?: string; funFact?: string } };
+  const [triviaState, setTriviaState] = useState<{
+    currentIndex: number;
+    questions: DisplayTriviaQuestion[];
+    revealed?: boolean;
+    settings?: { leaderboardsVisibleToPlayers?: boolean; leaderboardsVisibleOnDisplay?: boolean; mcTipsEnabled?: boolean };
+    questionStartAt?: string | null;
+    timeLimitSec?: number;
+    scores?: Record<string, number>;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [setupOpen, setSetupOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
@@ -82,7 +92,8 @@ export default function Display() {
       setEventConfig(payload.eventConfig && typeof payload.eventConfig === 'object' ? payload.eventConfig : null);
       setStarted(payload.started === true);
       setGameType(payload.gameType || 'music-bingo');
-      setTriviaState(payload.trivia && typeof payload.trivia === 'object' ? { currentIndex: payload.trivia.currentIndex ?? 0, questions: payload.trivia.questions ?? [], revealed: (payload.trivia as { revealed?: boolean }).revealed } : null);
+      const tr = payload.trivia && typeof payload.trivia === 'object' ? payload.trivia as { currentIndex?: number; questions?: DisplayTriviaQuestion[]; revealed?: boolean; settings?: { leaderboardsVisibleOnDisplay?: boolean; mcTipsEnabled?: boolean }; questionStartAt?: string | null; timeLimitSec?: number; scores?: Record<string, number> } : null;
+      setTriviaState(tr ? { currentIndex: tr.currentIndex ?? 0, questions: (tr.questions ?? []) as DisplayTriviaQuestion[], revealed: tr.revealed, settings: tr.settings, questionStartAt: tr.questionStartAt, timeLimitSec: tr.timeLimitSec, scores: tr.scores } : null);
       setError(null);
     });
     s.on('display:error', (payload: { message?: string }) => {
@@ -95,12 +106,16 @@ export default function Display() {
       setRevealed(Array.isArray(rev) ? rev : []);
     });
     s.on('game:started', () => setStarted(true));
-    s.on('game:trivia-state', (payload: { currentIndex?: number; questions?: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean }) => {
+    s.on('game:trivia-state', (payload: { currentIndex?: number; questions?: DisplayTriviaQuestion[]; revealed?: boolean; settings?: { leaderboardsVisibleOnDisplay?: boolean; mcTipsEnabled?: boolean }; questionStartAt?: string | null; timeLimitSec?: number; scores?: Record<string, number> }) => {
       if (payload && typeof payload === 'object') {
         setTriviaState((prev) => ({
           currentIndex: payload.currentIndex ?? prev?.currentIndex ?? 0,
           questions: payload.questions ?? prev?.questions ?? [],
           revealed: payload.revealed ?? prev?.revealed,
+          settings: payload.settings ?? prev?.settings,
+          questionStartAt: payload.questionStartAt ?? prev?.questionStartAt,
+          timeLimitSec: payload.timeLimitSec ?? prev?.timeLimitSec,
+          scores: payload.scores ?? prev?.scores,
         }));
       }
     });
@@ -143,8 +158,12 @@ export default function Display() {
     );
   }
 
-  const qrUrl = joinUrl
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(joinUrl)}`
+  // Always use current origin for QR so it points to the frontend (player view), not the backend
+  const effectiveJoinUrl = typeof window !== 'undefined' && code?.trim()
+    ? `${window.location.origin}/join/${code.trim().toUpperCase()}`
+    : joinUrl;
+  const qrUrl = effectiveJoinUrl
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(effectiveJoinUrl)}`
     : '';
 
   // Waiting room: show on TV before game starts — left: big QR; right: logo, game name, description (no clickable links)
@@ -154,8 +173,8 @@ export default function Display() {
     const venueName = eventConfig?.venueName || '';
     const hasSocial = eventConfig?.facebookUrl || eventConfig?.instagramUrl;
     const qrSize = 320;
-    const qrUrlWaiting = joinUrl
-      ? `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&margin=12&data=${encodeURIComponent(joinUrl)}`
+    const qrUrlWaiting = effectiveJoinUrl
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&margin=12&data=${encodeURIComponent(effectiveJoinUrl)}`
       : '';
     return (
       <div
@@ -214,7 +233,7 @@ export default function Display() {
     const gameName = eventConfig?.gameTitle || eventTitle || 'Trivia';
     const venueName = eventConfig?.venueName || '';
     const hasSocial = eventConfig?.facebookUrl || eventConfig?.instagramUrl;
-    const trQr = joinUrl ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=${encodeURIComponent(joinUrl)}` : '';
+    const trQr = effectiveJoinUrl ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=${encodeURIComponent(effectiveJoinUrl)}` : '';
     return (
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: theme.bg, color: theme.text }}>
         <header style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', background: theme.panel, borderBottom: `2px solid ${theme.border}` }}>
@@ -232,6 +251,16 @@ export default function Display() {
         </header>
         <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 32, textAlign: 'center' }}>
           <p style={{ margin: '0 0 12px', fontSize: 14, color: theme.muted }}>Question {idx + 1} of {triviaState.questions.length}</p>
+          {triviaState.settings?.mcTipsEnabled && q?.hostNotes?.mcTip && (
+            <p style={{ margin: '0 0 16px', padding: 16, maxWidth: 800, background: theme.panel, borderRadius: 12, borderLeft: `4px solid ${theme.accent}`, fontSize: 'clamp(14px, 2vw, 18px)', color: theme.muted, textAlign: 'left' }}>
+              <strong>MC tip:</strong> {q.hostNotes.mcTip}
+            </p>
+          )}
+          {!triviaState.revealed && triviaState.questionStartAt != null && (triviaState.timeLimitSec ?? 30) > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <TimerPill questionStartAt={triviaState.questionStartAt} timeLimitSec={triviaState.timeLimitSec ?? 30} active />
+            </div>
+          )}
           <h2 style={{ margin: '0 0 24px', fontSize: 'clamp(1.25rem, 3vw, 2rem)', fontWeight: 600, lineHeight: 1.4 }}>{q?.question}</h2>
           {triviaState.revealed && q?.options?.length ? (
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
@@ -243,6 +272,19 @@ export default function Display() {
             <p style={{ margin: 0, padding: '16px 24px', background: theme.accent, color: '#111', borderRadius: 12, fontWeight: 700, fontSize: 20 }}>{(q as { correctAnswer: string }).correctAnswer}</p>
           ) : (
             <p style={{ margin: 0, fontSize: 18, color: theme.muted }}>Answer on your phone</p>
+          )}
+          {triviaState.settings?.leaderboardsVisibleOnDisplay !== false && triviaState.scores && Object.keys(triviaState.scores).length > 0 && (
+            <div style={{ marginTop: 24, padding: '12px 24px', background: theme.panel, borderRadius: 12, display: 'inline-block', alignSelf: 'center' }}>
+              <p style={{ margin: '0 0 8px', fontSize: 14, color: theme.muted }}>Scores</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+                {Object.entries(triviaState.scores)
+                  .sort((a, b) => b[1] - a[1])
+                  .slice(0, 10)
+                  .map(([id, score]) => (
+                    <span key={id} style={{ fontWeight: 600 }}>{score} pts</span>
+                  ))}
+              </div>
+            </div>
           )}
         </main>
         {(hasSocial || venueName) && (

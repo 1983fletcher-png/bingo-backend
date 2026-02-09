@@ -976,8 +976,10 @@ function createGame(opts = {}) {
       questions: Array.isArray(opts.questions) ? opts.questions : [],
       currentIndex: 0,
       revealed: false,
+      questionStartAt: null,
       scores: {},
-      answers: {} // playerId -> { questionIndex -> answer }
+      answers: {},
+      settings: { leaderboardsVisibleToPlayers: true, leaderboardsVisibleOnDisplay: true, autoAdvanceEnabled: false }
     } : null
   };
   games.set(code, game);
@@ -990,10 +992,20 @@ function getTriviaPayload(game, opts = {}) {
   const t = game.trivia;
   const q = t.questions[t.currentIndex] || null;
   const questions = forAudience
-    ? t.questions.map((qu) => ({ question: qu.question, options: qu.options }))
+    ? t.questions.map((qu, i) => ({
+        question: qu.question,
+        options: qu.options,
+        ...(i === t.currentIndex && t.settings?.mcTipsEnabled && qu.hostNotes?.mcTip ? { mcTip: qu.hostNotes.mcTip } : {})
+      }))
     : t.questions;
   const currentQuestion = forAudience && q
-    ? { question: q.question, options: q.options, ...(t.revealed && q.correctAnswer != null ? { correctAnswer: q.correctAnswer } : {}) }
+    ? {
+        question: q.question,
+        options: q.options,
+        timeLimitSec: q.timeLimitSec ?? 30,
+        ...(t.revealed && q.correctAnswer != null ? { correctAnswer: q.correctAnswer } : {}),
+        ...(t.settings?.mcTipsEnabled && q.hostNotes?.mcTip ? { mcTip: q.hostNotes.mcTip } : {})
+      }
     : q;
   return {
     packId: t.packId,
@@ -1001,6 +1013,10 @@ function getTriviaPayload(game, opts = {}) {
     currentIndex: t.currentIndex,
     revealed: t.revealed,
     scores: t.scores,
+    settings: t.settings || { leaderboardsVisibleToPlayers: true, leaderboardsVisibleOnDisplay: true },
+    questionStartAt: t.questionStartAt || null,
+    timeLimitSec: (q && (q.timeLimitSec != null)) ? q.timeLimitSec : 30,
+    finalWagerEnabled: t.finalWagerEnabled === true,
     currentQuestion
   };
 }
@@ -1032,7 +1048,7 @@ function assertHost(game, socket, hostToken) {
 }
 
 io.on('connection', (socket) => {
-  socket.on('host:create', ({ baseUrl, gameType, packId, questions, eventConfig } = {}) => {
+  socket.on('host:create', ({ baseUrl, gameType, packId, questions, eventConfig, settings, finalWagerEnabled } = {}) => {
     const isTriviaLike = ['trivia', 'icebreakers', 'edutainment', 'team-building'].includes(gameType);
     const resolvedType = gameType === 'classic-bingo' ? 'classic-bingo'
       : isTriviaLike ? gameType
@@ -1043,6 +1059,17 @@ io.on('connection', (socket) => {
       questions: isTriviaLike ? (Array.isArray(questions) ? questions : []) : undefined,
       eventConfig: eventConfig && typeof eventConfig === 'object' ? eventConfig : undefined
     });
+    if (game.trivia && settings && typeof settings === 'object') {
+      game.trivia.settings = {
+        ...game.trivia.settings,
+        leaderboardsVisibleToPlayers: settings.leaderboardsVisibleToPlayers !== false,
+        leaderboardsVisibleOnDisplay: settings.leaderboardsVisibleOnDisplay !== false,
+        autoAdvanceEnabled: settings.autoAdvanceEnabled === true
+      };
+    }
+    if (game.trivia && typeof finalWagerEnabled === 'boolean') {
+      game.trivia.finalWagerEnabled = finalWagerEnabled;
+    }
     game.hostId = socket.id;
     socket.join(`game:${game.code}`);
     socket.gameCode = game.code;
@@ -1291,6 +1318,7 @@ io.on('connection', (socket) => {
     game.welcomeDismissed = false;
     game.trivia.currentIndex = 0;
     game.trivia.revealed = false;
+    game.trivia.questionStartAt = new Date().toISOString();
     io.to(`game:${game.code}`).emit('game:started', { welcomeDismissed: false });
     const payload = getTriviaPayload(game, { forAudience: true });
     io.to(`game:${game.code}`).emit('game:trivia-state', payload);
@@ -1304,6 +1332,23 @@ io.on('connection', (socket) => {
     if (t.currentIndex < t.questions.length - 1) {
       t.currentIndex += 1;
       t.revealed = false;
+      t.questionStartAt = new Date().toISOString();
+    }
+    const payload = getTriviaPayload(game, { forAudience: true });
+    io.to(`game:${game.code}`).emit('game:trivia-state', payload);
+  });
+
+  socket.on('host:trivia-settings', ({ code, hostToken, settings }) => {
+    const game = getGame(code);
+    if (!game?.trivia) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    if (settings && typeof settings === 'object') {
+      if (typeof settings.leaderboardsVisibleToPlayers === 'boolean') game.trivia.settings = game.trivia.settings || {};
+      if (game.trivia.settings) {
+        if (typeof settings.leaderboardsVisibleToPlayers === 'boolean') game.trivia.settings.leaderboardsVisibleToPlayers = settings.leaderboardsVisibleToPlayers;
+        if (typeof settings.leaderboardsVisibleOnDisplay === 'boolean') game.trivia.settings.leaderboardsVisibleOnDisplay = settings.leaderboardsVisibleOnDisplay;
+        if (typeof settings.autoAdvanceEnabled === 'boolean') game.trivia.settings.autoAdvanceEnabled = settings.autoAdvanceEnabled;
+      }
     }
     const payload = getTriviaPayload(game, { forAudience: true });
     io.to(`game:${game.code}`).emit('game:trivia-state', payload);
@@ -1320,11 +1365,21 @@ io.on('connection', (socket) => {
     const correct = (q.correctAnswer || '').trim().toLowerCase();
     const scores = { ...t.scores };
     const pointsPerCorrect = (typeof q.points === 'number' && q.points >= 0) ? q.points : 1;
-    for (const [playerId, answers] of Object.entries(t.answers)) {
-      const ans = (answers[t.currentIndex] || '').trim().toLowerCase();
-      if (ans === correct) {
-        scores[playerId] = (scores[playerId] || 0) + pointsPerCorrect;
+    const isLastQuestion = t.currentIndex === t.questions.length - 1;
+    const wagerCap = 10;
+    for (const [pid, answers] of Object.entries(t.answers)) {
+      const raw = answers[t.currentIndex];
+      const ans = (typeof raw === 'object' && raw && typeof raw.answer === 'string')
+        ? raw.answer.trim().toLowerCase()
+        : (typeof raw === 'string' ? raw.trim().toLowerCase() : '');
+      const wager = (typeof raw === 'object' && raw && typeof raw.wager === 'number')
+        ? Math.min(Math.max(0, raw.wager), wagerCap) : 0;
+      const correctAnswer = ans === correct;
+      let pts = correctAnswer ? pointsPerCorrect : 0;
+      if (isLastQuestion && t.finalWagerEnabled && wager > 0) {
+        pts += correctAnswer ? wager : -wager;
       }
+      scores[pid] = Math.max(0, (scores[pid] || 0) + pts);
     }
     t.scores = scores;
     io.to(`game:${game.code}`).emit('game:trivia-reveal', {
@@ -1334,13 +1389,14 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('player:trivia-answer', ({ code, questionIndex, answer }) => {
+  socket.on('player:trivia-answer', ({ code, questionIndex, answer, wager }) => {
     const game = getGame(code);
     if (!game || !game.trivia) return;
     const t = game.trivia;
     if (t.revealed || questionIndex !== t.currentIndex) return;
     if (!t.answers[socket.id]) t.answers[socket.id] = {};
-    t.answers[socket.id][questionIndex] = answer;
+    const w = (typeof wager === 'number' && wager > 0) ? Math.min(wager, 10) : 0;
+    t.answers[socket.id][questionIndex] = w > 0 ? { answer: String(answer ?? ''), wager: w } : (answer ?? '');
   });
 
   // --- Trivia Room (canonical state machine: WAITING_ROOM → READY_CHECK → ACTIVE_ROUND → REVEAL → …) ---
@@ -1433,8 +1489,9 @@ io.on('connection', (socket) => {
     if (!r) return;
     const q = r.pack?.questions?.find((qu) => qu.id === questionId);
     if (!q) return;
-    if (r.state !== 'ACTIVE_ROUND' || r.runtime.currentQuestionIndex !== r.pack.questions.findIndex((qu) => qu.id === questionId)) return;
-    const points = q.scoring?.basePoints ?? 1;
+    const currentIdx = r.pack.questions.findIndex((qu) => qu.id === questionId);
+    if (r.state !== 'ACTIVE_ROUND' || r.runtime.currentQuestionIndex !== currentIdx) return;
+
     let isCorrect = false;
     if (q.type === 'mc' || q.type === 'tf') {
       const correctId = q.answer?.correct;
@@ -1444,7 +1501,39 @@ io.on('connection', (socket) => {
       const accepted = [q.answer.primary.toLowerCase(), ...(q.answer.acceptedVariants || []).map((v) => v.toLowerCase())];
       isCorrect = accepted.includes(raw);
     }
-    roomStore.recordResponse(rid, questionId, playerId, payload, isCorrect ? points : 0, isCorrect);
+
+    const isLastQuestion = currentIdx === r.pack.questions.length - 1;
+    const wagerCap = r.settings?.finalWagerCap ?? 10;
+    const wager = isLastQuestion && r.pack?.finalWagerEnabled && typeof payload?.wager === 'number' && payload.wager >= 0
+      ? Math.min(payload.wager, wagerCap) : 0;
+
+    let points = 0;
+    if (isCorrect) {
+      points = roomStore.computePoints(r, q, new Date().toISOString());
+      if (wager > 0) points += wager;
+    } else if (wager > 0) {
+      const p = r.players.get(playerId);
+      if (p) p.score = Math.max(0, (p.score ?? 0) - wager);
+    }
+
+    roomStore.recordResponse(rid, questionId, playerId, payload, points, isCorrect);
+
+    const snapshot = roomStore.buildRoomSnapshot(rid);
+    if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
+  });
+
+  socket.on('room:host-dispute-resolve', ({ roomId, questionId, action, variantText } = {}) => {
+    const rid = (roomId || '').trim();
+    const r = roomStore.getRoom(rid);
+    if (!r || r.hostId !== socket.id) {
+      socket.emit('room:error', { message: 'Not host or room not found', code: 'UNAUTHORIZED' });
+      return;
+    }
+    const ok = roomStore.resolveDispute(rid, questionId, action, variantText);
+    if (!ok) {
+      socket.emit('room:error', { message: 'Invalid dispute action or state', code: 'INVALID_DISPUTE' });
+      return;
+    }
     const snapshot = roomStore.buildRoomSnapshot(rid);
     if (snapshot) io.to(`room:${rid}`).emit('room:snapshot', snapshot);
   });

@@ -5,9 +5,23 @@
  */
 import type { TriviaPackModel, PresetType } from '../../lib/models';
 import { weeklyBarClassicPack } from './weeklyBarClassic';
+import { weeklyBarExtendedPack } from './weeklyBarExtended';
+import { quickHappyHourPack } from './quickHappyHour';
+import { displayAutomatedPack } from './displayAutomated';
+import { themeNightPack } from './themeNight';
+import { familyFriendlyPack } from './familyFriendly';
+import { speedTriviaPack } from './speedTrivia';
+import { seasonalHolidayPack } from './seasonalHoliday';
 
 export const triviaRoomPacks: TriviaPackModel[] = [
   weeklyBarClassicPack,
+  weeklyBarExtendedPack,
+  quickHappyHourPack,
+  displayAutomatedPack,
+  themeNightPack,
+  familyFriendlyPack,
+  speedTriviaPack,
+  seasonalHolidayPack,
 ];
 
 export function getTriviaRoomPacks(): TriviaPackModel[] {
@@ -16,6 +30,14 @@ export function getTriviaRoomPacks(): TriviaPackModel[] {
 
 export function getTriviaRoomPack(id: string): TriviaPackModel | null {
   return triviaRoomPacks.find((p) => p.id === id) ?? null;
+}
+
+export function getPacks(): TriviaPackModel[] {
+  return getTriviaRoomPacks();
+}
+
+export function getPack(id: string): TriviaPackModel | null {
+  return getTriviaRoomPack(id);
 }
 
 export function getPacksByPreset(presetType: PresetType): TriviaPackModel[] {

@@ -20,6 +20,7 @@ import ActivityCalendar from './pages/ActivityCalendar';
 import TriviaBuilder from './pages/TriviaBuilder';
 import HostCreateTrivia from './pages/HostCreateTrivia';
 import Room from './pages/Room';
+import DisplayOnly from './pages/DisplayOnly';
 
 function useShowThemeToggle() {
   const path = useLocation().pathname;
@@ -40,6 +41,7 @@ export default function App() {
       <Route path="/host/build/trivia" element={<TriviaBuilder />} />
       <Route path="/room/:roomId" element={<Room />} />
       <Route path="/display/:code" element={<Display />} />
+      <Route path="/display-only/:packId" element={<DisplayOnly />} />
       <Route path="/join" element={<JoinEntry />} />
       <Route path="/join/:code" element={<Play />} />
       <Route path="/create" element={<CreativeStudio />} />
