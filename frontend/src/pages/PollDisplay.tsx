@@ -2,10 +2,9 @@
  * Interactive Polling — Display view (TV / projector).
  * Route: /poll/:pollId/display — Top 8, Other bucket, live ticker, QR at bottom.
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
-import type { Socket } from 'socket.io-client';
 import '../styles/join.css';
 
 const QR_API = 'https://api.qrserver.com/v1/create-qr-code/';
@@ -35,35 +34,52 @@ function maskForDisplay(text: string): string {
 
 export default function PollDisplay() {
   const { pollId } = useParams<{ pollId: string }>();
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [payload, setPayload] = useState<PollPayload | null>(null);
   const [tickerItems, setTickerItems] = useState<string[]>([]);
   const [connectionTimeout, setConnectionTimeout] = useState(false);
-
-  const join = useCallback(() => {
-    if (!socket?.connected || !pollId) return;
-    socket.emit('poll:join', { pollId, role: 'display' });
-  }, [socket, pollId]);
 
   useEffect(() => {
     if (!pollId) return;
     setConnectionTimeout(false);
     const s = getSocket();
-    setSocket(s);
+    
+    let hasJoined = false;
+    
+    const joinPoll = () => {
+      if (!hasJoined && s.connected && pollId) {
+        hasJoined = true;
+        s.emit('poll:join', { pollId, role: 'display' });
+      }
+    };
+    
+    const onConnect = () => {
+      joinPoll();
+    };
+    
     const onUpdate = (p: PollPayload) => {
       setPayload(p);
       if (p.recentSubmission && p.showTicker) {
         setTickerItems((prev) => [p.recentSubmission!.text, ...prev.slice(0, 14)]);
       }
     };
+    
+    s.on('connect', onConnect);
     s.on('poll:update', onUpdate);
-    join();
+    
+    // Join immediately if already connected
+    if (s.connected) {
+      joinPoll();
+    }
+    
     const t = window.setTimeout(() => setConnectionTimeout(true), 8000);
+    
     return () => {
+      hasJoined = false;
       window.clearTimeout(t);
+      s.off('connect', onConnect);
       s.off('poll:update', onUpdate);
     };
-  }, [pollId, join]);
+  }, [pollId]);
 
   if (!pollId) {
     return (

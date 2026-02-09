@@ -40,12 +40,20 @@ Use this to confirm the Interactive Polling feature is complete before you push 
 
 ---
 
+## Stability / freeze fixes (host page)
+
+- **Host token** — Memoized so the host page doesn’t re-run effects on every render.
+- **Join once** — Poll host/player/display join the poll once per mount (hasJoined flag); no duplicate join emissions or dependency loops.
+- **Socket** — Single shared socket; reconnection limited (5 attempts, backoff) so the browser doesn’t freeze on a bad backend URL.
+- **Production** — Set `VITE_SOCKET_URL` in Netlify to your Railway backend URL and redeploy so the live site connects.
+
 ## Quick verification (after push)
 
 1. **Create** — Home → Interactive Polling → Start a poll → fill question, optional venue/logo → Start poll → lands on host page with QR.
 2. **Player** — Open /poll/:pollId on phone (or new tab), submit answer, see confirmation; click "Change answer" and submit again; host locks → "Change answer" gone / poll closed message.
 3. **Display** — Open /poll/:pollId/display in new tab, see question and Top 8 (and Other); ticker shows new submissions when enabled.
 4. **Host** — Lock poll, clear, reset, export CSV/JSON, toggle ticker; "Open display for TV" opens display URL.
+5. **No freeze** — Host page stays responsive; if backend is down, connection message shows and reconnects stop after 5 attempts.
 
 ---
 

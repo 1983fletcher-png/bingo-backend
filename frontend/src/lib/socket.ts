@@ -1,4 +1,4 @@
-import { io } from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
 
 // Same backend URL as API: VITE_SOCKET_URL || VITE_API_URL || dev proxy / origin (see docs/FRONTEND-BACKEND-LINKING.md)
 function getSocketUrl(): string {
@@ -14,9 +14,34 @@ function getSocketUrl(): string {
 
 const url = getSocketUrl();
 
-export function getSocket() {
-  // Try polling first (more reliable through Railway/proxies), then upgrade to websocket
-  return io(url, { path: '/socket.io', transports: ['polling', 'websocket'] });
+let socketInstance: Socket | null = null;
+
+/** Single shared socket for the app. Prevents multiple connections and browser freeze. */
+export function getSocket(): Socket {
+  if (!socketInstance) {
+    socketInstance = io(url, {
+      path: '/socket.io',
+      transports: ['polling', 'websocket'],
+      // Limit reconnection attempts to prevent infinite retries and browser freezing
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
+      // Don't auto-connect if initial connection fails immediately
+      autoConnect: true,
+    });
+    
+    // Add error handler to prevent silent failures
+    socketInstance.on('connect_error', (error) => {
+      console.warn('Socket connection error:', error.message);
+    });
+    
+    socketInstance.on('reconnect_failed', () => {
+      console.warn('Socket reconnection failed after maximum attempts');
+    });
+  }
+  return socketInstance;
 }
 
 /** For debug/status: hostname we connect to (so user can verify build has correct backend). */

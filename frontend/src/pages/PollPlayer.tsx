@@ -2,7 +2,7 @@
  * Interactive Polling — Player view (phone). Scan QR → this page.
  * Route: /poll/:pollId — question, input, submit, venue drawer (collapsed), footer.
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import type { Socket } from 'socket.io-client';
@@ -30,33 +30,52 @@ export default function PollPlayer() {
   const [error, setError] = useState<string | null>(null);
   const [connectionTimeout, setConnectionTimeout] = useState(false);
 
-  const join = useCallback(() => {
-    if (!socket?.connected || !pollId) return;
-    socket.emit('poll:join', { pollId, role: 'player' });
-  }, [socket, pollId]);
-
   useEffect(() => {
     if (!pollId) return;
     setConnectionTimeout(false);
     const s = getSocket();
     setSocket(s);
+    
+    let hasJoined = false;
+    
+    const joinPoll = () => {
+      if (!hasJoined && s.connected && pollId) {
+        hasJoined = true;
+        s.emit('poll:join', { pollId, role: 'player' });
+      }
+    };
+    
+    const onConnect = () => {
+      joinPoll();
+    };
+    
     const onUpdate = (p: PollPayload) => setPayload(p);
     const onErr = (e: { message?: string }) => setError(e?.message || 'Error');
+    
+    s.on('connect', onConnect);
     s.on('poll:update', onUpdate);
     s.on('poll:error', onErr);
-    join();
+    
+    // Join immediately if already connected
+    if (s.connected) {
+      joinPoll();
+    }
+    
     const t = window.setTimeout(() => {
       setConnectionTimeout((prev) => {
         if (prev) return prev;
         return true;
       });
     }, 8000);
+    
     return () => {
+      hasJoined = false;
       window.clearTimeout(t);
+      s.off('connect', onConnect);
       s.off('poll:update', onUpdate);
       s.off('poll:error', onErr);
     };
-  }, [pollId, join]);
+  }, [pollId]);
 
   const canSubmit = payload && !payload.locked && socket?.connected;
   const isMultiple = payload?.responseType === 'multiple';

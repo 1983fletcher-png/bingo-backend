@@ -2,7 +2,7 @@
  * Interactive Polling — Host view.
  * Route: /poll/:pollId/host — QR, controls (lock, clear, reset, export, ticker), display link.
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getSocket, getSocketBackendLabel, isBackendUrlSet } from '../lib/socket';
 import type { Socket } from 'socket.io-client';
@@ -48,35 +48,61 @@ export default function PollHost() {
   const [error, setError] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
 
-  const hostToken = pollId ? getStoredHostToken(pollId) : null;
-
-  const join = useCallback(() => {
-    if (!socket?.connected || !pollId) return;
-    socket.emit('poll:join', { pollId, role: 'host', hostToken });
-  }, [socket, pollId, hostToken]);
+  // Memoize hostToken to prevent infinite re-renders
+  const hostToken = useMemo(() => {
+    return pollId ? getStoredHostToken(pollId) : null;
+  }, [pollId]);
 
   useEffect(() => {
     if (!pollId) return;
+    
     const s = getSocket();
     setSocket(s);
     setConnected(s.connected);
+    
+    // Only save if we have a token from state/navigation
     if (hostToken) saveHostToken(pollId, hostToken);
-    const onConnect = () => setConnected(true);
-    const onDisconnect = () => setConnected(false);
+    
+    let hasJoined = false;
+    
+    const joinPoll = () => {
+      if (!hasJoined && s.connected && pollId) {
+        hasJoined = true;
+        s.emit('poll:join', { pollId, role: 'host', hostToken });
+      }
+    };
+    
+    const onConnect = () => {
+      setConnected(true);
+      joinPoll();
+    };
+    
+    const onDisconnect = () => {
+      setConnected(false);
+      hasJoined = false;
+    };
+    
     const onUpdate = (p: PollPayload) => setPayload(p);
     const onErr = (e: { message?: string }) => setError(e?.message || 'Error');
+    
     s.on('connect', onConnect);
     s.on('disconnect', onDisconnect);
     s.on('poll:update', onUpdate);
     s.on('poll:error', onErr);
-    join();
+    
+    // Join immediately if already connected
+    if (s.connected) {
+      joinPoll();
+    }
+    
     return () => {
+      hasJoined = false;
       s.off('connect', onConnect);
       s.off('disconnect', onDisconnect);
       s.off('poll:update', onUpdate);
       s.off('poll:error', onErr);
     };
-  }, [pollId, join, hostToken]);
+  }, [pollId, hostToken]);
 
 
   const lock = () => {
