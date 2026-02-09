@@ -121,7 +121,7 @@ export default function Home() {
               </span>
               <span className="landing__game-cta">Create →</span>
             </Link>
-            <Link to="/poll/create" className="landing__hero-card">
+            <Link to="/poll/start" className="landing__hero-card">
               <span className="landing__hero-card-title">Interactive Polling</span>
               <span className="landing__hero-card-desc">
                 Live crowd input, instant results. One question, one QR.

@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { ThemeToggle } from './components/ThemeToggle';
 import Host from './pages/Host';
 import Play from './pages/Play';
@@ -21,10 +21,10 @@ import TriviaBuilder from './pages/TriviaBuilder';
 import HostCreateTrivia from './pages/HostCreateTrivia';
 import Room from './pages/Room';
 import DisplayOnly from './pages/DisplayOnly';
-import PollCreate from './pages/PollCreate';
-import PollHost from './pages/PollHost';
-import PollPlayer from './pages/PollPlayer';
-import PollDisplay from './pages/PollDisplay';
+import PollVenueStart from './pages/PollVenueStart';
+import PollHostVenue from './pages/PollHostVenue';
+import PollPlayerVenue from './pages/PollPlayerVenue';
+import PollDisplayVenue from './pages/PollDisplayVenue';
 
 function useShowThemeToggle() {
   const path = useLocation().pathname;
@@ -44,10 +44,11 @@ export default function App() {
       <Route path="/host/create" element={<HostCreateTrivia />} />
       <Route path="/host/build/trivia" element={<TriviaBuilder />} />
       <Route path="/room/:roomId" element={<Room />} />
-      <Route path="/poll/create" element={<PollCreate />} />
-      <Route path="/poll/:pollId" element={<PollPlayer />} />
-      <Route path="/poll/:pollId/host" element={<PollHost />} />
-      <Route path="/poll/:pollId/display" element={<PollDisplay />} />
+      <Route path="/poll/create" element={<Navigate to="/poll/start" replace />} />
+      <Route path="/poll/start" element={<PollVenueStart />} />
+      <Route path="/poll/join/:venueCode" element={<PollPlayerVenue />} />
+      <Route path="/poll/join/:venueCode/host" element={<PollHostVenue />} />
+      <Route path="/poll/join/:venueCode/display" element={<PollDisplayVenue />} />
       <Route path="/display/:code" element={<Display />} />
       <Route path="/display-only/:packId" element={<DisplayOnly />} />
       <Route path="/join" element={<JoinEntry />} />

@@ -148,6 +148,10 @@ export function assertHost(poll, socketId, hostToken) {
     poll.hostId = socketId;
     return true;
   }
+  if (hostToken && poll.venueHostToken && hostToken === poll.venueHostToken) {
+    poll.hostId = socketId;
+    return true;
+  }
   return false;
 }
 

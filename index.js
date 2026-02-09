@@ -16,6 +16,7 @@ import { getObservancesForYear, getUpcoming, CATEGORIES } from './lib/holidaysAn
 import { isR2Configured, uploadToR2 } from './lib/r2.js';
 import * as roomStore from './server/roomStore.js';
 import * as pollStore from './server/pollStore.js';
+import * as venuePollStore from './server/venuePollStore.js';
 
 /**
  * Extract text from a PDF buffer. Tries pdf-parse first (best fidelity), then Mozilla PDF.js fallback
@@ -1619,6 +1620,84 @@ io.on('connection', (socket) => {
     const payload = pollStore.setShowTicker(pid, show !== false, hostToken, socket.id);
     if (!payload) return;
     io.to(`poll:${pid}`).emit('poll:update', payload);
+  });
+
+  // --- Venue-based polling (permanent link, start/end poll, join by venue) ---
+  socket.on('venue:create', () => {
+    const { venueCode, hostToken } = venuePollStore.createVenue();
+    socket.emit('venue:created', { venueCode, hostToken });
+  });
+
+  socket.on('poll:start', ({ venueCode, hostToken, question, responseType, options, venueName, logoUrl } = {}) => {
+    const vc = (venueCode || '').trim().toUpperCase();
+    const v = venuePollStore.getVenue(vc);
+    if (!v || v.hostToken !== (hostToken || '')) {
+      socket.emit('poll:error', { message: 'Invalid venue or host token' });
+      return;
+    }
+    const poll = pollStore.createPoll({
+      question: (question || '').trim(),
+      responseType: responseType === 'multiple' ? 'multiple' : 'open',
+      options: Array.isArray(options) ? options.slice(0, 10).map((o) => String(o).trim()).filter(Boolean) : [],
+      venueName: (venueName || '').trim(),
+      logoUrl: logoUrl && typeof logoUrl === 'string' ? logoUrl : null,
+    });
+    if (!poll) {
+      socket.emit('poll:error', { message: 'Invalid poll (question required)' });
+      return;
+    }
+    poll.hostId = socket.id;
+    poll.venueCode = vc;
+    poll.venueHostToken = v.hostToken;
+    venuePollStore.setActivePoll(vc, poll.pollId, hostToken);
+    socket.join(`poll:${poll.pollId}`);
+    socket.join(`venue:${vc}`);
+    socket.pollId = poll.pollId;
+    socket.venueCode = vc;
+    const payload = pollStore.getPayloadForBroadcast(poll.pollId);
+    socket.emit('poll:started', { pollId: poll.pollId, hostToken: poll.hostToken });
+    socket.emit('poll:update', payload);
+    const room = io.sockets.adapter.rooms.get(`venue:${vc}`);
+    if (room) {
+      for (const sid of room) {
+        io.sockets.sockets.get(sid)?.join(`poll:${poll.pollId}`);
+      }
+    }
+    io.to(`poll:${poll.pollId}`).emit('poll:update', payload);
+  });
+
+  socket.on('poll:end', ({ venueCode, hostToken } = {}) => {
+    const vc = (venueCode || '').trim().toUpperCase();
+    const payload = venuePollStore.endPoll(vc, hostToken, (pid) => pollStore.getPayloadForBroadcast(pid));
+    if (payload) io.to(`poll:${payload.pollId}`).emit('poll:ended', payload);
+    socket.emit('poll:ended', payload || {});
+  });
+
+  socket.on('poll:join-by-venue', ({ venueCode, role, hostToken } = {}) => {
+    const vc = (venueCode || '').trim().toUpperCase();
+    const v = venuePollStore.getVenue(vc);
+    if (!v) {
+      socket.emit('poll:error', { message: 'Venue not found' });
+      return;
+    }
+    socket.join(`venue:${vc}`);
+    socket.venueCode = vc;
+    const activePollId = venuePollStore.getActivePollId(vc);
+    if (!activePollId) {
+      socket.emit('poll:no-active', { venueCode: vc });
+      return;
+    }
+    const isHost = role === 'host' && hostToken && hostToken === v.hostToken;
+    const payload = pollStore.joinPoll(activePollId, role || 'player', socket.id, isHost ? hostToken : null);
+    if (!payload) {
+      socket.emit('poll:error', { message: 'Poll not found' });
+      return;
+    }
+    const poll = pollStore.getPoll(activePollId);
+    if (isHost && poll) poll.hostId = socket.id;
+    socket.join(`poll:${activePollId}`);
+    socket.pollId = activePollId;
+    socket.emit('poll:update', payload);
   });
 
   socket.on('room:host-dispute-resolve', ({ roomId, questionId, action, variantText } = {}) => {
