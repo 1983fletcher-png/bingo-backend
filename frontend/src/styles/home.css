@@ -1,5 +1,5 @@
 /**
- * Landing / Home — calm, clear hierarchy. Uses design-system vars.
+ * Landing / Home — calm, clear hierarchy. Apple-inspired polish. Uses design-system vars.
  */
 .landing {
   min-height: 100vh;
@@ -7,68 +7,56 @@
   flex-direction: column;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Full-width bar: Playroom left, Activity + Help right, rounder edges, tight */
+/* Full-bleed top bar: edge to edge, Playroom left, Activity Calendar right */
 .landing__header {
   width: 100%;
   flex-shrink: 0;
-  padding: 10px 16px;
-  padding-left: calc(16px + env(safe-area-inset-left));
-  padding-right: calc(16px + env(safe-area-inset-right));
-}
-
-.landing__header-inner {
-  max-width: 1000px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 14px 24px;
+  padding-left: calc(24px + env(safe-area-inset-left));
+  padding-right: calc(24px + env(safe-area-inset-right));
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: var(--shadow-sm);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
 }
 
 .landing__header-title {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .landing__header-nav {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-left: auto;
+  gap: 8px;
 }
 
 .landing__header-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--bg);
+  gap: 8px;
+  padding: 9px 16px;
+  background: transparent;
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
 .landing__header-btn:hover {
   color: var(--text);
   border-color: var(--text-muted);
-}
-
-.landing__header-help {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .landing__main {
@@ -93,18 +81,20 @@
 }
 
 .landing__hero-title {
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-size: clamp(1.6rem, 4vw, 2.35rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   color: var(--text);
   margin: 0 0 0.5rem;
+  line-height: 1.2;
 }
 
 .landing__hero-tagline {
   font-size: clamp(0.9375rem, 1.8vw, 1.0625rem);
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--text-secondary);
   margin: 0 0 0.25rem;
+  letter-spacing: 0.01em;
 }
 
 .landing__hero-hosted {
@@ -112,6 +102,7 @@
   font-weight: 600;
   color: var(--text-muted);
   margin: 0 0 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 .landing__hero-support {
@@ -119,6 +110,8 @@
   font-weight: 500;
   color: var(--text-muted);
   margin: 0 0 1.5rem;
+  line-height: 1.5;
+  letter-spacing: 0.005em;
 }
 
 @media (max-width: 540px) {
@@ -148,13 +141,13 @@
 .landing__hero-card {
   display: flex;
   flex-direction: column;
-  padding: 1rem 1rem;
-  border-radius: 12px;
-  border: 2px solid var(--border);
+  padding: 1.1rem 1.15rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
   text-decoration: none;
   color: inherit;
   background: var(--surface);
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 @media (max-width: 540px) {
@@ -168,8 +161,8 @@
   color: inherit;
   text-decoration: none;
   border-color: var(--accent);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
 .landing__hero-card-title {
@@ -420,15 +413,17 @@
 
 .landing__values-text {
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--text-secondary);
   margin: 0 0 0.75rem;
+  letter-spacing: 0.01em;
 }
 
 .landing__values-spirit {
   font-size: 0.875rem;
   color: var(--text-muted);
   margin: 0;
+  letter-spacing: 0.02em;
 }
 
 .landing__footer {
@@ -439,7 +434,14 @@
 }
 
 .landing__footer-brand {
-  font-size: 0.875rem;
-  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
   margin: 0;
+}
+
+.landing__footer-credit {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0.35rem 0 0;
 }

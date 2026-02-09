@@ -72,22 +72,19 @@ export default function Home() {
 
   return (
     <div className="landing" style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* Full-width bar: Playroom left, Activity + Help right */}
+      {/* Full-width top bar: Playroom left, Activity Calendar right */}
       <header className="landing__header">
-        <div className="landing__header-inner">
-          <span className="landing__header-title">The Playroom</span>
-          <nav className="landing__header-nav" aria-label="Main">
-            <button
-              type="button"
-              onClick={() => navigate('/calendar')}
-              className="landing__header-btn"
-            >
-              <span aria-hidden>📅</span>
-              Activity calendar
-            </button>
-            <span className="landing__header-help" aria-hidden>Help (coming soon)</span>
-          </nav>
-        </div>
+        <span className="landing__header-title">The Playroom</span>
+        <nav className="landing__header-nav" aria-label="Main">
+          <button
+            type="button"
+            onClick={() => navigate('/calendar')}
+            className="landing__header-btn"
+          >
+            <span aria-hidden>📅</span>
+            Activity calendar
+          </button>
+        </nav>
       </header>
 
       <main className="landing__main">
@@ -99,14 +96,14 @@ export default function Home() {
           </p>
           <p className="landing__hero-hosted">Hosted anywhere, played everywhere.</p>
           <p className="landing__hero-support">
-            One link, one room. One link, everyone&apos;s in — on phones or with printable materials when you need them.
+            One link, one room, everyone&apos;s in. On phones, tablets, computers, or with printable materials when you need them.
           </p>
           {/* Four cards: Host, Join, Creative Studio, Interactive Polling (Learn & Grow hidden for now) */}
           <div className="landing__hero-cards">
             <Link to="/host" className="landing__hero-card">
               <span className="landing__hero-card-title">Host a room</span>
               <span className="landing__hero-card-desc">
-                Start a game — music bingo or trivia. Share the QR or link; players join from one screen.
+                Start a game. Music bingo, trivia, icebreakers, team building and more. Share the QR or link. Players join from one screen.
               </span>
               <span className="landing__game-cta">Get started →</span>
             </Link>
@@ -218,8 +215,7 @@ export default function Home() {
         >
           <h2 className="landing__section-title">Our approach</h2>
           <p className="landing__values-text">
-            Calm, welcoming, human. We reduce friction and avoid hype. Digital
-            when you want it, printable when you need it.
+            Calm, welcoming, human and fun. We reduce friction and avoid hype. Digital when you want it, printable when you need it.
           </p>
           <p className="landing__values-spirit">
             Knowledge · companionship · education · doing good.
@@ -228,6 +224,7 @@ export default function Home() {
 
         <footer className="landing__footer" role="contentinfo">
           <p className="landing__footer-brand">The Playroom</p>
+          <p className="landing__footer-credit">Created by Jason Fletcher</p>
         </footer>
       </main>
     </div>
