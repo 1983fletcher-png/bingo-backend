@@ -65,6 +65,7 @@ export function RoomHostPanel({
   };
 
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/room/${roomId}?role=player` : '';
+  const displayUrl = typeof window !== 'undefined' ? `${window.location.origin}/room/${roomId}?role=display` : '';
 
   const copyJoinUrl = () => {
     if (joinUrl) {
@@ -84,6 +85,27 @@ export function RoomHostPanel({
             <QRCodePanel joinUrl={joinUrl} label="Scan to join" size={160} />
             <p className="host-room__qr-hint">Room code</p>
             <p className="host-room__code">{roomId}</p>
+            <a
+              href={displayUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="host-room__display-link"
+              style={{
+                display: 'inline-block',
+                marginTop: 12,
+                padding: '10px 16px',
+                fontSize: 14,
+                fontWeight: 600,
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 8,
+                color: 'var(--accent)',
+                textDecoration: 'none',
+                transition: 'background 0.15s, border-color 0.15s',
+              }}
+            >
+              Display mode — open for TV
+            </a>
           </div>
           <div className="host-room__join-row">
             <a href={joinUrl} target="_blank" rel="noopener noreferrer" className="host-room__join-url" style={{ flex: '1 1 100%' }}>
@@ -117,11 +139,11 @@ export function RoomHostPanel({
           </div>
         </aside>
         <main className="host-room__right">
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 16 }}>
-            <div className="host-room__right-head" style={{ flex: '1 1 200px', minWidth: 0 }}>
-              <h1 className="host-room__right-title">Host — {pack?.title || 'Trivia'}</h1>
-              <p className="host-room__right-sub">Run the game. Preview to the right shows what players and the display see.</p>
-            </div>
+          <div style={{ marginBottom: 16 }}>
+            <h1 className="host-room__right-title" style={{ margin: '0 0 4px' }}>Host — {pack?.title || 'Trivia'}</h1>
+            <p className="host-room__right-sub" style={{ margin: 0 }}>Player view and Display view below match what players and the TV see.</p>
+          </div>
+          <div style={{ marginBottom: 20 }}>
             <LivePreview room={room} currentQuestion={currentQuestion} pack={pack} leaderboardTop={leaderboardTop} />
           </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
