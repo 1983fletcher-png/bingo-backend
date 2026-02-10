@@ -10,91 +10,15 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Full-bleed top bar: edge to edge, Playroom left, Activity Calendar right */
-.landing__header {
-  width: 100%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
-  padding-left: calc(24px + env(safe-area-inset-left));
-  padding-right: calc(24px + env(safe-area-inset-right));
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
-}
-
-.landing__header-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.025em;
-}
-
-.landing__header-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.landing__header-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 16px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
-}
-
-.landing__header-btn:hover {
-  color: var(--text);
-  border-color: var(--text-muted);
-  background: rgba(0, 0, 0, 0.03);
-}
-
 .landing__main {
   flex: 1;
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
-  padding: 0 24px 48px;
+  padding: 32px 24px 48px;
+  padding-top: calc(32px + env(safe-area-inset-top));
   padding-left: calc(24px + env(safe-area-inset-left));
   padding-right: calc(24px + env(safe-area-inset-right));
-}
-
-/* Prime: Activity calendar directly above Welcome */
-.landing__prime {
-  padding: 20px 0 24px;
-  text-align: center;
-}
-
-.landing__prime-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 28px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-.landing__prime-btn:hover {
-  opacity: 0.95;
-  transform: translateY(-1px);
 }
 
 .landing__hero {

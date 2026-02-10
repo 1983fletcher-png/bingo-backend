@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../styles/home.css';
 
 const WHO_ITS_FOR = [
@@ -68,38 +68,9 @@ const GAME_TYPES: Array<{
 ];
 
 export default function Home() {
-  const navigate = useNavigate();
-
   return (
     <div className="landing" style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* Full-width top bar: Playroom left, Activity Calendar right */}
-      <header className="landing__header">
-        <span className="landing__header-title">The Playroom</span>
-        <nav className="landing__header-nav" aria-label="Main">
-          <button
-            type="button"
-            onClick={() => navigate('/calendar')}
-            className="landing__header-btn"
-          >
-            <span aria-hidden>📅</span>
-            Activity calendar
-          </button>
-        </nav>
-      </header>
-
       <main className="landing__main">
-        {/* Prime: Activity calendar directly above welcome */}
-        <section className="landing__prime" aria-label="Activity calendar">
-          <button
-            type="button"
-            onClick={() => navigate('/calendar')}
-            className="landing__prime-btn"
-          >
-            <span aria-hidden>📅</span>
-            Activity calendar
-          </button>
-        </section>
-        {/* Hero: welcome, tagline, hosted line, one link — then four cards */}
         <section className="landing__hero" aria-label="Welcome">
           <h1 className="landing__hero-title">Welcome to the Playroom</h1>
           <p className="landing__hero-tagline">
@@ -109,7 +80,6 @@ export default function Home() {
           <p className="landing__hero-support">
             One link, one room, everyone&apos;s in. On phones, tablets, computers, or with printable materials when you need them.
           </p>
-          {/* Four cards: Host, Join, Creative Studio, Interactive Polling (Learn & Grow hidden for now) */}
           <div className="landing__hero-cards">
             <Link to="/host" className="landing__hero-card">
               <span className="landing__hero-card-title">Host a room</span>
@@ -118,19 +88,12 @@ export default function Home() {
               </span>
               <span className="landing__game-cta">Get started →</span>
             </Link>
-            <Link to="/join" className="landing__hero-card">
-              <span className="landing__hero-card-title">Join a room</span>
+            <Link to="/calendar" className="landing__hero-card">
+              <span className="landing__hero-card-title">Activity calendar</span>
               <span className="landing__hero-card-desc">
-                Enter the game code. Play on your phone or tablet — no app required.
+                Observances and holidays to guide your planning. Create fun, meaningful, memorable events with ease.
               </span>
-              <span className="landing__game-cta">Join →</span>
-            </Link>
-            <Link to="/create" className="landing__hero-card">
-              <span className="landing__hero-card-title">Creative Studio</span>
-              <span className="landing__hero-card-desc">
-                Custom pages: menus, promos, flyers, training materials.
-              </span>
-              <span className="landing__game-cta">Create →</span>
+              <span className="landing__game-cta">View calendar →</span>
             </Link>
             <Link to="/poll/start" className="landing__hero-card">
               <span className="landing__hero-card-title">Interactive Polling</span>
@@ -138,6 +101,13 @@ export default function Home() {
                 Live crowd input, instant results. One question, one QR.
               </span>
               <span className="landing__game-cta">Start a poll →</span>
+            </Link>
+            <Link to="/create" className="landing__hero-card">
+              <span className="landing__hero-card-title">Creative Studio</span>
+              <span className="landing__hero-card-desc">
+                Custom pages: menus, promos, flyers, training materials.
+              </span>
+              <span className="landing__game-cta">Create →</span>
             </Link>
           </div>
         </section>
