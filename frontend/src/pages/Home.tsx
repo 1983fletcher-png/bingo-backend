@@ -88,19 +88,19 @@ export default function Home() {
               </span>
               <span className="landing__game-cta">Get started →</span>
             </Link>
-            <Link to="/calendar" className="landing__hero-card">
-              <span className="landing__hero-card-title">Activity calendar</span>
-              <span className="landing__hero-card-desc">
-                Observances and holidays to guide your planning. Create fun, meaningful, memorable events with ease.
-              </span>
-              <span className="landing__game-cta">View calendar →</span>
-            </Link>
             <Link to="/poll/start" className="landing__hero-card">
               <span className="landing__hero-card-title">Interactive Polling</span>
               <span className="landing__hero-card-desc">
                 Live crowd input, instant results. One question, one QR.
               </span>
               <span className="landing__game-cta">Start a poll →</span>
+            </Link>
+            <Link to="/calendar" className="landing__hero-card">
+              <span className="landing__hero-card-title">Activity calendar</span>
+              <span className="landing__hero-card-desc">
+                Observances and holidays to guide your planning. Create fun, meaningful, memorable events with ease.
+              </span>
+              <span className="landing__game-cta">View calendar →</span>
             </Link>
             <Link to="/create" className="landing__hero-card">
               <span className="landing__hero-card-title">Creative Studio</span>

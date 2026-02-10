@@ -850,7 +850,7 @@ export default function Host() {
             {!socket?.connected && <p className="host-create__hint">Waiting for connection…</p>}
           </>
         )}
-        <Link to="/" className="host-create__back">← Back to home</Link>
+        <Link to="/" className="host-create__back">← Back to Playroom</Link>
       </div>
     );
   }
@@ -964,14 +964,24 @@ p{word-break:break-all;font-size:14px;color:#333}
               <button type="button" onClick={() => { setGame(null); setGameStarted(false); }} className="host-room__btn-secondary">
                 End game
               </button>
-              <Link to="/" className="host-room__back-link">← Back</Link>
+              <Link to="/" className="host-room__back-link">← Back to Playroom</Link>
             </div>
           </aside>
 
           <div className="host-room__right">
-            <div className="host-room__right-head">
+            <div className="host-room__right-head" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div>
               <h1 className="host-room__right-title">Run the game</h1>
               <p className="host-room__right-sub">Set what players see then start when you’re ready. Change options anytime.</p>
+            </div>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <a href={joinUrlForQR} target="_blank" rel="noopener noreferrer" className="host-room__link-btn" style={{ padding: '8px 14px', fontSize: 13 }}>
+                  Player view
+                </a>
+                <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn" style={{ padding: '8px 14px', fontSize: 13, background: 'var(--surface)', color: 'var(--text)' }}>
+                  TV display
+                </a>
+              </div>
             </div>
         <div className="host-room__tabs">
           {tabs.map(({ id, label }) => (

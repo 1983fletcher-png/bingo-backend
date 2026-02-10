@@ -1,7 +1,7 @@
 /**
  * Interactive Polling — Single-page Host (venue-based).
  * Route: /poll/join/:venueCode/host
- * Three columns: Join to Vote | Poll Setup & Controls | Live results preview.
+ * Three columns: Share (QR + links) | Poll Setup & Controls | Live results preview.
  * No separate Create Poll page; creation happens here via Start Poll.
  */
 import { useState, useEffect, useMemo } from 'react';
@@ -125,21 +125,6 @@ export default function PollHostVenue() {
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/poll/join/${vc}` : '';
   const displayUrl = typeof window !== 'undefined' ? `${window.location.origin}/poll/join/${vc}/display` : '';
 
-  const copy = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      const el = document.createElement('span');
-      el.textContent = 'Copied!';
-      el.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;z-index:9999;';
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 1500);
-    });
-  };
-
-  const openFullscreen = () => {
-    const w = window.open(displayUrl, 'poll-display', 'fullscreen=yes,scrollbars=no');
-    if (w) w.document.documentElement.requestFullscreen?.();
-  };
-
   const addOption = () => {
     if (options.length >= 10) return;
     setOptions((prev) => [...prev, '']);
@@ -211,7 +196,7 @@ export default function PollHostVenue() {
     return (
       <div className="join-page">
         <p>Missing venue.</p>
-        <Link to="/">Go home</Link>
+        <Link to="/">← Back to Playroom</Link>
       </div>
     );
   }
@@ -228,7 +213,7 @@ export default function PollHostVenue() {
   return (
     <div className="join-page" style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 16px' }}>
       <p style={{ marginBottom: 16 }}>
-        <Link to="/" className="join-page__back">← Back to home</Link>
+        <Link to="/" className="join-page__back">← Back to Playroom</Link>
       </p>
 
       {error && (
@@ -244,23 +229,12 @@ export default function PollHostVenue() {
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 1fr) minmax(280px, 1.4fr) minmax(200px, 1fr)', gap: 24, alignItems: 'start' }}>
-        {/* LEFT — Join to Vote */}
+        {/* LEFT — Share (QR + links only) */}
         <div style={{ position: 'sticky', top: 16 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 12px' }}>Join to vote</h2>
           <QRCodePanel joinUrl={joinUrl} label="Scan to vote" size={180} />
           <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <input readOnly value={joinUrl} style={{ flex: 1, fontSize: 11, padding: 6, border: '1px solid var(--border)', borderRadius: 6, background: 'var(--surface)' }} />
-              <button type="button" className="join-page__btn" style={{ padding: '6px 12px', fontSize: 12 }} onClick={() => copy(joinUrl)}>Copy</button>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 600 }}>Code:</span>
-              <code style={{ flex: 1, fontSize: 14, padding: 6, background: 'var(--surface)', borderRadius: 6 }}>{vc}</code>
-              <button type="button" className="join-page__btn" style={{ padding: '6px 12px', fontSize: 12 }} onClick={() => copy(vc)}>Copy</button>
-            </div>
             <a href={joinUrl} target="_blank" rel="noopener noreferrer" className="join-page__btn" style={{ textAlign: 'center', fontSize: 13 }}>Open player link</a>
             <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="join-page__btn" style={{ textAlign: 'center', fontSize: 13, background: 'var(--surface)', color: 'var(--text)' }}>Open TV display</a>
-            <button type="button" className="join-page__btn" style={{ fontSize: 13 }} onClick={openFullscreen}>Fullscreen TV display</button>
           </div>
           <p style={{ marginTop: 12, fontSize: 13, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: connected ? 'var(--success)' : 'var(--text-muted)' }} />

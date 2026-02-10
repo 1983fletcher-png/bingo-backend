@@ -6,24 +6,8 @@ import {
   type CalendarPrintDay,
   type CalendarPlanningDay,
   type ObservancesIndexDay,
-  type CalendarPrintStyle,
 } from '../lib/printMaterials';
-import type { CalendarObservance, ObservanceCategory } from '../types/observance';
-
-const CATEGORY_FILTER_OPTIONS: { value: ObservanceCategory | null; label: string }[] = [
-  { value: null, label: 'All' },
-  { value: 'food', label: 'Food' },
-  { value: 'drink', label: 'Drink' },
-  { value: 'candy', label: 'Candy' },
-  { value: 'holiday', label: 'Holiday' },
-  { value: 'music', label: 'Music' },
-  { value: 'games', label: 'Games' },
-  { value: 'wellness', label: 'Wellness' },
-  { value: 'education', label: 'Education' },
-  { value: 'family', label: 'Family' },
-  { value: 'seniors', label: 'Seniors' },
-  { value: 'community', label: 'Community' },
-];
+import type { CalendarObservance } from '../types/observance';
 
 const API_BASE =
   import.meta.env.VITE_SOCKET_URL ||
@@ -36,6 +20,13 @@ const MONTHS = [
 ];
 
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+/** Format a date as "February 10th, 2026" (ordinal day). */
+function formatTodayHeader(d: Date): string {
+  const day = d.getDate();
+  const ord = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
+  return `${MONTHS[d.getMonth()]} ${day}${ord}, ${d.getFullYear()}`;
+}
 
 type ThemeOption = { accent: string; bg: string; icon: string; label: string };
 
@@ -178,10 +169,6 @@ export default function ActivityCalendar() {
   const [error, setError] = useState<string | null>(null);
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
   const [showOnlySelected, setShowOnlySelected] = useState(false);
-  const [printStyle, setPrintStyle] = useState<CalendarPrintStyle>('neutral');
-  const [showBlankLinesInPrint, setShowBlankLinesInPrint] = useState(true);
-  const [categoryFilter, setCategoryFilter] = useState<ObservanceCategory | null>(null);
-
   const [selectionsByDate, setSelectionsByDate] = useState<Record<number, string[]>>({});
   const [notesByDate, setNotesByDate] = useState<Record<number, string>>({});
   const persistTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -231,12 +218,7 @@ export default function ActivityCalendar() {
   const startWeekday = firstDay.getDay();
   const daysInMonth = lastDay.getDate();
 
-  const filteredObservances =
-    categoryFilter === null
-      ? observances
-      : observances.filter((o) => o.categories?.includes(categoryFilter));
-
-  const observancesByDay = filteredObservances.reduce<Record<number, CalendarObservance[]>>((acc, o) => {
+  const observancesByDay = observances.reduce<Record<number, CalendarObservance[]>>((acc, o) => {
     if (!acc[o.day]) acc[o.day] = [];
     acc[o.day].push(o);
     return acc;
@@ -290,7 +272,7 @@ export default function ActivityCalendar() {
   };
 
   const allDaysWithObservances = Array.from(
-    new Set(filteredObservances.map((o) => o.day))
+    new Set(observances.map((o) => o.day))
   ).sort((a, b) => a - b);
   const daysToShowInIndex = showOnlySelected
     ? allDaysWithObservances.filter((d) => {
@@ -334,9 +316,9 @@ export default function ActivityCalendar() {
       gridDays,
       planningDays,
       {
-        printStyle,
+        printStyle: 'neutral',
         observancesIndex,
-        includeBlankLinesUnderObservances: showBlankLinesInPrint,
+        includeBlankLinesUnderObservances: false,
       }
     );
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -347,7 +329,7 @@ export default function ActivityCalendar() {
       return;
     }
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }, [year, month, daysInMonth, startWeekday, observancesByDay, selectionsByDate, notesByDate, printStyle, showBlankLinesInPrint, allDaysWithObservances]);
+  }, [year, month, daysInMonth, startWeekday, observancesByDay, selectionsByDate, notesByDate, allDaysWithObservances]);
 
   const cellStyle: React.CSSProperties = {
     minHeight: 100,
@@ -386,16 +368,16 @@ export default function ActivityCalendar() {
       <Link
         to="/"
         className="no-print"
-        style={{ display: 'inline-block', marginBottom: 24, color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', fontSize: '0.9rem', textDecoration: 'none' }}
+        style={{ display: 'inline-block', marginBottom: 16, color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', fontSize: '0.9rem', textDecoration: 'none' }}
       >
         ← Back to Playroom
       </Link>
 
-      <header style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: '0 0 8px', fontSize: '1.75rem', color: theme.accent }}>
-          {theme.icon} Activity calendar — {MONTHS[month - 1]} {year}
+      <header style={{ marginBottom: 24, textAlign: 'center' }}>
+        <h1 style={{ margin: '0 0 4px', fontSize: '1.75rem', color: theme.accent }}>
+          {theme.icon} Activity calendar — {formatTodayHeader(new Date())}
         </h1>
-        <p style={{ margin: 0, color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', lineHeight: 1.5 }}>
+        <p style={{ margin: 0, color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', lineHeight: 1.5, fontSize: '0.9rem' }}>
           Verified observances for planning. Your selections and notes stay on this device only.
         </p>
       </header>
@@ -413,29 +395,6 @@ export default function ActivityCalendar() {
           </button>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8' }}>Print style:</span>
-          {(['fun', 'neutral', 'bw'] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setPrintStyle(s)}
-              style={{
-                padding: '6px 12px',
-                borderRadius: 8,
-                border: printStyle === s ? `2px solid ${theme.accent}` : '1px solid transparent',
-                background: printStyle === s ? (theme.accent === NEUTRAL_THEME.accent ? 'rgba(30,41,59,0.1)' : `${theme.accent}25`) : 'transparent',
-                color: printStyle === s ? theme.accent : (theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8'),
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-              }}
-            >
-              {s === 'fun' ? 'Fun' : s === 'neutral' ? 'Neutral' : 'B&W'}
-            </button>
-          ))}
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8' }}>
-            <input type="checkbox" checked={showBlankLinesInPrint} onChange={(e) => setShowBlankLinesInPrint(e.target.checked)} />
-            Blank lines under observances
-          </label>
           <button type="button" onClick={handlePrint} style={{ padding: '10px 20px', background: theme.accent, border: 'none', borderRadius: 10, color: '#fff', cursor: 'pointer', fontWeight: 600 }}>
             Print calendar
           </button>
@@ -464,33 +423,6 @@ export default function ActivityCalendar() {
             {opt.icon} {opt.label}
           </button>
         ))}
-      </div>
-
-      <div className="no-print" style={{ marginBottom: 16 }}>
-        <span style={{ fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', marginRight: 8 }}>Filter by category:</span>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
-          {CATEGORY_FILTER_OPTIONS.map((opt) => {
-            const isActive = categoryFilter === opt.value;
-            return (
-              <button
-                key={opt.label}
-                type="button"
-                onClick={() => setCategoryFilter(opt.value)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: 8,
-                  border: isActive ? `2px solid ${theme.accent}` : `1px solid ${theme.accent}40`,
-                  background: isActive ? (theme.accent === NEUTRAL_THEME.accent ? 'rgba(30,41,59,0.12)' : `${theme.accent}20`) : 'transparent',
-                  color: isActive ? theme.accent : (theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8'),
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                }}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       {error && <p style={{ color: '#dc2626', marginBottom: 16 }}>{error}</p>}

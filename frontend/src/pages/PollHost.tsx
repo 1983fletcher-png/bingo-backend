@@ -155,7 +155,7 @@ export default function PollHost() {
     return (
       <div className="join-page">
         <p>Missing poll ID.</p>
-        <Link to="/">Go home</Link>
+        <Link to="/">← Back to Playroom</Link>
       </div>
     );
   }
@@ -164,7 +164,7 @@ export default function PollHost() {
     return (
       <div className="join-page">
         <p>{error}</p>
-        <Link to="/">Go home</Link>
+        <Link to="/">← Back to Playroom</Link>
       </div>
     );
   }
@@ -175,7 +175,7 @@ export default function PollHost() {
   return (
     <div className="join-page" style={{ maxWidth: 640, margin: '0 auto' }}>
       <p style={{ marginBottom: 16 }}>
-        <Link to="/" className="join-page__back">← Back to home</Link>
+        <Link to="/" className="join-page__back">← Back to Playroom</Link>
       </p>
 
       {!connected && (

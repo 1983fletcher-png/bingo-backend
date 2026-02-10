@@ -17,7 +17,8 @@ export default function Create() {
   return (
     <div className="create">
       <section className="create__hero" aria-label="Choose a template">
-        <Link to="/create" className="create__back">← Creative Studio</Link>
+        <Link to="/" className="create__back">← Back to Playroom</Link>
+        <Link to="/create" className="create__back" style={{ marginLeft: 12 }}>Creative Studio</Link>
         <h1 className="create__title">Create a page</h1>
         <p className="create__tagline">
           Pick what you need. We’ll guide you step by step—no design experience required.

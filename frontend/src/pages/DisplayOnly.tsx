@@ -53,7 +53,7 @@ export default function DisplayOnly() {
     return (
       <div style={{ padding: 24, textAlign: 'center' }}>
         <p>Pack not found or empty.</p>
-        <Link to="/">Go home</Link>
+        <Link to="/">← Back to Playroom</Link>
       </div>
     );
   }
@@ -91,7 +91,7 @@ export default function DisplayOnly() {
         </>
       )}
 
-      <Link to="/" style={{ position: 'absolute', top: 16, left: 16, fontSize: 14 }}>← Exit</Link>
+      <Link to="/" style={{ position: 'absolute', top: 16, left: 16, fontSize: 14 }}>← Back to Playroom</Link>
     </div>
   );
 }

@@ -60,7 +60,7 @@ export function ViewPage() {
       >
         <p>{error}</p>
         <Link to="/" style={{ color: 'var(--accent)' }}>
-          Go home
+          ← Back to Playroom
         </Link>
       </div>
     );

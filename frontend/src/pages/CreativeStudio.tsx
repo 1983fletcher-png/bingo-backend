@@ -348,7 +348,7 @@ export default function CreativeStudio() {
     >
       <header className="creative-studio__header">
         <Link to="/" className="creative-studio__back">
-          ← Playroom
+          ← Back to Playroom
         </Link>
         <h1 className="creative-studio__heading">Creative Studio</h1>
         <p className="creative-studio__tagline">

@@ -22,16 +22,15 @@ function truncate(str: string, maxLen: number): string {
   return str.slice(0, maxLen - 1) + '…';
 }
 
-/** Build a full HTML document for printing bingo cards. 2 cards per page, stacked vertically. Playroom Bingo branding. */
+/** Build a full HTML document for printing bingo cards. 2 cards per page, no header—cards use full page. */
 export function buildBingoCardsPrintDocument(
   cards: BingoCard[],
   options: { title?: string; cardsPerPage?: number } = {}
 ): string {
-  const { title: gameTitle, cardsPerPage = 2 } = options;
-  const brandTitle = 'Playroom Bingo';
+  const { cardsPerPage = 2 } = options;
   const maxTitleLen = 28;
 
-  const renderCard = (card: BingoCard, cardIndex: number): string => {
+  const renderCard = (card: BingoCard, _cardIndex: number): string => {
     const rows: string[] = [];
     for (let row = 0; row < 5; row++) {
       const cells: string[] = [];
@@ -45,11 +44,6 @@ export function buildBingoCardsPrintDocument(
     }
     return `
       <div class="card">
-        <div class="card-header">
-          <span class="card-brand">${escapeHtml(brandTitle)}</span>
-          ${gameTitle ? `<span class="card-game">${escapeHtml(gameTitle)}</span>` : ''}
-        </div>
-        <div class="card-label">Card ${cardIndex + 1}</div>
         <table class="card-grid"><tbody>${rows.join('')}</tbody></table>
       </div>`;
   };
@@ -59,17 +53,9 @@ export function buildBingoCardsPrintDocument(
     const pageCards = cards.slice(p, p + cardsPerPage);
     pages.push(`
       <div class="page">
-        <div class="page-header">
-          <h1 class="page-title">${escapeHtml(brandTitle)}</h1>
-          ${gameTitle ? `<p class="page-subtitle">${escapeHtml(gameTitle)}</p>` : ''}
-          <p class="page-meta">${cards.length} unique cards · 5 in a row wins</p>
-        </div>
         <div class="cards-stack">
           ${pageCards.map((card, i) => renderCard(card, p + i)).join('')}
         </div>
-        <footer class="page-footer">
-          <a href="https://theplayroom.netlify.app">theplayroom.netlify.app</a>
-        </footer>
       </div>`);
   }
 
@@ -77,7 +63,7 @@ export function buildBingoCardsPrintDocument(
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>${escapeHtml(brandTitle)}${gameTitle ? ` — ${escapeHtml(gameTitle)}` : ''} — Printable Bingo Cards</title>
+  <title>Printable Bingo Cards</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; font-size: 12px; color: #111; }
@@ -86,55 +72,41 @@ export function buildBingoCardsPrintDocument(
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: 12px 16px;
+      padding: 0.2in 0.3in;
       page-break-after: always;
       min-height: 100vh;
+      gap: 0.15in;
     }
     .page:last-child { page-break-after: auto; }
-    .page-header {
-      text-align: center;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #333;
-      width: 100%;
-      max-width: 7in;
-    }
-    .page-title { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 0.02em; }
-    .page-subtitle { margin: 4px 0 0 0; font-size: 14px; color: #444; }
-    .page-meta { margin: 4px 0 0 0; font-size: 11px; color: #666; }
     .cards-stack {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      justify-content: space-between;
       flex: 1;
+      gap: 0.2in;
+      width: 100%;
+      max-width: 8in;
     }
     .card {
       border: 2px solid #333;
-      padding: 10px;
-      width: 4.2in;
+      padding: 0.12in;
+      flex: 1 1 0;
+      min-height: 4.2in;
       max-width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .card-header { text-align: center; margin-bottom: 4px; }
-    .card-brand { font-weight: 700; font-size: 14px; display: block; }
-    .card-game { font-size: 12px; color: #444; }
-    .card-label { font-weight: 600; text-align: center; margin-bottom: 6px; font-size: 11px; }
-    .card-grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .cell { border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 10px; line-height: 1.2; }
+    .card-grid { width: 100%; height: 100%; max-width: 5in; border-collapse: collapse; table-layout: fixed; }
+    .cell { border: 1px solid #333; padding: 0.14in 0.08in; text-align: center; font-size: 12px; line-height: 1.3; }
     .cell:empty::after { content: " "; }
-    .page-footer {
-      margin-top: auto;
-      padding-top: 12px;
-      text-align: center;
-      font-size: 11px;
-      color: #666;
-    }
-    .page-footer a { color: #333; }
     @media print {
       body { padding: 0; }
-      .page { page-break-after: always; padding: 10px; min-height: auto; }
+      .page { page-break-after: always; padding: 0.2in 0.3in; min-height: 100vh; }
       .page:last-child { page-break-after: auto; }
-      .card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .card { -webkit-print-color-adjust: exact; print-color-adjust: exact; break-inside: avoid; }
+      .cards-stack { gap: 0.15in; }
     }
   </style>
 </head>

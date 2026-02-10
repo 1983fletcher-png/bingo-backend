@@ -186,7 +186,7 @@ export default function PollCreate() {
   return (
     <div className="join-page" style={{ maxWidth: 720, margin: '0 auto', padding: '24px 16px' }}>
       <p style={{ marginBottom: 24 }}>
-        <Link to="/" className="join-page__back">← Back to home</Link>
+        <Link to="/" className="join-page__back">← Back to Playroom</Link>
       </p>
       <h1 className="join-page__title" style={{ marginBottom: 8, fontSize: 'clamp(24px, 3vw, 32px)' }}>Create a poll</h1>
       <p className="join-page__intro" style={{ marginBottom: 32, fontSize: 'clamp(14px, 1.5vw, 16px)' }}>
