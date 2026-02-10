@@ -184,8 +184,8 @@ export function buildCalendarPrintPack(
   );
   const observancesPage =
     `<div class="print-pack-page observances-index-page">
-    <h2 class="observances-index-title">Observances — ${escapeHtml(monthName)} ${year}</h2>
-    <p class="observances-index-sub">Use this list to plan activities. Write notes in the right column.</p>
+    <h2 class="observances-index-title">This month's observances — ${escapeHtml(monthName)} ${year}</h2>
+    <p class="observances-index-sub">Use for planning and post-event notes. Discuss in meetings and brainstorm ideas. Write notes in the right column.</p>
     <table class="obs-table">
       <thead><tr><th>Date</th><th>Observances</th><th>Notes</th></tr></thead>
       <tbody>${observancesRows.join('')}</tbody>
@@ -207,7 +207,8 @@ export function buildCalendarPrintPack(
 
   const planningPage = `
   <div class="print-pack-page planning-table-page">
-    <h2 class="planning-table-title">Planning & notes — ${escapeHtml(monthName)} ${year}</h2>
+    <h2 class="planning-table-title">Planning & post-event notes — ${escapeHtml(monthName)} ${year}</h2>
+    <p class="planning-table-sub">Selected observances and space for meeting notes and follow-up.</p>
     <table class="planning-table">
       <thead><tr><th>Date</th><th>Selected observances</th><th>Notes</th></tr></thead>
       <tbody>${planningRows}</tbody>
@@ -237,18 +238,18 @@ export function buildCalendarPrintPack(
     .print-pack-page { page-break-after: always; }
     .print-pack-page:last-child { page-break-after: auto; }
 
-    /* Page 1: Full-page calendar (landscape). Grid fills the sheet. */
-    .cal-page { display: flex; flex-direction: column; padding: 0.2in 0.3in; box-sizing: border-box; min-height: 100vh; }
-    .cal-page-title { margin: 0 0 0.12in; font-size: 0.95rem; font-weight: 700; color: ${accentColor}; flex-shrink: 0; }
-    .cal-header-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px; text-align: center; font-weight: 600; font-size: 0.7rem; color: ${accentColor}; flex-shrink: 0; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 3px; flex: 1; min-height: 0; }
-    .cal-cell { border: 1px solid ${borderColor}; padding: 3px; min-height: 0; background: ${calCellBg}; display: flex; flex-direction: column; font-size: 0.6rem; }
+    /* Page 1: Full-page calendar (landscape). Maximize grid on first sheet. */
+    .cal-page { display: flex; flex-direction: column; padding: 0.15in 0.2in; box-sizing: border-box; min-height: 100vh; }
+    .cal-page-title { margin: 0 0 0.08in; font-size: 0.8rem; font-weight: 700; color: ${accentColor}; flex-shrink: 0; }
+    .cal-header-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 2px; text-align: center; font-weight: 600; font-size: 0.65rem; color: ${accentColor}; flex-shrink: 0; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 2px; flex: 1; min-height: 0; }
+    .cal-cell { border: 1px solid ${borderColor}; padding: 2px; min-height: 0; background: ${calCellBg}; display: flex; flex-direction: column; font-size: 0.55rem; }
     .cal-cell--empty { border-color: #ccc; background: #f5f5f5; }
-    .cal-day-num { font-weight: 700; font-size: 0.85rem; margin-bottom: 1px; color: ${accentColor}; flex-shrink: 0; }
-    .cal-primary { font-size: 0.58rem; color: #333; line-height: 1.2; flex: 1; overflow: hidden; min-height: 0; }
-    .cal-blank { flex: 1; min-height: 2px; }
+    .cal-day-num { font-weight: 700; font-size: 0.75rem; margin-bottom: 0; color: ${accentColor}; flex-shrink: 0; }
+    .cal-primary { font-size: 0.52rem; color: #333; line-height: 1.15; flex: 1; overflow: hidden; min-height: 0; }
+    .cal-blank { flex: 1; min-height: 1px; }
 
-    /* Page 2: Observances (portrait) — one page, all days. */
+    /* Page 2: This month's observances — for planning & post-event notes. */
     .observances-index-page { padding: 0.4in; }
     .observances-index-title { font-size: 1rem; margin: 0 0 4px; color: ${accentColor}; }
     .observances-index-sub { font-size: 0.8rem; color: #555; margin: 0 0 10px; }
@@ -259,9 +260,10 @@ export function buildCalendarPrintPack(
     .obs-table-observances { min-width: 2.2in; }
     .obs-table-notes { min-width: 1.8in; min-height: 1em; }
 
-    /* Page 3: Planning & notes (portrait). */
+    /* Page 3: Planning & post-event notes (portrait). */
     .planning-table-page { padding: 0.4in; }
-    .planning-table-title { font-size: 1rem; margin: 0 0 8px; color: ${accentColor}; }
+    .planning-table-title { font-size: 1rem; margin: 0 0 4px; color: ${accentColor}; }
+    .planning-table-sub { font-size: 0.8rem; color: #555; margin: 0 0 8px; }
     .planning-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     .planning-table th, .planning-table td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; vertical-align: top; }
     .planning-table th { background: #f0f0f0; font-weight: 600; }
@@ -275,7 +277,7 @@ export function buildCalendarPrintPack(
       @page { size: portrait; }
       @page :first { size: landscape; }
       body { padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .cal-page { width: 11in; height: 8.5in; margin: 0; padding: 0.2in 0.3in; min-height: 8.5in; }
+      .cal-page { width: 11in; height: 8.5in; margin: 0; padding: 0.12in 0.18in; min-height: 8.5in; height: 8.5in; }
       .cal-grid { flex: 1; min-height: 0; }
       .cal-cell { min-height: 0; }
     }

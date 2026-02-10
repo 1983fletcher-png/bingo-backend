@@ -168,7 +168,6 @@ export default function ActivityCalendar() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
-  const [showOnlySelected, setShowOnlySelected] = useState(false);
   const [selectionsByDate, setSelectionsByDate] = useState<Record<number, string[]>>({});
   const [notesByDate, setNotesByDate] = useState<Record<number, string>>({});
   const persistTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -274,13 +273,7 @@ export default function ActivityCalendar() {
   const allDaysWithObservances = Array.from(
     new Set(observances.map((o) => o.day))
   ).sort((a, b) => a - b);
-  const daysToShowInIndex = showOnlySelected
-    ? allDaysWithObservances.filter((d) => {
-        const selected = selectionsByDate[d] ?? [];
-        const note = (notesByDate[d] ?? '').trim();
-        return selected.length > 0 || !!note;
-      })
-    : allDaysWithObservances;
+  const daysToShowInIndex = allDaysWithObservances;
 
   const handlePrint = useCallback(() => {
     const gridDays: CalendarPrintDay[] = Array.from({ length: daysInMonth }, (_, i) => {
@@ -358,6 +351,15 @@ export default function ActivityCalendar() {
       }}
     >
       <style>{`
+        .activity-calendar-grid-wrap { width: 100%; min-width: 0; overflow: hidden; }
+        .activity-calendar-landscape-tip { display: none; }
+        [data-theme="light"] .activity-calendar-month-btn { color: #1e293b !important; }
+        @media (max-width: 640px) {
+          .activity-calendar-landscape-tip { display: block; }
+          .activity-calendar-grid-wrap { gap: 4px; }
+          .activity-calendar-grid-wrap .activity-calendar-cell { min-height: 64px; padding: 4px; font-size: 0.75rem; }
+          .activity-calendar-grid-wrap .activity-calendar-cell-day { font-size: 0.8rem; }
+        }
         @media print {
           .no-print { display: none !important; }
           .activity-calendar-page { background: #fff; border: none; padding: 16px; max-width: 100%; }
@@ -382,35 +384,27 @@ export default function ActivityCalendar() {
         </p>
       </header>
 
-      <div className="no-print" style={{ display: 'flex', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
-        <div style={{ flex: 1, minWidth: 120, display: 'flex', justifyContent: 'flex-end' }}>
-          <button type="button" onClick={handlePrint} style={{ padding: '10px 20px', background: theme.accent, border: 'none', borderRadius: 10, color: '#fff', cursor: 'pointer', fontWeight: 600 }}>
-            Print calendar
-          </button>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center', flex: '0 0 auto' }}>
-          <button type="button" onClick={prevMonth} style={{ padding: '10px 16px', background: theme.bg === NEUTRAL_THEME.bg ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)', border: `1px solid ${theme.accent}50`, borderRadius: 10, color: theme.accent === NEUTRAL_THEME.accent ? '#1e293b' : '#e2e8f0', cursor: 'pointer', fontSize: '1rem' }}>
-            ←
-          </button>
-          <span style={{ fontSize: '1.25rem', fontWeight: 600, minWidth: 200, textAlign: 'center', color: theme.accent }}>
-            {MONTHS[month - 1]} {year}
-          </span>
-          <button type="button" onClick={nextMonth} style={{ padding: '10px 16px', background: theme.bg === NEUTRAL_THEME.bg ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)', border: `1px solid ${theme.accent}50`, borderRadius: 10, color: theme.accent === NEUTRAL_THEME.accent ? '#1e293b' : '#e2e8f0', cursor: 'pointer', fontSize: '1rem' }}>
-            →
-          </button>
-        </div>
-        <div style={{ flex: 1, minWidth: 120 }} />
+      <div className="no-print" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+        <button type="button" className="activity-calendar-month-btn" onClick={prevMonth} style={{ padding: '10px 16px', background: theme.bg === NEUTRAL_THEME.bg ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)', border: `1px solid ${theme.accent}50`, borderRadius: 10, color: theme.accent === NEUTRAL_THEME.accent ? '#1e293b' : '#e2e8f0', cursor: 'pointer', fontSize: '1rem' }}>
+          ←
+        </button>
+        <span style={{ fontSize: '1.25rem', fontWeight: 600, minWidth: 200, textAlign: 'center', color: theme.accent }}>
+          {MONTHS[month - 1]} {year}
+        </span>
+        <button type="button" className="activity-calendar-month-btn" onClick={nextMonth} style={{ padding: '10px 16px', background: theme.bg === NEUTRAL_THEME.bg ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)', border: `1px solid ${theme.accent}50`, borderRadius: 10, color: theme.accent === NEUTRAL_THEME.accent ? '#1e293b' : '#e2e8f0', cursor: 'pointer', fontSize: '1rem' }}>
+          →
+        </button>
       </div>
 
-      <div className="no-print" style={{ marginBottom: 16 }}>
-        <span style={{ fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', marginRight: 8 }}>Design:</span>
+      <div className="no-print" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+        <span style={{ fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', marginRight: 4 }}>Design:</span>
         {options.map((opt, i) => (
           <button
             key={opt.label}
             type="button"
             onClick={() => setThemeIndex(i)}
             style={{
-              marginRight: 8,
+              marginRight: 0,
               marginBottom: 4,
               padding: '6px 12px',
               borderRadius: 8,
@@ -424,19 +418,26 @@ export default function ActivityCalendar() {
             {opt.icon} {opt.label}
           </button>
         ))}
+        <span style={{ width: 16, display: 'inline-block' }} />
+        <button type="button" onClick={handlePrint} style={{ padding: '10px 20px', background: theme.accent, border: 'none', borderRadius: 10, color: '#fff', cursor: 'pointer', fontWeight: 600 }}>
+          Print calendar
+        </button>
       </div>
 
       {error && <p style={{ color: '#dc2626', marginBottom: 16 }}>{error}</p>}
       {loading && <p style={{ color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', marginBottom: 16 }}>Loading…</p>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8, marginBottom: 24 }}>
+      <p className="no-print activity-calendar-landscape-tip" style={{ margin: '0 0 8px', fontSize: '0.8rem', color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', textAlign: 'center' }} aria-hidden>
+        Tip: Turn your phone sideways for a full calendar view.
+      </p>
+      <div className="activity-calendar-grid-wrap" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8, marginBottom: 24 }}>
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-          <div key={d} style={{ ...cellStyle, textAlign: 'center', fontWeight: 600, color: theme.accent, minHeight: 40, cursor: 'default' }}>
+          <div key={d} className="activity-calendar-cell" style={{ ...cellStyle, textAlign: 'center', fontWeight: 600, color: theme.accent, minHeight: 40, cursor: 'default' }}>
             {d}
           </div>
         ))}
         {Array.from({ length: startWeekday }, (_, i) => (
-          <div key={`pad-${i}`} style={{ ...cellStyle, opacity: 0.3, cursor: 'default' }} />
+          <div key={`pad-${i}`} className="activity-calendar-cell" style={{ ...cellStyle, opacity: 0.3, cursor: 'default' }} />
         ))}
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = i + 1;
@@ -447,6 +448,7 @@ export default function ActivityCalendar() {
           return (
             <div
               key={day}
+              className="activity-calendar-cell"
               role="button"
               tabIndex={0}
               onClick={() => handleDayClick(day)}
@@ -457,7 +459,7 @@ export default function ActivityCalendar() {
                 outlineOffset: 2,
               }}
             >
-              <div style={dayNumStyle}>{day}</div>
+              <div className="activity-calendar-cell-day" style={dayNumStyle}>{day}</div>
               {primary && <div style={eventStyle}>{primary.name}</div>}
               {moreCount > 0 && <div style={moreStyle}>+{moreCount} more</div>}
             </div>
@@ -599,64 +601,22 @@ export default function ActivityCalendar() {
       })()}
 
       <section style={{ padding: 20, background: theme.bg === NEUTRAL_THEME.bg ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)', borderRadius: 12, border: `1px solid ${theme.accent}30` }}>
-        <div className="no-print" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-          <h2 style={{ margin: 0, fontSize: '1rem', color: theme.accent }}>This month’s observances</h2>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8' }}>
-            <input
-              type="checkbox"
-              checked={showOnlySelected}
-              onChange={(e) => setShowOnlySelected(e.target.checked)}
-            />
-            Show only selected
-          </label>
-        </div>
+        <h2 style={{ margin: '0 0 12px', fontSize: '1rem', color: theme.accent }}>This month’s observances</h2>
         {observances.length === 0 && !loading && (
           <p style={{ color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', margin: 0 }}>None this month.</p>
         )}
         <div style={{ margin: 0 }}>
           {daysToShowInIndex.map((d) => {
             const obs = observancesByDay[d] ?? [];
-            const selected = selectionsByDate[d] ?? [];
-            const dayNote = notesByDate[d] ?? '';
             if (obs.length === 0) return null;
             return (
-              <div key={d} style={{ marginBottom: 16 }}>
-                <div style={{ fontWeight: 600, marginBottom: 6, color: theme.accent, fontSize: '0.95rem' }}>{MONTHS[month - 1]} {d}</div>
-                <ul style={{ margin: 0, paddingLeft: 20, color: theme.accent === NEUTRAL_THEME.accent ? '#334155' : '#cbd5e0', lineHeight: 1.8 }}>
-                  {obs.map((o) => {
-                    const isSelected = selected.includes(o.name);
-                    const catLabel = (o.categories?.length ?? 0) > 0 ? o.categories.join(', ') : undefined;
-                    return (
-                      <li key={o.id ?? o.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleSelection(d, o.name)}
-                        />
-                        <span>{o.name}{catLabel && <span style={{ color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', fontSize: '0.85em' }}> ({catLabel})</span>}</span>
-                      </li>
-                    );
-                  })}
+              <div key={d} style={{ marginBottom: 14 }}>
+                <div style={{ fontWeight: 600, marginBottom: 4, color: theme.accent, fontSize: '0.9rem' }}>{MONTHS[month - 1]} {d}</div>
+                <ul style={{ margin: 0, paddingLeft: 18, color: theme.accent === NEUTRAL_THEME.accent ? '#334155' : '#cbd5e0', lineHeight: 1.6, fontSize: '0.875rem' }}>
+                  {obs.map((o) => (
+                    <li key={o.id ?? o.name}>{o.short_name ?? o.name}</li>
+                  ))}
                 </ul>
-                <div style={{ marginTop: 8 }}>
-                  <label style={{ display: 'block', marginBottom: 4, fontSize: '0.8rem', color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8' }}>Notes (included in print)</label>
-                  <input
-                    type="text"
-                    value={dayNote}
-                    onChange={(e) => setNoteForDay(d, e.target.value)}
-                    placeholder="Ideas, plans…"
-                    style={{
-                      width: '100%',
-                      maxWidth: 400,
-                      padding: '8px 10px',
-                      borderRadius: 6,
-                      border: `1px solid ${theme.accent}40`,
-                      background: theme.bg === NEUTRAL_THEME.bg ? '#fff' : 'rgba(0,0,0,0.15)',
-                      color: theme.accent === NEUTRAL_THEME.accent ? '#1e293b' : '#e2e8f0',
-                      fontSize: '0.9rem',
-                    }}
-                  />
-                </div>
               </div>
             );
           })}

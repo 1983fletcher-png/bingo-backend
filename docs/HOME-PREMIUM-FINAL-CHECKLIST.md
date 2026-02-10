@@ -2,6 +2,8 @@
 
 Use this checklist before pushing. Cross off each item only after you’ve verified it (or implemented it). When every box is checked, you can push with confidence.
 
+**Note:** The live home page has since been simplified (welcome + tagline + “designed for” in the toolbar; no card icons; Design tabs then Print; no Pick→Share→Run section; no Game types / Who pill grid). This checklist remains for script-parity verification if you restore or compare against the original script.
+
 ---
 
 ## 1. From the original script — implemented or not
@@ -10,8 +12,8 @@ Use this checklist before pushing. Cross off each item only after you’ve verif
 |---|------|--------|------|
 | 1.1 | **Atmospheric background** (gradient + orb + dot grid) | ☐ Done | Fixed layer behind content in `home.css`. |
 | 1.2 | **Header: logo block + “The Playroom”** | ☐ Done | `.landing__header-brand`, `.landing__header-logo`, `.landing__header-name`. |
-| 1.3 | **Header nav: “Docs” link** | ☐ Not implemented | Script had `href="/docs"`. No `/docs` route in App — add link (or placeholder) or mark “omit by design”. |
-| 1.4 | **Header nav: “Sign in” link** | ☐ Not implemented | Script had `href="/signin"`. No `/signin` route in App — add link (or placeholder) or mark “omit by design”. |
+| 1.3 | **Header nav: “Docs” link** | ☐ Omitted by design | No `/docs` route; omitted until route exists. See §5. |
+| 1.4 | **Header nav: “Sign in” link** | ☐ Omitted by design | No `/signin` route; omitted until route exists. See §5. |
 | 1.5 | **Hero: “The Playroom” title** | ☐ Done | `landing__hero-title`. |
 | 1.6 | **Hero: main tagline** (“Simple, shared experiences…”) | ☐ Done | `landing__hero-tagline`. |
 | 1.7 | **Hero: sub copy** (“Plan faster with curated…”) | ☐ Done | `landing__hero-sub`. |
@@ -67,8 +69,7 @@ Use this checklist before pushing. Cross off each item only after you’ve verif
 
 ## 5. Pre-push summary
 
-- **Must resolve before push:** Decide and implement or document:
-  - **1.3 & 1.4**: Either add “Docs” and “Sign in” (or placeholders) in the header, or add a one-line note in this doc: “Header nav: Docs and Sign in omitted by design until routes exist.”
+- **1.3 & 1.4 (Docs / Sign in):** Header nav: Docs and Sign in **omitted by design** until those routes exist. No placeholder links in the current welcome toolbar.
 - **Everything else:** Verify each “Done” / “Verified” item in the table by actually loading the home page and toggling theme and viewport.
 
-When every row you care about is checked (and 1.3/1.4 are either done or explicitly omitted), you’re good to commit and push.
+When every row you care about is checked, you’re good to commit and push.

@@ -69,6 +69,10 @@ We use these to **discover** and **verify** observances. Listing here does not i
 
 All **fixed-date** observances (month + day) in `FIXED` apply to every year, including 2026 and 2027. Moving observances (e.g. Thanksgiving, Mother's Day, Easter) are computed per year via `NTH_WEEKDAY` and `EASTER_APPROX`. The calendar is therefore full and consistent for 2026, 2027, and beyond.
 
+## Notable people (celebrity births/deaths, musicians)
+
+To include **notable celebrity births or deaths, musicians, and similar “people” observances**: add them as normal observances in the backend (e.g. `lib/holidaysAndObservancesUS.js` or the observances API) with the correct `month` and `day`. The Activity Calendar frontend will display them automatically in the grid and in “This month’s observances.” Use an appropriate category (e.g. `music` for musicians, or extend categories with something like `people` / `culture` if desired). Verify birth/death dates against a reliable source (e.g. Wikipedia, official bios) before adding.
+
 ## Related docs
 
 - `lib/holidaysAndObservancesUS.js` — source of truth for observances.  

@@ -402,3 +402,193 @@
   cursor: not-allowed;
   opacity: 0.6;
 }
+
+/* ---- Creative Studio upgrades (menu layout + editor + trivia) ---- */
+.creative-studio__header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.creative-studio__header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.creative-studio__pill {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8125rem;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.creative-studio__pill--on {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.creative-studio__btn {
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.creative-studio__section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.creative-studio__section-title-input {
+  width: 100%;
+  font-size: 1.125rem;
+  font-weight: 700;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+.creative-studio__small-btn {
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.creative-studio__small-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.creative-studio__menu-item {
+  padding: 0.55rem 0;
+}
+.creative-studio__menu-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.creative-studio__menu-name {
+  font-weight: 800;
+}
+.creative-studio__menu-spacer {
+  flex: 1;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+.creative-studio__menu-price {
+  font-weight: 800;
+  white-space: nowrap;
+}
+.creative-studio__menu-desc {
+  margin-top: 0.2rem;
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+  line-height: 1.35;
+  max-width: 60ch;
+}
+.creative-studio__menu-name-input,
+.creative-studio__menu-price-input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  padding: 0.35rem 0.5rem;
+}
+.creative-studio__menu-name-input {
+  flex: 1;
+  min-width: 220px;
+  font-weight: 700;
+}
+.creative-studio__menu-price-input {
+  width: 90px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.creative-studio__menu-desc-input {
+  width: 100%;
+  margin-top: 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  padding: 0.5rem 0.6rem;
+  resize: vertical;
+}
+.creative-studio__x-btn {
+  margin-left: 0.35rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.creative-studio__x-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.creative-studio__meta-line {
+  color: var(--text-secondary);
+  margin: 0.2rem 0;
+}
+.creative-studio__training-item {
+  padding: 0.55rem 0;
+}
+.creative-studio__training-name {
+  font-weight: 800;
+}
+.creative-studio__training-desc {
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+}
+
+.creative-studio__test-item {
+  padding: 0.6rem 0;
+}
+.creative-studio__test-name {
+  font-weight: 800;
+}
+.creative-studio__blank-lines {
+  margin-top: 0.35rem;
+}
+.creative-studio__blank-line {
+  height: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  margin: 0.35rem 0;
+}
+
+.creative-studio__hint {
+  color: var(--text-secondary);
+  margin: 0.25rem 0 1rem;
+}
+.creative-studio__trivia-q {
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+.creative-studio__trivia-opts {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.creative-studio__trivia-num {
+  opacity: 0.75;
+  margin-right: 0.35rem;
+}
+.creative-studio__trivia-tag {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+  opacity: 0.9;
+}

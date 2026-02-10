@@ -130,27 +130,21 @@ export default function Home() {
         <div className="landing__atmosphere-dots" />
       </div>
 
-      <header className="landing__header landing__header--toolbar">
+      <header className="landing__header landing__header--toolbar" aria-label="Welcome">
         <div className="landing__header-inner">
-          <div className="landing__header-brand">
-            <div className="landing__header-logo" />
-            <span className="landing__header-name">The Playroom</span>
-          </div>
-          <p className="landing__header-tagline" aria-hidden>
+          <h1 className="landing__header-welcome">
+            Welcome to <span className="landing__header-brand-name">the Playroom</span>
+          </h1>
+          <p className="landing__header-tagline">
+            Simple, shared experiences for games, learning, and group connection.
+          </p>
+          <p className="landing__header-designed">
             Designed for venues, activity directors, teachers, caregivers, libraries, and teams.
           </p>
         </div>
       </header>
 
       <main className="landing__main">
-        {/* Hero */}
-        <section className="landing__hero" aria-label="Welcome">
-          <h1 className="landing__hero-title">Welcome to the Playroom</h1>
-          <p className="landing__hero-tagline">
-            Simple, shared experiences for games, learning, and group connection.
-          </p>
-        </section>
-
         {/* Hero cards */}
         <section className="landing__hero-cards-wrap">
           <div className="landing__hero-cards landing__hero-cards--grid">
