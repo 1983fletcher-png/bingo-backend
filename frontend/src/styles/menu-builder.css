@@ -189,6 +189,38 @@
   margin-top: 0.5rem;
 }
 
+.menu-builder__hint {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.menu-builder__save-load,
+.menu-builder__load-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+
+.menu-builder__save-load .menu-builder__input,
+.menu-builder__load-row .menu-builder__select {
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-builder__save-load .menu-builder__btn,
+.menu-builder__load-row .menu-builder__btn {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.menu-builder__save-msg {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
 .menu-builder__export {
   padding-top: 1rem;
   border-top: 1px solid var(--border);

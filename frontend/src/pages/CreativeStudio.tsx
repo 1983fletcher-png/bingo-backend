@@ -131,7 +131,7 @@ function stripPriceFromTail(text: string): { desc: string; price?: string } {
 }
 
 /**
- * Item parsing rule:
+ * Item parsing rule (dash format):
  * "Name - description - $price"
  * splits on dash-like separators; first chunk becomes name; remainder becomes description(+price)
  */
@@ -150,6 +150,38 @@ function parseItemLine(line: string): { name: string; description: string; price
   return { name, description: cleanWhitespace(desc), price };
 }
 
+/** Normalize price from pipe segment: "$12.00", "12", "12.5", "TBD" => display string or "TBD". */
+function normalizePipePrice(segment: string): string | undefined {
+  const s = segment.trim();
+  if (!s || /^tbd$/i.test(s)) return 'TBD';
+  const m = s.match(/^([$€]?\s*\d+(?:\.\d{1,2})?)\s*$/);
+  if (!m) return s || undefined;
+  const raw = m[1].replace(/\s/g, '');
+  const currency = raw.startsWith('€') ? '€' : '$';
+  const num = raw.replace(/[^0-9.]/g, '');
+  const normalized = /\.\d{1,2}$/.test(num) ? num : `${num}.00`;
+  return `${currency}${normalized}`;
+}
+
+/**
+ * Item parsing (pipe format): "Item | Description | Price"
+ * Line must contain at least 2 pipes. Price may be "$12", "12.5", "TBD"; we keep TBD and do not drop the row.
+ */
+function parseItemLinePipe(line: string): { name: string; description: string; price?: string } | null {
+  const t = line.trim();
+  if (!t) return null;
+  const pipeCount = (t.match(/\|/g) || []).length;
+  if (pipeCount < 2) return null;
+
+  const parts = t.split(/\|/).map((p) => p.trim());
+  const name = cleanWhitespace(parts[0] ?? '');
+  const description = cleanWhitespace(parts[1] ?? '');
+  const priceSeg = parts[2] !== undefined ? normalizePipePrice(parts[2]) : undefined;
+  if (!name) return null;
+
+  return { name, description, price: priceSeg };
+}
+
 function parseToDoc(rawText: string): StudioDoc {
   const lines = rawText
     .split(/\r?\n/)
@@ -159,6 +191,8 @@ function parseToDoc(rawText: string): StudioDoc {
   const blocks: Block[] = [];
   let titleSet = false;
   let currentSection: Extract<Block, { type: 'section' }> | null = null;
+
+  const hasPipeFormat = lines.some((l) => (l.match(/\|/g) || []).length >= 2);
 
   const ensureSection = (title: string, kind: SectionKind) => {
     const sec: Extract<Block, { type: 'section' }> = {
@@ -176,12 +210,48 @@ function parseToDoc(rawText: string): StudioDoc {
   };
 
   for (const line of lines) {
+    const pipeCount = (line.match(/\|/g) || []).length;
+
     if (!titleSet) {
-      blocks.push({ type: 'title', text: line });
-      titleSet = true;
+      if (hasPipeFormat && pipeCount >= 2) {
+        blocks.push({ type: 'title', text: 'Menu' });
+        titleSet = true;
+        const pipeItem = parseItemLinePipe(line);
+        if (pipeItem) {
+          const sec = ensureSection('Menu items', 'items');
+          sec.items.push({ id: uid('item'), name: pipeItem.name, description: pipeItem.description, price: pipeItem.price, tags: [] });
+        }
+      } else if (hasPipeFormat && line.trim() && pipeCount === 0) {
+        blocks.push({ type: 'title', text: 'Menu' });
+        titleSet = true;
+        const title = normalizeSectionTitle(line);
+        const kind: SectionKind = looksLikeMetaSectionTitle(title) ? 'meta' : 'items';
+        ensureSection(title, kind);
+      } else {
+        blocks.push({ type: 'title', text: line });
+        titleSet = true;
+      }
       continue;
     }
 
+    // Pipe format: "Item | Description | Price" — deterministic; append to current section (or default "Menu items")
+    if (pipeCount >= 2) {
+      const pipeItem = parseItemLinePipe(line);
+      if (pipeItem) {
+        let sec = currentSection as Extract<Block, { type: 'section' }> | null;
+        if (!sec || sec.kind !== 'items') sec = ensureSection('Menu items', 'items');
+        sec.items.push({
+          id: uid('item'),
+          name: pipeItem.name,
+          description: pipeItem.description,
+          price: pipeItem.price,
+          tags: [],
+        });
+      }
+      continue;
+    }
+
+    // Section header: non-empty, no pipe (and existing heuristics for backward compat)
     if (isSectionHeader(line)) {
       const title = normalizeSectionTitle(line);
       const kind: SectionKind = looksLikeMetaSectionTitle(title) ? 'meta' : 'items';
@@ -216,6 +286,25 @@ function parseToDoc(rawText: string): StudioDoc {
   }
 
   return { kind: 'menu_doc', blocks };
+}
+
+/** Parser test harness: run with sample pipe-format input. Expected: 2 sections, first has 2 items, second has 2 items. */
+export function runCreativeStudioParserTest(): { ok: boolean; sections: number; sectionItems: number[] } {
+  const input = `Swift Creek Starters
+Onion Rings | Crispy battered onion rings | TBD
+Mozzarella Sticks | Fried mozzarella sticks | TBD
+
+Serenity Cove Salads
+Sparrow Springs Salad | Arugula, spinach, apples | 15.50
+Emerald Wedge Salad | Iceberg wedge | TBD`;
+  const doc = parseToDoc(input);
+  const sections = doc.blocks.filter((b): b is Extract<Block, { type: 'section' }> => b.type === 'section' && b.kind === 'items');
+  const sectionItems = sections.map((s) => s.items.length);
+  const ok = sections.length === 2 && sectionItems[0] === 2 && sectionItems[1] === 2;
+  if (typeof console !== 'undefined' && console.log) {
+    console.log('[Creative Studio parser test]', ok ? 'PASS' : 'FAIL', { sections: sections.length, sectionItems });
+  }
+  return { ok, sections: sections.length, sectionItems };
 }
 
 function docToCanonicalText(doc: StudioDoc): string {
@@ -336,6 +425,11 @@ export default function CreativeStudio() {
   }, [rawInput]);
 
   const activeDoc = isEditing ? editDoc : parsedDoc;
+
+  useEffect(() => {
+    if (import.meta.env.DEV) runCreativeStudioParserTest();
+  }, []);
+
   const triviaQs = useMemo(() => buildTrivia(activeDoc, 18), [activeDoc]);
 
   const commitEditsToRaw = () => {
@@ -566,7 +660,7 @@ export default function CreativeStudio() {
                             {isEditing ? (
                               <input className="creative-studio__menu-price-input" value={it.price ?? ''} onChange={(e) => updateItem(b.id, it.id, { price: e.target.value })} placeholder="$" />
                             ) : (
-                              it.price ? <div className="creative-studio__menu-price">{it.price}</div> : <div />
+                              (it.price != null && it.price !== '') ? <div className="creative-studio__menu-price">{it.price}</div> : <div />
                             )}
 
                             {isEditing && (

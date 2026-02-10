@@ -16,6 +16,11 @@ import {
   getDefaultSections,
 } from '../types/pageBuilder';
 import { fetchJson, normalizeBackendUrl } from '../lib/safeFetch';
+import {
+  getSavedMenuDesigns,
+  saveMenuDesign,
+  type SavedMenuDesign,
+} from '../lib/savedMenuDesigns';
 import '../styles/create.css';
 import '../styles/menu-builder.css';
 
@@ -87,6 +92,10 @@ export function CreateMenuBuilder() {
   const previewRef = useRef<HTMLDivElement>(null);
   const [shareSlug, setShareSlug] = useState<string | null>(null);
   const [shareError, setShareError] = useState<string | null>(null);
+  const [savedDesigns, setSavedDesigns] = useState<SavedMenuDesign[]>(() => getSavedMenuDesigns());
+  const [saveDesignName, setSaveDesignName] = useState('');
+  const [loadDesignId, setLoadDesignId] = useState('');
+  const [saveDesignMessage, setSaveDesignMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const apiBase = normalizeBackendUrl(
@@ -248,6 +257,25 @@ export function CreateMenuBuilder() {
       setShareSlug(`${origin}/view/${slug}`);
     }
   }, [state]);
+
+  const handleSaveDesign = useCallback(() => {
+    setSaveDesignMessage(null);
+    const name = saveDesignName.trim() || 'Untitled menu';
+    saveMenuDesign(name, state);
+    setSavedDesigns(getSavedMenuDesigns());
+    setSaveDesignName('');
+    setSaveDesignMessage(`Saved “${name}”. You can load it anytime from “Load a design”.`);
+  }, [state, saveDesignName]);
+
+  const handleLoadDesign = useCallback(() => {
+    if (!loadDesignId) return;
+    const design = savedDesigns.find((d) => d.id === loadDesignId);
+    if (!design) return;
+    setState(design.document);
+    setShareSlug(null);
+    setShareError(null);
+    setLoadDesignId('');
+  }, [loadDesignId, savedDesigns]);
 
   return (
     <div className="menu-builder">
@@ -539,6 +567,58 @@ export function CreateMenuBuilder() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="menu-builder__block">
+            <span className="menu-builder__label">Save & load designs</span>
+            <p className="menu-builder__hint">
+              Save this menu layout to reuse later. When we have accounts, your designs will sync.
+            </p>
+            <div className="menu-builder__save-load">
+              <input
+                type="text"
+                className="menu-builder__input"
+                value={saveDesignName}
+                onChange={(e) => setSaveDesignName(e.target.value)}
+                placeholder="Design name"
+                aria-label="Name for saved design"
+              />
+              <button
+                type="button"
+                className="menu-builder__btn menu-builder__btn--secondary"
+                onClick={handleSaveDesign}
+              >
+                Save this design
+              </button>
+            </div>
+            {saveDesignMessage && (
+              <p className="menu-builder__save-msg">{saveDesignMessage}</p>
+            )}
+            {savedDesigns.length > 0 && (
+              <div className="menu-builder__load-row">
+                <select
+                  className="menu-builder__input menu-builder__select"
+                  value={loadDesignId}
+                  onChange={(e) => setLoadDesignId(e.target.value)}
+                  aria-label="Choose a saved design"
+                >
+                  <option value="">Load a design…</option>
+                  {savedDesigns.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name} ({new Date(d.savedAt).toLocaleDateString()})
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="menu-builder__btn menu-builder__btn--secondary"
+                  onClick={handleLoadDesign}
+                  disabled={!loadDesignId}
+                >
+                  Load
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="menu-builder__block menu-builder__export">
