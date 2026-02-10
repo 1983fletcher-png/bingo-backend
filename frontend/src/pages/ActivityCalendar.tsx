@@ -326,12 +326,7 @@ export default function ActivityCalendar() {
       URL.revokeObjectURL(url);
       return;
     }
-    w.addEventListener('afterprint', () => {
-      w.close();
-      URL.revokeObjectURL(url);
-    });
-    w.focus();
-    setTimeout(() => w.print(), 400);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }, [year, month, daysInMonth, startWeekday, observancesByDay, selectionsByDate, notesByDate, printStyle, showBlankLinesInPrint, allDaysWithObservances]);
 
   const cellStyle: React.CSSProperties = {
