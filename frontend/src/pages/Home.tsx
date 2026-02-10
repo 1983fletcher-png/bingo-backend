@@ -2,72 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/home.css';
 
-const WHO_ITS_FOR = [
-  'Venues',
-  'Teachers',
-  'Corporate Teams',
-  'Libraries',
-  'Caregivers',
-  'Assisted Living',
-  'Youth Programs',
-  'Activity Directors',
-  'HR & Learning',
-];
-
-const GAME_TYPES: Array<{
-  id: string;
-  title: string;
-  description: string;
-  to: string;
-  secondaryLabel?: string;
-  secondaryTo?: string;
-}> = [
-  {
-    id: 'music-bingo',
-    title: 'Music Bingo',
-    description:
-      'Curated themes or build your own. One code for the whole room — host from a tablet, play on any phone.',
-    to: '/host?type=bingo',
-  },
-  {
-    id: 'trivia',
-    title: 'Trivia',
-    description:
-      'Pick a verified pack and run — or build your own. Multiple choice, true/false. For pubs, teams, and family nights.',
-    to: '/host/create?trivia',
-    secondaryLabel: 'Build custom',
-    secondaryTo: '/host?type=trivia',
-  },
-  {
-    id: 'icebreakers',
-    title: 'Icebreakers',
-    description:
-      'Two Truths, Would You Rather, quick energizers. Low-stakes, high connection.',
-    to: '/host?type=icebreakers',
-  },
-  {
-    id: 'edutainment',
-    title: 'Edutainment',
-    description:
-      'Learning games for K–college. Grade bands, subjects, curriculum-aligned content.',
-    to: '/host?type=edutainment',
-  },
-  {
-    id: 'team-building',
-    title: 'Team Building',
-    description:
-      'Activities by age, occupation, or situation. Remote teams, retreats, community.',
-    to: '/host?type=team-building',
-  },
-  {
-    id: 'custom-training',
-    title: 'Custom Training Materials',
-    description:
-      'Build training and learning content for your company. Custom packs, compliance, onboarding.',
-    to: '/host?type=trivia',
-  },
-];
-
 type CardAccent = 'violet' | 'cyan' | 'amber' | 'emerald';
 
 type HeroCardData = {
@@ -133,15 +67,6 @@ function Arrow() {
     <span className="landing__card-arrow" aria-hidden>
       →
     </span>
-  );
-}
-
-function Step({ title, desc }: { title: string; desc: string }) {
-  return (
-    <div className="landing__step">
-      <div className="landing__step-title">{title}</div>
-      <div className="landing__step-desc">{desc}</div>
-    </div>
   );
 }
 
@@ -270,24 +195,24 @@ export default function Home() {
         <div className="landing__atmosphere-dots" />
       </div>
 
-      <header className="landing__header">
+      <header className="landing__header landing__header--toolbar">
         <div className="landing__header-inner">
           <div className="landing__header-brand">
             <div className="landing__header-logo" />
             <span className="landing__header-name">The Playroom</span>
           </div>
+          <p className="landing__header-tagline" aria-hidden>
+            Designed for venues, activity directors, teachers, caregivers, libraries, and teams.
+          </p>
         </div>
       </header>
 
       <main className="landing__main">
         {/* Hero */}
         <section className="landing__hero" aria-label="Welcome">
-          <h1 className="landing__hero-title">The Playroom</h1>
+          <h1 className="landing__hero-title">Welcome to the Playroom</h1>
           <p className="landing__hero-tagline">
             Simple, shared experiences for games, learning, and group connection.
-          </p>
-          <p className="landing__hero-sub">
-            Plan faster with curated observances, themes, and credible notes.
           </p>
         </section>
 
@@ -297,29 +222,6 @@ export default function Home() {
             {HERO_CARDS.map((c) => (
               <HeroCard key={c.title} card={c} />
             ))}
-          </div>
-
-          <div className="landing__reassurance">
-            <p className="landing__reassurance-main">
-              Designed for venues, activity directors, teachers, caregivers, libraries, and teams.
-            </p>
-            <p className="landing__reassurance-sub">Digital when you want it. Printable when you need it.</p>
-          </div>
-        </section>
-
-        {/* Pick → Share → Run */}
-        <section className="landing__pick-share-run" aria-label="How to get started">
-          <div className="landing__pick-share-run-inner">
-            <div className="landing__pick-share-run-title">Pick → Share → Run</div>
-            <p className="landing__pick-share-run-desc">
-              Choose an activity, share a link or QR, and host it live or on paper.{' '}
-              <span className="landing__pick-share-run-muted">Simple to start. Flexible to use.</span>
-            </p>
-            <div className="landing__pick-share-run-steps">
-              <Step title="Pick" desc="Choose a room, poll, calendar, or studio template." />
-              <Step title="Share" desc="One link or QR — phones, TVs, or printouts." />
-              <Step title="Run it" desc="Host confidently with notes, displays, and tools." />
-            </div>
           </div>
         </section>
 
@@ -353,45 +255,10 @@ export default function Home() {
         {/* Who it's for */}
         <section id="who-its-for" className="landing__section" aria-label="Who it's for">
           <h2 className="landing__section-title">Who it&apos;s for</h2>
-          <p className="landing__section-intro">
+          <p className="landing__section-intro landing__section-intro--solo">
             The same simple experience works in a brewery, a classroom, an assisted living facility, or a
             Fortune 500 company.
           </p>
-          <ul className="landing__who-grid">
-            {WHO_ITS_FOR.map((label) => (
-              <li key={label} className="landing__who-item">
-                <span>{label}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Game types */}
-        <section id="game-types" className="landing__section" aria-label="Game types">
-          <h2 className="landing__section-title">Game types</h2>
-          <p className="landing__section-intro">Pick a template and go, or customize to your needs.</p>
-          <div className="landing__games-grid">
-            {GAME_TYPES.map((g) =>
-              g.secondaryTo ? (
-                <div key={g.id} className="landing__game-card landing__game-card--dual">
-                  <Link to={g.to} className="landing__game-card-link">
-                    <h3 className="landing__game-title">{g.title}</h3>
-                    <p className="landing__game-desc">{g.description}</p>
-                    <span className="landing__game-cta">Play a pack →</span>
-                  </Link>
-                  <Link to={g.secondaryTo} className="landing__game-cta landing__game-cta--secondary">
-                    {g.secondaryLabel} →
-                  </Link>
-                </div>
-              ) : (
-                <Link key={g.id} to={g.to} className="landing__game-card">
-                  <h3 className="landing__game-title">{g.title}</h3>
-                  <p className="landing__game-desc">{g.description}</p>
-                  <span className="landing__game-cta">Get started →</span>
-                </Link>
-              )
-            )}
-          </div>
         </section>
 
         {/* Our approach */}
