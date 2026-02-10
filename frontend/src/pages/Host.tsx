@@ -22,6 +22,27 @@ import type { Socket } from 'socket.io-client';
 const API_BASE = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : window.location.origin);
 const BACKEND_CONFIGURED = !!(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL);
 
+function escapeCsvValue(val: string): string {
+  const s = String(val ?? '');
+  if (s.includes('"') || s.includes(',') || s.includes('\n') || s.includes('\r')) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
+function downloadCallSheetCsv(songPool: Song[], gameCode: string): void {
+  const header = 'Song Title,Artist';
+  const rows = songPool.map((s) => `${escapeCsvValue(s.title)},${escapeCsvValue(s.artist)}`);
+  const csv = [header, ...rows].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `call-sheet-${gameCode}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 const HOST_TOKEN_KEY = (code: string) => `playroom:hostToken:${code}`;
 
 interface GameCreated {
@@ -36,7 +57,7 @@ interface GameCreated {
   trivia?: { questions: TriviaQuestion[] };
 }
 
-type HostTab = 'waiting' | 'call' | 'questions' | 'controls';
+type HostTab = 'waiting' | 'call' | 'questions' | 'controls' | 'event' | 'print';
 
 export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building';
 
@@ -54,6 +75,7 @@ export default function Host() {
   const [createMode, setCreateMode] = useState<CreateMode>(() => createModeFromUrl(typeFromUrl));
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
+  const [connectionSlow, setConnectionSlow] = useState(false);
   const [game, setGame] = useState<GameCreated | null>(null);
   const [hostMessage, setHostMessage] = useState('Starting soon…');
   const [copyFeedback, setCopyFeedback] = useState(false);
@@ -585,21 +607,14 @@ export default function Host() {
     }
   };
 
-  if (!connected) {
-    return (
-      <div style={{ padding: 24, maxWidth: 520 }}>
-        <p style={{ fontSize: 12, color: BACKEND_CONFIGURED ? '#68d391' : '#f6ad55', marginBottom: 8 }}>
-          {BACKEND_CONFIGURED ? '● Backend URL set in build' : '⚠ Backend URL not set in this build'}
-        </p>
-        <p><strong>Connecting to server…</strong></p>
-        <p style={{ fontSize: 14, color: '#a0aec0', marginTop: 8 }}>
-          {BACKEND_CONFIGURED
-            ? 'If this never goes away, check that Railway is up and the URL in Netlify is correct (no trailing slash).'
-            : 'This build did not have VITE_SOCKET_URL. In Netlify → Site configuration → Environment variables, set VITE_SOCKET_URL to your Railway URL (no trailing slash), then Deploys → Trigger deploy → Clear cache and deploy site.'}
-        </p>
-      </div>
-    );
-  }
+  // Optional: show create form even while connecting; disable create until connected; timeout message after 10s
+  useEffect(() => {
+    if (!connected) {
+      const t = setTimeout(() => setConnectionSlow(true), 10000);
+      return () => clearTimeout(t);
+    }
+    setConnectionSlow(false);
+  }, [connected]);
 
   if (!game) {
     const isBingo = createMode === 'music-bingo' || createMode === 'classic-bingo';
@@ -647,7 +662,16 @@ export default function Host() {
 
     return (
       <div className="host-create">
-        <p style={{ fontSize: 12, color: '#68d391', marginBottom: 8 }}>● Connected to server</p>
+        {connected ? (
+          <p style={{ fontSize: 12, color: '#68d391', marginBottom: 8 }}>● Connected to server</p>
+        ) : (
+          <>
+            <p style={{ fontSize: 12, color: '#e2e8f0', marginBottom: 4 }}><strong>Connecting to server…</strong></p>
+            {connectionSlow && (
+              <p style={{ fontSize: 13, color: '#f6ad55', marginBottom: 8 }}>Taking longer than usual. Check Railway status or refresh.</p>
+            )}
+          </>
+        )}
         {!BACKEND_CONFIGURED && (
           <p style={{ fontSize: 11, color: '#f6ad55', marginBottom: 8 }}>
             ⚠ Set VITE_SOCKET_URL in Netlify and redeploy for production.
@@ -716,23 +740,23 @@ export default function Host() {
         {createMode === 'music-bingo' && (
           <>
             <div className="host-create__content host-create__packs-wrap">
-              <label className="host-create__label">Pre-built game (optional)</label>
+              <label className="host-create__label">Select your game</label>
               <select
                 className="host-create__select"
                 value={selectedPrebuiltGameId ?? ''}
                 onChange={(e) => setSelectedPrebuiltGameId(e.target.value || null)}
               >
-                <option value="">I'll build with Call sheet / AI</option>
+                <option value="">Build my own (add songs in Call sheet)</option>
                 {musicBingoGames.map((g) => (
                   <option key={g.id} value={g.id}>{g.title} — 75 songs</option>
                 ))}
               </select>
               <p className="host-create__hint">
-                Choose a pre-built game (75 songs, no duplicate artists) or leave blank to add songs from the Call sheet tab after creating.
+                Pick a pre-built list (75 songs, one per artist) or build your own from the Call sheet tab. Export call sheet as CSV to print or laminate.
               </p>
             </div>
             <p className="host-create__copy">
-              {selectedPrebuiltGameId ? 'Create a room with the selected game. One link for everyone.' : 'Create a room and add 75 songs from the Call sheet tab (AI or theme). One link for everyone.'}
+              {selectedPrebuiltGameId ? 'One link for everyone.' : 'One link for everyone. Add songs in the Call sheet tab after creating.'}
             </p>
           </>
         )}
@@ -832,16 +856,24 @@ export default function Host() {
   }
 
   const isTriviaLike = game.gameType === 'trivia' || game.gameType === 'icebreakers' || game.gameType === 'edutainment' || game.gameType === 'team-building';
+  const isBingo = game.gameType === 'music-bingo' || game.gameType === 'classic-bingo';
   const tabs: { id: HostTab; label: string }[] = isTriviaLike
     ? [
         { id: 'waiting', label: 'Waiting room' },
         { id: 'controls', label: 'Host controls' },
         { id: 'questions', label: 'Questions' },
       ]
-    : [
-        { id: 'waiting', label: 'Waiting room' },
-        { id: 'call', label: 'Call sheet' },
-      ];
+    : isBingo
+      ? [
+          { id: 'waiting', label: 'Waiting room' },
+          { id: 'call', label: 'Call sheet' },
+          { id: 'event', label: 'Event details' },
+          { id: 'print', label: 'Print materials' },
+        ]
+      : [
+          { id: 'waiting', label: 'Waiting room' },
+          { id: 'call', label: 'Call sheet' },
+        ];
 
   const displayUrl = `${window.location.origin}/display/${game.code}`;
   // Always use current origin so QR and link point to the frontend (player view), not the backend
@@ -890,6 +922,33 @@ export default function Host() {
                 {copyFeedback ? 'Copied' : 'Copy'}
               </button>
             </div>
+
+            <hr className="host-room__left-divider" />
+            <p className="host-room__section-label" style={{ marginTop: 12 }}>Print this QR</p>
+            <button
+              type="button"
+              className="host-room__link-btn"
+              style={{ display: 'block', width: '100%', marginBottom: 8 }}
+              onClick={() => {
+                const w = window.open('', '_blank');
+                if (!w) return;
+                w.document.write(`
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>QR code – ${game.code}</title>
+<style>body{font-family:system-ui,sans-serif;text-align:center;padding:24px;max-width:320px;margin:0 auto}
+img{display:block;margin:0 auto 16px}
+p{word-break:break-all;font-size:14px;color:#333}
+@media print{body{padding:0}}</style></head><body>
+<img src="${qrImageUrl}" width="240" height="240" alt="QR code" />
+<p>Scan to join</p>
+<p>${joinUrlForQR.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+</body></html>`);
+                w.document.close();
+                w.focus();
+              }}
+            >
+              Open print view (QR + link)
+            </button>
+
             <hr className="host-room__left-divider" />
             <span className="host-room__link-label">Quick actions</span>
             <div className="host-room__link-group">
@@ -973,125 +1032,125 @@ export default function Host() {
                 )}
               </div>
             </section>
-
-            <details className="host-room__details">
-              <summary className="host-room__details-summary">Event &amp; venue details</summary>
-              <div className="host-room__details-body">
-                <p className="host-room__details-intro">
-                  Event details are not shown on the display or player screens until you click &quot;Apply to game&quot; below.
-                </p>
-                <div style={{ marginBottom: 16 }}>
-                  <button type="button" className="host-room__apply-btn" onClick={pushEventConfigToGame} disabled={!socket?.connected || !game?.code}>
-                    Apply to game
-                  </button>
-                  {eventConfigAppliedFeedback && <span className="host-room__apply-feedback" role="status">Applied — visible on display and players.</span>}
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Game title</label>
-                  <input type="text" value={eventConfig.gameTitle ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, gameTitle: e.target.value }))} onBlur={applyEventConfig} placeholder="Music Bingo" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Venue name</label>
-                  <input type="text" value={eventConfig.venueName ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, venueName: e.target.value }))} onBlur={applyEventConfig} placeholder="Venue name" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Scrape venue site (URL for logo &amp; colors)</label>
-                  {apiBase ? (
-                    <p style={{ fontSize: 12, color: '#a0aec0', margin: '4px 0 8px' }} role="status">
-                      Backend: {backendReachable === true ? 'connected' : backendReachable === false ? 'not reachable' : 'checking…'} ({apiBase})
-                    </p>
-                  ) : (
-                    <p style={{ fontSize: 12, color: '#f6ad55', margin: '4px 0 8px' }} role="alert">Backend not set. Set VITE_SOCKET_URL and redeploy. You can add logo and details manually below.</p>
-                  )}
-                  <p style={{ fontSize: 12, color: '#a0aec0', margin: '0 0 8px' }}>We only fetch public meta tags. Use only with sites you have permission to reference.</p>
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                    <input type="url" value={scrapeUrl} onChange={(e) => { setScrapeUrl(e.target.value); setScrapeError(null); }} placeholder="https://example.com" style={{ flex: 1, padding: 8, borderRadius: 6 }} />
-                    <button type="button" onClick={scrapeVenue} disabled={scraping || !scrapeUrl.trim()} style={{ padding: '8px 16px' }}>{scraping ? '…' : 'Fetch'}</button>
-                  </div>
-                  {scrapeError && <p style={{ color: '#fc8181', fontSize: 13, marginBottom: 8 }} role="alert">{scrapeError}</p>}
-                  {scrapeSuccess && <p style={{ color: '#68d391', fontSize: 13, marginBottom: 8 }} role="status">{scrapeSuccess}</p>}
-                  <p style={{ fontSize: 12, color: '#a0aec0', marginBottom: 12 }}>Or add logo, title, accent color, and description manually below.</p>
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Logo / banner image</label>
-                  <input type="file" accept="image/*" onChange={handleLogoFile} style={{ fontSize: 13 }} />
-                  {eventConfig.logoUrl && <img src={eventConfig.logoUrl} alt="Venue" style={{ maxHeight: 60, marginTop: 8, display: 'block' }} />}
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Accent color</label>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <input type="color" value={eventConfig.accentColor ?? '#e94560'} onChange={(e) => setEventConfigState((c) => ({ ...c, accentColor: e.target.value }))} onBlur={applyEventConfig} style={{ width: 36, height: 28, padding: 0, border: '1px solid #4a5568', borderRadius: 6 }} />
-                    <input type="text" value={eventConfig.accentColor ?? '#e94560'} onChange={(e) => setEventConfigState((c) => ({ ...c, accentColor: e.target.value }))} onBlur={applyEventConfig} style={{ width: 120, padding: 8, borderRadius: 6 }} />
-                  </div>
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <input type="checkbox" checked={eventConfig.useVenueLogoInCenter ?? false} onChange={(e) => setEventConfigState((c) => ({ ...c, useVenueLogoInCenter: e.target.checked }))} onBlur={applyEventConfig} />
-                    <span>Use venue logo in center square (instead of &quot;FREE&quot;)</span>
-                  </label>
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Drink specials</label>
-                  <textarea value={eventConfig.drinkSpecials ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, drinkSpecials: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. $5 drafts" rows={2} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Food specials</label>
-                  <textarea value={eventConfig.foodSpecials ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, foodSpecials: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. Half-price appetizers" rows={2} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Welcome title / message</label>
-                  <input type="text" value={eventConfig.welcomeTitle ?? eventConfig.welcomeMessage ?? ''} onChange={(e) => { const v = e.target.value; setEventConfigState((c) => ({ ...c, welcomeTitle: v, welcomeMessage: v })); }} onBlur={applyEventConfig} placeholder="e.g. Welcome · Thanks for coming!" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Welcome background image (optional URL)</label>
-                  <input type="url" value={eventConfig.welcomeImageUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, welcomeImageUrl: e.target.value }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Promo / upcoming events</label>
-                  <textarea value={eventConfig.promoText ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, promoText: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. Karaoke Friday · Trivia Tuesday" rows={2} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Banner image URL (promo / social)</label>
-                  <input type="url" value={eventConfig.bannerImageUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, bannerImageUrl: e.target.value.trim() || undefined }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Facebook / Instagram</label>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <input type="url" value={eventConfig.facebookUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, facebookUrl: e.target.value }))} onBlur={applyEventConfig} placeholder="Facebook URL" style={{ flex: 1, minWidth: 140, padding: 8, borderRadius: 6 }} />
-                    <input type="url" value={eventConfig.instagramUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, instagramUrl: e.target.value }))} onBlur={applyEventConfig} placeholder="Instagram URL" style={{ flex: 1, minWidth: 140, padding: 8, borderRadius: 6 }} />
-                  </div>
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Food menu URL (optional)</label>
-                  <input type="url" value={eventConfig.foodMenuUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, foodMenuUrl: e.target.value.trim() || undefined }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Drink menu URL (optional)</label>
-                  <input type="url" value={eventConfig.drinkMenuUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, drinkMenuUrl: e.target.value.trim() || undefined }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', marginBottom: 4 }}>Events page URL (optional)</label>
-                  <input type="url" value={eventConfig.eventsUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, eventsUrl: e.target.value.trim() || undefined }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <input type="checkbox" checked={eventConfig.venueAllowedUseOfMenuDesign ?? false} onChange={(e) => setEventConfigState((c) => ({ ...c, venueAllowedUseOfMenuDesign: e.target.checked || undefined }))} onBlur={applyEventConfig} />
-                    Venue allowed use of menu design
-                  </label>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginTop: 16 }}>
-                  <p style={{ fontSize: 12, color: '#a0aec0', margin: 0 }}>Saved profiles are stored on this device only.</p>
-                  <button type="button" onClick={saveVenueProfile} style={{ padding: '8px 16px' }}>Save venue profile</button>
-                  {venueProfiles.length > 0 && (
-                    <select value={loadedProfileId ?? ''} onChange={(e) => { const id = e.target.value; if (!id) return; const p = venueProfiles.find((v) => v.id === id); if (p) loadVenueProfile(p); }} style={{ padding: '8px 12px', minWidth: 160, borderRadius: 6 }}>
-                      <option value="">Load venue…</option>
-                      {venueProfiles.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                    </select>
-                  )}
-                </div>
-              </div>
-            </details>
           </>
+        )}
+
+        {activeTab === 'event' && isBingo && (
+          <section className="host-room__details" style={{ padding: '16px 0' }}>
+            <h2 className="host-room__when-title" style={{ marginTop: 0 }}>Event &amp; venue details</h2>
+            <p className="host-room__details-intro">
+              Event details are not shown on the display or player screens until you click &quot;Apply to game&quot; below.
+            </p>
+            <div style={{ marginBottom: 16 }}>
+              <button type="button" className="host-room__apply-btn" onClick={pushEventConfigToGame} disabled={!socket?.connected || !game?.code}>
+                Apply to game
+              </button>
+              {eventConfigAppliedFeedback && <span className="host-room__apply-feedback" role="status">Applied — visible on display and players.</span>}
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Game title</label>
+              <input type="text" value={eventConfig.gameTitle ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, gameTitle: e.target.value }))} onBlur={applyEventConfig} placeholder="Music Bingo" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Venue name</label>
+              <input type="text" value={eventConfig.venueName ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, venueName: e.target.value }))} onBlur={applyEventConfig} placeholder="Venue name" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Scrape venue site (URL for logo &amp; colors)</label>
+              {apiBase ? (
+                <p style={{ fontSize: 12, color: '#a0aec0', margin: '4px 0 8px' }} role="status">
+                  Backend: {backendReachable === true ? 'connected' : backendReachable === false ? 'not reachable' : 'checking…'} ({apiBase})
+                </p>
+              ) : (
+                <p style={{ fontSize: 12, color: '#f6ad55', margin: '4px 0 8px' }} role="alert">Backend not set. Set VITE_SOCKET_URL and redeploy. You can add logo and details manually below.</p>
+              )}
+              <p style={{ fontSize: 12, color: '#a0aec0', margin: '0 0 8px' }}>We only fetch public meta tags. Use only with sites you have permission to reference.</p>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                <input type="url" value={scrapeUrl} onChange={(e) => { setScrapeUrl(e.target.value); setScrapeError(null); }} placeholder="https://example.com" style={{ flex: 1, padding: 8, borderRadius: 6 }} />
+                <button type="button" onClick={scrapeVenue} disabled={scraping || !scrapeUrl.trim()} style={{ padding: '8px 16px' }}>{scraping ? '…' : 'Fetch'}</button>
+              </div>
+              {scrapeError && <p style={{ color: '#fc8181', fontSize: 13, marginBottom: 8 }} role="alert">{scrapeError}</p>}
+              {scrapeSuccess && <p style={{ color: '#68d391', fontSize: 13, marginBottom: 8 }} role="status">{scrapeSuccess}</p>}
+              <p style={{ fontSize: 12, color: '#a0aec0', marginBottom: 12 }}>Or add logo, title, accent color, and description manually below.</p>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Logo / banner image</label>
+              <input type="file" accept="image/*" onChange={handleLogoFile} style={{ fontSize: 13 }} />
+              {eventConfig.logoUrl && <img src={eventConfig.logoUrl} alt="Venue" style={{ maxHeight: 60, marginTop: 8, display: 'block' }} />}
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Accent color</label>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <input type="color" value={eventConfig.accentColor ?? '#e94560'} onChange={(e) => setEventConfigState((c) => ({ ...c, accentColor: e.target.value }))} onBlur={applyEventConfig} style={{ width: 36, height: 28, padding: 0, border: '1px solid #4a5568', borderRadius: 6 }} />
+                <input type="text" value={eventConfig.accentColor ?? '#e94560'} onChange={(e) => setEventConfigState((c) => ({ ...c, accentColor: e.target.value }))} onBlur={applyEventConfig} style={{ width: 120, padding: 8, borderRadius: 6 }} />
+              </div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <input type="checkbox" checked={eventConfig.useVenueLogoInCenter ?? false} onChange={(e) => setEventConfigState((c) => ({ ...c, useVenueLogoInCenter: e.target.checked }))} onBlur={applyEventConfig} />
+                <span>Use venue logo in center square (instead of &quot;FREE&quot;)</span>
+              </label>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Drink specials</label>
+              <textarea value={eventConfig.drinkSpecials ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, drinkSpecials: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. $5 drafts" rows={2} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Food specials</label>
+              <textarea value={eventConfig.foodSpecials ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, foodSpecials: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. Half-price appetizers" rows={2} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Welcome title / message</label>
+              <input type="text" value={eventConfig.welcomeTitle ?? eventConfig.welcomeMessage ?? ''} onChange={(e) => { const v = e.target.value; setEventConfigState((c) => ({ ...c, welcomeTitle: v, welcomeMessage: v })); }} onBlur={applyEventConfig} placeholder="e.g. Welcome · Thanks for coming!" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Welcome background image (optional URL)</label>
+              <input type="url" value={eventConfig.welcomeImageUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, welcomeImageUrl: e.target.value }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Promo / upcoming events</label>
+              <textarea value={eventConfig.promoText ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, promoText: e.target.value }))} onBlur={applyEventConfig} placeholder="e.g. Karaoke Friday · Trivia Tuesday" rows={2} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Banner image URL (promo / social)</label>
+              <input type="url" value={eventConfig.bannerImageUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, bannerImageUrl: e.target.value.trim() || undefined }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Facebook / Instagram</label>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <input type="url" value={eventConfig.facebookUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, facebookUrl: e.target.value }))} onBlur={applyEventConfig} placeholder="Facebook URL" style={{ flex: 1, minWidth: 140, padding: 8, borderRadius: 6 }} />
+                <input type="url" value={eventConfig.instagramUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, instagramUrl: e.target.value }))} onBlur={applyEventConfig} placeholder="Instagram URL" style={{ flex: 1, minWidth: 140, padding: 8, borderRadius: 6 }} />
+              </div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Food menu URL (optional)</label>
+              <input type="url" value={eventConfig.foodMenuUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, foodMenuUrl: e.target.value.trim() || undefined }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Drink menu URL (optional)</label>
+              <input type="url" value={eventConfig.drinkMenuUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, drinkMenuUrl: e.target.value.trim() || undefined }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Events page URL (optional)</label>
+              <input type="url" value={eventConfig.eventsUrl ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, eventsUrl: e.target.value.trim() || undefined }))} onBlur={applyEventConfig} placeholder="https://…" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <input type="checkbox" checked={eventConfig.venueAllowedUseOfMenuDesign ?? false} onChange={(e) => setEventConfigState((c) => ({ ...c, venueAllowedUseOfMenuDesign: e.target.checked || undefined }))} onBlur={applyEventConfig} />
+                Venue allowed use of menu design
+              </label>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginTop: 16 }}>
+              <p style={{ fontSize: 12, color: '#a0aec0', margin: 0 }}>Saved profiles are stored on this device only.</p>
+              <button type="button" onClick={saveVenueProfile} style={{ padding: '8px 16px' }}>Save venue profile</button>
+              {venueProfiles.length > 0 && (
+                <select value={loadedProfileId ?? ''} onChange={(e) => { const id = e.target.value; if (!id) return; const p = venueProfiles.find((v) => v.id === id); if (p) loadVenueProfile(p); }} style={{ padding: '8px 12px', minWidth: 160, borderRadius: 6 }}>
+                  <option value="">Load venue…</option>
+                  {venueProfiles.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+              )}
+            </div>
+          </section>
         )}
 
         {activeTab === 'questions' && (
@@ -1359,36 +1418,49 @@ export default function Host() {
                 </div>
               </div>
             ) : (
-              <HostSongGrid
-                songPool={songPool}
-                revealed={revealed}
-                onReveal={handleReveal}
-                eventTitle={game.eventConfig?.gameTitle}
-              />
+              <>
+                <div style={{ marginBottom: 12 }}>
+                  <button
+                    type="button"
+                    onClick={() => downloadCallSheetCsv(songPool, game.code)}
+                    style={{ padding: '8px 16px', fontSize: 14 }}
+                  >
+                    Export call sheet (CSV)
+                  </button>
+                  <p style={{ margin: '6px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>Print or laminate for a reusable call sheet.</p>
+                </div>
+                <HostSongGrid
+                  songPool={songPool}
+                  revealed={revealed}
+                  onReveal={handleReveal}
+                  eventTitle={game.eventConfig?.gameTitle}
+                />
+              </>
             )}
           </>
         )}
 
-        {/* TV display link — optional */}
-        <details className="host-room__details">
-          <summary className="host-room__details-summary">TV display &amp; links</summary>
-          <div className="host-room__details-body">
-            <p style={{ margin: '0 0 8px 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Use the display URL on your TV or projector. The display screen shows a QR code so players can scan to join.</p>
-            <p style={{ fontSize: '0.9375rem', wordBreak: 'break-all' }}>
-              <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__join-url">{displayUrl}</a>
-            </p>
-          </div>
-        </details>
-
-        {/* Print materials — dropdown */}
-        <details className="host-room__details">
-          <summary className="host-room__details-summary">Print materials</summary>
-          <div className="host-room__details-body">
+        {activeTab === 'print' && (
+          <section className="host-room__details" style={{ padding: '16px 0' }}>
+            <h2 className="host-room__when-title" style={{ marginTop: 0 }}>Print materials</h2>
             <p style={{ color: '#a0aec0', fontSize: 14, marginTop: 0 }}>
               For players without phones or devices. Generate and print from your browser.
             </p>
 
             {game.gameType === 'music-bingo' && (
+              <>
+                {songPool.length > 0 && (
+                  <div style={{ marginBottom: 16 }}>
+                    <button
+                      type="button"
+                      onClick={() => downloadCallSheetCsv(songPool, game.code)}
+                      style={{ padding: '8px 16px', fontSize: 14 }}
+                    >
+                      Export call sheet (CSV)
+                    </button>
+                    <p style={{ margin: '6px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>Print or laminate for a reusable call sheet.</p>
+                  </div>
+                )}
               <div style={{ marginBottom: 24, padding: 16, border: '1px solid #4a5568', borderRadius: 8 }}>
                 <h4 style={{ margin: '0 0 8px 0' }}>Bingo cards</h4>
                 <p style={{ fontSize: 13, color: '#a0aec0', margin: '0 0 12px 0' }}>
@@ -1424,6 +1496,7 @@ export default function Host() {
                   </>
                 )}
               </div>
+              </>
             )}
 
             {game.gameType === 'trivia' && (
@@ -1474,8 +1547,8 @@ export default function Host() {
                 </div>
               </>
             )}
-          </div>
-        </details>
+          </section>
+        )}
           </div>
       </div>
       </div>
