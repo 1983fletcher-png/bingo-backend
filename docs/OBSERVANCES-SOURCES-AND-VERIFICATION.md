@@ -59,6 +59,11 @@ We use these to **discover** and **verify** observances. Listing here does not i
   - National Today: National Kahlúa Day (Feb 27), International Polar Bear Day, International Stand Up to Bullying Day, The Big Breakfast Day.  
 - **Added**: National Kahlúa Day, Pokémon Day, National Retro Day (all confirmed on NDC and/or National Today for Feb 27). Others (e.g. International Polar Bear Day) can be added in a later pass if we choose to include international observances more broadly.
 
+## Verified corrections (date fixes)
+
+- **National Peanut Butter Day**: Correct date is **January 24** (NDC, National Today, peanutbutter.com). It was previously listed on February 12; that was incorrect. Feb 12 now shows Lincoln's Birthday and National Plum Pudding Day (both verified).
+- **January 24**: Also includes National Compliment Day and National Beer Can Appreciation Day (NDC).
+
 ## Maintaining the list
 
 - **New observances**: Prefer adding in small batches by month or week, with a quick note in a PR or commit (e.g. “Feb 27: add Kahlúa, Pokémon, Retro per NDC + National Today”).  
