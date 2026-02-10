@@ -372,6 +372,9 @@ export default function ActivityCalendar() {
         <h1 style={{ margin: '0 0 4px', fontSize: '1.75rem', color: theme.accent }}>
           {theme.icon} Activity calendar
         </h1>
+        <p style={{ margin: '0 0 8px', fontSize: '1.15rem', fontWeight: 600, color: theme.accent }}>
+          {MONTHS[month - 1]}
+        </p>
         <p style={{ margin: 0, color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', lineHeight: 1.5, fontSize: '0.9rem' }}>
           Verified observances for planning. Your selections and notes stay on this device only.
         </p>
