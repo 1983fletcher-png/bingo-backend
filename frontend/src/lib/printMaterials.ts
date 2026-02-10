@@ -173,27 +173,43 @@ export function buildCalendarPrintPack(
       </div>`);
   }
 
-  const observancesIndexPage =
+  const renderObsRows = (dayBlocks: ObservancesIndexDay[]) =>
+    dayBlocks.flatMap((dayBlock) => {
+      const dayHeader = `<div class="obs-index-day">${escapeHtml(monthName)} ${dayBlock.day}</div>`;
+      const obsRows = dayBlock.observances.flatMap((o) => {
+        const line = `<div class="obs-index-line">${escapeHtml(o.name)}${o.category ? ` <span class="obs-cat">(${escapeHtml(o.category)})</span>` : ''}</div>`;
+        const blank = includeBlankLinesUnderObservances ? '<div class="obs-index-blank">_________________________</div>' : '';
+        return [line, blank];
+      });
+      const noteBlock = dayBlock.noteText.trim()
+        ? `<div class="obs-index-notes"><strong>Notes:</strong> ${escapeHtml(dayBlock.noteText)}</div>`
+        : '';
+      return [dayHeader, ...obsRows, noteBlock].filter(Boolean);
+    });
+
+  const observancesIndexPages =
     observancesIndex.length === 0
       ? ''
       : (() => {
-          const rows = observancesIndex.flatMap((dayBlock) => {
-            const dayHeader = `<div class="obs-index-day">${escapeHtml(monthName)} ${dayBlock.day}</div>`;
-            const obsRows = dayBlock.observances.flatMap((o) => {
-              const line = `<div class="obs-index-line">${escapeHtml(o.name)}${o.category ? ` <span class="obs-cat">(${escapeHtml(o.category)})</span>` : ''}</div>`;
-              const blank = includeBlankLinesUnderObservances ? '<div class="obs-index-blank">_________________________</div>' : '';
-              return [line, blank];
-            });
-            const noteBlock = dayBlock.noteText.trim()
-              ? `<div class="obs-index-notes"><strong>Notes:</strong> ${escapeHtml(dayBlock.noteText)}</div>`
-              : '';
-            return [dayHeader, ...obsRows, noteBlock].filter(Boolean);
-          });
-          return `
+          const firstHalf = observancesIndex.filter((d) => d.day <= 15);
+          const secondHalf = observancesIndex.filter((d) => d.day > 15);
+          const page1 =
+            firstHalf.length > 0
+              ? `
   <div class="print-pack-page observances-index-page">
-    <h2 class="observances-index-title">This month's observances</h2>
-    <div class="obs-index-columns">${rows.join('')}</div>
-  </div>`;
+    <h2 class="observances-index-title">This month's observances — 1–15</h2>
+    <div class="obs-index-list">${renderObsRows(firstHalf).join('')}</div>
+  </div>`
+              : '';
+          const page2 =
+            secondHalf.length > 0
+              ? `
+  <div class="print-pack-page observances-index-page">
+    <h2 class="observances-index-title">This month's observances — 16–${daysInMonth}</h2>
+    <div class="obs-index-list">${renderObsRows(secondHalf).join('')}</div>
+  </div>`
+              : '';
+          return page1 + page2;
         })();
 
   const planningPage =
@@ -240,18 +256,19 @@ export function buildCalendarPrintPack(
     body.print-style-fun { color: #1e1b4b; }
     .print-pack-page { page-break-after: always; }
     .print-pack-page:last-child { page-break-after: auto; }
-    .cal-page { display: flex; flex-direction: column; min-height: 0; }
+    .cal-page { position: relative; display: flex; flex-direction: column; min-height: 0; }
+    .cal-scaled { display: flex; flex-direction: column; flex: 1; min-height: 0; }
     .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; gap: 6px; flex: 1; min-height: 0; }
-    .cal-cell { border: 1px solid ${borderColor}; padding: 6px; min-height: 0; background: ${calCellBg}; display: flex; flex-direction: column; }
+    .cal-cell { border: 1px solid ${borderColor}; padding: 8px; min-height: 0; background: ${calCellBg}; display: flex; flex-direction: column; }
     .cal-cell--empty { border-color: #ccc; background: #f9f9f9; }
-    .cal-day-num { font-weight: 700; font-size: 1rem; margin-bottom: 2px; color: ${accentColor}; }
-    .cal-primary { font-size: 0.75rem; color: #333; line-height: 1.25; }
-    .cal-blank { flex: 1; min-height: 12px; }
+    .cal-day-num { font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; color: ${accentColor}; }
+    .cal-primary { font-size: 0.8rem; color: #333; line-height: 1.3; }
+    .cal-blank { flex: 1; min-height: 16px; }
     .cal-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 6px; text-align: center; font-weight: 600; font-size: 0.9rem; color: ${accentColor}; }
-    .observances-index-page { padding: 12px 0; }
-    .observances-index-title { font-size: 1rem; margin: 0 0 12px; color: ${accentColor}; }
-    .obs-index-columns { columns: 2; column-gap: 28px; column-fill: auto; }
-    .obs-index-day { font-weight: 700; margin-top: 14px; margin-bottom: 4px; font-size: 0.9rem; color: ${accentColor}; break-after: avoid; }
+    .observances-index-page { padding: 14px 0; }
+    .observances-index-title { font-size: 1rem; margin: 0 0 14px; color: ${accentColor}; }
+    .obs-index-list { }
+    .obs-index-day { font-weight: 700; margin-top: 12px; margin-bottom: 4px; font-size: 0.9rem; color: ${accentColor}; break-after: avoid; }
     .obs-index-day:first-of-type { margin-top: 0; }
     .obs-index-line { margin: 2px 0 0 10px; font-size: 0.85rem; line-height: 1.4; }
     .obs-index-blank { margin: 4px 0 8px 20px; color: #999; font-size: 0.8rem; }
@@ -269,6 +286,7 @@ export function buildCalendarPrintPack(
     @media print {
       body { padding: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .cal-page { height: 11in; min-height: 11in; max-height: 11in; box-sizing: border-box; overflow: hidden; }
+      .cal-scaled { transform: scale(0.67); transform-origin: top left; width: 149.25%; height: 149.25%; position: absolute; top: 0; left: 0; }
       .cal-grid { flex: 1; min-height: 0; }
       .cal-cell { min-height: 0; }
       .obs-index-day { break-after: avoid; }
@@ -277,13 +295,15 @@ export function buildCalendarPrintPack(
 </head>
 <body class="${bodyClass}">
   <div class="print-pack-page cal-page">
-    <h1 style="margin: 0 0 8px; font-size: 1.1rem; color: ${accentColor};">${escapeHtml(monthName)} ${year} — Calendar</h1>
-    <div class="cal-header">
-      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    <div class="cal-scaled">
+      <h1 style="margin: 0 0 8px; font-size: 1.1rem; color: ${accentColor};">${escapeHtml(monthName)} ${year} — Calendar</h1>
+      <div class="cal-header">
+        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
+      <div class="cal-grid">${dayCells.join('')}</div>
     </div>
-    <div class="cal-grid">${dayCells.join('')}</div>
   </div>
-  ${observancesIndexPage}
+  ${observancesIndexPages}
   ${planningPage}
   <script>
     window.onload = function() { window.print(); };
