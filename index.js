@@ -13,6 +13,7 @@ import { generateSongs } from './lib/ai.js';
 import { fetchTrustedSources } from './lib/trustedSources.js';
 import { enrichTrack, getChartStyleList } from './lib/musicDataLayer.js';
 import { getObservancesForYear, getUpcoming, CATEGORIES } from './lib/holidaysAndObservancesUS.js';
+import { mapToCalendarObservances } from './lib/observanceSchema.js';
 import { isR2Configured, uploadToR2 } from './lib/r2.js';
 import * as roomStore from './server/roomStore.js';
 import * as pollStore from './server/pollStore.js';
@@ -545,7 +546,8 @@ app.get('/api/observances/calendar', (req, res) => {
   try {
     const list = getObservancesForYear(year, categoryFilter);
     const forMonth = list.filter((o) => o.month === month);
-    res.json({ year, month, observances: forMonth });
+    const observances = mapToCalendarObservances(forMonth);
+    res.json({ year, month, observances });
   } catch (err) {
     res.status(400).json({ error: err.message || 'Invalid parameters' });
   }

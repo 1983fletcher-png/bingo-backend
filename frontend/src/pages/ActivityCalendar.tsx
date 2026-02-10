@@ -8,13 +8,27 @@ import {
   type ObservancesIndexDay,
   type CalendarPrintStyle,
 } from '../lib/printMaterials';
+import type { CalendarObservance, ObservanceCategory } from '../types/observance';
+
+const CATEGORY_FILTER_OPTIONS: { value: ObservanceCategory | null; label: string }[] = [
+  { value: null, label: 'All' },
+  { value: 'food', label: 'Food' },
+  { value: 'drink', label: 'Drink' },
+  { value: 'candy', label: 'Candy' },
+  { value: 'holiday', label: 'Holiday' },
+  { value: 'music', label: 'Music' },
+  { value: 'games', label: 'Games' },
+  { value: 'wellness', label: 'Wellness' },
+  { value: 'education', label: 'Education' },
+  { value: 'family', label: 'Family' },
+  { value: 'seniors', label: 'Seniors' },
+  { value: 'community', label: 'Community' },
+];
 
 const API_BASE =
   import.meta.env.VITE_SOCKET_URL ||
   import.meta.env.VITE_API_URL ||
   (import.meta.env.DEV ? '' : window.location.origin);
-
-type Observance = { name: string; month: number; day: number; category?: string };
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -159,13 +173,14 @@ export default function ActivityCalendar() {
   const [year, setYear] = useState(() => new Date().getFullYear());
   const [month, setMonth] = useState(() => new Date().getMonth() + 1);
   const [themeIndex, setThemeIndexState] = useState(loadThemeIndex);
-  const [observances, setObservances] = useState<Observance[]>([]);
+  const [observances, setObservances] = useState<CalendarObservance[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
   const [showOnlySelected, setShowOnlySelected] = useState(false);
   const [printStyle, setPrintStyle] = useState<CalendarPrintStyle>('neutral');
   const [showBlankLinesInPrint, setShowBlankLinesInPrint] = useState(true);
+  const [categoryFilter, setCategoryFilter] = useState<ObservanceCategory | null>(null);
 
   const [selectionsByDate, setSelectionsByDate] = useState<Record<number, string[]>>({});
   const [notesByDate, setNotesByDate] = useState<Record<number, string>>({});
@@ -200,7 +215,7 @@ export default function ActivityCalendar() {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const res = await fetchJson<{ observances: Observance[] }>(
+      const res = await fetchJson<{ observances: CalendarObservance[] }>(
         `${API_BASE}/api/observances/calendar?year=${year}&month=${month}`
       );
       if (cancelled) return;
@@ -216,7 +231,12 @@ export default function ActivityCalendar() {
   const startWeekday = firstDay.getDay();
   const daysInMonth = lastDay.getDate();
 
-  const observancesByDay = observances.reduce<Record<number, Observance[]>>((acc, o) => {
+  const filteredObservances =
+    categoryFilter === null
+      ? observances
+      : observances.filter((o) => o.categories?.includes(categoryFilter));
+
+  const observancesByDay = filteredObservances.reduce<Record<number, CalendarObservance[]>>((acc, o) => {
     if (!acc[o.day]) acc[o.day] = [];
     acc[o.day].push(o);
     return acc;
@@ -270,7 +290,7 @@ export default function ActivityCalendar() {
   };
 
   const allDaysWithObservances = Array.from(
-    new Set(observances.map((o) => o.day))
+    new Set(filteredObservances.map((o) => o.day))
   ).sort((a, b) => a - b);
   const daysToShowInIndex = showOnlySelected
     ? allDaysWithObservances.filter((d) => {
@@ -302,7 +322,7 @@ export default function ActivityCalendar() {
     }
     const observancesIndex: ObservancesIndexDay[] = allDaysWithObservances.map((d) => ({
       day: d,
-      observances: (observancesByDay[d] ?? []).map((o) => ({ name: o.name, category: o.category })),
+      observances: (observancesByDay[d] ?? []).map((o) => ({ name: o.name, category: o.categories?.[0] })),
       noteText: notesByDate[d] ?? '',
     }));
     const html = buildCalendarPrintPack(
@@ -446,6 +466,33 @@ export default function ActivityCalendar() {
         ))}
       </div>
 
+      <div className="no-print" style={{ marginBottom: 16 }}>
+        <span style={{ fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', marginRight: 8 }}>Filter by category:</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
+          {CATEGORY_FILTER_OPTIONS.map((opt) => {
+            const isActive = categoryFilter === opt.value;
+            return (
+              <button
+                key={opt.label}
+                type="button"
+                onClick={() => setCategoryFilter(opt.value)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  border: isActive ? `2px solid ${theme.accent}` : `1px solid ${theme.accent}40`,
+                  background: isActive ? (theme.accent === NEUTRAL_THEME.accent ? 'rgba(30,41,59,0.12)' : `${theme.accent}20`) : 'transparent',
+                  color: isActive ? theme.accent : (theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8'),
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                }}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {error && <p style={{ color: '#dc2626', marginBottom: 16 }}>{error}</p>}
       {loading && <p style={{ color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', marginBottom: 16 }}>Loading…</p>}
 
@@ -492,6 +539,8 @@ export default function ActivityCalendar() {
         const note = notesByDate[day] ?? '';
         const date = new Date(year, month - 1, day);
         const dateLabel = `${WEEKDAYS[date.getDay()]}, ${MONTHS[month - 1]} ${day}, ${year}`;
+        const mutedColor = theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8';
+        const borderColor = theme.accent === NEUTRAL_THEME.accent ? '#cbd5e1' : 'rgba(255,255,255,0.3)';
         return (
           <section
             className="no-print"
@@ -504,36 +553,80 @@ export default function ActivityCalendar() {
             }}
           >
             <h2 style={{ margin: '0 0 16px', fontSize: '1.1rem', color: theme.accent }}>{dateLabel}</h2>
-            <div style={{ marginBottom: 16 }}>
-              <strong style={{ display: 'block', marginBottom: 8, fontSize: '0.85rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8' }}>Observances</strong>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {obs.length === 0 && <span style={{ color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', fontSize: '0.9rem' }}>None this day.</span>}
-                {obs.map((o) => {
-                  const isSelected = selected.includes(o.name);
-                  return (
+            {obs.length === 0 && (
+              <p style={{ color: mutedColor, fontSize: '0.9rem', margin: 0 }}>None this day.</p>
+            )}
+            {obs.map((o) => {
+              const isSelected = selected.includes(o.name);
+              const displayName = o.short_name ?? o.name;
+              const isCommunity = o.authorship?.created_by === 'community';
+              const isVerified = o.verification?.confidence === 'high';
+              const countryLabel = o.country === 'US' ? 'United States' : o.country;
+              const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(o.name)}`;
+              const aboutUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(o.name)}`;
+              return (
+                <div
+                  key={o.id ?? o.name}
+                  style={{
+                    marginBottom: 20,
+                    padding: 16,
+                    background: theme.bg === NEUTRAL_THEME.bg ? '#fff' : 'rgba(0,0,0,0.08)',
+                    borderRadius: 10,
+                    border: `1px solid ${theme.accent}30`,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+                    <h3 style={{ margin: 0, fontSize: '1rem', color: theme.accent }}>{displayName}</h3>
                     <button
-                      key={o.name}
                       type="button"
                       onClick={() => toggleSelection(day, o.name)}
                       style={{
                         padding: '6px 12px',
                         borderRadius: 999,
-                        border: `1px solid ${isSelected ? theme.accent : (theme.accent === NEUTRAL_THEME.accent ? '#cbd5e1' : 'rgba(255,255,255,0.3)')}`,
+                        border: `1px solid ${isSelected ? theme.accent : borderColor}`,
                         background: isSelected ? `${theme.accent}25` : 'transparent',
                         color: isSelected ? theme.accent : (theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#cbd5e0'),
                         cursor: 'pointer',
                         fontSize: '0.85rem',
                       }}
                     >
-                      {o.name}
+                      {isSelected ? '✓ Selected' : 'Select for planning'}
                     </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div style={{ marginBottom: 16 }}>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                    {isCommunity && (
+                      <span style={{ padding: '4px 8px', borderRadius: 6, background: '#e0f2fe', color: '#0369a1', fontSize: '0.75rem', fontWeight: 600 }}>Community-Created</span>
+                    )}
+                    {isVerified && (
+                      <span style={{ padding: '4px 8px', borderRadius: 6, background: '#dcfce7', color: '#166534', fontSize: '0.75rem', fontWeight: 600 }}>Verified</span>
+                    )}
+                    {o.country && (
+                      <span style={{ padding: '4px 8px', borderRadius: 6, background: theme.bg === NEUTRAL_THEME.bg ? '#f1f5f9' : 'rgba(255,255,255,0.15)', color: mutedColor, fontSize: '0.75rem' }}>{countryLabel}</span>
+                    )}
+                    {(o.categories?.length ?? 0) > 0 && o.categories.slice(0, 4).map((c) => (
+                      <span key={c} style={{ padding: '4px 8px', borderRadius: 6, border: `1px solid ${theme.accent}40`, color: theme.accent, fontSize: '0.75rem' }}>{c}</span>
+                    ))}
+                  </div>
+                  {o.why_matters && (
+                    <p style={{ margin: '0 0 8px', fontSize: '0.9rem', color: theme.accent === NEUTRAL_THEME.accent ? '#334155' : '#cbd5e0', lineHeight: 1.45 }}>
+                      <strong style={{ color: mutedColor, fontSize: '0.8rem' }}>Why this day matters:</strong> {o.why_matters}
+                    </p>
+                  )}
+                  {o.activity_hint && (
+                    <p style={{ margin: '0 0 8px', fontSize: '0.85rem', color: theme.accent, lineHeight: 1.45 }}>
+                      <strong>Activity idea:</strong> {o.activity_hint}
+                    </p>
+                  )}
+                  <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${theme.accent}20`, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                    <a href={searchUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: theme.accent }}>Search Google</a>
+                    <a href={aboutUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: theme.accent }}>About this observance</a>
+                  </div>
+                </div>
+              );
+            })}
+            <div style={{ marginTop: 16, marginBottom: 16 }}>
               <label style={{ display: 'block', marginBottom: 6, fontSize: '0.85rem', fontWeight: 600, color: theme.accent === NEUTRAL_THEME.accent ? '#334155' : '#e2e8f0' }}>
-                Notes (private to this device)
+                Notes (private to this device, included in print)
               </label>
               <textarea
                 value={note}
@@ -599,14 +692,15 @@ export default function ActivityCalendar() {
                 <ul style={{ margin: 0, paddingLeft: 20, color: theme.accent === NEUTRAL_THEME.accent ? '#334155' : '#cbd5e0', lineHeight: 1.8 }}>
                   {obs.map((o) => {
                     const isSelected = selected.includes(o.name);
+                    const catLabel = (o.categories?.length ?? 0) > 0 ? o.categories.join(', ') : undefined;
                     return (
-                      <li key={o.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <li key={o.id ?? o.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <input
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => toggleSelection(d, o.name)}
                         />
-                        <span>{o.name}{o.category && <span style={{ color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', fontSize: '0.85em' }}> ({o.category})</span>}</span>
+                        <span>{o.name}{catLabel && <span style={{ color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', fontSize: '0.85em' }}> ({catLabel})</span>}</span>
                       </li>
                     );
                   })}
