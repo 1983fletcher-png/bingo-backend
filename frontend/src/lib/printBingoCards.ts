@@ -31,6 +31,7 @@ export function buildBingoCardsPrintDocument(
   const maxTitleLen = 28;
 
   const renderCard = (card: BingoCard, _cardIndex: number): string => {
+    const headerRow = '<tr><th class="col-head">B</th><th class="col-head">I</th><th class="col-head">N</th><th class="col-head">G</th><th class="col-head">O</th></tr>';
     const rows: string[] = [];
     for (let row = 0; row < 5; row++) {
       const cells: string[] = [];
@@ -44,7 +45,7 @@ export function buildBingoCardsPrintDocument(
     }
     return `
       <div class="card">
-        <table class="card-grid"><tbody>${rows.join('')}</tbody></table>
+        <table class="card-grid"><thead>${headerRow}</thead><tbody>${rows.join('')}</tbody></table>
       </div>`;
   };
 
@@ -56,6 +57,10 @@ export function buildBingoCardsPrintDocument(
         <div class="cards-stack">
           ${pageCards.map((card, i) => renderCard(card, p + i)).join('')}
         </div>
+        <footer class="page-footer">
+          <span>Created by the Playroom</span><br>
+          <a href="https://theplayroom.netlify.app" target="_blank" rel="noopener">theplayroom.netlify.app</a>
+        </footer>
       </div>`);
   }
 
@@ -99,9 +104,13 @@ export function buildBingoCardsPrintDocument(
       justify-content: center;
     }
     .card-grid { width: 100%; height: 100%; max-width: 5in; border-collapse: collapse; table-layout: fixed; }
+    .col-head { border: 1px solid #333; padding: 4px 8px; text-align: center; font-size: 14px; font-weight: 700; background: #f0f0f0; }
     .cell { border: 1px solid #333; padding: 0.14in 0.08in; text-align: center; font-size: 12px; line-height: 1.3; }
     .cell:empty::after { content: " "; }
+    .page-footer { margin-top: auto; padding-top: 12px; text-align: center; font-size: 11px; color: #555; }
+    .page-footer a { color: #333; }
     @media print {
+      @page { size: portrait; }
       body { padding: 0; }
       .page { page-break-after: always; padding: 0.2in 0.3in; min-height: 100vh; }
       .page:last-child { page-break-after: auto; }

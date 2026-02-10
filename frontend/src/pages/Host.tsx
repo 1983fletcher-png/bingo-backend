@@ -972,15 +972,17 @@ p{word-break:break-all;font-size:14px;color:#333}
             <div className="host-room__right-head" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
               <div>
               <h1 className="host-room__right-title">Run the game</h1>
-              <p className="host-room__right-sub">Set what players see then start when you’re ready. Change options anytime.</p>
+              <p className="host-room__right-sub">Player view and Display view below match what players and the TV see.</p>
             </div>
-              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                <a href={joinUrlForQR} target="_blank" rel="noopener noreferrer" className="host-room__link-btn" style={{ padding: '8px 14px', fontSize: 13 }}>
-                  Player view
-                </a>
-                <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn" style={{ padding: '8px 14px', fontSize: 13, background: 'var(--surface)', color: 'var(--text)' }}>
-                  TV display
-                </a>
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+              <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
+                <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Player view</div>
+                <iframe title="Player view" src={joinUrlForQR} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
+              </div>
+              <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
+                <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Display view</div>
+                <iframe title="TV display" src={displayUrl} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
               </div>
             </div>
         <div className="host-room__tabs">

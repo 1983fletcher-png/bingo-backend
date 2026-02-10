@@ -382,8 +382,13 @@ export default function ActivityCalendar() {
         </p>
       </header>
 
-      <div className="no-print" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="no-print" style={{ display: 'flex', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ flex: 1, minWidth: 120, display: 'flex', justifyContent: 'flex-end' }}>
+          <button type="button" onClick={handlePrint} style={{ padding: '10px 20px', background: theme.accent, border: 'none', borderRadius: 10, color: '#fff', cursor: 'pointer', fontWeight: 600 }}>
+            Print calendar
+          </button>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center', flex: '0 0 auto' }}>
           <button type="button" onClick={prevMonth} style={{ padding: '10px 16px', background: theme.bg === NEUTRAL_THEME.bg ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)', border: `1px solid ${theme.accent}50`, borderRadius: 10, color: theme.accent === NEUTRAL_THEME.accent ? '#1e293b' : '#e2e8f0', cursor: 'pointer', fontSize: '1rem' }}>
             ←
           </button>
@@ -394,11 +399,7 @@ export default function ActivityCalendar() {
             →
           </button>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <button type="button" onClick={handlePrint} style={{ padding: '10px 20px', background: theme.accent, border: 'none', borderRadius: 10, color: '#fff', cursor: 'pointer', fontWeight: 600 }}>
-            Print calendar
-          </button>
-        </div>
+        <div style={{ flex: 1, minWidth: 120 }} />
       </div>
 
       <div className="no-print" style={{ marginBottom: 16 }}>

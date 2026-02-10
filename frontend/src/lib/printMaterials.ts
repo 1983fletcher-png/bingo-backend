@@ -123,7 +123,7 @@ export function buildFlashcardsPrintDocument(
 </html>`;
 }
 
-/** Calendar print pack: page 1 = big grid, page 2 = observances index (with optional blank lines), pages 3+ = planning sheets. */
+/** Calendar print pack: 3 sheets. Page 1 = full-page calendar (landscape). Page 2 = observances list (portrait). Page 3 = planning & notes (portrait). */
 export type CalendarPrintDay = {
   day: number;
   primaryName: string | null;
@@ -173,58 +173,47 @@ export function buildCalendarPrintPack(
       </div>`);
   }
 
-  // Observances as compact table: Date | Observances | Notes (blank for writing). ~12–15 rows per page → 2–3 pages.
-  const ROWS_PER_OBS_PAGE = 14;
-  const observancesIndexPages =
-    observancesIndex.length === 0
-      ? ''
-      : (() => {
-          const rows = observancesIndex.map(
-            (dayBlock) =>
-              `<tr>
-                <td class="obs-table-date">${escapeHtml(monthName)} ${dayBlock.day}</td>
-                <td class="obs-table-observances">${dayBlock.observances.map((o) => escapeHtml(o.name)).join(', ')}</td>
-                <td class="obs-table-notes"></td>
-              </tr>`
-          );
-          const pages: string[] = [];
-          for (let i = 0; i < rows.length; i += ROWS_PER_OBS_PAGE) {
-            const chunk = rows.slice(i, i + ROWS_PER_OBS_PAGE);
-            const pageNum = Math.floor(i / ROWS_PER_OBS_PAGE) + 1;
-            pages.push(`
-  <div class="print-pack-page observances-index-page">
-    <h2 class="observances-index-title">Observances — ${escapeHtml(monthName)} ${year} (${pageNum})</h2>
+  // Page 2: Single observances page — all days, clearly labeled. One table so it fits on one portrait sheet.
+  const observancesRows = observancesIndex.map(
+    (dayBlock) =>
+      `<tr>
+        <td class="obs-table-date">${escapeHtml(monthName)} ${dayBlock.day}</td>
+        <td class="obs-table-observances">${dayBlock.observances.map((o) => escapeHtml(o.name)).join(', ')}</td>
+        <td class="obs-table-notes"></td>
+      </tr>`
+  );
+  const observancesPage =
+    `<div class="print-pack-page observances-index-page">
+    <h2 class="observances-index-title">Observances — ${escapeHtml(monthName)} ${year}</h2>
+    <p class="observances-index-sub">Use this list to plan activities. Write notes in the right column.</p>
     <table class="obs-table">
       <thead><tr><th>Date</th><th>Observances</th><th>Notes</th></tr></thead>
-      <tbody>${chunk.join('')}</tbody>
+      <tbody>${observancesRows.join('')}</tbody>
     </table>
-  </div>`);
-          }
-          return pages.join('');
-        })();
+  </div>`;
 
-  const planningPage =
-    planningDays.length === 0
-      ? ''
-      : `
-  <div class="print-pack-page planning-table-page">
-    <h2 class="planning-table-title">Planning — ${escapeHtml(monthName)} ${year}</h2>
-    <table class="planning-table">
-      <thead><tr><th>Date</th><th>Selected observances</th><th>Notes</th></tr></thead>
-      <tbody>
-        ${planningDays
-          .map(
-            (p) => `
+  // Page 3: Planning & notes — always included so we have exactly 3 pages and no blank sheet.
+  const planningRows =
+    planningDays.length > 0
+      ? planningDays.map(
+          (p) => `
         <tr>
           <td class="planning-date-cell">${escapeHtml(p.dateLabel)}</td>
           <td class="planning-selections-cell">${(p.selectedNames.length ? p.selectedNames : ['—']).map((n) => escapeHtml(n)).join(', ')}</td>
           <td class="planning-notes-cell">${p.noteText ? escapeHtml(p.noteText) : '—'}</td>
         </tr>`
-          )
-          .join('')}
-      </tbody>
+        ).join('')
+      : `<tr><td colspan="3" class="planning-empty">Add selections and notes in the app, then reprint. Use the lines below for meeting notes.</td></tr>`;
+
+  const planningPage = `
+  <div class="print-pack-page planning-table-page">
+    <h2 class="planning-table-title">Planning & notes — ${escapeHtml(monthName)} ${year}</h2>
+    <table class="planning-table">
+      <thead><tr><th>Date</th><th>Selected observances</th><th>Notes</th></tr></thead>
+      <tbody>${planningRows}</tbody>
     </table>
     <p class="planning-table-blank">Meeting / planning notes: _________________________________________</p>
+    <p class="planning-table-blank">_________________________________________</p>
     <p class="planning-table-blank">_________________________________________</p>
   </div>`;
 
@@ -247,23 +236,31 @@ export function buildCalendarPrintPack(
     body.print-style-fun { color: #1e1b4b; }
     .print-pack-page { page-break-after: always; }
     .print-pack-page:last-child { page-break-after: auto; }
-    .cal-page { display: flex; flex-direction: column; padding: 0.25in; box-sizing: border-box; }
-    .cal-header-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; text-align: center; font-weight: 600; font-size: 0.75rem; color: ${accentColor}; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 4px; flex: 1; min-height: 0; }
-    .cal-cell { border: 1px solid ${borderColor}; padding: 4px; min-height: 0; background: ${calCellBg}; display: flex; flex-direction: column; font-size: 0.65rem; }
+
+    /* Page 1: Full-page calendar (landscape). Grid fills the sheet. */
+    .cal-page { display: flex; flex-direction: column; padding: 0.2in 0.3in; box-sizing: border-box; min-height: 100vh; }
+    .cal-page-title { margin: 0 0 0.12in; font-size: 0.95rem; font-weight: 700; color: ${accentColor}; flex-shrink: 0; }
+    .cal-header-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px; text-align: center; font-weight: 600; font-size: 0.7rem; color: ${accentColor}; flex-shrink: 0; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 3px; flex: 1; min-height: 0; }
+    .cal-cell { border: 1px solid ${borderColor}; padding: 3px; min-height: 0; background: ${calCellBg}; display: flex; flex-direction: column; font-size: 0.6rem; }
     .cal-cell--empty { border-color: #ccc; background: #f5f5f5; }
-    .cal-day-num { font-weight: 700; font-size: 0.9rem; margin-bottom: 2px; color: ${accentColor}; }
-    .cal-primary { font-size: 0.6rem; color: #333; line-height: 1.25; flex: 1; overflow: hidden; }
-    .cal-blank { flex: 1; min-height: 4px; }
+    .cal-day-num { font-weight: 700; font-size: 0.85rem; margin-bottom: 1px; color: ${accentColor}; flex-shrink: 0; }
+    .cal-primary { font-size: 0.58rem; color: #333; line-height: 1.2; flex: 1; overflow: hidden; min-height: 0; }
+    .cal-blank { flex: 1; min-height: 2px; }
+
+    /* Page 2: Observances (portrait) — one page, all days. */
     .observances-index-page { padding: 0.4in; }
-    .observances-index-title { font-size: 0.95rem; margin: 0 0 10px; color: ${accentColor}; }
-    .obs-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-    .obs-table th, .obs-table td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; vertical-align: top; }
+    .observances-index-title { font-size: 1rem; margin: 0 0 4px; color: ${accentColor}; }
+    .observances-index-sub { font-size: 0.8rem; color: #555; margin: 0 0 10px; }
+    .obs-table { width: 100%; border-collapse: collapse; font-size: 9px; }
+    .obs-table th, .obs-table td { border: 1px solid #ccc; padding: 3px 6px; text-align: left; vertical-align: top; }
     .obs-table th { background: #f0f0f0; font-weight: 600; }
-    .obs-table-date { white-space: nowrap; width: 1.2in; }
-    .obs-table-observances { min-width: 2.5in; }
-    .obs-table-notes { min-width: 2in; min-height: 1.2em; }
-    .planning-table-page { padding: 8px 0; }
+    .obs-table-date { white-space: nowrap; width: 0.9in; }
+    .obs-table-observances { min-width: 2.2in; }
+    .obs-table-notes { min-width: 1.8in; min-height: 1em; }
+
+    /* Page 3: Planning & notes (portrait). */
+    .planning-table-page { padding: 0.4in; }
     .planning-table-title { font-size: 1rem; margin: 0 0 8px; color: ${accentColor}; }
     .planning-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     .planning-table th, .planning-table td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; vertical-align: top; }
@@ -271,11 +268,14 @@ export function buildCalendarPrintPack(
     .planning-date-cell { white-space: nowrap; width: 1%; }
     .planning-selections-cell { max-width: 200px; }
     .planning-notes-cell { font-size: 0.75rem; white-space: pre-wrap; max-width: 240px; }
+    .planning-empty { font-size: 0.85rem; color: #666; font-style: italic; }
     .planning-table-blank { margin: 8px 0 0; font-size: 0.8rem; color: #999; }
+
     @media print {
+      @page { size: portrait; }
       @page :first { size: landscape; }
       body { padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .cal-page { width: 11in; height: 8.5in; margin: 0; box-sizing: border-box; }
+      .cal-page { width: 11in; height: 8.5in; margin: 0; padding: 0.2in 0.3in; min-height: 8.5in; }
       .cal-grid { flex: 1; min-height: 0; }
       .cal-cell { min-height: 0; }
     }
@@ -283,13 +283,13 @@ export function buildCalendarPrintPack(
 </head>
 <body class="${bodyClass}">
   <div class="print-pack-page cal-page">
-    <h1 style="margin: 0 0 6px; font-size: 1rem; color: ${accentColor};">${escapeHtml(monthName)} ${year}</h1>
+    <h1 class="cal-page-title">${escapeHtml(monthName)} ${year}</h1>
     <div class="cal-header-row">
       <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
     </div>
     <div class="cal-grid">${dayCells.join('')}</div>
   </div>
-  ${observancesIndexPages}
+  ${observancesPage}
   ${planningPage}
   <script>
     window.onload = function() { window.print(); };
