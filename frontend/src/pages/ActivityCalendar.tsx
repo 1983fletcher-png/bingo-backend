@@ -21,13 +21,6 @@ const MONTHS = [
 
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-/** Format a date as "February 10th, 2026" (ordinal day). */
-function formatTodayHeader(d: Date): string {
-  const day = d.getDate();
-  const ord = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
-  return `${MONTHS[d.getMonth()]} ${day}${ord}, ${d.getFullYear()}`;
-}
-
 type ThemeOption = { accent: string; bg: string; icon: string; label: string };
 
 const NEUTRAL_THEME: ThemeOption = {
@@ -377,7 +370,7 @@ export default function ActivityCalendar() {
 
       <header style={{ marginBottom: 24, textAlign: 'center' }}>
         <h1 style={{ margin: '0 0 4px', fontSize: '1.75rem', color: theme.accent }}>
-          {theme.icon} Activity calendar — {formatTodayHeader(new Date())}
+          {theme.icon} Activity calendar
         </h1>
         <p style={{ margin: 0, color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', lineHeight: 1.5, fontSize: '0.9rem' }}>
           Verified observances for planning. Your selections and notes stay on this device only.
