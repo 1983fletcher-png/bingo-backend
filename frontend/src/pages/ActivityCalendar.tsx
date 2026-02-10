@@ -269,6 +269,17 @@ export default function ActivityCalendar() {
     setExpandedDay((prev) => (prev === day ? null : day));
   };
 
+  const allDaysWithObservances = Array.from(
+    new Set(observances.map((o) => o.day))
+  ).sort((a, b) => a - b);
+  const daysToShowInIndex = showOnlySelected
+    ? allDaysWithObservances.filter((d) => {
+        const selected = selectionsByDate[d] ?? [];
+        const note = (notesByDate[d] ?? '').trim();
+        return selected.length > 0 || !!note;
+      })
+    : allDaysWithObservances;
+
   const handlePrint = useCallback(() => {
     const gridDays: CalendarPrintDay[] = Array.from({ length: daysInMonth }, (_, i) => {
       const day = i + 1;
@@ -335,17 +346,6 @@ export default function ActivityCalendar() {
   const dayNumStyle: React.CSSProperties = { fontWeight: 600, marginBottom: 4, color: theme.accent };
   const eventStyle: React.CSSProperties = { fontSize: '0.75rem', color: theme.accent === NEUTRAL_THEME.accent ? '#475569' : '#94a3b8', marginTop: 4, lineHeight: 1.3 };
   const moreStyle: React.CSSProperties = { fontSize: '0.7rem', color: theme.accent === NEUTRAL_THEME.accent ? '#64748b' : '#94a3b8', marginTop: 2 };
-
-  const allDaysWithObservances = Array.from(
-    new Set(observances.map((o) => o.day))
-  ).sort((a, b) => a - b);
-  const daysToShowInIndex = showOnlySelected
-    ? allDaysWithObservances.filter((d) => {
-        const selected = selectionsByDate[d] ?? [];
-        const note = (notesByDate[d] ?? '').trim();
-        return selected.length > 0 || !!note;
-      })
-    : allDaysWithObservances;
 
   return (
     <div
