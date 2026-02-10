@@ -69,6 +69,34 @@
   padding-right: calc(24px + env(safe-area-inset-right));
 }
 
+/* Prime: Activity calendar directly above Welcome */
+.landing__prime {
+  padding: 20px 0 24px;
+  text-align: center;
+}
+
+.landing__prime-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.landing__prime-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
 .landing__hero {
   text-align: center;
   margin-bottom: 1.5rem;

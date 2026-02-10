@@ -88,6 +88,17 @@ export default function Home() {
       </header>
 
       <main className="landing__main">
+        {/* Prime: Activity calendar directly above welcome */}
+        <section className="landing__prime" aria-label="Activity calendar">
+          <button
+            type="button"
+            onClick={() => navigate('/calendar')}
+            className="landing__prime-btn"
+          >
+            <span aria-hidden>📅</span>
+            Activity calendar
+          </button>
+        </section>
         {/* Hero: welcome, tagline, hosted line, one link — then four cards */}
         <section className="landing__hero" aria-label="Welcome">
           <h1 className="landing__hero-title">Welcome to the Playroom</h1>

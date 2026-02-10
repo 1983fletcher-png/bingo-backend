@@ -240,13 +240,14 @@ export function buildCalendarPrintPack(
     body.print-style-fun { color: #1e1b4b; }
     .print-pack-page { page-break-after: always; }
     .print-pack-page:last-child { page-break-after: auto; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-    .cal-cell { border: 1px solid ${borderColor}; padding: 6px; min-height: 64px; background: ${calCellBg}; }
+    .cal-page { display: flex; flex-direction: column; min-height: 0; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; flex: 1; min-height: 0; }
+    .cal-cell { border: 1px solid ${borderColor}; padding: 8px; min-height: 80px; background: ${calCellBg}; display: flex; flex-direction: column; }
     .cal-cell--empty { border-color: #ccc; background: #f9f9f9; }
-    .cal-day-num { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; color: ${accentColor}; }
-    .cal-primary { font-size: 0.7rem; color: #333; line-height: 1.2; }
-    .cal-blank { min-height: 20px; }
-    .cal-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; text-align: center; font-weight: 600; font-size: 0.8rem; color: ${accentColor}; }
+    .cal-day-num { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; color: ${accentColor}; }
+    .cal-primary { font-size: 0.8rem; color: #333; line-height: 1.3; }
+    .cal-blank { flex: 1; min-height: 24px; }
+    .cal-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 6px; text-align: center; font-weight: 600; font-size: 0.9rem; color: ${accentColor}; }
     .observances-index-page { padding: 8px 0; }
     .observances-index-title { font-size: 1rem; margin: 0 0 8px; color: ${accentColor}; }
     .obs-index-columns { columns: 2; column-gap: 24px; column-fill: auto; }
@@ -266,14 +267,16 @@ export function buildCalendarPrintPack(
     .planning-notes-cell { font-size: 0.75rem; white-space: pre-wrap; max-width: 240px; }
     .planning-table-blank { margin: 8px 0 0; font-size: 0.8rem; color: #999; }
     @media print {
-      body { padding: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .cal-cell { min-height: 56px; }
+      body { padding: 8px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cal-page { min-height: 100vh; height: 100vh; box-sizing: border-box; }
+      .cal-grid { flex: 1; min-height: 0; }
+      .cal-cell { min-height: 0; flex: 1; }
       .obs-index-day { break-after: avoid; }
     }
   </style>
 </head>
 <body class="${bodyClass}">
-  <div class="print-pack-page">
+  <div class="print-pack-page cal-page">
     <h1 style="margin: 0 0 8px; font-size: 1.1rem; color: ${accentColor};">${escapeHtml(monthName)} ${year} — Calendar</h1>
     <div class="cal-header">
       <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
