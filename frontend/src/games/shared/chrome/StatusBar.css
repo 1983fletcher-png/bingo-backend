@@ -1,0 +1,48 @@
+.pr-statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: var(--pr-muted);
+  background: var(--pr-surface);
+  border-top: 1px solid var(--pr-border);
+}
+
+.pr-statusbar__badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--pr-radius-sm);
+  background: var(--pr-surface2);
+  color: var(--pr-text);
+  font-weight: var(--pr-weight-heading);
+}
+
+.pr-statusbar__code {
+  font-family: var(--pr-font-display);
+  letter-spacing: 0.1em;
+  color: var(--pr-text);
+}
+
+.pr-statusbar__count {
+  color: var(--pr-muted);
+}
+
+.pr-statusbar__qr {
+  padding: 0.25rem 0.5rem;
+  font-size: inherit;
+  background: transparent;
+  border: 1px solid var(--pr-border);
+  border-radius: var(--pr-radius-sm);
+  color: var(--pr-text);
+}
+
+.pr-statusbar__qr:hover {
+  border-color: var(--pr-brand);
+  color: var(--pr-brand);
+}
+
+.pr-statusbar__timer {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}

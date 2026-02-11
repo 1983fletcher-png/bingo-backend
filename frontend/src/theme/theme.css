@@ -1,0 +1,135 @@
+/**
+ * Playroom theme — fallback CSS variables and base styles using --pr-* tokens.
+ * Applied after design-system.css. Theme engine sets vars on html at runtime.
+ * @see docs/PLAYROOM-THEMING-SPEC.md
+ */
+
+/* Fallbacks when no theme applied yet (e.g. before ThemeProvider mount) */
+:root {
+  --pr-bg: #0f1115;
+  --pr-surface: #1b1f27;
+  --pr-surface2: #252a33;
+  --pr-text: #f0f0f0;
+  --pr-muted: #9aa3ad;
+  --pr-border: #3d4552;
+  --pr-brand: #e8b923;
+  --pr-brand2: #c99700;
+  --pr-success: #34c759;
+  --pr-warning: #ff9f0a;
+  --pr-danger: #ff3b30;
+  --pr-glow: #e8b923;
+  --pr-font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --pr-font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --pr-weight-heading: 600;
+  --pr-weight-body: 400;
+  --pr-letter-spacing-display: 0;
+  --pr-radius-sm: 6px;
+  --pr-radius-md: 10px;
+  --pr-radius-lg: 14px;
+  --pr-radius-xl: 20px;
+  --pr-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --pr-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --pr-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --pr-noise-opacity: 0.02;
+  --pr-glow-strength: 0.15;
+  --pr-vignette-opacity: 0;
+  --pr-scanlines-opacity: 0;
+  --pr-duration-fast: 150ms;
+  --pr-duration-med: 250ms;
+  --pr-duration-slow: 400ms;
+  --pr-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Playroom-themed page shell (optional: use on body or #root when full reskin) */
+.pr-page {
+  background: var(--pr-bg);
+  color: var(--pr-text);
+  font-family: var(--pr-font-ui);
+  min-height: 100vh;
+}
+
+/* Surfaces */
+.pr-surface {
+  background: var(--pr-surface);
+  color: var(--pr-text);
+  border-radius: var(--pr-radius-md);
+  box-shadow: var(--pr-shadow-sm);
+}
+
+.pr-surface2 {
+  background: var(--pr-surface2);
+  color: var(--pr-text);
+  border-radius: var(--pr-radius-md);
+}
+
+/* Glow utility (uses --pr-glow and --pr-glow-strength) */
+.pr-glow {
+  box-shadow: 0 0 20px color-mix(in srgb, var(--pr-glow) calc(var(--pr-glow-strength, 0.15) * 100%), transparent);
+}
+
+.pr-glow-text {
+  text-shadow: 0 0 12px color-mix(in srgb, var(--pr-glow) calc(var(--pr-glow-strength, 0.15) * 100%), transparent);
+}
+
+/* Focus ring — respects theme focus ring style */
+.pr-focus-ring:focus-visible {
+  outline: 2px solid var(--pr-brand);
+  outline-offset: 2px;
+}
+
+[data-pr-focus-ring="soft"] .pr-focus-ring:focus-visible {
+  outline-offset: 4px;
+  border-radius: var(--pr-radius-sm);
+}
+
+[data-pr-focus-ring="sharp"] .pr-focus-ring:focus-visible {
+  outline-offset: 2px;
+}
+
+/* Buttons using tokens */
+.pr-btn {
+  font-family: var(--pr-font-ui);
+  font-weight: var(--pr-weight-body);
+  padding: 0.5rem 1rem;
+  border-radius: var(--pr-radius-md);
+  border: 1px solid var(--pr-border);
+  background: var(--pr-surface2);
+  color: var(--pr-text);
+  transition: background var(--pr-duration-fast) var(--pr-easing),
+    border-color var(--pr-duration-fast) var(--pr-easing),
+    box-shadow var(--pr-duration-fast) var(--pr-easing);
+}
+
+.pr-btn:hover {
+  background: var(--pr-surface);
+  border-color: var(--pr-brand);
+}
+
+.pr-btn-primary {
+  background: var(--pr-brand);
+  color: var(--pr-bg);
+  border-color: var(--pr-brand);
+}
+
+.pr-btn-primary:hover {
+  background: var(--pr-brand2);
+  border-color: var(--pr-brand2);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--pr-glow) 30%, transparent);
+}
+
+/* Reduced motion: disable transitions when user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pr-page *,
+  .pr-page *::before,
+  .pr-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+[data-pr-motion="calm"] .pr-motion-sensitive,
+[data-pr-motion="calm"] .pr-motion-sensitive * {
+  animation: none !important;
+  transition-duration: 0.05s !important;
+}

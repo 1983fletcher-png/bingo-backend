@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "id": "classic",
+    "name": "Classic",
+    "description": "Corporate Smooth — premium, clean, subtle gradients and soft glows.",
+    "version": "1.0"
+  },
+  "colors": {
+    "bg": "#0f1115",
+    "surface": "#1b1f27",
+    "surface2": "#252a33",
+    "text": "#f0f0f0",
+    "muted": "#9aa3ad",
+    "border": "#3d4552",
+    "brand": "#e8b923",
+    "brand2": "#c99700",
+    "success": "#34c759",
+    "warning": "#ff9f0a",
+    "danger": "#ff3b30",
+    "glow": "#e8b923"
+  },
+  "typography": {
+    "fontUI": "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+    "fontDisplay": "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+    "weightHeading": "600",
+    "weightBody": "400",
+    "letterSpacingDisplay": "0"
+  },
+  "radii": {
+    "sm": "6px",
+    "md": "10px",
+    "lg": "14px",
+    "xl": "20px"
+  },
+  "shadows": {
+    "sm": "0 1px 3px rgba(0,0,0,0.25)",
+    "md": "0 4px 16px rgba(0,0,0,0.3)",
+    "lg": "0 8px 32px rgba(0,0,0,0.35)"
+  },
+  "effects": {
+    "noiseOpacity": 0.02,
+    "glowStrength": 0.15,
+    "vignetteOpacity": 0,
+    "scanlinesOpacity": 0
+  },
+  "motion": {
+    "levelDefault": "standard",
+    "durationFastMs": 150,
+    "durationMedMs": 250,
+    "durationSlowMs": 400,
+    "easingStandard": "cubic-bezier(0.4, 0, 0.2, 1)"
+  },
+  "componentStyles": {
+    "panelStyle": "glass",
+    "buttonStyle": "solid",
+    "focusRing": "soft"
+  },
+  "gameChromeDefaults": {
+    "marqueeHeader": false,
+    "stageFrame": "lightbar",
+    "scorePanel": "glass",
+    "tileStyle": "bezel",
+    "answerPlateStyle": "flat"
+  }
+}

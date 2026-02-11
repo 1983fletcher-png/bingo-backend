@@ -31,10 +31,11 @@ import ActivityRoomPlaceholder from './pages/ActivityRoomPlaceholder';
 import ActivityRoomPrintables from './pages/ActivityRoomPrintables';
 import ActivityRoomInsights from './pages/ActivityRoomInsights';
 import ActivityRoomLibrary from './pages/ActivityRoomLibrary';
+import ThemeLab from './pages/ThemeLab';
 
 function useShowThemeToggle() {
   const path = useLocation().pathname;
-  const isShell = path === '/' || path === '/host' || path === '/activity' || path.startsWith('/activity/') || path === '/join' || path === '/calendar' || path.startsWith('/create') || path.startsWith('/learn') || path.startsWith('/view') || path.startsWith('/room') || path.startsWith('/poll');
+  const isShell = path === '/' || path === '/host' || path === '/activity' || path.startsWith('/activity/') || path === '/join' || path === '/calendar' || path.startsWith('/create') || path.startsWith('/learn') || path.startsWith('/view') || path.startsWith('/room') || path.startsWith('/poll') || path === '/theme-lab';
   const isDisplay = path.startsWith('/display');
   return isShell && !isDisplay;
 }
@@ -83,6 +84,7 @@ export default function App() {
       <Route path="/learn" element={<Learn />} />
       <Route path="/learn/:id" element={<LearnCard />} />
       <Route path="/calendar" element={<ActivityCalendar />} />
+      <Route path="/theme-lab" element={<ThemeLab />} />
       <Route path="/view/:slug" element={<ViewPage />} />
     </Routes>
     </>

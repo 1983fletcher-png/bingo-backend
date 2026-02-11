@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "id": "retro-arcade",
+    "name": "Retro Arcade",
+    "description": "Nostalgia hit — neon accents, arcade carpet vibe, playful but premium.",
+    "version": "1.0"
+  },
+  "colors": {
+    "bg": "#0d0a14",
+    "surface": "#1a1520",
+    "surface2": "#252030",
+    "text": "#f0ecf5",
+    "muted": "#9a8fb0",
+    "border": "#3d3550",
+    "brand": "#a78bfa",
+    "brand2": "#8b5cf6",
+    "success": "#34d399",
+    "warning": "#fbbf24",
+    "danger": "#f472b6",
+    "glow": "#a78bfa"
+  },
+  "typography": {
+    "fontUI": "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+    "fontDisplay": "'Segoe UI', system-ui, sans-serif",
+    "weightHeading": "700",
+    "weightBody": "400",
+    "letterSpacingDisplay": "0.03em"
+  },
+  "radii": {
+    "sm": "6px",
+    "md": "10px",
+    "lg": "14px",
+    "xl": "18px"
+  },
+  "shadows": {
+    "sm": "0 0 8px rgba(167,139,250,0.2), 0 2px 4px rgba(0,0,0,0.3)",
+    "md": "0 0 20px rgba(167,139,250,0.25), 0 6px 20px rgba(0,0,0,0.35)",
+    "lg": "0 0 40px rgba(167,139,250,0.3), 0 12px 40px rgba(0,0,0,0.4)"
+  },
+  "effects": {
+    "noiseOpacity": 0.07,
+    "glowStrength": 0.35,
+    "vignetteOpacity": 0.15,
+    "scanlinesOpacity": 0.08
+  },
+  "motion": {
+    "levelDefault": "standard",
+    "durationFastMs": 120,
+    "durationMedMs": 220,
+    "durationSlowMs": 350,
+    "easingStandard": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+  },
+  "componentStyles": {
+    "panelStyle": "glass",
+    "buttonStyle": "solid",
+    "focusRing": "sharp"
+  },
+  "gameChromeDefaults": {
+    "marqueeHeader": true,
+    "stageFrame": "lightbar",
+    "scorePanel": "glass",
+    "tileStyle": "neon",
+    "answerPlateStyle": "hingeFlip"
+  }
+}

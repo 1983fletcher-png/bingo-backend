@@ -1,0 +1,50 @@
+.pr-tile {
+  padding: 0.75rem 1rem;
+  border-radius: var(--pr-radius-md);
+  font-family: var(--pr-font-ui);
+  color: var(--pr-text);
+  transition: background var(--pr-duration-fast) var(--pr-easing),
+    border-color var(--pr-duration-fast) var(--pr-easing),
+    box-shadow var(--pr-duration-fast) var(--pr-easing);
+}
+
+.pr-tile--flat {
+  background: var(--pr-surface);
+  border: 1px solid var(--pr-border);
+}
+
+.pr-tile--bezel {
+  background: var(--pr-surface2);
+  border: 2px solid var(--pr-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--pr-shadow-sm);
+}
+
+.pr-tile--neon {
+  background: var(--pr-surface);
+  border: 1px solid var(--pr-border);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--pr-glow) 25%, transparent);
+}
+
+.pr-tile--selected.pr-tile--flat,
+.pr-tile--selected.pr-tile--bezel {
+  border-color: var(--pr-brand);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--pr-glow) 20%, transparent);
+}
+
+.pr-tile--selected.pr-tile--neon {
+  border-color: var(--pr-glow);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--pr-glow) 40%, transparent);
+}
+
+.pr-tile--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pr-tile[role="button"]:not(.pr-tile--disabled):hover {
+  border-color: var(--pr-brand);
+}
+
+.pr-tile[role="button"]:not(.pr-tile--disabled):active {
+  transform: scale(0.98);
+}

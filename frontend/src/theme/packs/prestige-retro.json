@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "id": "prestige-retro",
+    "name": "Prestige Retro",
+    "description": "Polished showtime — light beams, metallic bevel, warm stage glow.",
+    "version": "1.0"
+  },
+  "colors": {
+    "bg": "#1a1512",
+    "surface": "#2a221c",
+    "surface2": "#362d26",
+    "text": "#f5ede8",
+    "muted": "#b8a99a",
+    "border": "#4a4036",
+    "brand": "#e8c45c",
+    "brand2": "#c9a83d",
+    "success": "#4ade80",
+    "warning": "#fbbf24",
+    "danger": "#f87171",
+    "glow": "#e8c45c"
+  },
+  "typography": {
+    "fontUI": "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+    "fontDisplay": "Georgia, 'Times New Roman', serif",
+    "weightHeading": "600",
+    "weightBody": "400",
+    "letterSpacingDisplay": "0.02em"
+  },
+  "radii": {
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px"
+  },
+  "shadows": {
+    "sm": "0 2px 4px rgba(0,0,0,0.35)",
+    "md": "0 6px 20px rgba(0,0,0,0.4)",
+    "lg": "0 12px 40px rgba(0,0,0,0.45)"
+  },
+  "effects": {
+    "noiseOpacity": 0.03,
+    "glowStrength": 0.25,
+    "vignetteOpacity": 0.2,
+    "scanlinesOpacity": 0.05
+  },
+  "motion": {
+    "levelDefault": "standard",
+    "durationFastMs": 180,
+    "durationMedMs": 300,
+    "durationSlowMs": 500,
+    "easingStandard": "cubic-bezier(0.33, 1, 0.68, 1)"
+  },
+  "componentStyles": {
+    "panelStyle": "bezel",
+    "buttonStyle": "solid",
+    "focusRing": "soft"
+  },
+  "gameChromeDefaults": {
+    "marqueeHeader": true,
+    "stageFrame": "lightbar",
+    "scorePanel": "bezel",
+    "tileStyle": "bezel",
+    "answerPlateStyle": "hingeFlip"
+  }
+}

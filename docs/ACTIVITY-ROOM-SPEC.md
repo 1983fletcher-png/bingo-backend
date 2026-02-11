@@ -3,6 +3,8 @@
 **Owner:** Jason / Playroom  
 **Goal:** Replace "Host a Room" with a new **Activity Room** that powers events, activities, training, and testing via kits + game shows + printables + insights.
 
+**Related:** **Market Match + Survey Showdown** → `docs/MARKET-MATCH-SURVEY-SHOWDOWN-SPEC.md`. **Crowd Control Trivia** (crowd-votes-category, verified DB) → `docs/CROWD-CONTROL-TRIVIA-SPEC.md`.
+
 ---
 
 ## 0) North Star

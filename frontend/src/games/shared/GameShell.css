@@ -1,0 +1,76 @@
+.pr-gameshell {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--pr-bg);
+  color: var(--pr-text);
+  font-family: var(--pr-font-ui);
+}
+
+.pr-gameshell__scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.pr-gameshell__chrome {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.pr-gameshell__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  flex-shrink: 0;
+}
+
+.pr-gameshell__header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.pr-gameshell__header-right {
+  flex-shrink: 0;
+}
+
+.pr-gameshell__stage-wrap {
+  flex: 1;
+  padding: 1rem;
+  min-height: 0;
+}
+
+.pr-gameshell__main {
+  min-height: 200px;
+}
+
+.pr-gameshell__sidebar {
+  padding: 1rem;
+  border-top: 1px solid var(--pr-border);
+}
+
+/* Display: max width, large typography */
+.pr-gameshell--display .pr-gameshell__stage-wrap {
+  max-width: 90vw;
+  margin: 0 auto;
+}
+
+.pr-gameshell--display .pr-gameshell__main {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+}
+
+/* Player: stack, large tap targets */
+.pr-gameshell--player .pr-gameshell__main {
+  padding: 0.5rem 0;
+}
+
+.pr-gameshell--player .pr-gameshell__stage-wrap {
+  padding: 0.75rem;
+}

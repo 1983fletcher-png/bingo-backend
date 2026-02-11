@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "id": "retro-studio",
+    "name": "Retro Studio",
+    "description": "Classic studio set — warm, mid-century, cleaner than arcade.",
+    "version": "1.0"
+  },
+  "colors": {
+    "bg": "#1e1a18",
+    "surface": "#2c2622",
+    "surface2": "#3a332e",
+    "text": "#f2ebe6",
+    "muted": "#a89b8f",
+    "border": "#4d443c",
+    "brand": "#d4a574",
+    "brand2": "#b8895c",
+    "success": "#6ee7b7",
+    "warning": "#fcd34d",
+    "danger": "#fca5a5",
+    "glow": "#d4a574"
+  },
+  "typography": {
+    "fontUI": "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+    "fontDisplay": "Georgia, 'Times New Roman', serif",
+    "weightHeading": "600",
+    "weightBody": "400",
+    "letterSpacingDisplay": "0.015em"
+  },
+  "radii": {
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px"
+  },
+  "shadows": {
+    "sm": "0 2px 6px rgba(0,0,0,0.3)",
+    "md": "0 6px 24px rgba(0,0,0,0.35)",
+    "lg": "0 12px 48px rgba(0,0,0,0.4)"
+  },
+  "effects": {
+    "noiseOpacity": 0.04,
+    "glowStrength": 0.2,
+    "vignetteOpacity": 0.18,
+    "scanlinesOpacity": 0
+  },
+  "motion": {
+    "levelDefault": "standard",
+    "durationFastMs": 160,
+    "durationMedMs": 280,
+    "durationSlowMs": 450,
+    "easingStandard": "cubic-bezier(0.33, 1, 0.68, 1)"
+  },
+  "componentStyles": {
+    "panelStyle": "bezel",
+    "buttonStyle": "solid",
+    "focusRing": "soft"
+  },
+  "gameChromeDefaults": {
+    "marqueeHeader": true,
+    "stageFrame": "bezel",
+    "scorePanel": "bezel",
+    "tileStyle": "bezel",
+    "answerPlateStyle": "flat"
+  }
+}
