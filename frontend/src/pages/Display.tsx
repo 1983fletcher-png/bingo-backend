@@ -7,6 +7,7 @@ import type { FeudState } from '../types/feud';
 import type { Song } from '../types/game';
 import { getActivityTheme } from '../types/themes';
 import { songKey } from '../types/game';
+import { GameShell } from '../games/shared/GameShell';
 
 const COLUMNS = ['B', 'I', 'N', 'G', 'O'] as const;
 const ROWS_PER_COL = 15;
@@ -178,29 +179,47 @@ export default function Display() {
     ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(effectiveJoinUrl)}`
     : '';
 
-  // Estimation Show / Category Grid: placeholder until full implementation
+  // Estimation Show / Category Grid (Market Match): placeholder until full implementation
   if (gameType === 'estimation' || gameType === 'jeopardy') {
     const title = gameType === 'estimation' ? 'Estimation Show' : 'Category Grid';
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: theme.bg, color: theme.text }}>
-        <div style={{ textAlign: 'center', padding: 48 }}>
-          <h1 style={{ marginBottom: 8 }}>{title}</h1>
-          <p style={{ color: theme.muted }}>Coming soon. Share the join link with players; full display will be available in a future update.</p>
-        </div>
-      </div>
+      <GameShell
+        gameKey="market_match"
+        viewMode="display"
+        title={title}
+        mainSlot={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48, textAlign: 'center' }}>
+            <div>
+              <h1 style={{ marginBottom: 8, fontFamily: 'var(--pr-font-display)' }}>{title}</h1>
+              <p style={{ color: 'var(--pr-muted)' }}>Coming soon. Share the join link with players; full display will be available in a future update.</p>
+            </div>
+          </div>
+        }
+        statusBarProps={{ joinCode: code?.toUpperCase() ?? '' }}
+      />
     );
   }
 
   // Feud (Survey Showdown): checkpoint-driven TV view
   if (gameType === 'feud' && feudState) {
     return (
-      <FeudDisplay
-        feud={feudState}
-        joinUrl={effectiveJoinUrl}
-        code={code?.toUpperCase() ?? ''}
-        eventTitle={eventConfig?.gameTitle || eventTitle}
-        theme={theme}
-        calmMode={calmMode}
+      <GameShell
+        gameKey="survey_showdown"
+        viewMode="display"
+        title={eventConfig?.gameTitle || eventTitle || 'Survey Showdown'}
+        subtitle={feudState.roundIndex ? `Round ${feudState.roundIndex}` : undefined}
+        headerRightSlot={code ? <span style={{ fontFamily: 'var(--pr-font-display)', letterSpacing: '0.1em' }}>{code.toUpperCase()}</span> : undefined}
+        mainSlot={
+          <FeudDisplay
+            feud={feudState}
+            joinUrl={effectiveJoinUrl}
+            code={code?.toUpperCase() ?? ''}
+            eventTitle={eventConfig?.gameTitle || eventTitle}
+            theme={theme}
+            calmMode={calmMode}
+          />
+        }
+        statusBarProps={{ joinCode: code?.toUpperCase() ?? '' }}
       />
     );
   }
@@ -265,7 +284,7 @@ export default function Display() {
     );
   }
 
-  // Started + Trivia: show trivia display (question, QR, logo, venue details)
+  // Started + Trivia (Crowd Control Trivia): show trivia display inside GameShell
   if (started && gameType === 'trivia' && triviaState?.questions?.length) {
     const idx = Math.min(triviaState.currentIndex, triviaState.questions.length - 1);
     const q = triviaState.questions[idx];
@@ -274,65 +293,63 @@ export default function Display() {
     const hasSocial = eventConfig?.facebookUrl || eventConfig?.instagramUrl;
     const trQr = effectiveJoinUrl ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=${encodeURIComponent(effectiveJoinUrl)}` : '';
     return (
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: theme.bg, color: theme.text }}>
-        <header style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', background: theme.panel, borderBottom: `2px solid ${theme.border}` }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            {eventConfig?.logoUrl && <img src={eventConfig.logoUrl} alt="" style={{ height: 40, objectFit: 'contain' }} />}
-            <div>
-              <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{gameName}</h1>
-              {venueName && <p style={{ margin: '2px 0 0 0', fontSize: 13, color: theme.muted }}>{venueName}</p>}
-            </div>
+      <GameShell
+        gameKey="crowd_control_trivia"
+        viewMode="display"
+        title={gameName}
+        subtitle={`Question ${idx + 1} of ${triviaState.questions.length}`}
+        headerRightSlot={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {trQr && <img src={trQr} alt="Join" style={{ width: 64, height: 64, borderRadius: 8, border: '2px solid var(--pr-border)' }} />}
+            <span style={{ fontFamily: 'var(--pr-font-display)', fontWeight: 700, letterSpacing: '0.1em' }}>{code?.toUpperCase()}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            {trQr && <img src={trQr} alt="Join" style={{ width: 80, height: 80, borderRadius: 8, border: `2px solid ${theme.border}` }} />}
-            <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.1em' }}>{code?.toUpperCase()}</span>
-          </div>
-        </header>
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 32, textAlign: 'center' }}>
-          <p style={{ margin: '0 0 12px', fontSize: 14, color: theme.muted }}>Question {idx + 1} of {triviaState.questions.length}</p>
-          {triviaState.settings?.mcTipsEnabled && q?.hostNotes?.mcTip && (
-            <p style={{ margin: '0 0 16px', padding: 16, maxWidth: 800, background: theme.panel, borderRadius: 12, borderLeft: `4px solid ${theme.accent}`, fontSize: 'clamp(14px, 2vw, 18px)', color: theme.muted, textAlign: 'left' }}>
-              <strong>MC tip:</strong> {q.hostNotes.mcTip}
-            </p>
-          )}
-          {!triviaState.revealed && triviaState.questionStartAt != null && (triviaState.timeLimitSec ?? 30) > 0 && (
-            <div style={{ marginBottom: 16 }}>
-              <TimerPill questionStartAt={triviaState.questionStartAt} timeLimitSec={triviaState.timeLimitSec ?? 30} active />
-            </div>
-          )}
-          <h2 style={{ margin: '0 0 24px', fontSize: 'clamp(1.25rem, 3vw, 2rem)', fontWeight: 600, lineHeight: 1.4 }}>{q?.question}</h2>
-          {triviaState.revealed && q?.options?.length ? (
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
-              {q.options.map((opt, i) => (
-                <span key={i} style={{ padding: '12px 20px', background: theme.card, color: theme.text, borderRadius: 12, fontWeight: 600, border: `2px solid ${theme.border}` }}>{opt}</span>
-              ))}
-            </div>
-          ) : triviaState.revealed && (q as { correctAnswer?: string })?.correctAnswer ? (
-            <p style={{ margin: 0, padding: '16px 24px', background: theme.accent, color: '#111', borderRadius: 12, fontWeight: 700, fontSize: 20 }}>{(q as { correctAnswer: string }).correctAnswer}</p>
-          ) : (
-            <p style={{ margin: 0, fontSize: 18, color: theme.muted }}>Answer on your phone</p>
-          )}
-          {triviaState.settings?.leaderboardsVisibleOnDisplay !== false && triviaState.scores && Object.keys(triviaState.scores).length > 0 && (
-            <div style={{ marginTop: 24, padding: '12px 24px', background: theme.panel, borderRadius: 12, display: 'inline-block', alignSelf: 'center' }}>
-              <p style={{ margin: '0 0 8px', fontSize: 14, color: theme.muted }}>Scores</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
-                {Object.entries(triviaState.scores)
-                  .sort((a, b) => b[1] - a[1])
-                  .slice(0, 10)
-                  .map(([id, score]) => (
-                    <span key={id} style={{ fontWeight: 600 }}>{score} pts</span>
-                  ))}
+        }
+        mainSlot={
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 24, textAlign: 'center' }}>
+            {triviaState.settings?.mcTipsEnabled && q?.hostNotes?.mcTip && (
+              <p style={{ margin: '0 0 16px', padding: 16, maxWidth: 800, background: 'var(--pr-surface)', borderRadius: 12, borderLeft: '4px solid var(--pr-brand)', fontSize: 'clamp(14px, 2vw, 18px)', color: 'var(--pr-muted)', textAlign: 'left' }}>
+                <strong>MC tip:</strong> {q.hostNotes.mcTip}
+              </p>
+            )}
+            {!triviaState.revealed && triviaState.questionStartAt != null && (triviaState.timeLimitSec ?? 30) > 0 && (
+              <div style={{ marginBottom: 16 }}>
+                <TimerPill questionStartAt={triviaState.questionStartAt} timeLimitSec={triviaState.timeLimitSec ?? 30} active />
               </div>
-            </div>
-          )}
-        </main>
-        {(hasSocial || venueName) && (
-          <footer style={{ flex: '0 0 auto', padding: '12px 24px', textAlign: 'center', fontSize: 13, color: theme.muted }}>
-            {venueName && <span>{venueName}</span>}
-            {hasSocial && <span>{venueName && ' · '}Follow us on Facebook · Instagram</span>}
-          </footer>
-        )}
-      </div>
+            )}
+            <h2 style={{ margin: '0 0 24px', fontSize: 'clamp(1.25rem, 3vw, 2rem)', fontWeight: 600, lineHeight: 1.4, color: 'var(--pr-text)' }}>{q?.question}</h2>
+            {triviaState.revealed && q?.options?.length ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
+                {q.options.map((opt, i) => (
+                  <span key={i} style={{ padding: '12px 20px', background: 'var(--pr-surface2)', color: 'var(--pr-text)', borderRadius: 12, fontWeight: 600, border: '2px solid var(--pr-border)' }}>{opt}</span>
+                ))}
+              </div>
+            ) : triviaState.revealed && (q as { correctAnswer?: string })?.correctAnswer ? (
+              <p style={{ margin: 0, padding: '16px 24px', background: 'var(--pr-brand)', color: 'var(--pr-bg)', borderRadius: 12, fontWeight: 700, fontSize: 20 }}>{(q as { correctAnswer: string }).correctAnswer}</p>
+            ) : (
+              <p style={{ margin: 0, fontSize: 18, color: 'var(--pr-muted)' }}>Answer on your phone</p>
+            )}
+            {triviaState.settings?.leaderboardsVisibleOnDisplay !== false && triviaState.scores && Object.keys(triviaState.scores).length > 0 && (
+              <div style={{ marginTop: 24, padding: '12px 24px', background: 'var(--pr-surface)', borderRadius: 12, display: 'inline-block', alignSelf: 'center' }}>
+                <p style={{ margin: '0 0 8px', fontSize: 14, color: 'var(--pr-muted)' }}>Scores</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+                  {Object.entries(triviaState.scores)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10)
+                    .map(([id, score]) => (
+                      <span key={id} style={{ fontWeight: 600, color: 'var(--pr-text)' }}>{score} pts</span>
+                    ))}
+                </div>
+              </div>
+            )}
+            {(hasSocial || venueName) && (
+              <p style={{ marginTop: 16, fontSize: 13, color: 'var(--pr-muted)' }}>
+                {venueName}{hasSocial && venueName ? ' · ' : ''}{hasSocial ? 'Follow us on Facebook · Instagram' : ''}
+              </p>
+            )}
+          </div>
+        }
+        statusBarProps={{ joinCode: code?.toUpperCase() ?? '' }}
+      />
     );
   }
 

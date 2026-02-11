@@ -91,7 +91,7 @@ Wrap app in ThemeProvider. Pages use --pr-bg, --pr-surface, --pr-text; cards/but
 - [x] theme.css + variable mapping
 - [x] BackgroundScene (3 scenes)
 - [x] GameShell + chrome (MarqueeHeader, StageFrame, StatusBar, Tile, AnswerPlate)
-- [ ] Wire GameShell into Survey Showdown, Market Match, Crowd Control display + player
+- [x] Wire GameShell into Survey Showdown, Market Match, Crowd Control display + player
 - [x] sessionTheme settings + defaults
 - [x] Responsive: Display 16:9, Player mobile (GameShell CSS)
 - [x] Motion toggles + prefers-reduced-motion (useMotion, theme.css)

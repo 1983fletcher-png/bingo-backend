@@ -10,6 +10,7 @@ import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
 import { TimerPill } from '../components/trivia-room';
 import { StandbyCard } from '../components/StandbyCard';
+import { GameShell } from '../games/shared/GameShell';
 import '../styles/join.css';
 
 /**
@@ -605,23 +606,29 @@ export default function Play() {
     const feud = joinState.feud;
     const canSubmit = !feud.locked && (feud.checkpointId === 'R1_COLLECT' || feud.checkpointId === 'R1_TITLE');
     return (
-      <div className="join-welcome" style={{ minHeight: '100vh', padding: 24, background: 'var(--bg)' }}>
-        <GameViewHeader config={joinState.eventConfig} gameTypeLabel="Survey Showdown" onOpenMenu={() => {}} />
-        <div style={{ maxWidth: 420, margin: '0 auto', paddingTop: 24 }}>
-          <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', fontWeight: 600 }}>{feud.prompt || 'Submit your answers'}</h2>
-          {feud.locked ? (
-            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Answers are locked. Watch the screen for the reveal!</p>
-          ) : canSubmit ? (
-            <FeudPlayerForm code={code!} socket={socket} />
-          ) : (
-            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Wait for the host to show the question.</p>
-          )}
-        </div>
-      </div>
+      <GameShell
+        gameKey="survey_showdown"
+        viewMode="player"
+        title="Survey Showdown"
+        subtitle={feud.prompt ? undefined : 'Submit your answers'}
+        mainSlot={
+          <div style={{ maxWidth: 420, margin: '0 auto', padding: 24 }}>
+            <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
+            {feud.locked ? (
+              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Answers are locked. Watch the screen for the reveal!</p>
+            ) : canSubmit ? (
+              <FeudPlayerForm code={code!} socket={socket} />
+            ) : (
+              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
+            )}
+          </div>
+        }
+        footerVariant="minimal"
+      />
     );
   }
 
-  // Trivia (and trivia-based: icebreakers, edutainment, team-building use same flow; header shows actual game type from server)
+  // Trivia (Crowd Control Trivia; icebreakers, edutainment, team-building use same flow)
   if (joinState?.started && (gameType === 'trivia' || gameType === 'icebreakers' || gameType === 'edutainment' || gameType === 'team-building')) {
     const trivia = joinState.trivia;
     const questions = trivia?.questions ?? [];
@@ -629,38 +636,52 @@ export default function Play() {
     const revealed = trivia?.revealed === true;
     const currentQ = questions[currentIndex];
     return (
-      <TriviaPlayerView
-        eventConfig={joinState.eventConfig}
-        gameTitle={joinState?.eventConfig?.gameTitle || gameTypeLabel}
-        gameTypeLabel={gameTypeLabel}
-        currentIndex={currentIndex}
-        totalQuestions={questions.length}
-        currentQuestion={currentQ?.question}
-        correctAnswer={currentQ?.correctAnswer}
-        options={currentQ?.options}
-        revealed={revealed}
-        socket={socket}
-        code={code ?? ''}
-        questionStartAt={trivia?.questionStartAt}
-        timeLimitSec={trivia?.timeLimitSec}
-        leaderboardsVisibleToPlayers={trivia?.settings?.leaderboardsVisibleToPlayers !== false}
-        scores={trivia?.scores}
-        finalWagerEnabled={trivia?.finalWagerEnabled === true}
+      <GameShell
+        gameKey="crowd_control_trivia"
+        viewMode="player"
+        title={joinState?.eventConfig?.gameTitle || gameTypeLabel}
+        subtitle={`Question ${currentIndex + 1} of ${questions.length || 1}`}
+        mainSlot={
+          <TriviaPlayerView
+            eventConfig={joinState.eventConfig}
+            gameTitle={joinState?.eventConfig?.gameTitle || gameTypeLabel}
+            gameTypeLabel={gameTypeLabel}
+            currentIndex={currentIndex}
+            totalQuestions={questions.length}
+            currentQuestion={currentQ?.question}
+            correctAnswer={currentQ?.correctAnswer}
+            options={currentQ?.options}
+            revealed={revealed}
+            socket={socket}
+            code={code ?? ''}
+            questionStartAt={trivia?.questionStartAt}
+            timeLimitSec={trivia?.timeLimitSec}
+            leaderboardsVisibleToPlayers={trivia?.settings?.leaderboardsVisibleToPlayers !== false}
+            scores={trivia?.scores}
+            finalWagerEnabled={trivia?.finalWagerEnabled === true}
+          />
+        }
+        footerVariant="minimal"
       />
     );
   }
 
-  // Estimation Show / Category Grid: placeholder
+  // Estimation Show / Category Grid (Market Match): placeholder
   if (gameType === 'estimation' || gameType === 'jeopardy') {
     const title = gameType === 'estimation' ? 'Estimation Show' : 'Category Grid';
     return (
-      <div style={{ padding: 24, minHeight: '100vh', background: 'var(--bg)' }}>
-        <GameViewHeader config={joinState?.eventConfig} gameTypeLabel={title} />
-        <div style={{ padding: '24px 0', textAlign: 'center' }}>
-          <h2 style={{ margin: '0 0 8px' }}>{title}</h2>
-          <p style={{ margin: 0, color: 'var(--text-muted)' }}>This game type is coming soon. You’re in the room; full gameplay will be available in a future update.</p>
-        </div>
-      </div>
+      <GameShell
+        gameKey="market_match"
+        viewMode="player"
+        title={title}
+        mainSlot={
+          <div style={{ padding: 24, textAlign: 'center' }}>
+            <h2 style={{ margin: '0 0 8px', color: 'var(--pr-text)' }}>{title}</h2>
+            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>This game type is coming soon. You are in the room; full gameplay will be available in a future update.</p>
+          </div>
+        }
+        footerVariant="minimal"
+      />
     );
   }
 
