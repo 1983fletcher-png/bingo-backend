@@ -1,0 +1,203 @@
+/**
+ * Activity Room shell — top nav, Build Tonight hub, consistent with host-create layout.
+ */
+.activity-room {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 1rem;
+  padding-bottom: 2rem;
+}
+
+.activity-room__header {
+  max-width: 960px;
+  margin: 0 auto 1.5rem;
+}
+
+.activity-room__back {
+  display: inline-block;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+}
+
+.activity-room__back:hover {
+  color: var(--accent);
+}
+
+.activity-room__title {
+  margin: 0 0 0.25rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--text);
+}
+
+.activity-room__tagline {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.activity-room__nav {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.activity-room__nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+.activity-room__nav-link {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+}
+
+.activity-room__nav-link:hover {
+  color: var(--text);
+  background: var(--surface2);
+}
+
+.activity-room__nav-link--on {
+  color: var(--accent);
+  background: rgba(var(--accent-rgb, 233, 69, 96), 0.12);
+}
+
+.activity-room__main {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Build Tonight content */
+.activity-room__build {
+  padding: 1.5rem 0;
+}
+
+.activity-room__build-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.activity-room__build-intro {
+  margin: 0 0 1.5rem;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.activity-room__start-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.activity-room__start-card {
+  display: block;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.activity-room__start-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.activity-room__start-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.activity-room__start-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.activity-room__placeholder {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.activity-room__placeholder h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+}
+
+/* Printables, Insights, Library section pages */
+.activity-room__section {
+  padding: 1.5rem 0;
+}
+
+.activity-room__section-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.activity-room__section-intro {
+  margin: 0 0 1.5rem;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.activity-room__card {
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.activity-room__card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.activity-room__btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  background: var(--accent);
+  color: var(--accent-contrast, #111);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.activity-room__btn:hover {
+  filter: brightness(1.08);
+}
+
+.activity-room__feedback {
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+}

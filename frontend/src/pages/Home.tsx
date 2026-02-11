@@ -89,11 +89,11 @@ function HeroCard({ card }: { card: HeroCardData }) {
 
 const HERO_CARDS: HeroCardData[] = [
   {
-    title: 'Host a Room',
+    title: 'Activity Room',
     description:
-      'Trivia, games, training, and group activities — everyone joins with one link.',
-    cta: 'Start hosting',
-    href: '/host',
+      'Plan, run, and print — trivia, game shows, kits, and printables in one place.',
+    cta: 'Build tonight',
+    href: '/activity',
     accent: 'violet',
   },
   {

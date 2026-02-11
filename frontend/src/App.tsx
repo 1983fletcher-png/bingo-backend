@@ -25,10 +25,16 @@ import PollVenueStart from './pages/PollVenueStart';
 import PollHostVenue from './pages/PollHostVenue';
 import PollPlayerVenue from './pages/PollPlayerVenue';
 import PollDisplayVenue from './pages/PollDisplayVenue';
+import ActivityRoom from './pages/ActivityRoom';
+import ActivityRoomBuildTonight from './pages/ActivityRoomBuildTonight';
+import ActivityRoomPlaceholder from './pages/ActivityRoomPlaceholder';
+import ActivityRoomPrintables from './pages/ActivityRoomPrintables';
+import ActivityRoomInsights from './pages/ActivityRoomInsights';
+import ActivityRoomLibrary from './pages/ActivityRoomLibrary';
 
 function useShowThemeToggle() {
   const path = useLocation().pathname;
-  const isShell = path === '/' || path === '/host' || path === '/join' || path === '/calendar' || path.startsWith('/create') || path.startsWith('/learn') || path.startsWith('/view') || path.startsWith('/room') || path.startsWith('/poll');
+  const isShell = path === '/' || path === '/host' || path === '/activity' || path.startsWith('/activity/') || path === '/join' || path === '/calendar' || path.startsWith('/create') || path.startsWith('/learn') || path.startsWith('/view') || path.startsWith('/room') || path.startsWith('/poll');
   const isDisplay = path.startsWith('/display');
   return isShell && !isDisplay;
 }
@@ -40,6 +46,14 @@ export default function App() {
       {showThemeToggle && <ThemeToggle />}
       <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/activity" element={<ActivityRoom />}>
+        <Route index element={<ActivityRoomBuildTonight />} />
+        <Route path="kits" element={<ActivityRoomPlaceholder title="Kits Library" />} />
+        <Route path="game-shows" element={<ActivityRoomPlaceholder title="Game Shows" />} />
+        <Route path="printables" element={<ActivityRoomPrintables />} />
+        <Route path="insights" element={<ActivityRoomInsights />} />
+        <Route path="library" element={<ActivityRoomLibrary />} />
+      </Route>
       <Route path="/host" element={<Host />} />
       <Route path="/host/create" element={<HostCreateTrivia />} />
       <Route path="/host/build/trivia" element={<TriviaBuilder />} />
@@ -53,6 +67,7 @@ export default function App() {
       <Route path="/display-only/:packId" element={<DisplayOnly />} />
       <Route path="/join" element={<JoinEntry />} />
       <Route path="/join/:code" element={<Play />} />
+      <Route path="/player/:code" element={<Play />} />
       <Route path="/create" element={<CreativeStudio />} />
       <Route path="/create/templates" element={<Create />} />
       <Route path="/create/hospitality" element={<CreateHospitality />} />

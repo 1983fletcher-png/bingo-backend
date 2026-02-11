@@ -954,3 +954,182 @@
   font-size: 0.875rem;
   color: var(--text-muted);
 }
+
+/* Feud host panel */
+.feud-host-panel {
+  padding: 0 0 1.5rem;
+}
+
+.feud-host-panel__section {
+  margin-top: 1rem;
+}
+
+.feud-host-panel__label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.feud-host-panel__input {
+  width: 100%;
+  max-width: 480px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.feud-host-panel__btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.feud-host-panel__btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.feud-host-panel__btn--primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.feud-host-panel__btn--danger {
+  color: var(--error, #dc2626);
+  border-color: var(--error, #dc2626);
+}
+
+.feud-host-panel__btn-small {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem;
+  margin-left: 0.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+
+.feud-host-panel__hint,
+.feud-host-panel__title {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.feud-host-panel__board {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.feud-host-panel__board-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.feud-host-panel__board-answer {
+  flex: 1;
+  font-weight: 500;
+}
+
+.feud-host-panel__strike {
+  color: var(--error, #dc2626);
+  font-weight: 700;
+}
+
+.feud-host-panel__urls {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.feud-host-panel__urls a {
+  color: var(--accent);
+}
+
+.feud-host-panel__audit {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.feud-host-panel__audit-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.feud-host-panel__audit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9375rem;
+}
+
+.feud-host-panel__audit-meta {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.feud-host-panel__replay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.feud-host-panel__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 1rem;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.feud-host-panel__prompt-ideas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.feud-host-panel__prompt-idea-btn {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8125rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feud-host-panel__prompt-idea-btn:hover {
+  background: var(--panel);
+  border-color: var(--accent);
+}

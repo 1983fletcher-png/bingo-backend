@@ -21,7 +21,7 @@ export default function CreatePlaceholder({ title, backTo, backLabel = '← Back
           This builder is being restored to the Playroom. You’ll get scrape-from-URL, logos, Facebook/Instagram links, and share links.
         </p>
         <p style={{ fontSize: '0.9375rem', color: 'var(--text-muted)' }}>
-          For now, use <Link to="/host" style={{ color: 'var(--accent)' }}>Host a room</Link> for games and the Activity calendar for events.
+          For now, use <Link to="/activity" style={{ color: 'var(--accent)' }}>Activity Room</Link> for games and the Activity calendar for events.
         </p>
       </section>
     </div>

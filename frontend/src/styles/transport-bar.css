@@ -1,0 +1,119 @@
+/**
+ * Transport Bar — Host view global controls (Back, Next, Pause, Jump, Reset, End).
+ */
+.transport-bar {
+  margin-bottom: 1rem;
+}
+
+.transport-bar__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.transport-bar__btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.transport-bar__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.transport-bar__btn--primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.transport-bar__btn--primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.transport-bar__btn--secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.transport-bar__btn--secondary:hover:not(:disabled) {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+.transport-bar__btn--danger {
+  background: transparent;
+  color: var(--error, #dc2626);
+  border-color: var(--error, #dc2626);
+}
+
+.transport-bar__btn--danger:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.transport-bar__jump-wrap {
+  position: relative;
+}
+
+.transport-bar__jump-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  min-width: 160px;
+}
+
+.transport-bar__jump-item {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 12px;
+  font-size: 0.875rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.transport-bar__jump-item:hover {
+  background: var(--surface2);
+}
+
+.transport-bar__confirm {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  min-width: 240px;
+}
+
+.transport-bar__confirm p {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.transport-bar__confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

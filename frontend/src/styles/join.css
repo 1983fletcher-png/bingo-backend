@@ -125,3 +125,22 @@
   color: var(--text-secondary);
   padding: 48px 24px;
 }
+
+/* Standby card — host reviewing (Activity Room spec §10) */
+.standby-card {
+  text-align: center;
+  padding: 2rem;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.standby-card__message {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}

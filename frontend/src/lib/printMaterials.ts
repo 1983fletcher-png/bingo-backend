@@ -1,5 +1,5 @@
 /**
- * Printable materials: trivia quiz sheet and flashcards.
+ * Printable materials: trivia quiz sheet, flashcards, Feud prompt cards, run of show.
  */
 import type { TriviaQuestion } from '../types/trivia';
 
@@ -119,6 +119,31 @@ export function buildFlashcardsPrintDocument(
   <h1>${escapeHtml(t)} — Flashcards</h1>
   <p style="font-size: 11px; color: #666;">Cut along the lines. Fold to hide the answer. ${questions.length} cards.</p>
   <div class="deck">${cards}</div>
+</body>
+</html>`;
+}
+
+/** Build HTML document for a single Survey Showdown (Feud) prompt card. */
+export function buildFeudPromptCardDocument(prompt: string, gameTitle?: string): string {
+  const title = gameTitle || 'Survey Showdown';
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${escapeHtml(title)} — Prompt</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; font-size: 18px; color: #111; display: flex; align-items: center; justify-content: center; min-height: 100vh; box-sizing: border-box; }
+    .card { text-align: center; max-width: 600px; }
+    .game { font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+    .prompt { font-size: 22px; font-weight: 600; line-height: 1.4; }
+    @media print { body { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p class="game">${escapeHtml(title)}</p>
+    <p class="prompt">${escapeHtml(prompt || 'Your survey question here')}</p>
+  </div>
 </body>
 </html>`;
 }

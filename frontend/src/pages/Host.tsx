@@ -1,7 +1,12 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import '../styles/host-create.css';
+import '../styles/transport-bar.css';
 import { getSocket } from '../lib/socket';
+import { TransportBar } from '../components/TransportBar';
+import { FeudHostPanel } from '../components/FeudHostPanel';
+import { DEFAULT_FEUD_STATE } from '../types/feud';
+import type { FeudState } from '../types/feud';
 import HostSongGrid from '../components/HostSongGrid';
 import SongFactPopUp from '../components/SongFactPopUp';
 import { defaultTriviaPacks } from '../data/triviaPacks';
@@ -15,8 +20,10 @@ import { PLAYROOM_HOST_CREATED_KEY } from './TriviaBuilder';
 import { buildTriviaQuizPrintDocument, buildFlashcardsPrintDocument } from '../lib/printMaterials';
 import { TimerPill } from '../components/trivia-room';
 import { fetchJson, normalizeBackendUrl } from '../lib/safeFetch';
-import type { Song, EventConfig, VenueProfile } from '../types/game';
+import type { Song, EventConfig, VenueProfile, DisplayThemeId } from '../types/game';
 import { VENUE_PROFILES_KEY } from '../types/game';
+import { ACTIVITY_THEMES } from '../types/themes';
+import { getPreset } from '../data/activityPresets';
 import type { Socket } from 'socket.io-client';
 
 const API_BASE = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : window.location.origin);
@@ -55,15 +62,19 @@ interface GameCreated {
   songPool?: Song[];
   revealed?: Song[];
   trivia?: { questions: TriviaQuestion[] };
+  feud?: import('../types/feud').FeudState;
 }
 
 type HostTab = 'waiting' | 'call' | 'questions' | 'controls' | 'event' | 'print';
 
-export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building';
+export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building' | 'feud' | 'estimation' | 'jeopardy';
 
 function createModeFromUrl(type: string | null): CreateMode {
   if (type === 'bingo' || type === 'music-bingo') return 'music-bingo';
   if (type === 'classic-bingo') return 'classic-bingo';
+  if (type === 'feud') return 'feud';
+  if (type === 'estimation') return 'estimation';
+  if (type === 'jeopardy') return 'jeopardy';
   if (type === 'trivia' || type === 'icebreakers' || type === 'edutainment' || type === 'team-building') return type;
   return 'music-bingo';
 }
@@ -262,6 +273,9 @@ export default function Host() {
     });
 
     s.on('game:trivia-reveal', () => setTriviaRevealed(true));
+    s.on('feud:state', (payload: FeudState) => {
+      setGame((prev) => (prev ? { ...prev, feud: payload } : null));
+    });
 
     s.on('game:songs-updated', ({ songPool: pool }: { songPool: Song[] }) => {
       setSongPool(Array.isArray(pool) ? pool : []);
@@ -287,6 +301,7 @@ export default function Host() {
       s.off('game:revealed');
       s.off('game:trivia-state');
       s.off('game:trivia-reveal');
+      s.off('feud:state');
     };
   }, []);
 
@@ -341,6 +356,31 @@ export default function Host() {
         gameType: mode,
         eventConfig: { ...initialEventConfig, gameTitle: pack?.title ?? defaultTitles[mode] },
         questions: pack?.questions ?? [],
+      });
+    } else if (mode === 'feud') {
+      const presetId = searchParams.get('preset') || (typeof localStorage !== 'undefined' ? localStorage.getItem('playroom-activity-preset') : null);
+      const preset = presetId ? getPreset(presetId) : null;
+      socket.emit('host:create', {
+        baseUrl: window.location.origin,
+        gameType: 'feud',
+        eventConfig: {
+          ...initialEventConfig,
+          gameTitle: 'Survey Showdown',
+          ...(preset && { displayThemeId: preset.displayThemeId }),
+        },
+        options: preset?.noScoreDefault ? { feudShowScores: false } : undefined,
+      });
+    } else if (mode === 'estimation') {
+      socket.emit('host:create', {
+        baseUrl: window.location.origin,
+        gameType: 'estimation',
+        eventConfig: { ...initialEventConfig, gameTitle: 'Estimation Show' },
+      });
+    } else if (mode === 'jeopardy') {
+      socket.emit('host:create', {
+        baseUrl: window.location.origin,
+        gameType: 'jeopardy',
+        eventConfig: { ...initialEventConfig, gameTitle: 'Category Grid' },
       });
     } else {
       socket.emit('host:create', {
@@ -618,7 +658,10 @@ export default function Host() {
 
   if (!game) {
     const isBingo = createMode === 'music-bingo' || createMode === 'classic-bingo';
-    const isPackMode = !isBingo;
+    const isFeud = createMode === 'feud';
+    const isEstimation = createMode === 'estimation';
+    const isJeopardy = createMode === 'jeopardy';
+    const isPackMode = !isBingo && !isFeud && !isEstimation && !isJeopardy;
     const selectedTriviaPack = defaultTriviaPacks.find((p) => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
     const selectedIcebreakerPack = icebreakerPacks.find((p) => p.id === selectedIcebreakerPackId) ?? defaultIcebreakerPack;
     const selectedEdutainmentPack = edutainmentPacks.find((p) => p.id === selectedEdutainmentPackId) ?? defaultEdutainmentPack;
@@ -631,8 +674,8 @@ export default function Host() {
       : null;
     const packHasContent = packForMode && 'questions' in packForMode && packForMode.questions.length > 0;
     const canCreatePack = isPackMode && !!packHasContent;
-    const canCreate = socket?.connected && (isBingo || canCreatePack);
-    const step = isBingo ? (canCreate ? 3 : 1) : canCreate ? 3 : packForMode ? 2 : 1;
+    const canCreate = socket?.connected && (isBingo || isFeud || isEstimation || isJeopardy || canCreatePack);
+    const step = isBingo || isFeud || isEstimation || isJeopardy ? (canCreate ? 3 : 1) : canCreate ? 3 : packForMode ? 2 : 1;
 
     const handleCreate = () => {
       if (createMode === 'music-bingo') {
@@ -644,6 +687,9 @@ export default function Host() {
         }
         createGame('music-bingo');
       } else if (createMode === 'classic-bingo') createGame('classic-bingo');
+      else if (createMode === 'feud') createGame('feud');
+      else if (createMode === 'estimation') createGame('estimation');
+      else if (createMode === 'jeopardy') createGame('jeopardy');
       else createGame(createMode, packForMode as TriviaPack);
     };
 
@@ -658,7 +704,13 @@ export default function Host() {
               ? 'Create Icebreakers'
               : createMode === 'edutainment'
                 ? 'Create Edutainment'
-                : 'Create Team Building';
+                : createMode === 'feud'
+                  ? 'Create Survey Showdown'
+                  : createMode === 'estimation'
+                    ? 'Create Estimation Show'
+                    : createMode === 'jeopardy'
+                      ? 'Create Category Grid'
+                      : 'Create Team Building';
 
     return (
       <div className="host-create">
@@ -693,6 +745,13 @@ export default function Host() {
         <p className="host-create__sub">Choose your game type, then pick content. Share the QR or link so players can join.</p>
         <p className="host-create__sub host-create__sub--small">What do you want to run?</p>
         <div className="host-create__game-type">
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'feud' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('feud')}
+          >
+            Survey Showdown
+          </button>
           <button
             type="button"
             className={`host-create__game-type-btn ${createMode === 'music-bingo' ? 'host-create__game-type-btn--on' : ''}`}
@@ -735,8 +794,27 @@ export default function Host() {
           >
             Team Building
           </button>
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'estimation' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('estimation')}
+          >
+            Estimation Show
+          </button>
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'jeopardy' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('jeopardy')}
+          >
+            Category Grid
+          </button>
         </div>
 
+        {createMode === 'feud' && (
+          <p className="host-create__sub" style={{ marginTop: 8 }}>
+            One prompt, short answers, Top 8 board. Players submit; you lock, then reveal or strike. Great for venues and groups.
+          </p>
+        )}
         {createMode === 'music-bingo' && (
           <>
             <div className="host-create__content host-create__packs-wrap">
@@ -975,16 +1053,51 @@ p{word-break:break-all;font-size:14px;color:#333}
               <p className="host-room__right-sub">Player view and Display view below match what players and the TV see.</p>
             </div>
             </div>
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+            {game.gameType !== 'feud' && (
+            <TransportBar
+              onBack={() => {}}
+              onNext={game?.gameType === 'trivia' ? () => { if (triviaQuestions.length > 0 && triviaCurrentIndex < triviaQuestions.length - 1) setTriviaCurrentIndex((i) => i + 1); } : undefined}
+              onEndSession={() => { setGame(null); setGameStarted(false); }}
+              jumpCheckpoints={[
+                { id: 'waiting', label: 'Waiting room' },
+                { id: 'game', label: 'Game' },
+              ]}
+              onJump={(id) => { if (id === 'waiting') setActiveTab('waiting'); else if (id === 'game') setActiveTab(game?.gameType === 'trivia' ? 'questions' : 'call'); }}
+            />
+            )}
+            <div className="host-room__previews" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
               <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
-                <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Player view</div>
+                <div className="host-room__preview-head" style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                  <span>Player view</span>
+                  <span className="host-room__preview-badge" style={{ color: 'var(--success, #68d391)', fontSize: 10, fontWeight: 600 }} aria-label="Live">● Live</span>
+                </div>
                 <iframe title="Player view" src={joinUrlForQR} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
               </div>
               <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
-                <div style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Display view</div>
+                <div className="host-room__preview-head" style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                  <span>Display (TV)</span>
+                  <span className="host-room__preview-badge" style={{ color: 'var(--success, #68d391)', fontSize: 10, fontWeight: 600 }} aria-label="Live">● Live</span>
+                </div>
                 <iframe title="TV display" src={displayUrl} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
               </div>
             </div>
+        {game.gameType === 'estimation' || game.gameType === 'jeopardy' ? (
+          <div className="host-room__placeholder-panel" style={{ padding: 24, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
+            <h2 style={{ margin: '0 0 8px' }}>{game.gameType === 'estimation' ? 'Estimation Show' : 'Category Grid'}</h2>
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Host controls for this game type are coming soon. Share the join link and display link with your room; full gameplay will be added in a future update.</p>
+          </div>
+        ) : game.gameType === 'feud' ? (
+          <FeudHostPanel
+            gameCode={game.code}
+            feud={game.feud ?? DEFAULT_FEUD_STATE}
+            onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
+            socket={socket}
+            joinUrl={joinUrlForQR}
+            displayUrl={displayUrl}
+            onEndSession={() => navigate('/activity')}
+          />
+        ) : (
+        <>
         <div className="host-room__tabs">
           {tabs.map(({ id, label }) => (
             <button
@@ -1066,6 +1179,15 @@ p{word-break:break-all;font-size:14px;color:#333}
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4 }}>Venue name</label>
               <input type="text" value={eventConfig.venueName ?? ''} onChange={(e) => setEventConfigState((c) => ({ ...c, venueName: e.target.value }))} onBlur={applyEventConfig} placeholder="Venue name" style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }} />
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Display theme (Activity Room)</label>
+              <select value={eventConfig.displayThemeId ?? 'classic'} onChange={(e) => setEventConfigState((c) => ({ ...c, displayThemeId: (e.target.value as DisplayThemeId) || undefined }))} onBlur={applyEventConfig} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }}>
+                {ACTIVITY_THEMES.map((t) => (
+                  <option key={t.id} value={t.id}>{t.label}</option>
+                ))}
+              </select>
+              <p style={{ fontSize: 12, color: '#a0aec0', margin: '4px 0 0' }}>Calm reduces motion and flash on the TV.</p>
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4 }}>Scrape venue site (URL for logo &amp; colors)</label>
@@ -1560,6 +1682,8 @@ p{word-break:break-all;font-size:14px;color:#333}
               </>
             )}
           </section>
+        )}
+        </>
         )}
           </div>
       </div>

@@ -9,7 +9,36 @@ import { buildCardFromPool } from '../types/game';
 import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
 import { TimerPill } from '../components/trivia-room';
+import { StandbyCard } from '../components/StandbyCard';
 import '../styles/join.css';
+
+/**
+ * Feud player: 1–3 short phrase answers, submit.
+ */
+function FeudPlayerForm({ code, socket }: { code: string; socket: Socket | null }) {
+  const [a1, setA1] = useState('');
+  const [a2, setA2] = useState('');
+  const [a3, setA3] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const answers = [a1.trim(), a2.trim(), a3.trim()].filter(Boolean);
+    if (!socket || answers.length === 0) return;
+    socket.emit('feud:submit', { code: code.toUpperCase(), answers });
+    setSubmitted(true);
+  };
+  if (submitted) {
+    return <p style={{ margin: 0, color: 'var(--text-muted)', fontWeight: 500 }}>Thanks! Your answers are in.</p>;
+  }
+  return (
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <input type="text" className="join-page__input" placeholder="Answer 1" value={a1} onChange={(e) => setA1(e.target.value)} autoComplete="off" />
+      <input type="text" className="join-page__input" placeholder="Answer 2 (optional)" value={a2} onChange={(e) => setA2(e.target.value)} autoComplete="off" />
+      <input type="text" className="join-page__input" placeholder="Answer 3 (optional)" value={a3} onChange={(e) => setA3(e.target.value)} autoComplete="off" />
+      <button type="submit" className="join-page__btn" disabled={!a1.trim()}>Submit</button>
+    </form>
+  );
+}
 
 /**
  * Trivia player view: current question, multiple choice or text answer, then correct answer when revealed.
@@ -212,6 +241,9 @@ function getGameTypeLabel(gameType: string | undefined): string {
     case 'icebreakers': return 'Icebreakers';
     case 'edutainment': return 'Edutainment';
     case 'team-building': return 'Team Building';
+    case 'feud': return 'Survey Showdown';
+    case 'estimation': return 'Estimation Show';
+    case 'jeopardy': return 'Category Grid';
     default: return gameType.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   }
 }
@@ -247,6 +279,10 @@ interface JoinState {
   gameType?: string;
   freeSpace?: boolean;
   winCondition?: string;
+  /** When true, host is reviewing/backed up; show standby message (Activity Room spec §10) */
+  standby?: boolean;
+  /** Feud (Survey Showdown) state when gameType === 'feud' */
+  feud?: import('../types/feud').FeudState;
   /** Trivia: current question index, questions list (with optional options for MC), and whether answer is revealed */
   trivia?: {
     currentIndex: number;
@@ -367,6 +403,10 @@ export default function Play() {
       });
     });
 
+    s.on('feud:state', (payload: import('../types/feud').FeudState) => {
+      setJoinState((prev) => (prev ? { ...prev, feud: payload } : null));
+    });
+
     return () => {
       s.off('connect');
       s.off('disconnect');
@@ -380,6 +420,7 @@ export default function Play() {
       s.off('game:revealed');
       s.off('game:trivia-state');
       s.off('game:trivia-reveal');
+      s.off('feud:state');
     };
   }, [code]);
 
@@ -487,6 +528,15 @@ export default function Play() {
     );
   }
 
+  // Standby: host is reviewing / backed up (Activity Room spec §10)
+  if (joinState?.started && joinState?.standby) {
+    return (
+      <div className="join-welcome" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <StandbyCard />
+      </div>
+    );
+  }
+
   // Waiting room: show until host starts
   if (joinState && !joinState.started) {
     return (
@@ -550,6 +600,27 @@ export default function Play() {
     );
   }
 
+  // Feud (Survey Showdown): prompt + 1–3 answers, submit
+  if (gameType === 'feud' && joinState?.feud) {
+    const feud = joinState.feud;
+    const canSubmit = !feud.locked && (feud.checkpointId === 'R1_COLLECT' || feud.checkpointId === 'R1_TITLE');
+    return (
+      <div className="join-welcome" style={{ minHeight: '100vh', padding: 24, background: 'var(--bg)' }}>
+        <GameViewHeader config={joinState.eventConfig} gameTypeLabel="Survey Showdown" onOpenMenu={() => {}} />
+        <div style={{ maxWidth: 420, margin: '0 auto', paddingTop: 24 }}>
+          <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', fontWeight: 600 }}>{feud.prompt || 'Submit your answers'}</h2>
+          {feud.locked ? (
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Answers are locked. Watch the screen for the reveal!</p>
+          ) : canSubmit ? (
+            <FeudPlayerForm code={code!} socket={socket} />
+          ) : (
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Wait for the host to show the question.</p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   // Trivia (and trivia-based: icebreakers, edutainment, team-building use same flow; header shows actual game type from server)
   if (joinState?.started && (gameType === 'trivia' || gameType === 'icebreakers' || gameType === 'edutainment' || gameType === 'team-building')) {
     const trivia = joinState.trivia;
@@ -576,6 +647,20 @@ export default function Play() {
         scores={trivia?.scores}
         finalWagerEnabled={trivia?.finalWagerEnabled === true}
       />
+    );
+  }
+
+  // Estimation Show / Category Grid: placeholder
+  if (gameType === 'estimation' || gameType === 'jeopardy') {
+    const title = gameType === 'estimation' ? 'Estimation Show' : 'Category Grid';
+    return (
+      <div style={{ padding: 24, minHeight: '100vh', background: 'var(--bg)' }}>
+        <GameViewHeader config={joinState?.eventConfig} gameTypeLabel={title} />
+        <div style={{ padding: '24px 0', textAlign: 'center' }}>
+          <h2 style={{ margin: '0 0 8px' }}>{title}</h2>
+          <p style={{ margin: 0, color: 'var(--text-muted)' }}>This game type is coming soon. You’re in the room; full gameplay will be available in a future update.</p>
+        </div>
+      </div>
     );
   }
 

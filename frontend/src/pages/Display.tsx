@@ -2,7 +2,10 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import { TimerPill } from '../components/trivia-room';
+import { FeudDisplay } from '../components/FeudDisplay';
+import type { FeudState } from '../types/feud';
 import type { Song } from '../types/game';
+import { getActivityTheme } from '../types/themes';
 import { songKey } from '../types/game';
 
 const COLUMNS = ['B', 'I', 'N', 'G', 'O'] as const;
@@ -44,6 +47,8 @@ type DisplayEventConfig = {
   promoText?: string;
   facebookUrl?: string;
   instagramUrl?: string;
+  /** Activity Room display theme: classic | calm | corporate */
+  displayThemeId?: string;
 };
 
 export default function Display() {
@@ -68,6 +73,7 @@ export default function Display() {
   const [error, setError] = useState<string | null>(null);
   const [setupOpen, setSetupOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const [feudState, setFeudState] = useState<FeudState | null>(null);
 
   const masterBoard = useMemo(() => buildMasterBoard(songPool), [songPool]);
   const revealedSet = useMemo(() => new Set(revealed.map(songKey)), [revealed]);
@@ -84,7 +90,7 @@ export default function Display() {
     const join = () => s.emit('display:join', { code: codeUpper });
     join();
     s.on('connect', join);
-    s.on('display:ok', (payload: { joinUrl?: string; songPool?: Song[]; revealed?: Song[]; eventConfig?: DisplayEventConfig; started?: boolean; gameType?: string; trivia?: { currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean } }) => {
+    s.on('display:ok', (payload: { joinUrl?: string; songPool?: Song[]; revealed?: Song[]; eventConfig?: DisplayEventConfig; started?: boolean; gameType?: string; feud?: FeudState; trivia?: { currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean } }) => {
       setJoinUrl(payload.joinUrl || `${window.location.origin}/join/${code}`);
       setSongPool(Array.isArray(payload.songPool) ? payload.songPool : []);
       setRevealed(Array.isArray(payload.revealed) ? payload.revealed : []);
@@ -92,6 +98,7 @@ export default function Display() {
       setEventConfig(payload.eventConfig && typeof payload.eventConfig === 'object' ? payload.eventConfig : null);
       setStarted(payload.started === true);
       setGameType(payload.gameType || 'music-bingo');
+      setFeudState(payload.feud && typeof payload.feud === 'object' ? payload.feud : null);
       const tr = payload.trivia && typeof payload.trivia === 'object' ? payload.trivia as { currentIndex?: number; questions?: DisplayTriviaQuestion[]; revealed?: boolean; settings?: { leaderboardsVisibleOnDisplay?: boolean; mcTipsEnabled?: boolean }; questionStartAt?: string | null; timeLimitSec?: number; scores?: Record<string, number> } : null;
       setTriviaState(tr ? { currentIndex: tr.currentIndex ?? 0, questions: (tr.questions ?? []) as DisplayTriviaQuestion[], revealed: tr.revealed, settings: tr.settings, questionStartAt: tr.questionStartAt, timeLimitSec: tr.timeLimitSec, scores: tr.scores } : null);
       setError(null);
@@ -130,6 +137,10 @@ export default function Display() {
         return { ...prev, questions, revealed: true };
       });
     });
+    s.on('feud:state', (payload: FeudState) => setFeudState(payload));
+    s.on('game:event-config-updated', (data: { eventConfig?: DisplayEventConfig }) => {
+      if (data.eventConfig && typeof data.eventConfig === 'object') setEventConfig(data.eventConfig);
+    });
     return () => {
       s.off('connect', join);
       s.off('display:ok');
@@ -139,12 +150,13 @@ export default function Display() {
       s.off('game:started');
       s.off('game:trivia-state');
       s.off('game:trivia-reveal');
+      s.off('feud:state');
+      s.off('game:event-config-updated');
     };
   }, [code]);
 
-  const theme = darkMode
-    ? { bg: '#0f1115', panel: '#1b1f27', card: '#252a33', text: '#f0f0f0', muted: '#9aa3ad', accent: '#e8b923', border: '#3d4552' }
-    : { bg: '#f5f5f5', panel: '#fff', card: '#fafafa', text: '#1a1a1a', muted: '#666', accent: '#c99700', border: '#ddd' };
+  const activityTheme = getActivityTheme(eventConfig?.displayThemeId, darkMode);
+  const { calmMode, ...theme } = activityTheme;
 
   if (error) {
     return (
@@ -165,6 +177,33 @@ export default function Display() {
   const qrUrl = effectiveJoinUrl
     ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(effectiveJoinUrl)}`
     : '';
+
+  // Estimation Show / Category Grid: placeholder until full implementation
+  if (gameType === 'estimation' || gameType === 'jeopardy') {
+    const title = gameType === 'estimation' ? 'Estimation Show' : 'Category Grid';
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: theme.bg, color: theme.text }}>
+        <div style={{ textAlign: 'center', padding: 48 }}>
+          <h1 style={{ marginBottom: 8 }}>{title}</h1>
+          <p style={{ color: theme.muted }}>Coming soon. Share the join link with players; full display will be available in a future update.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Feud (Survey Showdown): checkpoint-driven TV view
+  if (gameType === 'feud' && feudState) {
+    return (
+      <FeudDisplay
+        feud={feudState}
+        joinUrl={effectiveJoinUrl}
+        code={code?.toUpperCase() ?? ''}
+        eventTitle={eventConfig?.gameTitle || eventTitle}
+        theme={theme}
+        calmMode={calmMode}
+      />
+    );
+  }
 
   // Waiting room: show on TV before game starts — left: big QR; right: logo, game name, description (no clickable links)
   if (!started) {

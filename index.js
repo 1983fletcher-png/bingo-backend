@@ -937,12 +937,16 @@ function getGame(code) {
 }
 
 const TRIVIA_LIKE_TYPES = ['trivia', 'icebreakers', 'edutainment', 'team-building'];
+const FEUD_CHECKPOINTS = ['STANDBY', 'R1_TITLE', 'R1_COLLECT', 'R1_LOCKED', 'R1_BOARD_0', 'R1_BOARD_1', 'R1_BOARD_2', 'R1_BOARD_3', 'R1_BOARD_4', 'R1_BOARD_5', 'R1_BOARD_6', 'R1_BOARD_7', 'R1_BOARD_8', 'R1_SUMMARY'];
 
 function createGame(opts = {}) {
   let code;
   do { code = nanoidCode(); } while (games.has(code));
   const requested = opts.gameType;
-  const gameType = requested === 'classic-bingo' ? 'classic-bingo'
+  const gameType = requested === 'feud' ? 'feud'
+    : requested === 'estimation' ? 'estimation'
+    : requested === 'jeopardy' ? 'jeopardy'
+    : requested === 'classic-bingo' ? 'classic-bingo'
     : TRIVIA_LIKE_TYPES.includes(requested) ? requested
     : 'music-bingo';
   const defaultTitles = {
@@ -951,7 +955,10 @@ function createGame(opts = {}) {
     'edutainment': 'Edutainment',
     'team-building': 'Team Building',
     'classic-bingo': 'Classic Bingo',
-    'music-bingo': 'Playroom'
+    'music-bingo': 'Playroom',
+    'feud': 'Survey Showdown',
+    'estimation': 'Estimation Show',
+    'jeopardy': 'Category Grid'
   };
   const defaultTitle = defaultTitles[gameType] || 'Playroom';
   const game = {
@@ -964,11 +971,10 @@ function createGame(opts = {}) {
     revealed: [],
     winner: null,
     started: false,
-    welcomeDismissed: false, // when true, display shows first question/call sheet; when false, shows welcome panel
+    welcomeDismissed: false,
     freeSpace: true,
     winCondition: 'line',
     gameType,
-    // Waiting room: mini-game and theme before host starts main event (default ON so players get a welcome screen)
     waitingRoom: {
       game: 'roll-call',
       theme: 'default',
@@ -977,9 +983,7 @@ function createGame(opts = {}) {
       stretchyImageSource: 'playroom',
       mazeCenterSource: 'playroom'
     },
-    // Roll Call leaderboard (stubbed): playerId -> { bestTimeMs, displayName }
     rollCallScores: new Map(),
-    // Trivia state (when gameType is trivia-like: trivia, icebreakers, edutainment, team-building)
     trivia: TRIVIA_LIKE_TYPES.includes(gameType) ? {
       packId: opts.packId || '',
       questions: Array.isArray(opts.questions) ? opts.questions : [],
@@ -989,6 +993,18 @@ function createGame(opts = {}) {
       scores: {},
       answers: {},
       settings: { leaderboardsVisibleToPlayers: true, leaderboardsVisibleOnDisplay: true, autoAdvanceEnabled: false }
+    } : null,
+    // Feud (Survey Showdown) state when gameType === 'feud'
+    feud: gameType === 'feud' ? {
+      roundIndex: 1,
+      checkpointId: 'R1_TITLE',
+      prompt: '',
+      submissions: [],
+      locked: false,
+      topAnswers: [],
+      showScores: true,
+      cascadeEffect: false,
+      bottomDropEffect: false
     } : null
   };
   games.set(code, game);
@@ -1057,9 +1073,12 @@ function assertHost(game, socket, hostToken) {
 }
 
 io.on('connection', (socket) => {
-  socket.on('host:create', ({ baseUrl, gameType, packId, questions, eventConfig, settings, finalWagerEnabled } = {}) => {
+  socket.on('host:create', ({ baseUrl, gameType, packId, questions, eventConfig, settings, finalWagerEnabled, options } = {}) => {
     const isTriviaLike = ['trivia', 'icebreakers', 'edutainment', 'team-building'].includes(gameType);
-    const resolvedType = gameType === 'classic-bingo' ? 'classic-bingo'
+    const resolvedType = gameType === 'feud' ? 'feud'
+      : gameType === 'estimation' ? 'estimation'
+      : gameType === 'jeopardy' ? 'jeopardy'
+      : gameType === 'classic-bingo' ? 'classic-bingo'
       : isTriviaLike ? gameType
       : 'music-bingo';
     const game = createGame({
@@ -1068,6 +1087,9 @@ io.on('connection', (socket) => {
       questions: isTriviaLike ? (Array.isArray(questions) ? questions : []) : undefined,
       eventConfig: eventConfig && typeof eventConfig === 'object' ? eventConfig : undefined
     });
+    if (game.feud && options && typeof options === 'object' && options.feudShowScores === false) {
+      game.feud.showScores = false;
+    }
     if (game.trivia && settings && typeof settings === 'object') {
       game.trivia.settings = {
         ...game.trivia.settings,
@@ -1096,6 +1118,7 @@ io.on('connection', (socket) => {
       waitingRoom: game.waitingRoom
     };
     if (game.trivia) payload.trivia = getTriviaPayload(game);
+    if (game.feud) payload.feud = game.feud;
     socket.emit('game:created', payload);
   });
 
@@ -1126,6 +1149,7 @@ io.on('connection', (socket) => {
       waitingRoom: game.waitingRoom,
     };
     if (game.trivia) payload.trivia = getTriviaPayload(game);
+    if (game.feud) payload.feud = game.feud;
     socket.emit('host:resume:ok', payload);
     socket.emit('game:created', payload);
   });
@@ -1251,7 +1275,7 @@ io.on('connection', (socket) => {
       waitingRoom: game.waitingRoom
     };
     if (game.trivia) joinPayload.trivia = getTriviaPayload(game, { forAudience: true });
-    // Stubbed Roll Call leaderboard for waiting room
+    if (game.feud) joinPayload.feud = game.feud;
     joinPayload.rollCallLeaderboard = getRollCallLeaderboard(game);
     socket.emit('join:ok', joinPayload);
     socket.to(`game:${game.code}`).emit('player:joined', {
@@ -1315,7 +1339,100 @@ io.on('connection', (socket) => {
       rollCallLeaderboard: getRollCallLeaderboard(game)
     };
     if (game.trivia) displayPayload.trivia = getTriviaPayload(game, { forAudience: true });
+    if (game.feud) displayPayload.feud = game.feud;
     socket.emit('display:ok', displayPayload);
+  });
+
+  // --- Feud (Survey Showdown) ---
+  socket.on('feud:set-checkpoint', ({ code, hostToken, checkpointId }) => {
+    const game = getGame(code);
+    if (!game?.feud) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    if (FEUD_CHECKPOINTS.includes(checkpointId)) {
+      game.feud.checkpointId = checkpointId;
+      io.to(`game:${game.code}`).emit('feud:state', game.feud);
+    }
+  });
+
+  socket.on('feud:set-prompt', ({ code, hostToken, prompt }) => {
+    const game = getGame(code);
+    if (!game?.feud) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    game.feud.prompt = typeof prompt === 'string' ? prompt : '';
+    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+  });
+
+  socket.on('feud:set-effects', ({ code, hostToken, cascadeEffect, bottomDropEffect }) => {
+    const game = getGame(code);
+    if (!game?.feud) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    if (typeof cascadeEffect === 'boolean') game.feud.cascadeEffect = cascadeEffect;
+    if (typeof bottomDropEffect === 'boolean') game.feud.bottomDropEffect = bottomDropEffect;
+    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+  });
+
+  socket.on('feud:set-show-scores', ({ code, hostToken, showScores }) => {
+    const game = getGame(code);
+    if (!game?.feud) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    if (typeof showScores === 'boolean') game.feud.showScores = showScores;
+    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+  });
+
+  socket.on('feud:submit', ({ code, answers }) => {
+    const game = getGame(code);
+    if (!game?.feud || game.feud.locked) return;
+    const p = game.players.get(socket.id);
+    if (!p) return;
+    const list = Array.isArray(answers) ? answers.slice(0, 3).map((a) => String(a).trim()).filter(Boolean) : [];
+    game.feud.submissions.push({ playerId: socket.id, displayName: p.name, answers: list });
+    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+  });
+
+  socket.on('feud:lock', ({ code, hostToken }) => {
+    const game = getGame(code);
+    if (!game?.feud) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    game.feud.locked = true;
+    const counts = new Map();
+    for (const sub of game.feud.submissions) {
+      for (const a of sub.answers) {
+        const key = a.toLowerCase().replace(/\s+/g, ' ').trim();
+        if (!key) continue;
+        counts.set(key, (counts.get(key) || 0) + 1);
+      }
+    }
+    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+    game.feud.topAnswers = sorted.map(([answer, count], i) => ({
+      answer,
+      count,
+      points: 8 - i,
+      revealed: false,
+      strike: false
+    }));
+    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+  });
+
+  socket.on('feud:reveal', ({ code, hostToken, index }) => {
+    const game = getGame(code);
+    if (!game?.feud) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    const i = parseInt(index, 10);
+    if (i >= 0 && i < game.feud.topAnswers.length) {
+      game.feud.topAnswers[i].revealed = true;
+      io.to(`game:${game.code}`).emit('feud:state', game.feud);
+    }
+  });
+
+  socket.on('feud:strike', ({ code, hostToken, index }) => {
+    const game = getGame(code);
+    if (!game?.feud) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    const i = parseInt(index, 10);
+    if (i >= 0 && i < game.feud.topAnswers.length) {
+      game.feud.topAnswers[i].strike = true;
+      io.to(`game:${game.code}`).emit('feud:state', game.feud);
+    }
   });
 
   // --- Trivia ---

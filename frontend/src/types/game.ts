@@ -1,6 +1,9 @@
 /** localStorage key for UI theme: 'light' | 'dark' */
 export const THEME_KEY = 'playroom-theme';
 
+/** Activity Room display theme: classic | calm | corporate. Affects TV/Display theme and calmMode. */
+export type DisplayThemeId = 'classic' | 'calm' | 'corporate';
+
 /** Event & venue config (display, welcome, scrape, social links). Synced to game via host:set-event-config. */
 export interface EventConfig {
   gameTitle?: string;
@@ -10,6 +13,8 @@ export interface EventConfig {
   drinkSpecials?: string;
   foodSpecials?: string;
   themeLabel?: string;
+  /** Activity Room TV theme (Playroom Classic / Calm / Corporate) */
+  displayThemeId?: DisplayThemeId;
   promoText?: string;
   bannerImageUrl?: string;
   facebookUrl?: string;
