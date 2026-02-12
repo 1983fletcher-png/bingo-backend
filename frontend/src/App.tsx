@@ -31,11 +31,11 @@ import ActivityRoomPlaceholder from './pages/ActivityRoomPlaceholder';
 import ActivityRoomPrintables from './pages/ActivityRoomPrintables';
 import ActivityRoomInsights from './pages/ActivityRoomInsights';
 import ActivityRoomLibrary from './pages/ActivityRoomLibrary';
-import ThemeLab from './pages/ThemeLab';
+import ThemeLabPage from './pages/theme-lab/ThemeLabPage';
 
 function useShowThemeToggle() {
   const path = useLocation().pathname;
-  const isShell = path === '/' || path === '/host' || path === '/activity' || path.startsWith('/activity/') || path === '/join' || path === '/calendar' || path.startsWith('/create') || path.startsWith('/learn') || path.startsWith('/view') || path.startsWith('/room') || path.startsWith('/poll') || path === '/theme-lab';
+  const isShell = path === '/' || path === '/host' || path.startsWith('/host/') || path === '/activity' || path.startsWith('/activity/') || path === '/join' || path === '/calendar' || path.startsWith('/create') || path.startsWith('/learn') || path.startsWith('/view') || path.startsWith('/room') || path.startsWith('/poll') || path === '/theme-lab';
   const isDisplay = path.startsWith('/display');
   return isShell && !isDisplay;
 }
@@ -55,9 +55,10 @@ export default function App() {
         <Route path="insights" element={<ActivityRoomInsights />} />
         <Route path="library" element={<ActivityRoomLibrary />} />
       </Route>
-      <Route path="/host" element={<Host />} />
       <Route path="/host/create" element={<HostCreateTrivia />} />
       <Route path="/host/build/trivia" element={<TriviaBuilder />} />
+      <Route path="/host/:gameType" element={<Host />} />
+      <Route path="/host" element={<Host />} />
       <Route path="/room/:roomId" element={<Room />} />
       <Route path="/poll/create" element={<Navigate to="/poll/start" replace />} />
       <Route path="/poll/start" element={<PollVenueStart />} />
@@ -65,6 +66,7 @@ export default function App() {
       <Route path="/poll/join/:venueCode/host" element={<PollHostVenue />} />
       <Route path="/poll/join/:venueCode/display" element={<PollDisplayVenue />} />
       <Route path="/display/:code" element={<Display />} />
+      <Route path="/display/:code/:gameType" element={<Display />} />
       <Route path="/display-only/:packId" element={<DisplayOnly />} />
       <Route path="/join" element={<JoinEntry />} />
       <Route path="/join/:code" element={<Play />} />
@@ -84,7 +86,8 @@ export default function App() {
       <Route path="/learn" element={<Learn />} />
       <Route path="/learn/:id" element={<LearnCard />} />
       <Route path="/calendar" element={<ActivityCalendar />} />
-      <Route path="/theme-lab" element={<ThemeLab />} />
+            {/* DEV: ThemeLab */}
+      <Route path="/theme-lab" element={<ThemeLabPage />} />
       <Route path="/view/:slug" element={<ViewPage />} />
     </Routes>
     </>

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSocket } from '../lib/socket';
 import { TimerPill } from '../components/trivia-room';
@@ -8,6 +8,10 @@ import type { Song } from '../types/game';
 import { getActivityTheme } from '../types/themes';
 import { songKey } from '../types/game';
 import { GameShell } from '../games/shared/GameShell';
+import type { MarketMatchState } from '../types/marketMatch';
+import { getMarketMatchItem } from '../data/marketMatchDataset';
+import type { CrowdControlState } from '../types/crowdControlTrivia';
+import { getBoard, getQuestion, VALUE_LADDER } from '../data/crowdControlTriviaDataset';
 
 const COLUMNS = ['B', 'I', 'N', 'G', 'O'] as const;
 const ROWS_PER_COL = 15;
@@ -75,6 +79,8 @@ export default function Display() {
   const [setupOpen, setSetupOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
   const [feudState, setFeudState] = useState<FeudState | null>(null);
+  const [marketMatchState, setMarketMatchState] = useState<MarketMatchState | null>(null);
+  const [crowdControlState, setCrowdControlState] = useState<CrowdControlState | null>(null);
 
   const masterBoard = useMemo(() => buildMasterBoard(songPool), [songPool]);
   const revealedSet = useMemo(() => new Set(revealed.map(songKey)), [revealed]);
@@ -91,7 +97,7 @@ export default function Display() {
     const join = () => s.emit('display:join', { code: codeUpper });
     join();
     s.on('connect', join);
-    s.on('display:ok', (payload: { joinUrl?: string; songPool?: Song[]; revealed?: Song[]; eventConfig?: DisplayEventConfig; started?: boolean; gameType?: string; feud?: FeudState; trivia?: { currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean } }) => {
+    s.on('display:ok', (payload: { joinUrl?: string; songPool?: Song[]; revealed?: Song[]; eventConfig?: DisplayEventConfig; started?: boolean; gameType?: string; feud?: FeudState; marketMatch?: MarketMatchState; crowdControl?: CrowdControlState; trivia?: { currentIndex: number; questions: { question: string; options?: string[]; correctIndex?: number }[]; revealed?: boolean } }) => {
       setJoinUrl(payload.joinUrl || `${window.location.origin}/join/${code}`);
       setSongPool(Array.isArray(payload.songPool) ? payload.songPool : []);
       setRevealed(Array.isArray(payload.revealed) ? payload.revealed : []);
@@ -100,6 +106,8 @@ export default function Display() {
       setStarted(payload.started === true);
       setGameType(payload.gameType || 'music-bingo');
       setFeudState(payload.feud && typeof payload.feud === 'object' ? payload.feud : null);
+      setMarketMatchState(payload.marketMatch && typeof payload.marketMatch === 'object' ? payload.marketMatch : null);
+      setCrowdControlState(payload.crowdControl && typeof payload.crowdControl === 'object' ? payload.crowdControl : null);
       const tr = payload.trivia && typeof payload.trivia === 'object' ? payload.trivia as { currentIndex?: number; questions?: DisplayTriviaQuestion[]; revealed?: boolean; settings?: { leaderboardsVisibleOnDisplay?: boolean; mcTipsEnabled?: boolean }; questionStartAt?: string | null; timeLimitSec?: number; scores?: Record<string, number> } : null;
       setTriviaState(tr ? { currentIndex: tr.currentIndex ?? 0, questions: (tr.questions ?? []) as DisplayTriviaQuestion[], revealed: tr.revealed, settings: tr.settings, questionStartAt: tr.questionStartAt, timeLimitSec: tr.timeLimitSec, scores: tr.scores } : null);
       setError(null);
@@ -139,6 +147,8 @@ export default function Display() {
       });
     });
     s.on('feud:state', (payload: FeudState) => setFeudState(payload));
+    s.on('market-match:state', (payload: MarketMatchState) => setMarketMatchState(payload));
+    s.on('cct:state', (payload: CrowdControlState) => setCrowdControlState(payload));
     s.on('game:event-config-updated', (data: { eventConfig?: DisplayEventConfig }) => {
       if (data.eventConfig && typeof data.eventConfig === 'object') setEventConfig(data.eventConfig);
     });
@@ -152,6 +162,8 @@ export default function Display() {
       s.off('game:trivia-state');
       s.off('game:trivia-reveal');
       s.off('feud:state');
+      s.off('market-match:state');
+      s.off('cct:state');
       s.off('game:event-config-updated');
     };
   }, [code]);
@@ -179,7 +191,147 @@ export default function Display() {
     ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(effectiveJoinUrl)}`
     : '';
 
-  // Estimation Show / Category Grid (Market Match): placeholder until full implementation
+  // Market Match: price-guessing display (current item + reveal)
+  if (gameType === 'market-match' && marketMatchState) {
+    const item = getMarketMatchItem(marketMatchState.currentIndex ?? 0);
+    const revealed = marketMatchState.revealed === true;
+    return (
+      <GameShell
+        gameKey="market_match"
+        viewMode="display"
+        title={eventConfig?.gameTitle || eventTitle || 'Market Match'}
+        subtitle={item ? `What did this cost in ${item.year}?` : undefined}
+        headerRightSlot={code ? <span style={{ fontFamily: 'var(--pr-font-display)', letterSpacing: '0.1em' }}>{code.toUpperCase()}</span> : undefined}
+        mainSlot={
+          <div style={{ padding: 32, textAlign: 'center' }}>
+            {item ? (
+              <>
+                <h2 style={{ margin: '0 0 16px', fontSize: 'clamp(1.25rem, 3vw, 2rem)', fontWeight: 600, color: 'var(--pr-text)' }}>
+                  {item.title}
+                </h2>
+                <p style={{ margin: 0, fontSize: 18, color: 'var(--pr-muted)' }}>
+                  What did it cost in {item.year}? ({item.unit})
+                </p>
+                {revealed && (
+                  <div style={{ marginTop: 24, padding: '20px 24px', background: 'var(--pr-surface2)', borderRadius: 12, display: 'inline-block' }}>
+                    <p style={{ margin: 0, fontSize: 28, fontWeight: 700, color: 'var(--pr-brand)' }}>
+                      ${item.priceUsd.toFixed(2)} {item.unit}
+                    </p>
+                    {item.citation && (
+                      <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--pr-muted)' }}>{item.citation}</p>
+                    )}
+                  </div>
+                )}
+                {!revealed && <p style={{ marginTop: 24, color: 'var(--pr-muted)' }}>Guess on your phone — host will reveal.</p>}
+              </>
+            ) : (
+              <p style={{ color: 'var(--pr-muted)' }}>Host will pick an item.</p>
+            )}
+          </div>
+        }
+        statusBarProps={{ joinCode: code?.toUpperCase() ?? '' }}
+      />
+    );
+  }
+
+  // Crowd Control Trivia: board or question/reveal
+  if (gameType === 'crowd-control-trivia' && crowdControlState) {
+    const board = getBoard(crowdControlState.boardId ?? 0);
+    const phase = crowdControlState.phase ?? 'board';
+    const question = getQuestion(crowdControlState.currentQuestionId ?? null);
+    const isQuestion = phase === 'question' || phase === 'reveal';
+    const revealed = crowdControlState.revealed === true;
+
+    return (
+      <GameShell
+        gameKey="crowd_control_trivia"
+        viewMode="display"
+        title={eventConfig?.gameTitle || eventTitle || 'Crowd Control Trivia'}
+        subtitle={phase === 'vote' ? 'Vote for a category!' : board?.name}
+        headerRightSlot={code ? <span style={{ fontFamily: 'var(--pr-font-display)', letterSpacing: '0.1em' }}>{code.toUpperCase()}</span> : undefined}
+        mainSlot={
+          isQuestion && question ? (
+            <div style={{ padding: 32, textAlign: 'center', maxWidth: 720, margin: '0 auto' }}>
+              <h2 style={{ margin: '0 0 24px', fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)', fontWeight: 600, color: 'var(--pr-text)' }}>
+                {question.prompt}
+              </h2>
+              {!revealed && question.options && question.options.length > 0 && (
+                <ul style={{ margin: '0 0 24px', paddingLeft: 24, textAlign: 'left', display: 'inline-block' }}>
+                  {question.options.map((opt, i) => (
+                    <li key={i} style={{ marginBottom: 8, fontSize: 18 }}>{opt}</li>
+                  ))}
+                </ul>
+              )}
+              {!revealed && <p style={{ color: 'var(--pr-muted)' }}>Answer on your phone — host will reveal.</p>}
+              {revealed && (
+                <div style={{ marginTop: 24, padding: '20px 24px', background: 'var(--pr-surface2)', borderRadius: 12, display: 'inline-block' }}>
+                  <p style={{ margin: 0, fontSize: 24, fontWeight: 700, color: 'var(--pr-brand)' }}>{question.correctAnswer}</p>
+                  {question.explanation && (
+                    <p style={{ margin: '12px 0 0', fontSize: 16, color: 'var(--pr-muted)' }}>{question.explanation}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : board ? (
+            <div style={{ padding: 24, overflow: 'auto' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: `minmax(120px, 1fr) repeat(${VALUE_LADDER.length}, minmax(72px, 1fr))`,
+                  gap: 8,
+                  background: 'var(--pr-surface2)',
+                  padding: 16,
+                  borderRadius: 12,
+                  border: '1px solid var(--pr-border)',
+                  maxWidth: 800,
+                  margin: '0 auto'
+                }}
+              >
+                <div style={{ padding: 12, fontWeight: 600, fontSize: 14, color: 'var(--pr-muted)' }}>Category</div>
+                {VALUE_LADDER.map((v) => (
+                  <div key={v} style={{ padding: 12, fontWeight: 600, fontSize: 14, textAlign: 'center', color: 'var(--pr-muted)' }}>${v}</div>
+                ))}
+                {(board.categories ?? []).map((cat, ci) => {
+                  const used = (crowdControlState.usedSlots ?? [0,0,0,0,0,0])[ci] ?? 0;
+                  return (
+                    <React.Fragment key={ci}>
+                      <div style={{ padding: 12, fontSize: 14, fontWeight: 500 }}>{cat}</div>
+                      {VALUE_LADDER.map((_, vi) => {
+                        const usedCell = used > vi;
+                        return (
+                          <div
+                            key={vi}
+                            style={{
+                              padding: 12,
+                              textAlign: 'center',
+                              fontSize: 14,
+                              background: usedCell ? 'var(--pr-surface)' : 'transparent',
+                              color: usedCell ? 'var(--pr-muted)' : 'var(--pr-text)',
+                              borderRadius: 6
+                            }}
+                          >
+                            {usedCell ? '✓' : '$' + VALUE_LADDER[vi]}
+                          </div>
+                        );
+                      })}
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+              {phase === 'vote' && (
+                <p style={{ marginTop: 16, textAlign: 'center', color: 'var(--pr-muted)' }}>Pick the next category on your phone!</p>
+              )}
+            </div>
+          ) : (
+            <div style={{ padding: 48, textAlign: 'center', color: 'var(--pr-muted)' }}>Board loading…</div>
+          )
+        }
+        statusBarProps={{ joinCode: code?.toUpperCase() ?? '' }}
+      />
+    );
+  }
+
+  // Estimation Show / Category Grid: placeholder until full implementation
   if (gameType === 'estimation' || gameType === 'jeopardy') {
     const title = gameType === 'estimation' ? 'Estimation Show' : 'Category Grid';
     return (

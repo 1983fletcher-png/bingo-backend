@@ -11,6 +11,8 @@ import type { Socket } from 'socket.io-client';
 import { TimerPill } from '../components/trivia-room';
 import { StandbyCard } from '../components/StandbyCard';
 import { GameShell } from '../games/shared/GameShell';
+import { getMarketMatchItem } from '../data/marketMatchDataset';
+import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
 import '../styles/join.css';
 
 /**
@@ -243,6 +245,8 @@ function getGameTypeLabel(gameType: string | undefined): string {
     case 'edutainment': return 'Edutainment';
     case 'team-building': return 'Team Building';
     case 'feud': return 'Survey Showdown';
+    case 'market-match': return 'Market Match';
+    case 'crowd-control-trivia': return 'Crowd Control Trivia';
     case 'estimation': return 'Estimation Show';
     case 'jeopardy': return 'Category Grid';
     default: return gameType.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -284,6 +288,10 @@ interface JoinState {
   standby?: boolean;
   /** Feud (Survey Showdown) state when gameType === 'feud' */
   feud?: import('../types/feud').FeudState;
+  /** Market Match state when gameType === 'market-match' */
+  marketMatch?: { currentIndex: number; revealed: boolean };
+  /** Crowd Control Trivia state when gameType === 'crowd-control-trivia' */
+  crowdControl?: import('../types/crowdControlTrivia').CrowdControlState;
   /** Trivia: current question index, questions list (with optional options for MC), and whether answer is revealed */
   trivia?: {
     currentIndex: number;
@@ -407,6 +415,12 @@ export default function Play() {
     s.on('feud:state', (payload: import('../types/feud').FeudState) => {
       setJoinState((prev) => (prev ? { ...prev, feud: payload } : null));
     });
+    s.on('market-match:state', (payload: { currentIndex?: number; revealed?: boolean }) => {
+      setJoinState((prev) => (prev ? { ...prev, marketMatch: { currentIndex: payload.currentIndex ?? prev.marketMatch?.currentIndex ?? 0, revealed: payload.revealed ?? prev.marketMatch?.revealed ?? false } } : null));
+    });
+    s.on('cct:state', (payload: import('../types/crowdControlTrivia').CrowdControlState) => {
+      setJoinState((prev) => (prev ? { ...prev, crowdControl: payload } : null));
+    });
 
     return () => {
       s.off('connect');
@@ -422,6 +436,8 @@ export default function Play() {
       s.off('game:trivia-state');
       s.off('game:trivia-reveal');
       s.off('feud:state');
+      s.off('market-match:state');
+      s.off('cct:state');
     };
   }, [code]);
 
@@ -666,7 +682,119 @@ export default function Play() {
     );
   }
 
-  // Estimation Show / Category Grid (Market Match): placeholder
+  // Market Match: price-guessing player view
+  if (gameType === 'market-match' && joinState?.marketMatch) {
+    const item = getMarketMatchItem(joinState.marketMatch.currentIndex ?? 0);
+    const revealed = joinState.marketMatch.revealed === true;
+    return (
+      <GameShell
+        gameKey="market_match"
+        viewMode="player"
+        title="Market Match"
+        subtitle={item ? `What did it cost in ${item.year}?` : undefined}
+        mainSlot={
+          <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
+            {item ? (
+              <>
+                <h2 style={{ margin: '0 0 12px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>
+                  {item.title}
+                </h2>
+                <p style={{ margin: 0, color: 'var(--pr-muted)' }}>
+                  What did it cost in {item.year}? ({item.unit})
+                </p>
+                {revealed ? (
+                  <p style={{ marginTop: 16, padding: 12, background: 'var(--pr-surface2)', borderRadius: 8, fontWeight: 600, color: 'var(--pr-brand)' }}>
+                    ${item.priceUsd.toFixed(2)} {item.unit}
+                  </p>
+                ) : (
+                  <p style={{ marginTop: 16, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>
+                )}
+              </>
+            ) : (
+              <p style={{ color: 'var(--pr-muted)' }}>Host will pick an item.</p>
+            )}
+          </div>
+        }
+        footerVariant="minimal"
+      />
+    );
+  }
+
+  // Crowd Control Trivia: vote for category, then see question / reveal
+  if (gameType === 'crowd-control-trivia' && joinState?.crowdControl) {
+    const cct = joinState.crowdControl;
+    const phase = cct.phase ?? 'board';
+    const board = getBoard(cct.boardId ?? 0);
+    const question = getQuestion(cct.currentQuestionId ?? null);
+    const revealed = cct.revealed === true;
+    const vote = (categoryIndex: number) => {
+      if (socket && code) socket.emit('cct:vote', { code: code.toUpperCase(), categoryIndex });
+    };
+    return (
+      <GameShell
+        gameKey="crowd_control_trivia"
+        viewMode="player"
+        title="Crowd Control Trivia"
+        subtitle={phase === 'vote' ? 'Pick the next category' : phase === 'question' || phase === 'reveal' ? (question?.prompt ? 'Answer on screen' : undefined) : undefined}
+        mainSlot={
+          <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
+            {phase === 'vote' && board && (
+              <>
+                <p style={{ margin: '0 0 16px', fontSize: 15, color: 'var(--pr-text)' }}>Vote for the next category:</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {(board.categories ?? []).map((cat, i) => {
+                    const used = (cct.usedSlots ?? [0,0,0,0,0,0])[i] ?? 0;
+                    const disabled = used >= 5;
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        className="join-page__btn"
+                        onClick={() => vote(i)}
+                        disabled={disabled}
+                        style={{ width: '100%' }}
+                      >
+                        {cat} {disabled ? '(done)' : `(${cct.voteCounts?.[i] ?? 0} votes)`}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            {(phase === 'question' || phase === 'reveal') && question && (
+              <>
+                <h2 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 600, color: 'var(--pr-text)' }}>
+                  {question.prompt}
+                </h2>
+                {!revealed && question.options && question.options.length > 0 && (
+                  <ul style={{ margin: '0 0 16px', paddingLeft: 20 }}>
+                    {question.options.map((opt, i) => (
+                      <li key={i} style={{ marginBottom: 6 }}>{opt}</li>
+                    ))}
+                  </ul>
+                )}
+                {!revealed && <p style={{ margin: 0, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>}
+                {revealed && (
+                  <div style={{ marginTop: 16, padding: 16, background: 'var(--pr-surface2)', borderRadius: 8 }}>
+                    <p style={{ margin: 0, fontWeight: 600, color: 'var(--pr-brand)' }}>{question.correctAnswer}</p>
+                    {question.explanation && (
+                      <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--pr-muted)' }}>{question.explanation}</p>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+            {phase === 'board' && (
+              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to open category vote.</p>
+            )}
+          </div>
+        }
+        footerVariant="minimal"
+      />
+    );
+  }
+
+  // Estimation Show / Category Grid: placeholder
   if (gameType === 'estimation' || gameType === 'jeopardy') {
     const title = gameType === 'estimation' ? 'Estimation Show' : 'Category Grid';
     return (

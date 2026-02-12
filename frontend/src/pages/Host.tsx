@@ -1,10 +1,13 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import '../styles/host-create.css';
 import '../styles/transport-bar.css';
 import { getSocket } from '../lib/socket';
 import { TransportBar } from '../components/TransportBar';
 import { FeudHostPanel } from '../components/FeudHostPanel';
+import { MarketMatchHostPanel } from '../components/MarketMatchHostPanel';
+import { CrowdControlHostPanel } from '../components/CrowdControlHostPanel';
+import { GameShell } from '../games/shared/GameShell';
 import { DEFAULT_FEUD_STATE } from '../types/feud';
 import type { FeudState } from '../types/feud';
 import HostSongGrid from '../components/HostSongGrid';
@@ -63,26 +66,36 @@ interface GameCreated {
   revealed?: Song[];
   trivia?: { questions: TriviaQuestion[] };
   feud?: import('../types/feud').FeudState;
+  marketMatch?: { currentIndex: number; revealed: boolean };
+  crowdControl?: import('../types/crowdControlTrivia').CrowdControlState;
 }
 
 type HostTab = 'waiting' | 'call' | 'questions' | 'controls' | 'event' | 'print';
 
-export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building' | 'feud' | 'estimation' | 'jeopardy';
+export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building' | 'feud' | 'estimation' | 'market-match' | 'crowd-control-trivia' | 'jeopardy';
 
 function createModeFromUrl(type: string | null): CreateMode {
   if (type === 'bingo' || type === 'music-bingo') return 'music-bingo';
   if (type === 'classic-bingo') return 'classic-bingo';
   if (type === 'feud') return 'feud';
   if (type === 'estimation') return 'estimation';
+  if (type === 'market-match') return 'market-match';
+  if (type === 'crowd-control-trivia') return 'crowd-control-trivia';
   if (type === 'jeopardy') return 'jeopardy';
   if (type === 'trivia' || type === 'icebreakers' || type === 'edutainment' || type === 'team-building') return type;
   return 'music-bingo';
 }
 
+/** URL type: path segment /host/:gameType or query ?type= (path takes precedence). */
+function getTypeFromHostUrl(params: { gameType?: string }, searchParams: URLSearchParams): string | null {
+  return params.gameType ?? searchParams.get('type');
+}
+
 export default function Host() {
   const navigate = useNavigate();
+  const params = useParams<{ gameType?: string }>();
   const [searchParams] = useSearchParams();
-  const typeFromUrl = searchParams.get('type');
+  const typeFromUrl = getTypeFromHostUrl(params, searchParams);
   const [createMode, setCreateMode] = useState<CreateMode>(() => createModeFromUrl(typeFromUrl));
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
@@ -276,6 +289,12 @@ export default function Host() {
     s.on('feud:state', (payload: FeudState) => {
       setGame((prev) => (prev ? { ...prev, feud: payload } : null));
     });
+    s.on('market-match:state', (payload: { currentIndex?: number; revealed?: boolean }) => {
+      setGame((prev) => (prev ? { ...prev, marketMatch: { currentIndex: payload.currentIndex ?? prev.marketMatch?.currentIndex ?? 0, revealed: payload.revealed ?? prev.marketMatch?.revealed ?? false } } : null));
+    });
+    s.on('cct:state', (payload: import('../types/crowdControlTrivia').CrowdControlState) => {
+      setGame((prev) => (prev ? { ...prev, crowdControl: payload } : null));
+    });
 
     s.on('game:songs-updated', ({ songPool: pool }: { songPool: Song[] }) => {
       setSongPool(Array.isArray(pool) ? pool : []);
@@ -375,6 +394,18 @@ export default function Host() {
         baseUrl: window.location.origin,
         gameType: 'estimation',
         eventConfig: { ...initialEventConfig, gameTitle: 'Estimation Show' },
+      });
+    } else if (mode === 'market-match') {
+      socket.emit('host:create', {
+        baseUrl: window.location.origin,
+        gameType: 'market-match',
+        eventConfig: { ...initialEventConfig, gameTitle: 'Market Match' },
+      });
+    } else if (mode === 'crowd-control-trivia') {
+      socket.emit('host:create', {
+        baseUrl: window.location.origin,
+        gameType: 'crowd-control-trivia',
+        eventConfig: { ...initialEventConfig, gameTitle: 'Crowd Control Trivia' },
       });
     } else if (mode === 'jeopardy') {
       socket.emit('host:create', {
@@ -689,6 +720,8 @@ export default function Host() {
       } else if (createMode === 'classic-bingo') createGame('classic-bingo');
       else if (createMode === 'feud') createGame('feud');
       else if (createMode === 'estimation') createGame('estimation');
+      else if (createMode === 'market-match') createGame('market-match');
+      else if (createMode === 'crowd-control-trivia') createGame('crowd-control-trivia');
       else if (createMode === 'jeopardy') createGame('jeopardy');
       else createGame(createMode, packForMode as TriviaPack);
     };
@@ -708,9 +741,11 @@ export default function Host() {
                   ? 'Create Survey Showdown'
                   : createMode === 'estimation'
                     ? 'Create Estimation Show'
-                    : createMode === 'jeopardy'
-                      ? 'Create Category Grid'
-                      : 'Create Team Building';
+                    : createMode === 'crowd-control-trivia'
+                      ? 'Create Crowd Control Trivia'
+                      : createMode === 'jeopardy'
+                        ? 'Create Category Grid'
+                        : 'Create Team Building';
 
     return (
       <div className="host-create">
@@ -800,6 +835,13 @@ export default function Host() {
             onClick={() => setCreateMode('estimation')}
           >
             Estimation Show
+          </button>
+          <button
+            type="button"
+            className={`host-create__game-type-btn ${createMode === 'crowd-control-trivia' ? 'host-create__game-type-btn--on' : ''}`}
+            onClick={() => setCreateMode('crowd-control-trivia')}
+          >
+            Crowd Control Trivia
           </button>
           <button
             type="button"
@@ -1086,15 +1128,59 @@ p{word-break:break-all;font-size:14px;color:#333}
             <h2 style={{ margin: '0 0 8px' }}>{game.gameType === 'estimation' ? 'Estimation Show' : 'Category Grid'}</h2>
             <p style={{ margin: 0, color: 'var(--text-muted)' }}>Host controls for this game type are coming soon. Share the join link and display link with your room; full gameplay will be added in a future update.</p>
           </div>
+        ) : game.gameType === 'market-match' ? (
+          <GameShell
+            gameKey="market_match"
+            viewMode="host"
+            title="Market Match"
+            mainSlot={
+              <MarketMatchHostPanel
+                gameCode={game.code}
+                hostToken={game.hostToken ?? null}
+                marketMatch={game.marketMatch ?? { currentIndex: 0, revealed: false }}
+                socket={socket}
+                joinUrl={joinUrlForQR}
+                displayUrl={displayUrl}
+                onEndSession={() => navigate('/activity')}
+              />
+            }
+            footerVariant="minimal"
+          />
+        ) : game.gameType === 'crowd-control-trivia' ? (
+          <GameShell
+            gameKey="crowd_control_trivia"
+            viewMode="host"
+            title="Crowd Control Trivia"
+            mainSlot={
+              <CrowdControlHostPanel
+                gameCode={game.code}
+                hostToken={game.hostToken ?? null}
+                crowdControl={game.crowdControl ?? { boardId: 0, usedSlots: [0,0,0,0,0,0], phase: 'board', voteCounts: [0,0,0,0,0,0], winningCategoryIndex: null, currentValueIndex: null, currentQuestionId: null, revealed: false }}
+                socket={socket}
+                joinUrl={joinUrlForQR}
+                displayUrl={displayUrl}
+                onEndSession={() => navigate('/activity')}
+              />
+            }
+            footerVariant="minimal"
+          />
         ) : game.gameType === 'feud' ? (
-          <FeudHostPanel
-            gameCode={game.code}
-            feud={game.feud ?? DEFAULT_FEUD_STATE}
-            onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
-            socket={socket}
-            joinUrl={joinUrlForQR}
-            displayUrl={displayUrl}
-            onEndSession={() => navigate('/activity')}
+          <GameShell
+            gameKey="survey_showdown"
+            viewMode="host"
+            title="Survey Showdown"
+            mainSlot={
+              <FeudHostPanel
+                gameCode={game.code}
+                feud={game.feud ?? DEFAULT_FEUD_STATE}
+                onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
+                socket={socket}
+                joinUrl={joinUrlForQR}
+                displayUrl={displayUrl}
+                onEndSession={() => navigate('/activity')}
+              />
+            }
+            footerVariant="minimal"
           />
         ) : (
         <>

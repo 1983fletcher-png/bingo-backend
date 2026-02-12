@@ -939,12 +939,24 @@ function getGame(code) {
 const TRIVIA_LIKE_TYPES = ['trivia', 'icebreakers', 'edutainment', 'team-building'];
 const FEUD_CHECKPOINTS = ['STANDBY', 'R1_TITLE', 'R1_COLLECT', 'R1_LOCKED', 'R1_BOARD_0', 'R1_BOARD_1', 'R1_BOARD_2', 'R1_BOARD_3', 'R1_BOARD_4', 'R1_BOARD_5', 'R1_BOARD_6', 'R1_BOARD_7', 'R1_BOARD_8', 'R1_SUMMARY'];
 
+// Crowd Control Trivia: board 0 question_ids (row-major: 6 categories × 5 values)
+const CCT_BOARD_0_QUESTION_IDS = [
+  'q_fd_01_200', 'q_fd_01_300', 'q_fd_01_400', 'q_fd_01_500', 'q_fd_01_600',
+  'q_mv_01_200', 'q_mv_01_300', 'q_mv_01_400', 'q_mv_01_500', 'q_mv_01_600',
+  'q_mu_01_200', 'q_mu_01_300', 'q_mu_01_400', 'q_mu_01_500', 'q_mu_01_600',
+  'q_hi_01_200', 'q_hi_01_300', 'q_hi_01_400', 'q_hi_01_500', 'q_hi_01_600',
+  'q_sp_01_200', 'q_sp_01_300', 'q_sp_01_400', 'q_sp_01_500', 'q_sp_01_600',
+  'q_sn_01_200', 'q_sn_01_300', 'q_sn_01_400', 'q_sn_01_500', 'q_sn_01_600'
+];
+
 function createGame(opts = {}) {
   let code;
   do { code = nanoidCode(); } while (games.has(code));
   const requested = opts.gameType;
   const gameType = requested === 'feud' ? 'feud'
     : requested === 'estimation' ? 'estimation'
+    : requested === 'market-match' ? 'market-match'
+    : requested === 'crowd-control-trivia' ? 'crowd-control-trivia'
     : requested === 'jeopardy' ? 'jeopardy'
     : requested === 'classic-bingo' ? 'classic-bingo'
     : TRIVIA_LIKE_TYPES.includes(requested) ? requested
@@ -958,6 +970,8 @@ function createGame(opts = {}) {
     'music-bingo': 'Playroom',
     'feud': 'Survey Showdown',
     'estimation': 'Estimation Show',
+    'market-match': 'Market Match',
+    'crowd-control-trivia': 'Crowd Control Trivia',
     'jeopardy': 'Category Grid'
   };
   const defaultTitle = defaultTitles[gameType] || 'Playroom';
@@ -1005,8 +1019,25 @@ function createGame(opts = {}) {
       showScores: true,
       cascadeEffect: false,
       bottomDropEffect: false
+    } : null,
+    // Market Match (price guessing) state when gameType === 'market-match'
+    marketMatch: gameType === 'market-match' ? {
+      currentIndex: 0,
+      revealed: false
+    } : null,
+    // Crowd Control Trivia: category vote → next value → question → reveal
+    crowdControl: gameType === 'crowd-control-trivia' ? {
+      boardId: 0,
+      usedSlots: [0, 0, 0, 0, 0, 0],
+      phase: 'board',
+      voteCounts: [0, 0, 0, 0, 0, 0],
+      winningCategoryIndex: null,
+      currentValueIndex: null,
+      currentQuestionId: null,
+      revealed: false
     } : null
   };
+  if (game.crowdControl) game.cctPlayerVotes = new Map(); // socketId -> categoryIndex (server-only)
   games.set(code, game);
   return game;
 }
@@ -1077,6 +1108,8 @@ io.on('connection', (socket) => {
     const isTriviaLike = ['trivia', 'icebreakers', 'edutainment', 'team-building'].includes(gameType);
     const resolvedType = gameType === 'feud' ? 'feud'
       : gameType === 'estimation' ? 'estimation'
+      : gameType === 'market-match' ? 'market-match'
+      : gameType === 'crowd-control-trivia' ? 'crowd-control-trivia'
       : gameType === 'jeopardy' ? 'jeopardy'
       : gameType === 'classic-bingo' ? 'classic-bingo'
       : isTriviaLike ? gameType
@@ -1119,6 +1152,8 @@ io.on('connection', (socket) => {
     };
     if (game.trivia) payload.trivia = getTriviaPayload(game);
     if (game.feud) payload.feud = game.feud;
+    if (game.marketMatch) payload.marketMatch = game.marketMatch;
+    if (game.crowdControl) payload.crowdControl = game.crowdControl;
     socket.emit('game:created', payload);
   });
 
@@ -1150,6 +1185,8 @@ io.on('connection', (socket) => {
     };
     if (game.trivia) payload.trivia = getTriviaPayload(game);
     if (game.feud) payload.feud = game.feud;
+    if (game.marketMatch) payload.marketMatch = game.marketMatch;
+    if (game.crowdControl) payload.crowdControl = game.crowdControl;
     socket.emit('host:resume:ok', payload);
     socket.emit('game:created', payload);
   });
@@ -1276,6 +1313,8 @@ io.on('connection', (socket) => {
     };
     if (game.trivia) joinPayload.trivia = getTriviaPayload(game, { forAudience: true });
     if (game.feud) joinPayload.feud = game.feud;
+    if (game.marketMatch) joinPayload.marketMatch = game.marketMatch;
+    if (game.crowdControl) joinPayload.crowdControl = game.crowdControl;
     joinPayload.rollCallLeaderboard = getRollCallLeaderboard(game);
     socket.emit('join:ok', joinPayload);
     socket.to(`game:${game.code}`).emit('player:joined', {
@@ -1340,7 +1379,110 @@ io.on('connection', (socket) => {
     };
     if (game.trivia) displayPayload.trivia = getTriviaPayload(game, { forAudience: true });
     if (game.feud) displayPayload.feud = game.feud;
+    if (game.marketMatch) displayPayload.marketMatch = game.marketMatch;
+    if (game.crowdControl) displayPayload.crowdControl = game.crowdControl;
     socket.emit('display:ok', displayPayload);
+  });
+
+  // --- Crowd Control Trivia ---
+  function emitCctState(game) {
+    if (game?.crowdControl) io.to(`game:${game.code}`).emit('cct:state', game.crowdControl);
+  }
+  socket.on('cct:open-vote', ({ code, hostToken }) => {
+    const game = getGame(code);
+    if (!game?.crowdControl) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    game.crowdControl.phase = 'vote';
+    game.crowdControl.voteCounts = [0, 0, 0, 0, 0, 0];
+    if (game.cctPlayerVotes) game.cctPlayerVotes.clear();
+    emitCctState(game);
+  });
+  socket.on('cct:vote', ({ code, categoryIndex }) => {
+    const game = getGame(code);
+    if (!game?.crowdControl || game.crowdControl.phase !== 'vote') return;
+    const cat = parseInt(categoryIndex, 10);
+    if (Number.isNaN(cat) || cat < 0 || cat > 5) return;
+    if (!game.cctPlayerVotes) game.cctPlayerVotes = new Map();
+    game.cctPlayerVotes.set(socket.id, cat);
+    const counts = [0, 0, 0, 0, 0, 0];
+    for (const [, c] of game.cctPlayerVotes) counts[c]++;
+    game.crowdControl.voteCounts = counts;
+    emitCctState(game);
+  });
+  socket.on('cct:lock-vote', ({ code, hostToken }) => {
+    const game = getGame(code);
+    if (!game?.crowdControl) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    const cc = game.crowdControl;
+    const counts = cc.voteCounts || [0, 0, 0, 0, 0, 0];
+    let maxCount = 0;
+    let winningCat = 0;
+    for (let i = 0; i < 6; i++) {
+      if (counts[i] > maxCount && (cc.usedSlots[i] ?? 0) < 5) {
+        maxCount = counts[i];
+        winningCat = i;
+      }
+    }
+    const used = cc.usedSlots || [0, 0, 0, 0, 0, 0];
+    const valueIndex = used[winningCat];
+    if (valueIndex >= 5) return;
+    cc.winningCategoryIndex = winningCat;
+    cc.currentValueIndex = valueIndex;
+    cc.currentQuestionId = CCT_BOARD_0_QUESTION_IDS[winningCat * 5 + valueIndex];
+    cc.usedSlots = [...used];
+    cc.usedSlots[winningCat] = valueIndex + 1;
+    cc.phase = 'question';
+    cc.revealed = false;
+    emitCctState(game);
+  });
+  socket.on('cct:reveal', ({ code, hostToken }) => {
+    const game = getGame(code);
+    if (!game?.crowdControl) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    game.crowdControl.revealed = true;
+    emitCctState(game);
+  });
+  socket.on('cct:back-to-board', ({ code, hostToken }) => {
+    const game = getGame(code);
+    if (!game?.crowdControl) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    const cc = game.crowdControl;
+    cc.phase = 'board';
+    cc.currentQuestionId = null;
+    cc.revealed = false;
+    cc.winningCategoryIndex = null;
+    cc.currentValueIndex = null;
+    emitCctState(game);
+  });
+
+  // --- Market Match ---
+  socket.on('market-match:next', ({ code, hostToken }) => {
+    const game = getGame(code);
+    if (!game?.marketMatch) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    game.marketMatch.currentIndex = Math.max(0, (game.marketMatch.currentIndex || 0) + 1);
+    game.marketMatch.revealed = false;
+    io.to(`game:${game.code}`).emit('market-match:state', game.marketMatch);
+  });
+
+  socket.on('market-match:set-index', ({ code, hostToken, index }) => {
+    const game = getGame(code);
+    if (!game?.marketMatch) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    const i = parseInt(index, 10);
+    if (!Number.isNaN(i) && i >= 0) {
+      game.marketMatch.currentIndex = i;
+      game.marketMatch.revealed = false;
+      io.to(`game:${game.code}`).emit('market-match:state', game.marketMatch);
+    }
+  });
+
+  socket.on('market-match:reveal', ({ code, hostToken }) => {
+    const game = getGame(code);
+    if (!game?.marketMatch) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    game.marketMatch.revealed = true;
+    io.to(`game:${game.code}`).emit('market-match:state', game.marketMatch);
   });
 
   // --- Feud (Survey Showdown) ---
