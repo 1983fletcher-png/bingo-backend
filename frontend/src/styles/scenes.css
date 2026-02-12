@@ -1,0 +1,10 @@
+/**
+ * Scene intensity vars (optional overrides).
+ * Scene background + tint + vignette/noise are defined in theme/themes.css.
+ */
+:root {
+  --scene-intensity: 1;
+  --scene-vignette-opacity: 0.35;
+  --scene-noise-opacity: 0.03;
+  --scene-bloom-opacity: 0.08;
+}

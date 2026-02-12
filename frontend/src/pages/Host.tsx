@@ -27,6 +27,8 @@ import type { Song, EventConfig, VenueProfile, DisplayThemeId } from '../types/g
 import { VENUE_PROFILES_KEY } from '../types/game';
 import { ACTIVITY_THEMES } from '../types/themes';
 import { THEME_IDS } from '../theme/themeRegistry';
+import { useTheme } from '../theme/ThemeProvider';
+import { registryIdToSiteTheme } from '../theme/themeTypes';
 import { getPreset } from '../data/activityPresets';
 import type { Socket } from 'socket.io-client';
 
@@ -96,6 +98,7 @@ export default function Host() {
   const navigate = useNavigate();
   const params = useParams<{ gameType?: string }>();
   const [searchParams] = useSearchParams();
+  const { setTheme } = useTheme();
   const typeFromUrl = getTypeFromHostUrl(params, searchParams);
   const [createMode, setCreateMode] = useState<CreateMode>(() => createModeFromUrl(typeFromUrl));
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -1093,6 +1096,7 @@ p{word-break:break-all;font-size:14px;color:#333}
                   value={eventConfig.playroomThemeId ?? 'classic'}
                   onChange={(e) => {
                     const v = e.target.value || 'classic';
+                    setTheme(registryIdToSiteTheme(v));
                     setEventConfigState((c) => ({ ...c, playroomThemeId: v }));
                     if (socket && game?.code) {
                       const hostToken = game.code ? localStorage.getItem(HOST_TOKEN_KEY(game.code)) : null;
@@ -1306,7 +1310,16 @@ p{word-break:break-all;font-size:14px;color:#333}
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4 }}>Display skin (TV look)</label>
-              <select value={eventConfig.playroomThemeId ?? 'classic'} onChange={(e) => setEventConfigState((c) => ({ ...c, playroomThemeId: e.target.value || undefined }))} onBlur={applyEventConfig} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }}>
+              <select
+                value={eventConfig.playroomThemeId ?? 'classic'}
+                onChange={(e) => {
+                  const v = e.target.value || 'classic';
+                  setTheme(registryIdToSiteTheme(v));
+                  setEventConfigState((c) => ({ ...c, playroomThemeId: v }));
+                }}
+                onBlur={applyEventConfig}
+                style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }}
+              >
                 {THEME_IDS.map((id) => (
                   <option key={id} value={id}>{id === 'classic' ? 'Classic' : id === 'prestige-retro' ? 'Prestige Retro' : id === 'retro-studio' ? 'Retro Studio' : id === 'retro-arcade' ? 'Retro Arcade' : id}</option>
                 ))}

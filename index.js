@@ -1554,7 +1554,13 @@ io.on('connection', (socket) => {
     const game = getGame(code);
     if (!game?.feud || game.feud.locked) return;
     const p = game.players.get(socket.id);
-    if (!p) return;
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[feud:submit] code=%s socketId=%s hasPlayer=%s answers=%o', code, socket.id, !!p, Array.isArray(answers) ? answers : []);
+    }
+    if (!p) {
+      if (process.env.NODE_ENV !== 'production') console.warn('[feud:submit] Player not in room — ensure player:join was sent first');
+      return;
+    }
     const list = Array.isArray(answers) ? answers.slice(0, 3).map((a) => String(a).trim()).filter(Boolean) : [];
     game.feud.submissions.push({ playerId: socket.id, displayName: p.name, answers: list });
     io.to(`game:${game.code}`).emit('feud:state', game.feud);

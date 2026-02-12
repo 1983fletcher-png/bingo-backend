@@ -16,7 +16,9 @@ export function FeudPlayerForm({ code, socket }: Props) {
     e.preventDefault();
     const answers = [a1.trim(), a2.trim(), a3.trim()].filter(Boolean);
     if (!socket || answers.length === 0) return;
-    socket.emit('feud:submit', { code: code.toUpperCase(), answers });
+    const codeUpper = code.toUpperCase();
+    if (import.meta.env?.DEV) console.log('[FeudPlayerForm] feud:submit', { code: codeUpper, answers });
+    socket.emit('feud:submit', { code: codeUpper, answers });
     setSubmitted(true);
   };
   if (submitted) {

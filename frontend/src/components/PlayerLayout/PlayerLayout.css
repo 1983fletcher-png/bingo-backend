@@ -1,0 +1,39 @@
+/* PlayerLayout — mini stage (top) + input panel (bottom). Same theme tokens and stage framing. */
+
+.player-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  gap: 20px;
+}
+
+.player-layout__stage {
+  flex: 0 0 auto;
+  height: 35vh;
+  min-height: 180px;
+  max-height: 45vh;
+  border-radius: var(--pr-radius-lg, 14px);
+  border: 1px solid var(--pr-border, var(--border));
+  background: var(--pr-surface, var(--surface));
+  box-shadow: var(--pr-shadow-sm, 0 1px 3px rgba(0,0,0,0.25));
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+}
+
+.player-layout__input {
+  flex: 1 1 auto;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.player-layout__input .player-layout__cta {
+  margin-top: 8px;
+}

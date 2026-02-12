@@ -44,7 +44,13 @@
   --pr-glow-strength: 0.15;
   --pr-vignette-opacity: 0;
   --pr-scanlines-opacity: 0;
+  --stage-overlay: none;
 }
+
+/* Theme overlay textures (Vite public path — no 404s) */
+[data-theme="prestige"] { --stage-overlay: url("/themes/overlays/overlay-prestige.webp"); }
+[data-theme="retro"] { --stage-overlay: url("/themes/overlays/overlay-retro.webp"); }
+[data-theme="retro-arcade"] { --stage-overlay: url("/themes/overlays/overlay-arcade.webp"); }
 
 [data-theme="prestige"] {
   --pr-bg: #0d0d0f;
@@ -92,19 +98,20 @@
   --pr-scanlines-opacity: 0.04;
 }
 
+/* Scene backgrounds (Vite public path — /themes/scenes/*.webp) */
 :root, [data-scene="studio"] {
-  --pr-scene-bg: var(--pr-bg);
-  --pr-scene-tint: rgba(0,0,0,0);
+  --pr-scene-bg: url("/themes/scenes/studio.webp"), linear-gradient(180deg, #0b0f14 0%, #121826 50%, #0b0f14 100%);
+  --pr-scene-tint: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,0.2), rgba(0,0,0,0.85));
 }
 
 [data-scene="mountains"] {
-  --pr-scene-bg: linear-gradient(180deg, #0b0f14 0%, #1a2332 50%, #0f1419 100%);
-  --pr-scene-tint: rgba(26,35,50,0.3);
+  --pr-scene-bg: url("/themes/scenes/mountains.webp"), linear-gradient(180deg, #0b0f14 0%, #1a2332 50%, #0f1419 100%);
+  --pr-scene-tint: radial-gradient(1200px 800px at 50% 20%, rgba(0,0,0,0.15), rgba(0,0,0,0.88));
 }
 
 [data-scene="arcadeCarpet"] {
-  --pr-scene-bg: radial-gradient(ellipse 120% 80% at 50% 100%, #1a0a2e 0%, #0b0f14 60%);
-  --pr-scene-tint: rgba(80,40,120,0.15);
+  --pr-scene-bg: url("/themes/scenes/arcade-carpet.webp"), radial-gradient(ellipse 120% 80% at 50% 100%, #1a0a2e 0%, #0b0f14 60%);
+  --pr-scene-tint: radial-gradient(1200px 800px at 50% 15%, rgba(0,0,0,0.15), rgba(0,0,0,0.9));
 }
 
 [data-motion="standard"] {
@@ -117,6 +124,7 @@
 }
 
 [data-motion="calm"] {
+  --pr-glow-strength: 0.15;
   --pr-motion-fast: 0.5;
   --pr-motion-med: 0.6;
   --pr-motion-slow: 0.7;
@@ -126,12 +134,68 @@
 }
 
 [data-motion="high-energy"] {
+  --pr-glow-strength: 0.35;
   --pr-motion-fast: 1.2;
   --pr-motion-med: 1.1;
   --pr-motion-slow: 1;
-  --pr-duration-fast: 120ms;
+  --pr-duration-fast: 90ms;
   --pr-duration-med: 200ms;
   --pr-duration-slow: 320ms;
+}
+
+/* -----------------------------------------------------------------------------
+   Site-wide scene background + vignette/noise (set dressing)
+   ----------------------------------------------------------------------------- */
+html, body {
+  background: var(--pr-bg);
+}
+
+body {
+  color: var(--pr-text);
+  position: relative;
+  min-height: 100%;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background-image: var(--pr-scene-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: saturate(1.05) contrast(1.05);
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: var(--pr-scene-tint);
+  pointer-events: none;
+}
+
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 900px at 50% 10%, rgba(255,255,255,0.04), rgba(0,0,0, var(--pr-vignette-opacity, 0.55))),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255, var(--pr-scanlines-opacity, 0)) 0px,
+      rgba(255,255,255, var(--pr-scanlines-opacity, 0)) 1px,
+      transparent 3px,
+      transparent 6px
+    );
+  mix-blend-mode: overlay;
+  opacity: 1;
 }
 
 /* -----------------------------------------------------------------------------
@@ -154,6 +218,9 @@
 }
 
 /* Pseudo-elements used as decorative overlays must not capture clicks */
+body::before,
+body::after,
+html::before,
 .pr-page::before,
 .pr-page::after,
 .pr-gameshell::before,
@@ -185,4 +252,51 @@
 [data-motion="high-energy"] .pr-reveal,
 [data-motion="high-energy"] [class*="reveal"] {
   transition-duration: var(--pr-duration-fast);
+}
+
+/* -----------------------------------------------------------------------------
+   Stage frame polish (TV + Player top-stage preview) — one class for all game views
+   ----------------------------------------------------------------------------- */
+.stage-frame,
+.gshell__stage,
+.pr-stage,
+.player-layout__stage {
+  position: relative;
+  background: color-mix(in srgb, var(--pr-surface) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pr-border) 70%, transparent);
+  border-radius: var(--pr-radius-xl);
+  box-shadow: var(--pr-shadow-lg);
+  overflow: hidden;
+}
+
+.stage-frame::before,
+.gshell__stage::before,
+.pr-stage::before,
+.player-layout__stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--stage-overlay);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: var(--pr-noise-opacity, 0.14);
+  mix-blend-mode: overlay;
+  z-index: 0;
+}
+
+.stage-frame::after,
+.gshell__stage::after,
+.pr-stage::after,
+.player-layout__stage::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 500px at 50% 0%, color-mix(in srgb, var(--pr-glow) calc(18% + var(--pr-glow-strength, 0.25) * 40%), transparent), transparent 65%),
+    radial-gradient(1200px 800px at 50% 30%, transparent, rgba(0,0,0, var(--pr-vignette-opacity, 0.55)));
+  opacity: 1;
+  z-index: 0;
 }

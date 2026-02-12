@@ -24,7 +24,7 @@ export function StageFrame({
 }: StageFrameProps) {
   return (
     <div
-      className={`pr-stage pr-stage--${variant} ${floorReflection ? 'pr-stage--floor' : ''} ${shimmer ? 'pr-stage--shimmer' : ''} ${className}`.trim()}
+      className={`stage-frame pr-stage pr-stage--${variant} ${floorReflection ? 'pr-stage--floor' : ''} ${shimmer ? 'pr-stage--shimmer' : ''} ${className}`.trim()}
       data-stage={variant}
     >
       {variant === 'lightbar' && <div className="pr-stage__lightbar pr-stage__lightbar--top" />}

@@ -14,7 +14,7 @@ import { GameShell } from '../components/GameShell';
 import type { ThemeId } from '../theme/theme.types';
 import { getMarketMatchItem } from '../data/marketMatchDataset';
 import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
-import { FeudPlayerForm } from '../components/FeudPlayerForm';
+import { PlayerLayout, TextAnswerInput } from '../components/PlayerLayout';
 import '../styles/join.css';
 
 /**
@@ -298,6 +298,8 @@ export default function Play() {
   const [menuOverlay, setMenuOverlay] = useState<{ url: string; useIframe: boolean } | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
   const hasRejoinEmitted = useRef(false);
+  const rejoinRef = useRef<{ code: string; name: string } | null>(null);
+  rejoinRef.current = joinState && code?.trim() ? { code: code.trim().toUpperCase(), name: (() => { try { const raw = sessionStorage.getItem(PLAYROOM_JOIN_KEY(code)); if (raw) { const p = JSON.parse(raw) as { name?: string }; return p.name || name || 'Anonymous'; } } catch { } return name || 'Anonymous'; })() } : null;
 
   // Restore session so refresh keeps player in the same room
   useEffect(() => {
@@ -320,7 +322,15 @@ export default function Play() {
     const s = getSocket();
     setSocket(s);
     setSocketConnected(s.connected);
-    s.on('connect', () => setSocketConnected(true));
+    const onConnect = () => {
+      setSocketConnected(true);
+      const r = rejoinRef.current;
+      if (r) {
+        s.emit('player:join', { code: r.code, name: r.name });
+        if (import.meta.env?.DEV) console.log('[Play] Re-joined room on connect', r.code);
+      }
+    };
+    s.on('connect', onConnect);
     s.on('disconnect', () => setSocketConnected(false));
 
     s.on('join:ok', (payload: JoinState) => {
@@ -393,6 +403,7 @@ export default function Play() {
     });
 
     s.on('feud:state', (payload: import('../types/feud').FeudState) => {
+      if (import.meta.env?.DEV) console.log('[Play] feud:state', { submissions: payload?.submissions?.length ?? 0, topAnswers: payload?.topAnswers?.length ?? 0 });
       setJoinState((prev) => (prev ? { ...prev, feud: payload } : null));
     });
     s.on('market-match:state', (payload: { currentIndex?: number; revealed?: boolean }) => {
@@ -403,7 +414,7 @@ export default function Play() {
     });
 
     return () => {
-      s.off('connect');
+      s.off('connect', onConnect);
       s.off('disconnect');
       s.off('join:ok');
       s.off('join:error');
@@ -545,6 +556,24 @@ export default function Play() {
   if (gameType === 'feud' && joinState?.feud && (joinState.started || feudRoundActive)) {
     const feud = joinState.feud;
     const canSubmit = !feud.locked && (feud.checkpointId === 'R1_COLLECT' || feud.checkpointId === 'R1_TITLE');
+    const handleFeudSubmit = (answers: string[]) => {
+      if (socket && code) socket.emit('feud:submit', { code: code.toUpperCase(), answers });
+    };
+    const miniStage = (
+      <div style={{ textAlign: 'center' }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
+        <p style={{ margin: 0, fontSize: 14, color: 'var(--pr-muted)' }}>
+          {feud.locked ? 'Answers locked — watch the screen!' : feud.checkpointId === 'R1_COLLECT' ? 'Round collecting' : 'Round in progress'}
+        </p>
+      </div>
+    );
+    const inputSlot = feud.locked ? (
+      <p style={{ margin: 0, color: 'var(--pr-muted)', fontWeight: 500 }}>Answers are locked. Watch the screen for the reveal!</p>
+    ) : canSubmit ? (
+      <TextAnswerInput onSubmit={handleFeudSubmit} maxFields={3} placeholder="Answer" submitLabel="Submit" disabled={!socket} />
+    ) : (
+      <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
+    );
     return (
       <GameShell
         gameKey="survey_showdown"
@@ -554,16 +583,7 @@ export default function Play() {
         code={code ?? undefined}
         themeId={sessionThemeId}
       >
-        <div style={{ maxWidth: 420, margin: '0 auto', padding: 24 }}>
-          <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
-          {feud.locked ? (
-            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Answers are locked. Watch the screen for the reveal!</p>
-          ) : canSubmit ? (
-            <FeudPlayerForm code={code!} socket={socket} />
-          ) : (
-            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
-          )}
-        </div>
+        <PlayerLayout stage={miniStage} input={inputSlot} />
       </GameShell>
     );
   }

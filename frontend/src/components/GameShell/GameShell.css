@@ -1,0 +1,126 @@
+/* GameShell — stage frame for TV (display), Player, Host. Uses theme vars. */
+
+.gshell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  color: var(--pr-text, var(--text));
+  font-family: var(--pr-font-ui, var(--font-sans));
+}
+
+.gshell__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+
+.gshell__header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.gshell__header-right {
+  flex-shrink: 0;
+}
+
+.gshell__marquee-title {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: var(--pr-weight-heading, 600);
+  margin: 0;
+  color: var(--pr-text);
+  letter-spacing: var(--pr-letter-spacing-display, 0);
+}
+
+.gshell__marquee-subtitle {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  margin: 4px 0 0;
+  color: var(--pr-muted);
+}
+
+.gshell__stage {
+  position: relative;
+  flex: 1;
+  min-height: 200px;
+  border-radius: 24px;
+  overflow: hidden;
+  /* Background, border, overlay, glow from themes.css (set dressing) */
+}
+
+.gshell__stage-inner {
+  position: relative;
+  z-index: 1;
+  padding: 24px;
+  min-height: 160px;
+}
+
+.gshell__stage-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--pr-brand, var(--accent)) 40%, transparent) 20%, var(--pr-brand, var(--accent)) 50%, color-mix(in srgb, var(--pr-brand, var(--accent)) 40%, transparent) 80%, transparent 100%);
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gshell--display .gshell__stage-inner {
+  padding: 32px;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+}
+
+.gshell--display .gshell__marquee-title {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.gshell--player .gshell {
+  padding: 16px;
+  max-width: 480px;
+}
+
+.gshell--player .gshell__stage-inner {
+  padding: 20px;
+}
+
+.gshell--host {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.gshell--host .gshell__header {
+  grid-column: 1 / -1;
+}
+
+.gshell--host .gshell__stage {
+  grid-row: 2;
+  grid-column: 2;
+  min-height: 400px;
+}
+
+.gshell__host-rail {
+  grid-row: 2;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.gshell__code {
+  font-size: 0.875rem;
+  color: var(--pr-muted);
+  letter-spacing: 0.1em;
+}
