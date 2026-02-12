@@ -6,14 +6,17 @@
 
 /* Fallbacks when no theme applied yet (e.g. before ThemeProvider mount) */
 :root {
-  --pr-bg: #0f1115;
-  --pr-surface: #1b1f27;
-  --pr-surface2: #252a33;
-  --pr-text: #f0f0f0;
+  --pr-bg: #0b0f14;
+  --pr-surface: #121826;
+  --pr-surface2: #182033;
+  --pr-text: #e8eefc;
+  --pr-text-muted: rgba(232, 238, 252, 0.72);
   --pr-muted: #9aa3ad;
-  --pr-border: #3d4552;
+  --pr-border: rgba(232, 238, 252, 0.12);
   --pr-brand: #e8b923;
   --pr-brand2: #c99700;
+  --pr-accent: #7df9ff;
+  --pr-accent-contrast: #0b0f14;
   --pr-success: #34c759;
   --pr-warning: #ff9f0a;
   --pr-danger: #ff3b30;
@@ -38,6 +41,12 @@
   --pr-duration-med: 250ms;
   --pr-duration-slow: 400ms;
   --pr-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  margin: 0;
+  background: var(--pr-bg);
+  color: var(--pr-text);
 }
 
 /* Playroom-themed page shell (optional: use on body or #root when full reskin) */

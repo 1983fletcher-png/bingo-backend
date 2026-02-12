@@ -48,6 +48,9 @@ export default function ActivityRoom() {
       <main className="activity-room__main">
         <Outlet />
       </main>
+      <footer className="activity-room__footer" style={{ padding: '12px 1rem', borderTop: '1px solid var(--border)', marginTop: 'auto' }}>
+        <Link to="/theme-lab" style={{ opacity: 0.6, fontSize: 12 }}>Theme Lab</Link>
+      </footer>
     </div>
   );
 }

@@ -5,17 +5,17 @@
  */
 
 import { useState, useMemo } from 'react';
-import type { ThemeId, SceneId, MotionLevel } from '../theme/theme.types';
-import { THEME_IDS, getTheme } from '../theme/themeRegistry';
-import { getThemeCSSVars } from '../theme/applyTheme';
-import { MarqueeHeader, StageFrame, Tile, AnswerPlate } from '../games/shared/chrome';
-import { GameShell } from '../games/shared/GameShell';
-import { BackgroundScene } from '../theme/scenes/BackgroundScene';
+import type { ThemeId, SceneId, MotionLevel } from '../../theme/theme.types';
+import { THEME_IDS, getTheme } from '../../theme/themeRegistry';
+import { getThemeCSSVars } from '../../theme/applyTheme';
+import { MarqueeHeader, StageFrame, Tile, AnswerPlate } from '../../games/shared/chrome';
+import { GameShell } from '../../games/shared/GameShell';
+import { BackgroundScene } from '../../theme/scenes/BackgroundScene';
 
 const SCENE_IDS: SceneId[] = ['arcadeCarpet', 'studio', 'mountains'];
 const MOTION_LEVELS: MotionLevel[] = ['calm', 'standard', 'hype'];
 
-export default function ThemeLab() {
+export default function ThemeLabPage() {
   const [themeId, setThemeId] = useState<ThemeId>('classic');
   const [sceneId, setSceneId] = useState<SceneId>('arcadeCarpet');
   const [motionLevel, setMotionLevel] = useState<MotionLevel>('standard');
@@ -26,6 +26,7 @@ export default function ThemeLab() {
   return (
     <div className="pr-page" style={themeStyle} data-pr-theme={themeId} data-pr-motion={motionLevel}>
       <div style={{ padding: '1rem', maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ fontWeight: 800, marginBottom: 12 }}>THEME LAB LOADED</div>
         <h1 style={{ fontFamily: 'var(--pr-font-display)', marginBottom: '0.5rem' }}>
           Theme Lab
         </h1>

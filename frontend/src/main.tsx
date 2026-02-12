@@ -5,15 +5,16 @@ import { applyStoredTheme } from './components/ThemeToggle';
 import { ThemeProvider } from './theme/ThemeProvider';
 import App from './App';
 import './index.css';
+import './theme/theme.css';
 
 applyStoredTheme();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider>
+    <ThemeProvider>
+      <BrowserRouter>
         <App />
-      </ThemeProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>
 );
