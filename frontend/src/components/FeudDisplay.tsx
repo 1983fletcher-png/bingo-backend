@@ -40,15 +40,24 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
   }
 
   if (checkpoint === 'R1_COLLECT') {
+    const count = feud.submissions?.length ?? 0;
     return (
       <div className="feud-display feud-display--collect" style={{ background: theme.bg, color: theme.text }}>
         <div className="feud-display__collect-inner">
           <h2 className="feud-display__prompt">{feud.prompt || 'Submit your answers…'}</h2>
+          <p className="feud-display__muted" style={{ marginTop: 8, marginBottom: 16 }}>
+            Submissions open — answer on your phone.
+          </p>
           {qrUrl && (
             <div className="feud-display__qr-wrap">
               <img src={qrUrl} alt="Scan to join" className="feud-display__qr" />
               <p className="feud-display__code">{code}</p>
             </div>
+          )}
+          {count > 0 && (
+            <p className="feud-display__muted" style={{ marginTop: 12, fontSize: '0.95rem' }}>
+              {count} submission{count !== 1 ? 's' : ''} so far
+            </p>
           )}
         </div>
       </div>

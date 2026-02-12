@@ -4,7 +4,7 @@
  * @see docs/PLAYROOM-THEMING-SPEC.md §11
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import type { ThemeId, SceneId, MotionLevel } from '../../theme/theme.types';
 import { THEME_IDS, getTheme } from '../../theme/themeRegistry';
 import { getThemeCSSVars } from '../../theme/applyTheme';
@@ -19,13 +19,55 @@ export default function ThemeLabPage() {
   const [themeId, setThemeId] = useState<ThemeId>('classic');
   const [sceneId, setSceneId] = useState<SceneId>('arcadeCarpet');
   const [motionLevel, setMotionLevel] = useState<MotionLevel>('standard');
+  const [clickDebug, setClickDebug] = useState(false);
+  const outlineRef = useRef<HTMLDivElement | null>(null);
 
   const tokens = useMemo(() => getTheme(themeId), [themeId]);
   const themeStyle = useMemo(() => getThemeCSSVars(tokens, motionLevel), [tokens, motionLevel]);
 
+  const handlePageClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (!clickDebug) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (el) {
+        console.log('[ThemeLab click debug] elementFromPoint:', el.tagName, el.className, el);
+        const rect = el.getBoundingClientRect();
+        if (outlineRef.current) {
+          outlineRef.current.style.display = 'block';
+          outlineRef.current.style.left = `${rect.left}px`;
+          outlineRef.current.style.top = `${rect.top}px`;
+          outlineRef.current.style.width = `${rect.width}px`;
+          outlineRef.current.style.height = `${rect.height}px`;
+        }
+      }
+    },
+    [clickDebug]
+  );
+
   return (
-    <div className="pr-page" style={themeStyle} data-pr-theme={themeId} data-pr-motion={motionLevel}>
-      <div style={{ padding: '1rem', maxWidth: 1200, margin: '0 auto' }}>
+    <div
+      className="pr-page"
+      style={{ ...themeStyle, position: 'relative' }}
+      data-pr-theme={themeId}
+      data-pr-motion={motionLevel}
+      onClick={handlePageClick}
+    >
+      {/* Dev-only: red outline of element under cursor when click debug is on */}
+      {clickDebug && (
+        <div
+          ref={outlineRef}
+          aria-hidden
+          style={{
+            display: 'none',
+            position: 'fixed',
+            border: '3px solid red',
+            pointerEvents: 'none',
+            zIndex: 99999,
+            boxSizing: 'border-box',
+          }}
+        />
+      )}
+      <div style={{ padding: '1rem', maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ fontWeight: 800, marginBottom: 12 }}>THEME LAB LOADED</div>
         <h1 style={{ fontFamily: 'var(--pr-font-display)', marginBottom: '0.5rem' }}>
           Theme Lab
@@ -97,6 +139,16 @@ export default function ThemeLabPage() {
                 </option>
               ))}
             </select>
+          </label>
+          <label style={{ marginLeft: '1rem' }}>
+            <input
+              type="checkbox"
+              checked={clickDebug}
+              onChange={(e) => setClickDebug(e.target.checked)}
+            />
+            <span style={{ marginLeft: 6, fontSize: 13, color: 'var(--pr-muted)' }}>
+              Click debug (outline + console)
+            </span>
           </label>
         </div>
 

@@ -1,5 +1,6 @@
 /**
  * Survey Showdown (Feud) — page stack checkpoints and state.
+ * Explicit session state: lobby (STANDBY/R1_TITLE) -> collecting (R1_COLLECT) -> locked (R1_LOCKED) -> reveal (R1_BOARD_*) -> summary (R1_SUMMARY).
  * @see docs/ACTIVITY-ROOM-SPEC.md §8.1
  */
 

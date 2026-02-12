@@ -234,7 +234,11 @@ function randomFunnyName(): string {
   return FUNNY_NAMES[Math.floor(Math.random() * FUNNY_NAMES.length)];
 }
 
-/** Map server gameType to the label shown in the player header (which room we're in). */
+/**
+ * Join routing: /join/:code and /player/:code both render Play.
+ * Session is resolved on join:ok (gameType, feud, etc.); we branch on gameType to show the correct game view (e.g. feud -> Survey Showdown player).
+ * Rejoin after refresh: stored session triggers player:join; join:ok again supplies gameType so the same view is shown.
+ */
 function getGameTypeLabel(gameType: string | undefined): string {
   if (!gameType) return 'Game';
   switch (gameType) {
@@ -554,7 +558,38 @@ export default function Play() {
     );
   }
 
-  // Waiting room: show until host starts
+  // Survey Showdown (feud): show game view when round is in progress (collecting/locked/reveal/summary), even before game "started"
+  const feudRoundActive =
+    gameType === 'feud' &&
+    joinState?.feud &&
+    joinState.feud.checkpointId !== 'STANDBY';
+  if (gameType === 'feud' && joinState?.feud && (joinState.started || feudRoundActive)) {
+    const feud = joinState.feud;
+    const canSubmit = !feud.locked && (feud.checkpointId === 'R1_COLLECT' || feud.checkpointId === 'R1_TITLE');
+    return (
+      <GameShell
+        gameKey="survey_showdown"
+        viewMode="player"
+        title="Survey Showdown"
+        subtitle={feud.prompt ? undefined : 'Submit your answers'}
+        mainSlot={
+          <div style={{ maxWidth: 420, margin: '0 auto', padding: 24 }}>
+            <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
+            {feud.locked ? (
+              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Answers are locked. Watch the screen for the reveal!</p>
+            ) : canSubmit ? (
+              <FeudPlayerForm code={code!} socket={socket} />
+            ) : (
+              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
+            )}
+          </div>
+        }
+        footerVariant="minimal"
+      />
+    );
+  }
+
+  // Waiting room: show until host starts (skip for feud when round already active — handled above)
   if (joinState && !joinState.started) {
     return (
       <WaitingRoomView
@@ -614,33 +649,6 @@ export default function Play() {
           onDismiss={() => setShowFact(false)}
         />
       </>
-    );
-  }
-
-  // Feud (Survey Showdown): prompt + 1–3 answers, submit
-  if (gameType === 'feud' && joinState?.feud) {
-    const feud = joinState.feud;
-    const canSubmit = !feud.locked && (feud.checkpointId === 'R1_COLLECT' || feud.checkpointId === 'R1_TITLE');
-    return (
-      <GameShell
-        gameKey="survey_showdown"
-        viewMode="player"
-        title="Survey Showdown"
-        subtitle={feud.prompt ? undefined : 'Submit your answers'}
-        mainSlot={
-          <div style={{ maxWidth: 420, margin: '0 auto', padding: 24 }}>
-            <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
-            {feud.locked ? (
-              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Answers are locked. Watch the screen for the reveal!</p>
-            ) : canSubmit ? (
-              <FeudPlayerForm code={code!} socket={socket} />
-            ) : (
-              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
-            )}
-          </div>
-        }
-        footerVariant="minimal"
-      />
     );
   }
 

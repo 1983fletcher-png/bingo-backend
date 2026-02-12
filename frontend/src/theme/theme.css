@@ -43,6 +43,19 @@
   --pr-easing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Any background/scene layer must NEVER capture clicks */
+.pr-bg,
+.pr-scene,
+.pr-scene > *,
+.pr-gameshell__scene,
+.pr-gameshell__scene *,
+.pr-vignette,
+.pr-noise,
+.pr-scanlines,
+.pr-lightbeams {
+  pointer-events: none !important;
+}
+
 body {
   margin: 0;
   background: var(--pr-bg);

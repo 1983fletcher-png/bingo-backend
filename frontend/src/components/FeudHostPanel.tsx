@@ -84,6 +84,9 @@ export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, di
     setTimeout(() => setCheckpoint(next), 400);
   };
 
+  const inLobby = feud.checkpointId === 'STANDBY' || feud.checkpointId === 'R1_TITLE';
+  const canStartRound = inLobby && !!socket;
+
   return (
     <div className="feud-host-panel">
       <TransportBar
@@ -97,6 +100,22 @@ export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, di
         onResetRound={() => setCheckpoint('STANDBY')}
         onEndSession={onEndSession}
       />
+      {inLobby && (
+        <div className="feud-host-panel__section" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '0.5rem' }}>
+          <button
+            type="button"
+            className="feud-host-panel__btn feud-host-panel__btn--primary"
+            style={{ fontSize: '1rem', padding: '0.75rem 1.25rem' }}
+            onClick={() => setCheckpoint('R1_COLLECT')}
+            disabled={!canStartRound}
+          >
+            Start round / Open submissions
+          </button>
+          <p className="feud-host-panel__hint" style={{ marginTop: 8, marginBottom: 0 }}>
+            Moves to collecting — players see the prompt and can submit answers.
+          </p>
+        </div>
+      )}
       <div className="feud-host-panel__section">
         <label className="feud-host-panel__label">Round prompt</label>
         <input
