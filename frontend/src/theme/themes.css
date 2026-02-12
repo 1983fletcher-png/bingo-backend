@@ -117,11 +117,11 @@
   --stage-overlay: url("/themes/overlays/overlay-gameshow.webp");
 }
 
-/* Survey Showdown game-show: full mockup overlays (TV + player) — Family Feud–style assets */
+/* Survey Showdown game-show: frame-only art (NO baked answers/numbers). Live tiles in SurveyShowdownBoard. */
 
-/* ---- TV Display: full mockup as scene background so lights, frame, stage are from asset ---- */
+/* ---- TV Display: frame-only asset only ---- */
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-scene-layer {
-  background: url("/themes/survey-showdown/tv-display.png") center center / cover no-repeat;
+  background: url("/themes/survey-showdown/survey-showdown-tv-frame.png") center center / cover no-repeat;
   background-color: #0d0515;
 }
 
@@ -177,9 +177,9 @@
   box-shadow: none;
 }
 
-/* ---- Player: full mockup per view (answer / waiting / reveal) ---- */
+/* ---- Player: frame-only asset (answer/waiting); reveal uses SurveyShowdownFrame img, no baked bg ---- */
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="answer"] .player-layout__stage {
-  background: url("/themes/survey-showdown/player-answer.png") center center / cover no-repeat;
+  background: url("/themes/survey-showdown/survey-showdown-player-frame.png") center center / cover no-repeat;
   border: none;
   box-shadow: none;
 }
@@ -189,7 +189,7 @@
 }
 
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="waiting"] .player-layout__stage {
-  background: url("/themes/survey-showdown/player-waiting.png") center center / cover no-repeat;
+  background: url("/themes/survey-showdown/survey-showdown-player-frame.png") center center / cover no-repeat;
   border: none;
   box-shadow: none;
 }
@@ -199,7 +199,7 @@
 }
 
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="reveal"] .player-layout__stage {
-  background: url("/themes/survey-showdown/player-reveal.png") center center / cover no-repeat;
+  background: transparent;
   border: none;
   box-shadow: none;
 }
@@ -248,18 +248,17 @@
   overflow-y: auto;
 }
 
-/* Player scene layer: use same mockup as stage so full screen matches (optional; stage is the main area) */
+/* Player scene layer: frame-only asset (answer/waiting); reveal = transparent (Frame component provides img) */
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="answer"] .pr-scene-layer {
-  background: url("/themes/survey-showdown/player-answer.png") center center / cover no-repeat;
+  background: url("/themes/survey-showdown/survey-showdown-player-frame.png") center center / cover no-repeat;
   background-color: #1a0a2e;
 }
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="waiting"] .pr-scene-layer {
-  background: url("/themes/survey-showdown/player-waiting.png") center center / cover no-repeat;
+  background: url("/themes/survey-showdown/survey-showdown-player-frame.png") center center / cover no-repeat;
   background-color: #1a0a2e;
 }
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="reveal"] .pr-scene-layer {
-  background: url("/themes/survey-showdown/player-reveal.png") center center / cover no-repeat;
-  background-color: #1a0a2e;
+  background: #0d0515;
 }
 
 /* Fallback when NOT using full mockups: original CSS-driven game show look */

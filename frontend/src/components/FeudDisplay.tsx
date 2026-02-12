@@ -4,6 +4,8 @@
  */
 import type { FeudState, FeudCheckpointId } from '../types/feud';
 import { feudCheckpointToPhase } from '../types/feud';
+import { SurveyShowdownFrame } from '../games/feud/SurveyShowdownFrame';
+import { SurveyShowdownBoard } from '../games/feud/SurveyShowdownBoard';
 import '../styles/feud-display.css';
 
 type Props = {
@@ -15,8 +17,8 @@ type Props = {
   calmMode?: boolean;
 };
 
-export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }: Props) {
-  const checkpoint: FeudCheckpointId = feud.checkpointId;
+export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
+  const checkpoint: FeudCheckpointId = feud.checkpointId || 'STANDBY';
   const phase = feudCheckpointToPhase(checkpoint);
   const submissionCount = feud.submissions?.length ?? 0;
   const qrUrl = joinUrl
@@ -84,7 +86,6 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
   }
 
   const isBoard = checkpoint.startsWith('R1_BOARD_');
-  const revealUpTo = isBoard ? Math.max(0, parseInt(checkpoint.replace('R1_BOARD_', ''), 10)) : 0;
   const hasBoardData = (feud.topAnswers?.length ?? 0) > 0;
 
   if (checkpoint === 'R1_LOCKED' && !hasBoardData) {
@@ -98,37 +99,18 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
   }
 
   if (isBoard || checkpoint === 'R1_SUMMARY' || (checkpoint === 'R1_LOCKED' && hasBoardData)) {
-    const showAll = checkpoint === 'R1_SUMMARY';
-    const raw = feud.topAnswers ?? [];
-    const boardItems = raw.length >= 8 ? raw : [...raw, ...Array.from({ length: 8 - raw.length }, () => ({ answer: '', count: 0, revealed: false, strike: false }))];
     return (
-      <div className="feud-display feud-display--board" style={{ background: theme.bg, color: theme.text }}>
-        <h2 className="feud-display__prompt feud-display__prompt--small">{feud.prompt || 'Top answers'}</h2>
-        <div className="feud-display__board-frame">
-          <div className="feud-display__board">
-            {boardItems.slice(0, 8).map((item, i) => {
-              const revealed = item.revealed || (feud.showScores && (showAll || i < revealUpTo));
-              const strike = item.strike;
-              const displayAnswer = (revealed && item.answer) ? (item.answer.charAt(0).toUpperCase() + item.answer.slice(1)) : (revealed ? '???' : '???');
-              return (
-                <div
-                  key={i}
-                  className={`feud-display__plate ${revealed ? 'feud-display__plate--revealed' : ''} ${strike ? 'feud-display__plate--strike' : ''} ${!calmMode ? 'feud-display__plate--hinge' : ''}`}
-                  style={{ ['--reveal-order' as string]: i }}
-                >
-                  <div className="feud-display__plate-front" />
-                  <div className="feud-display__plate-back" style={{ background: theme.panel, borderColor: theme.border }}>
-                    {strike ? <span className="feud-display__strike">✕</span> : null}
-                    <span className="feud-display__plate-answer">{displayAnswer}</span>
-                    {revealed && item.count != null && item.count > 0 && (
-                      <span className="feud-display__plate-votes" style={{ color: theme.accent }}>{item.count}</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+      <div className="feud-display feud-display--board feud-display--board-live" style={{ background: theme.bg, color: theme.text }}>
+        <SurveyShowdownFrame variant="tv">
+          <div className="feud-display__hud">
+            <h2 className="feud-display__prompt feud-display__prompt--inframe">
+              {feud.prompt || 'Top answers'}
+            </h2>
           </div>
-        </div>
+          <div className="feud-display__boardWrap">
+            <SurveyShowdownBoard variant="tv" feud={feud} />
+          </div>
+        </SurveyShowdownFrame>
       </div>
     );
   }

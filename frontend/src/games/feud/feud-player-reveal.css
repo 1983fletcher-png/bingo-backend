@@ -1,69 +1,25 @@
 /**
- * Survey Showdown player reveal — 2×4 grid, mobile-optimized.
+ * Survey Showdown player reveal — 2-layer: frame + live board. Prompt + frame fills.
  */
 .feud-player-reveal {
+  display: flex;
+  flex-direction: column;
   padding: 12px;
   max-width: 420px;
   margin: 0 auto;
+  height: 100%;
+  min-height: 0;
 }
 
 .feud-player-reveal__prompt {
-  margin: 0 0 12px;
+  flex: 0 0 auto;
+  margin: 0 0 8px;
   font-size: 1rem;
   font-weight: 600;
   color: var(--pr-text);
 }
 
-.feud-player-reveal__board {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 12px;
-}
-
-.feud-player-reveal__plate {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 48px;
-  padding: 10px 12px;
-  border-radius: var(--pr-radius-md, 10px);
-  background: color-mix(in srgb, var(--pr-surface) 95%, transparent);
-  border: 1px solid var(--pr-border);
-  position: relative;
-}
-
-.feud-player-reveal__plate--revealed {
-  border-color: var(--pr-brand);
-}
-
-.feud-player-reveal__plate--strike {
-  opacity: 0.7;
-}
-
-.feud-player-reveal__num {
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: var(--pr-brand);
-  min-width: 1.2em;
-}
-
-.feud-player-reveal__answer {
-  flex: 1;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--pr-text);
-  min-width: 0;
-}
-
-.feud-player-reveal__votes {
-  font-size: 0.875rem;
-  font-weight: 800;
-  color: var(--pr-accent);
-}
-
-.feud-player-reveal__strike {
-  position: absolute;
-  right: 8px;
-  font-size: 1.25rem;
-  color: var(--pr-danger, #ff3b30);
+.feud-player-reveal .survey-showdown-frame {
+  flex: 1 1 auto;
+  min-height: 0;
 }

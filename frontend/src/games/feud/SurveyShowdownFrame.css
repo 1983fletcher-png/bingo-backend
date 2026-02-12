@@ -1,0 +1,48 @@
+/**
+ * Survey Showdown frame — full-bleed frame image + percentage-based safe area.
+ */
+.survey-showdown-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  overflow: hidden;
+}
+
+.survey-showdown-frame__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+}
+
+.survey-showdown-frame__safe {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+.survey-showdown-frame__safe--debug {
+  outline: 2px dashed rgba(0, 255, 128, 0.8);
+  outline-offset: -2px;
+  background: rgba(0, 255, 128, 0.06);
+}
+
+.survey-showdown-frame__debug-outline--frame {
+  position: absolute;
+  inset: 0;
+  outline: 2px solid rgba(255, 200, 0, 0.6);
+  outline-offset: -2px;
+  pointer-events: none;
+}
+
+/* Debug: tile bounds (when Board is in debug mode it adds this class to container) */
+.survey-showdown-board[data-debug="true"] .survey-showdown-tile {
+  outline: 1px solid rgba(255, 100, 255, 0.7);
+  outline-offset: -1px;
+}

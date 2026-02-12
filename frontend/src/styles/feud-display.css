@@ -221,3 +221,42 @@
 .feud-display__plate--strike .feud-display__plate-answer {
   visibility: hidden;
 }
+
+/* Board with live 2-layer frame + tiles (SurveyShowdownFrame + SurveyShowdownBoard) */
+.feud-display--board-live {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.feud-display--board-live .feud-display__prompt {
+  flex: 0 0 auto;
+}
+
+.feud-display--board-live .survey-showdown-frame {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.feud-display__hud {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(8px, 1.2vw, 14px);
+}
+
+.feud-display__prompt--inframe {
+  margin: 0;
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  font-size: clamp(18px, 2.0vw, 32px);
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+.feud-display__boardWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+}
