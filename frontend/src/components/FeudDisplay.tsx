@@ -3,6 +3,7 @@
  * @see docs/ACTIVITY-ROOM-SPEC.md §8.1
  */
 import type { FeudState, FeudCheckpointId } from '../types/feud';
+import { feudCheckpointToPhase } from '../types/feud';
 import '../styles/feud-display.css';
 
 type Props = {
@@ -16,6 +17,8 @@ type Props = {
 
 export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }: Props) {
   const checkpoint: FeudCheckpointId = feud.checkpointId;
+  const phase = feudCheckpointToPhase(checkpoint);
+  const submissionCount = feud.submissions?.length ?? 0;
   const qrUrl = joinUrl
     ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(joinUrl)}`
     : '';
@@ -40,10 +43,10 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
   }
 
   if (checkpoint === 'R1_COLLECT') {
-    const count = feud.submissions?.length ?? 0;
     return (
       <div className="feud-display feud-display--collect" style={{ background: theme.bg, color: theme.text }}>
         <div className="feud-display__collect-inner">
+          <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 8 }}>Phase: {phase}</p>
           <h2 className="feud-display__prompt">{feud.prompt || 'Submit your answers…'}</h2>
           <p className="feud-display__muted" style={{ marginTop: 8, marginBottom: 16 }}>
             Submissions open — answer on your phone.
@@ -54,11 +57,9 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
               <p className="feud-display__code">{code}</p>
             </div>
           )}
-          {count > 0 && (
-            <p className="feud-display__muted" style={{ marginTop: 12, fontSize: '0.95rem' }}>
-              {count} submission{count !== 1 ? 's' : ''} so far
-            </p>
-          )}
+          <p className="feud-display__muted" style={{ marginTop: 12, fontSize: '0.95rem' }}>
+            {submissionCount} submission{submissionCount !== 1 ? 's' : ''} so far
+          </p>
         </div>
       </div>
     );
@@ -67,6 +68,7 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
   if (checkpoint === 'R1_LOCKED') {
     return (
       <div className="feud-display feud-display--locked" style={{ background: theme.bg, color: theme.text }}>
+        <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 8 }}>Phase: {phase}</p>
         <h2 className="feud-display__prompt">{feud.prompt || 'Answers locked'}</h2>
         <p className="feud-display__muted">Revealing top answers…</p>
       </div>
@@ -78,11 +80,13 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
 
   if (isBoard || checkpoint === 'R1_SUMMARY') {
     const showAll = checkpoint === 'R1_SUMMARY';
+    const boardItems = feud.topAnswers?.length ? feud.topAnswers : [];
     return (
       <div className="feud-display feud-display--board" style={{ background: theme.bg, color: theme.text }}>
+        <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 4 }}>Phase: {phase}</p>
         <h2 className="feud-display__prompt feud-display__prompt--small">{feud.prompt || 'Top answers'}</h2>
         <div className="feud-display__board">
-          {(feud.topAnswers.length ? feud.topAnswers : Array.from({ length: 8 }, () => ({ answer: '—', count: 0, revealed: false, strike: false }))).map((item, i) => {
+          {(boardItems.length ? boardItems : Array.from({ length: 8 }, () => ({ answer: '—', count: 0, revealed: false, strike: false }))).map((item, i) => {
             const revealed = item.revealed || (feud.showScores && (showAll || i < revealUpTo));
             const strike = item.strike;
             return (

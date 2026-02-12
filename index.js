@@ -3,6 +3,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import { readFileSync } from 'fs';
+import { readFile, writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { customAlphabet } from 'nanoid';
@@ -593,22 +594,50 @@ app.get('/api/learn/cards/:id', (req, res) => {
   }
 });
 
-// Page Builder: save document for shareable link (in-memory; optional DB later)
-const pageBuilderDocs = new Map();
+// Page Builder: save document for shareable link (file-based persistence + in-memory cache)
+const PAGE_BUILDER_DIR = path.join(__dirname, 'data', 'page-builder');
+const pageBuilderDocs = new Map(); // cache for fast GET after load from disk
 const nanoidSlug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10);
-app.post('/api/page-builder/save', (req, res) => {
+
+app.post('/api/page-builder/save', async (req, res) => {
   const document = req.body?.document;
   if (!document || typeof document !== 'object') {
     return res.status(400).json({ error: 'Missing document body' });
   }
   const slug = nanoidSlug();
-  pageBuilderDocs.set(slug, { document, createdAt: Date.now() });
+  const createdAt = Date.now();
+  try {
+    await mkdir(PAGE_BUILDER_DIR, { recursive: true });
+    await writeFile(
+      path.join(PAGE_BUILDER_DIR, `${slug}.json`),
+      JSON.stringify({ document, createdAt }),
+      'utf8'
+    );
+  } catch (err) {
+    console.error('[page-builder] write failed:', err?.message || err);
+    return res.status(500).json({ error: 'Failed to save document' });
+  }
+  pageBuilderDocs.set(slug, { document, createdAt });
   res.json({ slug });
 });
-app.get('/api/page-builder/:slug', (req, res) => {
-  const entry = pageBuilderDocs.get(req.params.slug);
+
+app.get('/api/page-builder/:slug', async (req, res) => {
+  const slug = req.params.slug;
+  if (!slug || !/^[a-z0-9]+$/.test(slug)) {
+    return res.status(400).json({ error: 'Invalid slug' });
+  }
+  let entry = pageBuilderDocs.get(slug);
   if (!entry) {
-    return res.status(404).json({ error: 'Not found' });
+    try {
+      const raw = await readFile(path.join(PAGE_BUILDER_DIR, `${slug}.json`), 'utf8');
+      const parsed = JSON.parse(raw);
+      entry = { document: parsed.document, createdAt: parsed.createdAt ?? 0 };
+      pageBuilderDocs.set(slug, entry);
+    } catch (e) {
+      if (e?.code === 'ENOENT') return res.status(404).json({ error: 'Not found' });
+      console.error('[page-builder] read failed:', e?.message || e);
+      return res.status(500).json({ error: 'Failed to load document' });
+    }
   }
   res.json(entry.document);
 });

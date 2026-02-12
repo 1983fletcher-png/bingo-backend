@@ -1,8 +1,20 @@
 /**
  * Survey Showdown (Feud) — page stack checkpoints and state.
- * Explicit session state: lobby (STANDBY/R1_TITLE) -> collecting (R1_COLLECT) -> locked (R1_LOCKED) -> reveal (R1_BOARD_*) -> summary (R1_SUMMARY).
+ * Explicit round phases: SET_PROMPT -> COLLECTING -> LOCKED -> REVEALING -> SUMMARY.
+ * Checkpoint IDs map to these phases for host/display UI.
  * @see docs/ACTIVITY-ROOM-SPEC.md §8.1
  */
+
+/** High-level round phases for UI labels and flow */
+export const FEUD_PHASES = [
+  'SET_PROMPT',   // Host sets prompt; display shows title (STANDBY / R1_TITLE)
+  'COLLECTING',   // Submissions open (R1_COLLECT)
+  'LOCKED',       // Submissions closed, computing board (R1_LOCKED)
+  'REVEALING',    // Revealing top answers one by one (R1_BOARD_0 … R1_BOARD_8)
+  'SUMMARY',      // Round summary (R1_SUMMARY)
+] as const;
+
+export type FeudPhase = (typeof FEUD_PHASES)[number];
 
 export const FEUD_CHECKPOINTS = [
   'STANDBY',
@@ -22,6 +34,16 @@ export const FEUD_CHECKPOINTS = [
 ] as const;
 
 export type FeudCheckpointId = (typeof FEUD_CHECKPOINTS)[number];
+
+/** Map checkpoint to phase for display/host labels */
+export function feudCheckpointToPhase(checkpointId: FeudCheckpointId): FeudPhase {
+  if (checkpointId === 'STANDBY' || checkpointId === 'R1_TITLE') return 'SET_PROMPT';
+  if (checkpointId === 'R1_COLLECT') return 'COLLECTING';
+  if (checkpointId === 'R1_LOCKED') return 'LOCKED';
+  if (checkpointId.startsWith('R1_BOARD_')) return 'REVEALING';
+  if (checkpointId === 'R1_SUMMARY') return 'SUMMARY';
+  return 'SET_PROMPT';
+}
 
 export interface FeudBoardItem {
   answer: string;

@@ -1,12 +1,31 @@
 /**
  * Ensure a backend base URL has a scheme so fetch() hits the real host.
  * If the value is "example.up.railway.app", returns "https://example.up.railway.app".
+ * In dev, logs a warning when url is empty so you know to set VITE_SOCKET_URL or VITE_API_URL.
  */
 export function normalizeBackendUrl(url: string): string {
-  const u = (url || '').trim().replace(/\/$/, '');
-  if (!u) return u;
+  const raw = (url || '').trim();
+  const u = raw.replace(/\/$/, '');
+  if (!u) {
+    if (import.meta.env?.DEV && typeof console !== 'undefined') {
+      console.warn(
+        '[safeFetch] Backend URL is empty. Set VITE_SOCKET_URL or VITE_API_URL so share links and API calls work.'
+      );
+    }
+    return '';
+  }
   if (/^https?:\/\//i.test(u)) return u;
   return 'https://' + u;
+}
+
+/**
+ * Same as normalizeBackendUrl; use when you need to show apiBase in UI or assert it in prod.
+ * In production, returns empty string if env is missing (caller should show error).
+ */
+export function getApiBase(): string {
+  const raw =
+    import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || '';
+  return normalizeBackendUrl(raw);
 }
 
 /**

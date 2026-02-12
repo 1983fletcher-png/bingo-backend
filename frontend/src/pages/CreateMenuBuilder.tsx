@@ -15,7 +15,7 @@ import {
   type MenuItem,
   getDefaultSections,
 } from '../types/pageBuilder';
-import { fetchJson, normalizeBackendUrl } from '../lib/safeFetch';
+import { fetchJson, getApiBase } from '../lib/safeFetch';
 import {
   getSavedMenuDesigns,
   saveMenuDesign,
@@ -96,11 +96,10 @@ export function CreateMenuBuilder() {
   const [saveDesignName, setSaveDesignName] = useState('');
   const [loadDesignId, setLoadDesignId] = useState('');
   const [saveDesignMessage, setSaveDesignMessage] = useState<string | null>(null);
+  const [healthTestResult, setHealthTestResult] = useState<string | null>(null);
 
   useEffect(() => {
-    const apiBase = normalizeBackendUrl(
-      import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || ''
-    );
+    const apiBase = getApiBase();
     if (!apiBase) return;
     const from = new Date().toISOString().slice(0, 10);
     fetchJson<{ observances?: UpcomingObs[] }>(
@@ -230,9 +229,7 @@ export function CreateMenuBuilder() {
   const handleShare = useCallback(async () => {
     setShareError(null);
     setShareSlug(null);
-    const apiBase = normalizeBackendUrl(
-      import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || ''
-    );
+    const apiBase = getApiBase();
     if (!apiBase) {
       setShareError(
         'Backend URL not set. Set VITE_SOCKET_URL to your Railway backend to get a share link.'
@@ -277,6 +274,21 @@ export function CreateMenuBuilder() {
     setLoadDesignId('');
   }, [loadDesignId, savedDesigns]);
 
+  const handleTestBackend = useCallback(async () => {
+    const apiBase = getApiBase();
+    setHealthTestResult(null);
+    if (!apiBase) {
+      setHealthTestResult('No backend URL (set VITE_SOCKET_URL or VITE_API_URL)');
+      return;
+    }
+    try {
+      const res = await fetchJson<{ ok?: boolean }>(`${apiBase}/health`);
+      setHealthTestResult(res.ok && res.data?.ok ? 'OK' : res.error || `HTTP ${res.status}`);
+    } catch {
+      setHealthTestResult('Request failed');
+    }
+  }, []);
+
   return (
     <div className="menu-builder">
       <header className="menu-builder__header">
@@ -287,6 +299,15 @@ export function CreateMenuBuilder() {
         <p className="menu-builder__tagline">
           Edit below. Preview updates instantly. No reloads.
         </p>
+        {import.meta.env.DEV && (
+          <div className="menu-builder__dev-wiring" style={{ marginTop: 8, fontSize: 12, color: 'var(--text-muted)' }}>
+            <span>apiBase: {getApiBase() || '(not set)'}</span>
+            <button type="button" onClick={handleTestBackend} style={{ marginLeft: 8 }}>
+              Test backend
+            </button>
+            {healthTestResult != null && <span style={{ marginLeft: 8 }}>→ {healthTestResult}</span>}
+          </div>
+        )}
       </header>
 
       <div className="menu-builder__layout">

@@ -20,6 +20,7 @@ export default function ThemeLabPage() {
   const [sceneId, setSceneId] = useState<SceneId>('arcadeCarpet');
   const [motionLevel, setMotionLevel] = useState<MotionLevel>('standard');
   const [clickDebug, setClickDebug] = useState(false);
+  const [lastClickedButton, setLastClickedButton] = useState<string | null>(null);
   const outlineRef = useRef<HTMLDivElement | null>(null);
 
   const tokens = useMemo(() => getTheme(themeId), [themeId]);
@@ -67,7 +68,17 @@ export default function ThemeLabPage() {
           }}
         />
       )}
-      <div style={{ padding: '1rem', maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      {/* Main content: stacking context so sections are above any full-bleed background; pointer-events auto so all controls receive clicks */}
+      <div
+        style={{
+          padding: '1rem',
+          maxWidth: 1200,
+          margin: '0 auto',
+          position: 'relative',
+          zIndex: 2,
+          pointerEvents: 'auto',
+        }}
+      >
         <div style={{ fontWeight: 800, marginBottom: 12 }}>THEME LAB LOADED</div>
         <h1 style={{ fontFamily: 'var(--pr-font-display)', marginBottom: '0.5rem' }}>
           Theme Lab
@@ -76,7 +87,7 @@ export default function ThemeLabPage() {
           Preview skins, scenes, and motion. Use dropdowns to switch.
         </p>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <label>
             Theme
             <select
@@ -152,29 +163,39 @@ export default function ThemeLabPage() {
           </label>
         </div>
 
-        <section style={{ marginBottom: '2rem' }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             Site card + buttons
           </h2>
           <div className="pr-surface" style={{ padding: '1rem', marginBottom: '0.5rem' }}>
             <p style={{ margin: 0 }}>Sample card using --pr-surface</p>
           </div>
-          <button type="button" className="pr-btn pr-btn-primary" style={{ marginRight: '0.5rem' }}>
+          <button
+            type="button"
+            className="pr-btn pr-btn-primary"
+            style={{ marginRight: '0.5rem' }}
+            onClick={() => setLastClickedButton('Primary')}
+          >
             Primary
           </button>
-          <button type="button" className="pr-btn">
+          <button type="button" className="pr-btn" onClick={() => setLastClickedButton('Secondary')}>
             Secondary
           </button>
+          {lastClickedButton && (
+            <span style={{ marginLeft: 8, fontSize: 12, color: 'var(--pr-muted)' }}>
+              Last clicked: {lastClickedButton}
+            </span>
+          )}
         </section>
 
-        <section style={{ marginBottom: '2rem' }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             Marquee header
           </h2>
           <MarqueeHeader title="Survey Showdown" subtitle="Round 1" variant="marqueePop" />
         </section>
 
-        <section style={{ marginBottom: '2rem' }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             Stage frame
           </h2>
@@ -185,7 +206,7 @@ export default function ThemeLabPage() {
           </StageFrame>
         </section>
 
-        <section style={{ marginBottom: '2rem' }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             Sample grid tiles
           </h2>
@@ -197,7 +218,7 @@ export default function ThemeLabPage() {
           </div>
         </section>
 
-        <section style={{ marginBottom: '2rem' }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             Answer plates
           </h2>
@@ -208,11 +229,11 @@ export default function ThemeLabPage() {
           </div>
         </section>
 
-        <section style={{ marginBottom: '2rem' }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             GameShell — Display mock
           </h2>
-          <div style={{ height: 320, position: 'relative', borderRadius: 'var(--pr-radius-lg)', overflow: 'hidden' }}>
+          <div style={{ height: 320, position: 'relative', zIndex: 0, borderRadius: 'var(--pr-radius-lg)', overflow: 'hidden' }}>
             <GameShell
               gameKey="survey_showdown"
               viewMode="display"
@@ -232,11 +253,11 @@ export default function ThemeLabPage() {
           </div>
         </section>
 
-        <section style={{ marginBottom: '2rem' }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             GameShell — Player mock
           </h2>
-          <div style={{ height: 320, position: 'relative', borderRadius: 'var(--pr-radius-lg)', overflow: 'hidden' }}>
+          <div style={{ height: 320, position: 'relative', zIndex: 0, borderRadius: 'var(--pr-radius-lg)', overflow: 'hidden' }}>
             <GameShell
               gameKey="survey_showdown"
               viewMode="player"
@@ -254,11 +275,11 @@ export default function ThemeLabPage() {
           </div>
         </section>
 
-        <section style={{ marginBottom: '2rem' }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             Background scene only
           </h2>
-          <div style={{ height: 200, position: 'relative', borderRadius: 'var(--pr-radius-md)', overflow: 'hidden' }}>
+          <div style={{ height: 200, position: 'relative', zIndex: 0, borderRadius: 'var(--pr-radius-md)', overflow: 'hidden' }}>
             <BackgroundScene sceneId={sceneId} intensity={1} />
           </div>
         </section>

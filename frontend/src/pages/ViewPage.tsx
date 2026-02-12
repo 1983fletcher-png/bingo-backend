@@ -15,21 +15,20 @@ import type {
   LiveMusicBuilderState,
   WelcomeBuilderState,
 } from '../types/pageBuilder';
-import { fetchJson, normalizeBackendUrl } from '../lib/safeFetch';
+import { fetchJson, getApiBase } from '../lib/safeFetch';
 
 export function ViewPage() {
   const { slug } = useParams<{ slug: string }>();
   const [doc, setDoc] = useState<PageBuilderDocument | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [healthTestResult, setHealthTestResult] = useState<string | null>(null);
 
   useEffect(() => {
     if (!slug) {
       setError('Missing link');
       return;
     }
-    const apiBase = normalizeBackendUrl(
-      import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || ''
-    );
+    const apiBase = getApiBase();
     if (!apiBase) {
       setError('Backend not configured');
       return;
@@ -41,6 +40,21 @@ export function ViewPage() {
       })
       .catch(() => setError('Failed to load'));
   }, [slug]);
+
+  const handleTestBackend = async () => {
+    const apiBase = getApiBase();
+    setHealthTestResult(null);
+    if (!apiBase) {
+      setHealthTestResult('No backend URL');
+      return;
+    }
+    try {
+      const res = await fetchJson<{ ok?: boolean }>(`${apiBase}/health`);
+      setHealthTestResult(res.ok && res.data?.ok ? 'OK' : res.error || `HTTP ${res.status}`);
+    } catch {
+      setHealthTestResult('Request failed');
+    }
+  };
 
   if (error) {
     return (
@@ -58,6 +72,13 @@ export function ViewPage() {
           color: 'var(--text)',
         }}
       >
+        {import.meta.env.DEV && (
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
+            apiBase: {getApiBase() || '(not set)'}
+            <button type="button" onClick={handleTestBackend} style={{ marginLeft: 8 }}>Test backend</button>
+            {healthTestResult != null && <span style={{ marginLeft: 8 }}>→ {healthTestResult}</span>}
+          </div>
+        )}
         <p>{error}</p>
         <Link to="/" style={{ color: 'var(--accent)' }}>
           ← Back to Playroom
@@ -93,11 +114,20 @@ export function ViewPage() {
         minHeight: '100vh',
         padding: '1rem',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
         background: 'var(--bg)',
       }}
     >
+      {import.meta.env.DEV && (
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8, alignSelf: 'stretch', textAlign: 'center' }}>
+          apiBase: {getApiBase() || '(not set)'}
+          <button type="button" onClick={handleTestBackend} style={{ marginLeft: 8 }}>Test backend</button>
+          {healthTestResult != null && <span style={{ marginLeft: 8 }}>→ {healthTestResult}</span>}
+        </div>
+      )}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', flex: 1 }}>
       {type === 'menu' && <MenuPreview state={doc as MenuBuilderState} />}
       {type === 'event' && <EventPreview state={doc as EventBuilderState} />}
       {type === 'live-music' && (
@@ -109,6 +139,7 @@ export function ViewPage() {
       {!['menu', 'event', 'live-music', 'welcome'].includes(type) && (
         <MenuPreview state={doc as MenuBuilderState} />
       )}
+      </div>
     </div>
   );
 }

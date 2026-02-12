@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { TransportBar } from './TransportBar';
 import type { FeudState, FeudCheckpointId } from '../types/feud';
-import { FEUD_CHECKPOINTS } from '../types/feud';
+import { FEUD_CHECKPOINTS, feudCheckpointToPhase } from '../types/feud';
 import { getStoredAudioSettings, saveAudioSettings, type AudioSettings, type AudioProfileId } from '../lib/audioCues';
 
 const HOST_TOKEN_KEY = (code: string) => `playroom:hostToken:${code}`;
@@ -86,9 +86,15 @@ export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, di
 
   const inLobby = feud.checkpointId === 'STANDBY' || feud.checkpointId === 'R1_TITLE';
   const canStartRound = inLobby && !!socket;
+  const phase = feudCheckpointToPhase(feud.checkpointId);
+  const isCollecting = feud.checkpointId === 'R1_COLLECT';
+  const canLock = isCollecting && !!socket;
 
   return (
     <div className="feud-host-panel">
+      <div className="feud-host-panel__phase" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
+        Phase: {phase} · Submissions: {feud.submissions?.length ?? 0}
+      </div>
       <TransportBar
         onBack={() => setCheckpoint('STANDBY')}
         onNext={() => {
@@ -112,7 +118,22 @@ export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, di
             Start round / Open submissions
           </button>
           <p className="feud-host-panel__hint" style={{ marginTop: 8, marginBottom: 0 }}>
-            Moves to collecting — players see the prompt and can submit answers.
+            Moves to COLLECTING — players see the prompt and can submit answers.
+          </p>
+        </div>
+      )}
+      {isCollecting && (
+        <div className="feud-host-panel__section" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '0.5rem' }}>
+          <button
+            type="button"
+            className="feud-host-panel__btn"
+            onClick={lock}
+            disabled={!canLock}
+          >
+            Lock submissions → LOCKED
+          </button>
+          <p className="feud-host-panel__hint" style={{ marginTop: 8, marginBottom: 0 }}>
+            Stops new answers and computes top answers for reveal.
           </p>
         </div>
       )}

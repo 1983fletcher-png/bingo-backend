@@ -46,6 +46,7 @@ export default function App() {
     <>
       {showThemeToggle && <ThemeToggle />}
       <Routes>
+      {/* Verified: /create → CreativeStudio; /create/templates → Create; /create/hospitality/menu → CreateMenuBuilder; /view/:slug → ViewPage; /theme-lab → ThemeLabPage. ActivityRoom nested routes render via <Outlet />. */}
       <Route path="/" element={<Home />} />
       <Route path="/activity" element={<ActivityRoom />}>
         <Route index element={<ActivityRoomBuildTonight />} />
