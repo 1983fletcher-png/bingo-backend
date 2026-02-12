@@ -248,6 +248,8 @@ interface JoinState {
     welcomeTitle?: string;
     welcomeMessage?: string;
     venueAllowedUseOfMenuDesign?: boolean;
+    /** Playroom skin (classic, prestige-retro, retro-studio, retro-arcade) for session theme */
+    playroomThemeId?: string;
   };
   waitingRoom: {
     game: 'roll-call' | null;
