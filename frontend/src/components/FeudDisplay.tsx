@@ -83,7 +83,11 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
     );
   }
 
-  if (checkpoint === 'R1_LOCKED') {
+  const isBoard = checkpoint.startsWith('R1_BOARD_');
+  const revealUpTo = isBoard ? Math.max(0, parseInt(checkpoint.replace('R1_BOARD_', ''), 10)) : 0;
+  const hasBoardData = (feud.topAnswers?.length ?? 0) > 0;
+
+  if (checkpoint === 'R1_LOCKED' && !hasBoardData) {
     return (
       <div className="feud-display feud-display--locked" style={{ background: theme.bg, color: theme.text }}>
         <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 8 }}>Phase: {phase}</p>
@@ -93,20 +97,19 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
     );
   }
 
-  const isBoard = checkpoint.startsWith('R1_BOARD_');
-  const revealUpTo = isBoard ? Math.max(0, parseInt(checkpoint.replace('R1_BOARD_', ''), 10)) : 0;
-
-  if (isBoard || checkpoint === 'R1_SUMMARY') {
+  if (isBoard || checkpoint === 'R1_SUMMARY' || (checkpoint === 'R1_LOCKED' && hasBoardData)) {
     const showAll = checkpoint === 'R1_SUMMARY';
-    const boardItems = feud.topAnswers?.length ? feud.topAnswers : [];
+    const raw = feud.topAnswers ?? [];
+    const boardItems = raw.length >= 8 ? raw : [...raw, ...Array.from({ length: 8 - raw.length }, () => ({ answer: '', count: 0, revealed: false, strike: false }))];
     return (
       <div className="feud-display feud-display--board" style={{ background: theme.bg, color: theme.text }}>
         <h2 className="feud-display__prompt feud-display__prompt--small">{feud.prompt || 'Top answers'}</h2>
         <div className="feud-display__board-frame">
           <div className="feud-display__board">
-            {(boardItems.length ? boardItems : Array.from({ length: 8 }, () => ({ answer: '', count: 0, revealed: false, strike: false }))).map((item, i) => {
+            {boardItems.slice(0, 8).map((item, i) => {
               const revealed = item.revealed || (feud.showScores && (showAll || i < revealUpTo));
               const strike = item.strike;
+              const displayAnswer = (revealed && item.answer) ? (item.answer.charAt(0).toUpperCase() + item.answer.slice(1)) : (revealed ? '???' : '???');
               return (
                 <div
                   key={i}
@@ -116,7 +119,7 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
                   <div className="feud-display__plate-front" />
                   <div className="feud-display__plate-back" style={{ background: theme.panel, borderColor: theme.border }}>
                     {strike ? <span className="feud-display__strike">✕</span> : null}
-                    <span className="feud-display__plate-answer">{revealed ? item.answer : '???'}</span>
+                    <span className="feud-display__plate-answer">{displayAnswer}</span>
                     {revealed && item.count != null && item.count > 0 && (
                       <span className="feud-display__plate-votes" style={{ color: theme.accent }}>{item.count}</span>
                     )}

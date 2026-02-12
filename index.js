@@ -1571,22 +1571,27 @@ io.on('connection', (socket) => {
     if (!game?.feud) return;
     if (!assertHost(game, socket, hostToken)) return;
     game.feud.locked = true;
+    game.feud.checkpointId = 'R1_LOCKED';
     const counts = new Map();
     for (const sub of game.feud.submissions) {
       for (const a of sub.answers) {
-        const key = a.toLowerCase().replace(/\s+/g, ' ').trim();
+        const key = String(a).toLowerCase().replace(/\s+/g, ' ').trim();
         if (!key) continue;
         counts.set(key, (counts.get(key) || 0) + 1);
       }
     }
     const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
-    game.feud.topAnswers = sorted.map(([answer, count], i) => ({
-      answer,
-      count,
+    const topEight = sorted.map(([answer, count], i) => ({
+      answer: answer,
+      count: count,
       points: 8 - i,
       revealed: false,
       strike: false
     }));
+    while (topEight.length < 8) {
+      topEight.push({ answer: '', count: 0, revealed: false, strike: false });
+    }
+    game.feud.topAnswers = topEight;
     io.to(`game:${game.code}`).emit('feud:state', game.feud);
   });
 

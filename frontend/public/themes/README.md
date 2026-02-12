@@ -11,5 +11,6 @@ Files here are served at `/themes/...`. Replace placeholders with real WebP (~30
 - overlay-prestige.webp
 - overlay-retro.webp
 - overlay-arcade.webp
+- overlay-gameshow.webp (Survey Showdown Game Show theme; add for full game-show frame)
 
 Referenced in `src/theme/themes.css` as `url("/themes/scenes/...")` and `url("/themes/overlays/...")`.
