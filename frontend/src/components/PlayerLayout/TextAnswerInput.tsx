@@ -1,15 +1,17 @@
 /**
- * Text answer input — single or multiple lines. Used by Survey Showdown (1–3 answers).
+ * Text answer input — single or multiple lines. Used by Survey Showdown (3 answers: top 3 things).
  */
 import React, { useState } from 'react';
 
 export interface TextAnswerInputProps {
   onSubmit: (values: string[]) => void;
   placeholder?: string;
-  /** Max number of text fields (e.g. 3 for feud) */
+  /** Max number of text fields (3 for Survey Showdown = top 3 answers) */
   maxFields?: number;
   submitLabel?: string;
   disabled?: boolean;
+  /** Hint above the fields (e.g. "Your top 3 answers") */
+  hint?: string;
 }
 
 export function TextAnswerInput({
@@ -18,6 +20,7 @@ export function TextAnswerInput({
   maxFields = 1,
   submitLabel = 'Submit',
   disabled = false,
+  hint,
 }: TextAnswerInputProps) {
   const [values, setValues] = useState<string[]>(() => Array(maxFields).fill(''));
   const [submitted, setSubmitted] = useState(false);
@@ -38,6 +41,10 @@ export function TextAnswerInput({
     setSubmitted(true);
   };
 
+  const placeholders = maxFields > 1
+    ? Array.from({ length: maxFields }, (_, i) => `Answer ${i + 1}`)
+    : [placeholder];
+
   if (submitted) {
     return (
       <p style={{ margin: 0, color: 'var(--pr-muted)', fontWeight: 500 }}>
@@ -48,12 +55,15 @@ export function TextAnswerInput({
 
   return (
     <form onSubmit={handleSubmit} className="player-layout__form" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {hint && (
+        <p style={{ margin: 0, fontSize: 14, color: 'var(--pr-muted)' }}>{hint}</p>
+      )}
       {Array.from({ length: maxFields }, (_, i) => (
         <input
           key={i}
           type="text"
           className="join-page__input"
-          placeholder={i === 0 ? placeholder : `${placeholder} ${i + 1} (optional)`}
+          placeholder={placeholders[i] ?? `Answer ${i + 1}`}
           value={values[i]}
           onChange={(e) => update(i, e.target.value)}
           autoComplete="off"

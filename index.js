@@ -968,6 +968,42 @@ function getGame(code) {
 const TRIVIA_LIKE_TYPES = ['trivia', 'icebreakers', 'edutainment', 'team-building'];
 const FEUD_CHECKPOINTS = ['STANDBY', 'R1_TITLE', 'R1_COLLECT', 'R1_LOCKED', 'R1_BOARD_0', 'R1_BOARD_1', 'R1_BOARD_2', 'R1_BOARD_3', 'R1_BOARD_4', 'R1_BOARD_5', 'R1_BOARD_6', 'R1_BOARD_7', 'R1_BOARD_8', 'R1_SUMMARY'];
 
+/** Recompute topAnswers from submissions (same as feud:lock). Mutates game.feud.topAnswers. */
+function feudRecomputeTopAnswers(game) {
+  if (!game?.feud?.submissions?.length) return;
+  const counts = new Map();
+  for (const sub of game.feud.submissions) {
+    for (const a of sub.answers) {
+      const key = String(a).toLowerCase().replace(/\s+/g, ' ').trim();
+      if (!key) continue;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+  }
+  const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const topEight = sorted.map(([answer, count], i) => ({
+    answer,
+    count,
+    points: 8 - i,
+    revealed: false,
+    strike: false
+  }));
+  while (topEight.length < 8) {
+    topEight.push({ answer: '', count: 0, revealed: false, strike: false });
+  }
+  game.feud.topAnswers = topEight;
+}
+
+/** Deep clone of feud state for emitting (avoids reference issues; ensures clients get full topAnswers). */
+function getFeudStateForEmit(game) {
+  if (!game?.feud) return null;
+  const f = game.feud;
+  const isBoardCheckpoint = f.checkpointId === 'R1_LOCKED' || f.checkpointId.startsWith('R1_BOARD_') || f.checkpointId === 'R1_SUMMARY';
+  if (isBoardCheckpoint && f.locked && (f.topAnswers?.length ?? 0) === 0 && (f.submissions?.length ?? 0) > 0) {
+    feudRecomputeTopAnswers(game);
+  }
+  return JSON.parse(JSON.stringify(game.feud));
+}
+
 // Crowd Control Trivia: board 0 question_ids (row-major: 6 categories × 5 values)
 const CCT_BOARD_0_QUESTION_IDS = [
   'q_fd_01_200', 'q_fd_01_300', 'q_fd_01_400', 'q_fd_01_500', 'q_fd_01_600',
@@ -1004,11 +1040,15 @@ function createGame(opts = {}) {
     'jeopardy': 'Category Grid'
   };
   const defaultTitle = defaultTitles[gameType] || 'Playroom';
+  const eventConfig = opts.eventConfig || { gameTitle: defaultTitle, venueName: '', accentColor: '#e94560' };
+  if (gameType === 'feud' && (eventConfig.playroomThemeId == null || eventConfig.playroomThemeId === '')) {
+    eventConfig.playroomThemeId = 'game-show';
+  }
   const game = {
     code,
     hostToken: nanoidCode() + nanoidCode(),
     hostId: null,
-    eventConfig: opts.eventConfig || { gameTitle: defaultTitle, venueName: '', accentColor: '#e94560' },
+    eventConfig,
     players: new Map(),
     songPool: [],
     revealed: [],
@@ -1180,7 +1220,7 @@ io.on('connection', (socket) => {
       waitingRoom: game.waitingRoom
     };
     if (game.trivia) payload.trivia = getTriviaPayload(game);
-    if (game.feud) payload.feud = game.feud;
+    if (game.feud) payload.feud = getFeudStateForEmit(game);
     if (game.marketMatch) payload.marketMatch = game.marketMatch;
     if (game.crowdControl) payload.crowdControl = game.crowdControl;
     socket.emit('game:created', payload);
@@ -1213,7 +1253,7 @@ io.on('connection', (socket) => {
       waitingRoom: game.waitingRoom,
     };
     if (game.trivia) payload.trivia = getTriviaPayload(game);
-    if (game.feud) payload.feud = game.feud;
+    if (game.feud) payload.feud = getFeudStateForEmit(game);
     if (game.marketMatch) payload.marketMatch = game.marketMatch;
     if (game.crowdControl) payload.crowdControl = game.crowdControl;
     socket.emit('host:resume:ok', payload);
@@ -1341,7 +1381,7 @@ io.on('connection', (socket) => {
       waitingRoom: game.waitingRoom
     };
     if (game.trivia) joinPayload.trivia = getTriviaPayload(game, { forAudience: true });
-    if (game.feud) joinPayload.feud = game.feud;
+    if (game.feud) joinPayload.feud = getFeudStateForEmit(game);
     if (game.marketMatch) joinPayload.marketMatch = game.marketMatch;
     if (game.crowdControl) joinPayload.crowdControl = game.crowdControl;
     joinPayload.rollCallLeaderboard = getRollCallLeaderboard(game);
@@ -1407,7 +1447,7 @@ io.on('connection', (socket) => {
       rollCallLeaderboard: getRollCallLeaderboard(game)
     };
     if (game.trivia) displayPayload.trivia = getTriviaPayload(game, { forAudience: true });
-    if (game.feud) displayPayload.feud = game.feud;
+    if (game.feud) displayPayload.feud = getFeudStateForEmit(game);
     if (game.marketMatch) displayPayload.marketMatch = game.marketMatch;
     if (game.crowdControl) displayPayload.crowdControl = game.crowdControl;
     socket.emit('display:ok', displayPayload);
@@ -1521,7 +1561,7 @@ io.on('connection', (socket) => {
     if (!assertHost(game, socket, hostToken)) return;
     if (FEUD_CHECKPOINTS.includes(checkpointId)) {
       game.feud.checkpointId = checkpointId;
-      io.to(`game:${game.code}`).emit('feud:state', game.feud);
+      io.to(`game:${game.code}`).emit('feud:state', getFeudStateForEmit(game));
     }
   });
 
@@ -1530,7 +1570,7 @@ io.on('connection', (socket) => {
     if (!game?.feud) return;
     if (!assertHost(game, socket, hostToken)) return;
     game.feud.prompt = typeof prompt === 'string' ? prompt : '';
-    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+    io.to(`game:${game.code}`).emit('feud:state', getFeudStateForEmit(game));
   });
 
   socket.on('feud:set-effects', ({ code, hostToken, cascadeEffect, bottomDropEffect }) => {
@@ -1547,7 +1587,7 @@ io.on('connection', (socket) => {
     if (!game?.feud) return;
     if (!assertHost(game, socket, hostToken)) return;
     if (typeof showScores === 'boolean') game.feud.showScores = showScores;
-    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+    io.to(`game:${game.code}`).emit('feud:state', getFeudStateForEmit(game));
   });
 
   socket.on('feud:submit', ({ code, answers }) => {
@@ -1563,7 +1603,7 @@ io.on('connection', (socket) => {
     }
     const list = Array.isArray(answers) ? answers.slice(0, 3).map((a) => String(a).trim()).filter(Boolean) : [];
     game.feud.submissions.push({ playerId: socket.id, displayName: p.name, answers: list });
-    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+    io.to(`game:${game.code}`).emit('feud:state', getFeudStateForEmit(game));
   });
 
   socket.on('feud:lock', ({ code, hostToken }) => {
@@ -1592,7 +1632,7 @@ io.on('connection', (socket) => {
       topEight.push({ answer: '', count: 0, revealed: false, strike: false });
     }
     game.feud.topAnswers = topEight;
-    io.to(`game:${game.code}`).emit('feud:state', game.feud);
+    io.to(`game:${game.code}`).emit('feud:state', getFeudStateForEmit(game));
   });
 
   socket.on('feud:reveal', ({ code, hostToken, index }) => {
@@ -1602,7 +1642,7 @@ io.on('connection', (socket) => {
     const i = parseInt(index, 10);
     if (i >= 0 && i < game.feud.topAnswers.length) {
       game.feud.topAnswers[i].revealed = true;
-      io.to(`game:${game.code}`).emit('feud:state', game.feud);
+      io.to(`game:${game.code}`).emit('feud:state', getFeudStateForEmit(game));
     }
   });
 
@@ -1613,7 +1653,7 @@ io.on('connection', (socket) => {
     const i = parseInt(index, 10);
     if (i >= 0 && i < game.feud.topAnswers.length) {
       game.feud.topAnswers[i].strike = true;
-      io.to(`game:${game.code}`).emit('feud:state', game.feud);
+      io.to(`game:${game.code}`).emit('feud:state', getFeudStateForEmit(game));
     }
   });
 

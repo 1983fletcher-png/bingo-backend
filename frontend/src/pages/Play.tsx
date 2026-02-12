@@ -613,7 +613,7 @@ export default function Play() {
     ) : showWaiting ? (
       <p style={{ margin: 0, color: 'var(--pr-muted)', fontWeight: 500 }}>Your answers are in. Answers still coming in.</p>
     ) : canSubmit ? (
-      <TextAnswerInput onSubmit={handleFeudSubmit} maxFields={3} placeholder="Answer" submitLabel="Submit" disabled={!socket} />
+      <TextAnswerInput onSubmit={handleFeudSubmit} maxFields={3} placeholder="Answer" submitLabel="Submit" disabled={!socket} hint="Your top 3 answers" />
     ) : (
       <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
     );

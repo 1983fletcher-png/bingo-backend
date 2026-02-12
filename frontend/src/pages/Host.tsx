@@ -389,6 +389,7 @@ export default function Host() {
         eventConfig: {
           ...initialEventConfig,
           gameTitle: 'Survey Showdown',
+          playroomThemeId: 'game-show',
           ...(preset && { displayThemeId: preset.displayThemeId }),
         },
         options: preset?.noScoreDefault ? { feudShowScores: false } : undefined,
