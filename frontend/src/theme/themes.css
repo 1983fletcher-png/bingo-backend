@@ -148,6 +148,35 @@
   background: transparent;
 }
 
+/* TV: no purple panels — content integrated into stage; one size, no scroll */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .feud-display__standby-card,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .feud-display__collect-inner {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .feud-display__live-answers {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .feud-display {
+  overflow: hidden;
+  padding: clamp(0.5rem, 2vw, 1.5rem);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-gameshell__chrome {
+  overflow: hidden;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-stage__content {
+  overflow: hidden;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-gameshell__header {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
 /* ---- Player: full mockup per view (answer / waiting / reveal) ---- */
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="answer"] .player-layout__stage {
   background: url("/themes/survey-showdown/player-answer.png") center center / cover no-repeat;
@@ -179,6 +208,46 @@
   opacity: 0;
 }
 
+/* Player: no purple stage frame — outer stage transparent so only mockup shows */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .pr-stage,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .stage-frame {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .pr-stage::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .pr-stage::after,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .stage-frame::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .stage-frame::after {
+  opacity: 0;
+}
+
+/* Player: content on stage transparent so mockup shows; keep inputs visible */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .player-layout__stage > * {
+  background: transparent;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .player-layout__input {
+  background: transparent;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .player-layout__form {
+  background: transparent;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .feud-player-waiting {
+  background: transparent;
+}
+/* Minimize scroll on player: contain height, limit live-answers */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .player-layout {
+  overflow: hidden;
+  min-height: 100vh;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .player-layout__stage {
+  overflow: hidden;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .feud-player-waiting ul {
+  max-height: 140px;
+  overflow-y: auto;
+}
+
 /* Player scene layer: use same mockup as stage so full screen matches (optional; stage is the main area) */
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="answer"] .pr-scene-layer {
   background: url("/themes/survey-showdown/player-answer.png") center center / cover no-repeat;
@@ -208,8 +277,8 @@
   background-color: #0d0515;
 }
 
-[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .pr-stage,
-[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .stage-frame,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]):not([data-feud-view]) .pr-stage,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]):not([data-feud-view]) .stage-frame,
 [data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-feud-view]) .player-layout__stage {
   box-shadow:
     0 0 0 4px color-mix(in srgb, var(--pr-brand) 85%, transparent),
@@ -222,16 +291,16 @@
     linear-gradient(180deg, color-mix(in srgb, var(--pr-surface2) 60%, transparent) 0%, color-mix(in srgb, var(--pr-surface) 95%, transparent) 40%, color-mix(in srgb, var(--pr-surface) 98%, transparent) 100%);
 }
 
-[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .pr-stage::before,
-[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .stage-frame::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]):not([data-feud-view]) .pr-stage::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]):not([data-feud-view]) .stage-frame::before,
 [data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-feud-view]) .player-layout__stage::before {
   opacity: 0.72;
   background-size: cover;
   background-position: center;
 }
 
-[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .pr-stage::after,
-[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .stage-frame::after,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]):not([data-feud-view]) .pr-stage::after,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]):not([data-feud-view]) .stage-frame::after,
 [data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-feud-view]) .player-layout__stage::after {
   background:
     linear-gradient(to top, color-mix(in srgb, var(--pr-glow) 28%, transparent) 0%, transparent 40%),

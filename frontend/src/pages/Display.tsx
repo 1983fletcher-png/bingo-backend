@@ -179,7 +179,9 @@ export default function Display() {
   const displayPlayroomThemeId = (eventConfig?.playroomThemeId && ['classic', 'prestige-retro', 'retro-studio', 'retro-arcade', 'game-show'].includes(eventConfig.playroomThemeId))
     ? eventConfig.playroomThemeId as 'classic' | 'prestige-retro' | 'retro-studio' | 'retro-arcade' | 'game-show'
     : undefined;
-  const feudTheme = displayPlayroomThemeId === 'game-show' ? { ...getActivityTheme('game-show', true), calmMode } : { ...theme, calmMode };
+  const feudTheme = displayPlayroomThemeId === 'game-show'
+    ? { ...getActivityTheme('game-show', true), calmMode, bg: 'transparent' }
+    : { ...theme, calmMode };
 
   if (error) {
     return (
