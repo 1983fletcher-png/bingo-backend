@@ -15,6 +15,7 @@ import type { ThemeId } from '../theme/theme.types';
 import { getMarketMatchItem } from '../data/marketMatchDataset';
 import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
 import { PlayerLayout, TextAnswerInput } from '../components/PlayerLayout';
+import { FeudPlayerReveal } from '../games/feud/FeudPlayerReveal';
 import '../styles/join.css';
 
 /**
@@ -297,6 +298,7 @@ export default function Play() {
   const [showFact, setShowFact] = useState(false);
   const [menuOverlay, setMenuOverlay] = useState<{ url: string; useIframe: boolean } | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [feudSubmittedThisRound, setFeudSubmittedThisRound] = useState(false);
   const hasRejoinEmitted = useRef(false);
   const rejoinRef = useRef<{ code: string; name: string } | null>(null);
   rejoinRef.current = joinState && code?.trim() ? { code: code.trim().toUpperCase(), name: (() => { try { const raw = sessionStorage.getItem(PLAYROOM_JOIN_KEY(code)); if (raw) { const p = JSON.parse(raw) as { name?: string }; return p.name || name || 'Anonymous'; } } catch { } return name || 'Anonymous'; })() } : null;
@@ -458,6 +460,11 @@ export default function Play() {
   }, [joinState?.started, joinState?.code, gameType, songPool, displayName]);
 
   useEffect(() => {
+    const cid = joinState?.feud?.checkpointId;
+    if (cid === 'R1_TITLE' || cid === 'STANDBY') setFeudSubmittedThisRound(false);
+  }, [joinState?.feud?.checkpointId]);
+
+  useEffect(() => {
     if (socket && code && card && card.length > 0) {
       socket.emit('player:card', { code: code.toUpperCase(), card });
     }
@@ -550,36 +557,73 @@ export default function Play() {
     gameType === 'feud' &&
     joinState?.feud &&
     joinState.feud.checkpointId !== 'STANDBY';
-  const sessionThemeId = (joinState?.eventConfig?.playroomThemeId && ['classic', 'prestige-retro', 'retro-studio', 'retro-arcade'].includes(joinState.eventConfig.playroomThemeId))
+  const sessionThemeId = (joinState?.eventConfig?.playroomThemeId && ['classic', 'prestige-retro', 'retro-studio', 'retro-arcade', 'game-show'].includes(joinState.eventConfig.playroomThemeId))
     ? (joinState.eventConfig.playroomThemeId as ThemeId)
     : undefined;
   if (gameType === 'feud' && joinState?.feud && (joinState.started || feudRoundActive)) {
     const feud = joinState.feud;
     const canSubmit = !feud.locked && (feud.checkpointId === 'R1_COLLECT' || feud.checkpointId === 'R1_TITLE');
+    const showReveal = feud.locked || feud.checkpointId.startsWith('R1_BOARD_') || feud.checkpointId === 'R1_SUMMARY';
+    const showWaiting = canSubmit && feudSubmittedThisRound;
+    const submissionCount = feud.submissions?.length ?? 0;
+    const liveAnswers: string[] = [];
+    (feud.submissions ?? []).forEach((s) => {
+      (s.answers ?? []).forEach((a) => {
+        const t = (a || '').trim();
+        if (t) liveAnswers.push(t);
+      });
+    });
+
     const handleFeudSubmit = (answers: string[]) => {
-      if (socket && code) socket.emit('feud:submit', { code: code.toUpperCase(), answers });
+      if (socket && code) {
+        socket.emit('feud:submit', { code: code.toUpperCase(), answers });
+        setFeudSubmittedThisRound(true);
+      }
     };
-    const miniStage = (
+
+    const miniStage = showReveal ? (
+      <FeudPlayerReveal feud={feud} />
+    ) : showWaiting ? (
+      <div className="feud-player-waiting" style={{ padding: 16, maxWidth: 420, margin: '0 auto', textAlign: 'center' }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: 600, color: 'var(--pr-text)' }}>Answers still coming in</h2>
+        <p style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--pr-muted)' }}>
+          {submissionCount} player{submissionCount !== 1 ? 's' : ''} have answered
+        </p>
+        {liveAnswers.length > 0 && (
+          <ul style={{ margin: 0, padding: 12, listStyle: 'none', textAlign: 'left', border: '1px solid var(--pr-border)', borderRadius: 12, background: 'rgba(0,0,0,0.15)', maxHeight: 200, overflowY: 'auto' }}>
+            {liveAnswers.slice(-24).map((a, i) => (
+              <li key={`${i}-${a}`} style={{ padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', color: 'var(--pr-text)', fontSize: 14 }}>
+                {a}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ) : (
       <div style={{ textAlign: 'center' }}>
         <h2 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
         <p style={{ margin: 0, fontSize: 14, color: 'var(--pr-muted)' }}>
-          {feud.locked ? 'Answers locked — watch the screen!' : feud.checkpointId === 'R1_COLLECT' ? 'Round collecting' : 'Round in progress'}
+          {feud.checkpointId === 'R1_COLLECT' ? 'Round collecting' : 'Round in progress'}
         </p>
       </div>
     );
-    const inputSlot = feud.locked ? (
-      <p style={{ margin: 0, color: 'var(--pr-muted)', fontWeight: 500 }}>Answers are locked. Watch the screen for the reveal!</p>
+
+    const inputSlot = showReveal ? (
+      <p style={{ margin: 0, color: 'var(--pr-muted)', fontWeight: 500 }}>Watch the screen for the reveal!</p>
+    ) : showWaiting ? (
+      <p style={{ margin: 0, color: 'var(--pr-muted)', fontWeight: 500 }}>Your answers are in. Answers still coming in.</p>
     ) : canSubmit ? (
       <TextAnswerInput onSubmit={handleFeudSubmit} maxFields={3} placeholder="Answer" submitLabel="Submit" disabled={!socket} />
     ) : (
       <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
     );
+
     return (
       <GameShell
         gameKey="survey_showdown"
         variant="player"
         title="Survey Showdown"
-        subtitle={feud.prompt ? undefined : 'Submit your answers'}
+        subtitle={feud.prompt ? undefined : showWaiting ? 'Answers still coming in' : 'Submit your answers'}
         code={code ?? undefined}
         themeId={sessionThemeId}
       >

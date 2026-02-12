@@ -3,7 +3,7 @@
  * @see docs/PLAYROOM-THEMING-SPEC.md
  */
 
-export type ThemeId = 'classic' | 'prestige-retro' | 'retro-studio' | 'retro-arcade';
+export type ThemeId = 'classic' | 'prestige-retro' | 'retro-studio' | 'retro-arcade' | 'game-show';
 export type SceneId = 'arcadeCarpet' | 'studio' | 'mountains';
 export type MotionLevel = 'calm' | 'standard' | 'hype';
 

@@ -176,9 +176,10 @@ export default function Display() {
 
   const activityTheme = getActivityTheme(eventConfig?.displayThemeId, darkMode);
   const { calmMode, ...theme } = activityTheme;
-  const displayPlayroomThemeId = (eventConfig?.playroomThemeId && ['classic', 'prestige-retro', 'retro-studio', 'retro-arcade'].includes(eventConfig.playroomThemeId))
-    ? eventConfig.playroomThemeId as 'classic' | 'prestige-retro' | 'retro-studio' | 'retro-arcade'
+  const displayPlayroomThemeId = (eventConfig?.playroomThemeId && ['classic', 'prestige-retro', 'retro-studio', 'retro-arcade', 'game-show'].includes(eventConfig.playroomThemeId))
+    ? eventConfig.playroomThemeId as 'classic' | 'prestige-retro' | 'retro-studio' | 'retro-arcade' | 'game-show'
     : undefined;
+  const feudTheme = displayPlayroomThemeId === 'game-show' ? { ...getActivityTheme('game-show', true), calmMode } : { ...theme, calmMode };
 
   if (error) {
     return (
@@ -275,8 +276,8 @@ export default function Display() {
           joinUrl={effectiveJoinUrl}
           code={code?.toUpperCase() ?? ''}
           eventTitle={eventConfig?.gameTitle || eventTitle}
-          theme={theme}
-          calmMode={calmMode}
+          theme={feudTheme}
+          calmMode={feudTheme.calmMode}
         />
       </GameShell>
     );

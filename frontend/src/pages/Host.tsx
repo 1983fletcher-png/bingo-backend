@@ -1107,7 +1107,7 @@ p{word-break:break-all;font-size:14px;color:#333}
                 >
                   {THEME_IDS.map((id) => (
                     <option key={id} value={id}>
-                      {id === 'classic' ? 'Classic' : id === 'prestige-retro' ? 'Prestige' : id === 'retro-studio' ? 'Retro' : id === 'retro-arcade' ? 'Retro Arcade' : id}
+                      {id === 'classic' ? 'Classic' : id === 'prestige-retro' ? 'Prestige' : id === 'retro-studio' ? 'Retro' : id === 'retro-arcade' ? 'Retro Arcade' : id === 'game-show' ? 'Game Show' : id}
                     </option>
                   ))}
                 </select>
@@ -1321,7 +1321,7 @@ p{word-break:break-all;font-size:14px;color:#333}
                 style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }}
               >
                 {THEME_IDS.map((id) => (
-                  <option key={id} value={id}>{id === 'classic' ? 'Classic' : id === 'prestige-retro' ? 'Prestige Retro' : id === 'retro-studio' ? 'Retro Studio' : id === 'retro-arcade' ? 'Retro Arcade' : id}</option>
+                  <option key={id} value={id}>{id === 'classic' ? 'Classic' : id === 'prestige-retro' ? 'Prestige Retro' : id === 'retro-studio' ? 'Retro Studio' : id === 'retro-arcade' ? 'Retro Arcade' : id === 'game-show' ? 'Game Show' : id}</option>
                 ))}
               </select>
               <p style={{ fontSize: 12, color: '#a0aec0', margin: '4px 0 0' }}>Visual skin on the TV (classic, retro arcade, etc.).</p>

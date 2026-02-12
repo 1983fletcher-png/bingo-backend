@@ -1,8 +1,8 @@
 /**
- * Activity Room display themes (Playroom Classic, Calm, Corporate).
+ * Activity Room display themes (Playroom Classic, Calm, Corporate, Game Show).
  * @see docs/ACTIVITY-ROOM-SPEC.md §14
  */
-export type ActivityThemeId = 'classic' | 'calm' | 'corporate';
+export type ActivityThemeId = 'classic' | 'calm' | 'corporate' | 'game-show';
 
 export interface ActivityThemeColors {
   bg: string;
@@ -81,21 +81,33 @@ const CORPORATE_LIGHT: ActivityThemeColors = {
   border: '#d0d7de'
 };
 
+const GAME_SHOW_DARK: ActivityThemeColors = {
+  bg: '#1a0a2e',
+  panel: '#2d1b4e',
+  card: '#3d2663',
+  text: '#f0e6ff',
+  muted: '#a090c0',
+  accent: '#d4af37',
+  border: 'rgba(212,175,55,0.35)'
+};
+
 export const ACTIVITY_THEMES: { id: ActivityThemeId; label: string; calmMode: boolean }[] = [
   { id: 'classic', label: 'Playroom Classic', calmMode: false },
   { id: 'calm', label: 'Calm', calmMode: true },
-  { id: 'corporate', label: 'Corporate', calmMode: false }
+  { id: 'corporate', label: 'Corporate', calmMode: false },
+  { id: 'game-show', label: 'Game Show', calmMode: false }
 ];
 
 export function getActivityTheme(
   themeId: ActivityThemeId | string | undefined,
   darkMode: boolean
 ): ActivityThemeColors & { calmMode: boolean } {
-  const id = (themeId === 'calm' || themeId === 'corporate' || themeId === 'classic' ? themeId : 'classic') as ActivityThemeId;
+  const id = (themeId === 'calm' || themeId === 'corporate' || themeId === 'classic' || themeId === 'game-show' ? themeId : 'classic') as ActivityThemeId;
   const entry = ACTIVITY_THEMES.find((t) => t.id === id) ?? ACTIVITY_THEMES[0];
   let colors: ActivityThemeColors;
   if (id === 'calm') colors = darkMode ? CALM_DARK : CALM_LIGHT;
   else if (id === 'corporate') colors = darkMode ? CORPORATE_DARK : CORPORATE_LIGHT;
+  else if (id === 'game-show') colors = GAME_SHOW_DARK;
   else colors = darkMode ? CLASSIC_DARK : CLASSIC_LIGHT;
   return { ...colors, calmMode: entry.calmMode };
 }

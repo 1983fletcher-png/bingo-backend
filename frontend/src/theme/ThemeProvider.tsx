@@ -53,7 +53,8 @@ function parseThemeId(raw: string | null): ThemeId {
     raw === 'classic' ||
     raw === 'prestige-retro' ||
     raw === 'retro-studio' ||
-    raw === 'retro-arcade'
+    raw === 'retro-arcade' ||
+    raw === 'game-show'
   ) {
     return raw;
   }

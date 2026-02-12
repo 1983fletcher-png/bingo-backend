@@ -43,17 +43,16 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
   }
 
   if (checkpoint === 'R1_COLLECT') {
-    const allAnswers: { text: string; displayName?: string }[] = [];
+    const allAnswers: string[] = [];
     (feud.submissions ?? []).forEach((s) => {
       (s.answers ?? []).forEach((a) => {
         const t = (a || '').trim();
-        if (t) allAnswers.push({ text: t, displayName: s.displayName });
+        if (t) allAnswers.push(t);
       });
     });
     return (
       <div className="feud-display feud-display--collect" style={{ background: theme.bg, color: theme.text }}>
         <div className="feud-display__collect-inner">
-          <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 8 }}>Phase: {phase}</p>
           <h2 className="feud-display__prompt">{feud.prompt || 'Submit your answers…'}</h2>
           <p className="feud-display__muted" style={{ marginTop: 8, marginBottom: 8 }}>
             Submissions open — answer on your phone.
@@ -65,16 +64,15 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
             </div>
           )}
           <p className="feud-display__muted" style={{ marginTop: 12, marginBottom: 8, fontSize: '0.95rem' }}>
-            {submissionCount} submission{submissionCount !== 1 ? 's' : ''} · {allAnswers.length} answer{allAnswers.length !== 1 ? 's' : ''} so far
+            {submissionCount} player{submissionCount !== 1 ? 's' : ''} have answered · {allAnswers.length} answer{allAnswers.length !== 1 ? 's' : ''} so far
           </p>
           {allAnswers.length > 0 && (
             <div className="feud-display__live-answers">
-              <p className="feud-display__muted" style={{ fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Answers coming in</p>
+              <p className="feud-display__muted" style={{ fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Answers still coming in</p>
               <ul className="feud-display__live-answers-list">
                 {allAnswers.slice(-24).map((a, i) => (
-                  <li key={`${i}-${a.text}-${a.displayName ?? ''}`} className="feud-display__live-answers-item" style={{ color: theme.text }}>
-                    {a.displayName ? <span style={{ color: theme.muted, marginRight: 6 }}>{a.displayName}:</span> : null}
-                    <span>{a.text}</span>
+                  <li key={`${i}-${a}`} className="feud-display__live-answers-item" style={{ color: theme.text }}>
+                    {a}
                   </li>
                 ))}
               </ul>
@@ -103,27 +101,30 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
     const boardItems = feud.topAnswers?.length ? feud.topAnswers : [];
     return (
       <div className="feud-display feud-display--board" style={{ background: theme.bg, color: theme.text }}>
-        <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 4 }}>Phase: {phase}</p>
         <h2 className="feud-display__prompt feud-display__prompt--small">{feud.prompt || 'Top answers'}</h2>
-        <div className="feud-display__board">
-          {(boardItems.length ? boardItems : Array.from({ length: 8 }, () => ({ answer: '—', count: 0, revealed: false, strike: false }))).map((item, i) => {
-            const revealed = item.revealed || (feud.showScores && (showAll || i < revealUpTo));
-            const strike = item.strike;
-            return (
-              <div
-                key={i}
-                className={`feud-display__plate ${revealed ? 'feud-display__plate--revealed' : ''} ${strike ? 'feud-display__plate--strike' : ''} ${!calmMode ? 'feud-display__plate--hinge' : ''}`}
-                style={{ ['--reveal-order' as string]: i }}
-              >
-                <div className="feud-display__plate-front" />
-                <div className="feud-display__plate-back" style={{ background: theme.panel, borderColor: theme.border }}>
-                  {strike ? <span className="feud-display__strike">✕</span> : null}
-                  <span className="feud-display__plate-answer">{revealed ? item.answer : '???'}</span>
-                  {revealed && feud.showScores && item.count != null && <span className="feud-display__plate-count">{item.count}</span>}
+        <div className="feud-display__board-frame">
+          <div className="feud-display__board">
+            {(boardItems.length ? boardItems : Array.from({ length: 8 }, () => ({ answer: '', count: 0, revealed: false, strike: false }))).map((item, i) => {
+              const revealed = item.revealed || (feud.showScores && (showAll || i < revealUpTo));
+              const strike = item.strike;
+              return (
+                <div
+                  key={i}
+                  className={`feud-display__plate ${revealed ? 'feud-display__plate--revealed' : ''} ${strike ? 'feud-display__plate--strike' : ''} ${!calmMode ? 'feud-display__plate--hinge' : ''}`}
+                  style={{ ['--reveal-order' as string]: i }}
+                >
+                  <div className="feud-display__plate-front" />
+                  <div className="feud-display__plate-back" style={{ background: theme.panel, borderColor: theme.border }}>
+                    {strike ? <span className="feud-display__strike">✕</span> : null}
+                    <span className="feud-display__plate-answer">{revealed ? item.answer : '???'}</span>
+                    {revealed && item.count != null && item.count > 0 && (
+                      <span className="feud-display__plate-votes" style={{ color: theme.accent }}>{item.count}</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     );

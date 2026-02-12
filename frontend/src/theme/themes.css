@@ -98,6 +98,23 @@
   --pr-scanlines-opacity: 0.04;
 }
 
+[data-theme="game-show"] {
+  --pr-bg: #1a0a2e;
+  --pr-surface: #2d1b4e;
+  --pr-surface2: #3d2663;
+  --pr-text: #f0e6ff;
+  --pr-muted: #a090c0;
+  --pr-border: rgba(212,175,55,0.35);
+  --pr-brand: #d4af37;
+  --pr-brand2: #b8960c;
+  --pr-accent: #d4af37;
+  --pr-glow: #d4af37;
+  --pr-noise-opacity: 0.02;
+  --pr-glow-strength: 0.25;
+  --pr-vignette-opacity: 0.15;
+  --pr-scanlines-opacity: 0.03;
+}
+
 /* Scene backgrounds (Vite public path — /themes/scenes/*.webp) */
 :root, [data-scene="studio"] {
   --pr-scene-bg: url("/themes/scenes/studio.webp"), linear-gradient(180deg, #0b0f14 0%, #121826 50%, #0b0f14 100%);
