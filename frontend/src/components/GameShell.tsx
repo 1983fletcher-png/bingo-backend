@@ -33,6 +33,8 @@ export interface GameShellProps {
   };
   /** Override footer: 'minimal' | 'statusbar' | 'none'. Default: player=minimal, host/display=statusbar */
   footerVariant?: 'minimal' | 'statusbar' | 'none';
+  /** Survey Showdown player view state — picks which mockup overlay to show (answer | waiting | reveal) */
+  feudView?: 'answer' | 'waiting' | 'reveal';
 }
 
 /** Map variant to shared viewMode */
@@ -48,11 +50,13 @@ export function GameShell({
   themeId,
   statusBarProps: statusBarOverride,
   footerVariant: footerOverride,
+  feudView,
 }: GameShellProps) {
   const { theme } = useTheme();
   const themeIdResolved = themeId ?? (siteThemeToRegistryId(theme) as ThemeId);
   const statusBarProps = statusBarOverride ?? (code ? { joinCode: code.toUpperCase() } : undefined);
   const footerVariant = footerOverride ?? (variant === 'player' ? 'minimal' : 'statusbar');
+  const optionalData = feudView ? { 'data-feud-view': feudView } : undefined;
 
   return (
     <SharedGameShell
@@ -61,6 +65,7 @@ export function GameShell({
       title={title}
       subtitle={subtitle}
       themeId={themeIdResolved}
+      optionalData={optionalData}
       headerRightSlot={
         code ? (
           <span style={{ fontSize: '0.875rem', color: 'var(--pr-muted)', letterSpacing: '0.1em' }}>

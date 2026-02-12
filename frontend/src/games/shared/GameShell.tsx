@@ -28,6 +28,8 @@ export interface GameShellProps {
   motionLevel?: MotionLevel;
   headerVariant?: MarqueeVariant;
   footerVariant?: FooterVariant;
+  /** Optional data attributes on root (e.g. data-feud-view for Survey Showdown overlay) */
+  optionalData?: Record<string, string>;
   headerRightSlot?: React.ReactNode;
   mainSlot: React.ReactNode;
   sidebarSlot?: React.ReactNode;
@@ -52,6 +54,7 @@ export function GameShell({
   motionLevel: motionOverride,
   headerVariant = 'banner',
   footerVariant = 'statusbar',
+  optionalData,
   headerRightSlot,
   mainSlot,
   sidebarSlot,
@@ -87,6 +90,7 @@ export function GameShell({
       data-view={viewMode}
       data-pr-theme={themeId}
       data-pr-motion={motionLevel}
+      {...(optionalData ?? {})}
       style={themeStyle}
     >
       <div className="pr-scene-layer" aria-hidden>

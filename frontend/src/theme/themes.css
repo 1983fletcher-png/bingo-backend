@@ -117,10 +117,84 @@
   --stage-overlay: url("/themes/overlays/overlay-gameshow.webp");
 }
 
-/* Survey Showdown game-show: match provided assets — full game show look (TV + player) */
+/* Survey Showdown game-show: full mockup overlays (TV + player) — Family Feud–style assets */
 
-/* Dark starry background + proscenium (darker sides like stage frame) */
-[data-pr-theme="game-show"][data-game="survey_showdown"] .pr-scene-layer {
+/* ---- TV Display: full mockup as scene background so lights, frame, stage are from asset ---- */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-scene-layer {
+  background: url("/themes/survey-showdown/tv-display.png") center center / cover no-repeat;
+  background-color: #0d0515;
+}
+
+/* Stage transparent so mockup shows through; hide gradient overlays */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-stage,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .stage-frame {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-stage::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-stage::after,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .stage-frame::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .stage-frame::after {
+  opacity: 0;
+}
+
+/* Feud display content sits on top of mockup; transparent bg so mockup shows */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .feud-display {
+  background: transparent;
+}
+
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-view="display"] .pr-gameshell__main {
+  background: transparent;
+}
+
+/* ---- Player: full mockup per view (answer / waiting / reveal) ---- */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="answer"] .player-layout__stage {
+  background: url("/themes/survey-showdown/player-answer.png") center center / cover no-repeat;
+  border: none;
+  box-shadow: none;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="answer"] .player-layout__stage::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="answer"] .player-layout__stage::after {
+  opacity: 0;
+}
+
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="waiting"] .player-layout__stage {
+  background: url("/themes/survey-showdown/player-waiting.png") center center / cover no-repeat;
+  border: none;
+  box-shadow: none;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="waiting"] .player-layout__stage::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="waiting"] .player-layout__stage::after {
+  opacity: 0;
+}
+
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="reveal"] .player-layout__stage {
+  background: url("/themes/survey-showdown/player-reveal.png") center center / cover no-repeat;
+  border: none;
+  box-shadow: none;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="reveal"] .player-layout__stage::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="reveal"] .player-layout__stage::after {
+  opacity: 0;
+}
+
+/* Player scene layer: use same mockup as stage so full screen matches (optional; stage is the main area) */
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="answer"] .pr-scene-layer {
+  background: url("/themes/survey-showdown/player-answer.png") center center / cover no-repeat;
+  background-color: #1a0a2e;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="waiting"] .pr-scene-layer {
+  background: url("/themes/survey-showdown/player-waiting.png") center center / cover no-repeat;
+  background-color: #1a0a2e;
+}
+[data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view="reveal"] .pr-scene-layer {
+  background: url("/themes/survey-showdown/player-reveal.png") center center / cover no-repeat;
+  background-color: #1a0a2e;
+}
+
+/* Fallback when NOT using full mockups: original CSS-driven game show look */
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]):not([data-feud-view]) .pr-scene-layer {
   background:
     linear-gradient(90deg, rgba(0,0,0,0.7) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.7) 100%),
     linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 12%, transparent 88%, rgba(0,0,0,0.4) 100%),
@@ -134,10 +208,9 @@
   background-color: #0d0515;
 }
 
-/* Stage: game show set — gold frame, visible overlay when asset present, strong footlights */
-[data-pr-theme="game-show"][data-game="survey_showdown"] .pr-stage,
-[data-pr-theme="game-show"][data-game="survey_showdown"] .stage-frame,
-[data-pr-theme="game-show"][data-game="survey_showdown"] .player-layout__stage {
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .pr-stage,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .stage-frame,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-feud-view]) .player-layout__stage {
   box-shadow:
     0 0 0 4px color-mix(in srgb, var(--pr-brand) 85%, transparent),
     0 0 48px color-mix(in srgb, var(--pr-glow) 55%, transparent),
@@ -149,19 +222,17 @@
     linear-gradient(180deg, color-mix(in srgb, var(--pr-surface2) 60%, transparent) 0%, color-mix(in srgb, var(--pr-surface) 95%, transparent) 40%, color-mix(in srgb, var(--pr-surface) 98%, transparent) 100%);
 }
 
-/* Overlay image (overlay-gameshow.webp) — full visibility when asset is present */
-[data-pr-theme="game-show"][data-game="survey_showdown"] .pr-stage::before,
-[data-pr-theme="game-show"][data-game="survey_showdown"] .stage-frame::before,
-[data-pr-theme="game-show"][data-game="survey_showdown"] .player-layout__stage::before {
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .pr-stage::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .stage-frame::before,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-feud-view]) .player-layout__stage::before {
   opacity: 0.72;
   background-size: cover;
   background-position: center;
 }
 
-/* Upward lights (footlights) + reflective game show floor */
-[data-pr-theme="game-show"][data-game="survey_showdown"] .pr-stage::after,
-[data-pr-theme="game-show"][data-game="survey_showdown"] .stage-frame::after,
-[data-pr-theme="game-show"][data-game="survey_showdown"] .player-layout__stage::after {
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .pr-stage::after,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-view="display"]) .stage-frame::after,
+[data-pr-theme="game-show"][data-game="survey_showdown"]:not([data-feud-view]) .player-layout__stage::after {
   background:
     linear-gradient(to top, color-mix(in srgb, var(--pr-glow) 28%, transparent) 0%, transparent 40%),
     linear-gradient(to top left, color-mix(in srgb, var(--pr-glow) 16%, transparent) 0%, transparent 50%),

@@ -626,6 +626,7 @@ export default function Play() {
         subtitle={feud.prompt ? undefined : showWaiting ? 'Answers still coming in' : 'Submit your answers'}
         code={code ?? undefined}
         themeId={sessionThemeId}
+        feudView={showReveal ? 'reveal' : showWaiting ? 'waiting' : 'answer'}
       >
         <PlayerLayout stage={miniStage} input={inputSlot} />
       </GameShell>
