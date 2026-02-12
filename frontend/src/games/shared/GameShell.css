@@ -8,6 +8,14 @@
   font-family: var(--pr-font-ui);
 }
 
+/* Wrapper for scene so .pr-scene-layer gets global pointer-events: none */
+.pr-gameshell .pr-scene-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .pr-gameshell__scene {
   position: absolute;
   inset: 0;

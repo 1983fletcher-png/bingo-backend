@@ -54,8 +54,8 @@ export default function ThemeLabPage() {
 
   return (
     <div
-      className="pr-page"
-      style={{ ...themeStyle, position: 'relative' }}
+      className="pr-page pr-app"
+      style={{ ...themeStyle, position: 'relative', zIndex: 0 }}
       data-pr-theme={themeId}
       data-pr-motion={motionLevel}
       onClick={handlePageClick}
@@ -75,15 +75,18 @@ export default function ThemeLabPage() {
           }}
         />
       )}
-      {/* Main content: stacking context so sections are above any full-bleed background; pointer-events auto so all controls receive clicks */}
+      {/* Main content: full-height interactive layer so ALL sections (tiles, plates, GameShell chrome) receive clicks */}
       <div
+        className="pr-themelab-content"
         style={{
           padding: '1rem',
           maxWidth: 1200,
           margin: '0 auto',
           position: 'relative',
-          zIndex: 2,
+          zIndex: 1,
+          minHeight: '100vh',
           pointerEvents: 'auto',
+          isolation: 'isolate',
         }}
       >
         <div style={{ fontWeight: 800, marginBottom: 12 }}>THEME LAB LOADED</div>
@@ -269,11 +272,11 @@ export default function ThemeLabPage() {
           </div>
         </section>
 
-        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 1 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             GameShell — Display mock
           </h2>
-          <div style={{ height: 320, position: 'relative', zIndex: 0, borderRadius: 'var(--pr-radius-lg)', overflow: 'hidden' }}>
+          <div style={{ height: 320, position: 'relative', zIndex: 1, borderRadius: 'var(--pr-radius-lg)', overflow: 'hidden' }}>
             <GameShell
               gameKey="survey_showdown"
               viewMode="display"
@@ -293,11 +296,11 @@ export default function ThemeLabPage() {
           </div>
         </section>
 
-        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 1 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             GameShell — Player mock
           </h2>
-          <div style={{ height: 320, position: 'relative', zIndex: 0, borderRadius: 'var(--pr-radius-lg)', overflow: 'hidden' }}>
+          <div style={{ height: 320, position: 'relative', zIndex: 1, borderRadius: 'var(--pr-radius-lg)', overflow: 'hidden' }}>
             <GameShell
               gameKey="survey_showdown"
               viewMode="player"
@@ -315,11 +318,11 @@ export default function ThemeLabPage() {
           </div>
         </section>
 
-        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
+        <section style={{ marginBottom: '2rem', position: 'relative', zIndex: 1 }}>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--pr-muted)' }}>
             Background scene only
           </h2>
-          <div style={{ height: 200, position: 'relative', zIndex: 0, borderRadius: 'var(--pr-radius-md)', overflow: 'hidden' }}>
+          <div style={{ height: 200, position: 'relative', zIndex: 1, borderRadius: 'var(--pr-radius-md)', overflow: 'hidden' }}>
             <BackgroundScene sceneId={sceneId} intensity={1} />
           </div>
         </section>

@@ -1084,6 +1084,31 @@ p{word-break:break-all;font-size:14px;color:#333}
               </a>
             </div>
             <p className="host-room__display-hint">Players scan the QR or use the link above. Open <strong>Display (TV)</strong> on your projector so everyone sees the code and questions.</p>
+            {(game.gameType === 'feud' || game.gameType === 'market-match' || game.gameType === 'crowd-control-trivia') && (
+              <>
+                <hr className="host-room__left-divider" />
+                <span className="host-room__link-label">Display theme</span>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '4px 0 8px' }}>TV and player screens use this look.</p>
+                <select
+                  value={eventConfig.playroomThemeId ?? 'classic'}
+                  onChange={(e) => {
+                    const v = e.target.value || 'classic';
+                    setEventConfigState((c) => ({ ...c, playroomThemeId: v }));
+                    if (socket && game?.code) {
+                      const hostToken = game.code ? localStorage.getItem(HOST_TOKEN_KEY(game.code)) : null;
+                      socket.emit('host:set-event-config', { code: game.code, hostToken, eventConfig: { ...eventConfig, playroomThemeId: v } });
+                    }
+                  }}
+                  style={{ width: '100%', padding: '8px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: 14 }}
+                >
+                  {THEME_IDS.map((id) => (
+                    <option key={id} value={id}>
+                      {id === 'classic' ? 'Classic' : id === 'prestige-retro' ? 'Prestige' : id === 'retro-studio' ? 'Retro' : id === 'retro-arcade' ? 'Retro Arcade' : id}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
             <div className="host-room__actions">
               <button type="button" onClick={() => { setGame(null); setGameStarted(false); }} className="host-room__btn-secondary">
                 End game

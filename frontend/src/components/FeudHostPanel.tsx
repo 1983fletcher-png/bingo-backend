@@ -31,10 +31,23 @@ type Props = {
   onEndSession?: () => void;
 };
 
+const IS_DEV = typeof import.meta !== 'undefined' && import.meta.env?.DEV;
+
 export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, displayUrl, onEndSession }: Props) {
   const [promptDraft, setPromptDraft] = useState(feud.prompt);
+  const [debugOpen, setDebugOpen] = useState(false);
+  const [lastEvent, setLastEvent] = useState<{ name: string; ts: number } | null>(null);
 
   const hostToken = typeof localStorage !== 'undefined' ? localStorage.getItem(HOST_TOKEN_KEY(gameCode)) : null;
+
+  useEffect(() => {
+    if (!socket || !IS_DEV) return;
+    const onFeud = () => setLastEvent({ name: 'feud:state', ts: Date.now() });
+    socket.on('feud:state', onFeud);
+    return () => {
+      socket.off('feud:state', onFeud);
+    };
+  }, [socket]);
 
   const setCheckpoint = (checkpointId: FeudCheckpointId) => {
     if (!socket) return;
@@ -90,11 +103,51 @@ export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, di
   const isCollecting = feud.checkpointId === 'R1_COLLECT';
   const canLock = isCollecting && !!socket;
 
+  const submissionCount = feud.submissions?.length ?? 0;
+  const connectionStatus = socket?.connected ? 'connected' : 'disconnected';
+
   return (
     <div className="feud-host-panel">
       <div className="feud-host-panel__phase" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
-        Phase: {phase} · Submissions: {feud.submissions?.length ?? 0}
+        Phase: {phase} · Submissions: <strong data-feud-submissions-count>{submissionCount}</strong>
       </div>
+      {IS_DEV && (
+        <div className="feud-host-panel__debug" style={{ marginBottom: 8 }}>
+          <button
+            type="button"
+            onClick={() => setDebugOpen((o) => !o)}
+            style={{ fontSize: 11, padding: '4px 8px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text-muted)', cursor: 'pointer' }}
+          >
+            {debugOpen ? 'Hide' : 'Show'} session debug
+          </button>
+          {debugOpen && (
+            <pre
+              style={{
+                marginTop: 6,
+                padding: 8,
+                fontSize: 11,
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 4,
+                color: 'var(--text)',
+                overflow: 'auto',
+                maxHeight: 120,
+              }}
+            >
+              {JSON.stringify(
+                {
+                  roomCode: gameCode,
+                  connectionStatus,
+                  submissionsCount: submissionCount,
+                  lastEvent: lastEvent ? `${lastEvent.name} @ ${new Date(lastEvent.ts).toISOString()}` : null,
+                },
+                null,
+                2
+              )}
+            </pre>
+          )}
+        </div>
+      )}
       <TransportBar
         onBack={() => setCheckpoint('STANDBY')}
         onNext={() => {

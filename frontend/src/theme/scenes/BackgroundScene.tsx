@@ -23,7 +23,7 @@ export function BackgroundScene({
 
   return (
     <div
-      className={`pr-scene pr-scene-${sceneId} ${reducedMotion ? 'pr-scene-reduced-motion' : ''} ${className}`.trim()}
+      className={`pr-scene pr-scene-layer pr-scene-${sceneId} ${reducedMotion ? 'pr-scene-reduced-motion' : ''} ${className}`.trim()}
       data-scene-id={sceneId}
       aria-hidden
       style={{ ['--pr-scene-intensity' as string]: String(opacity) }}

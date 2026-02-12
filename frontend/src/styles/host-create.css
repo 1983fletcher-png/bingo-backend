@@ -1075,22 +1075,35 @@
   list-style: none;
   margin: 0.5rem 0 0;
   padding: 0;
-  max-height: 200px;
+  max-height: 280px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .feud-host-panel__audit-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.35rem 0;
-  border-bottom: 1px solid var(--border);
+  align-items: baseline;
+  gap: 12px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: var(--surface2, rgba(0, 0, 0, 0.1));
   font-size: 0.9375rem;
+}
+
+.feud-host-panel__audit-item span:first-child {
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .feud-host-panel__audit-meta {
   font-size: 0.8125rem;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 .feud-host-panel__replay {

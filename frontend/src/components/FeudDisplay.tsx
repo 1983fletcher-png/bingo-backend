@@ -43,12 +43,19 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
   }
 
   if (checkpoint === 'R1_COLLECT') {
+    const allAnswers: { text: string; displayName?: string }[] = [];
+    (feud.submissions ?? []).forEach((s) => {
+      (s.answers ?? []).forEach((a) => {
+        const t = (a || '').trim();
+        if (t) allAnswers.push({ text: t, displayName: s.displayName });
+      });
+    });
     return (
       <div className="feud-display feud-display--collect" style={{ background: theme.bg, color: theme.text }}>
         <div className="feud-display__collect-inner">
           <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 8 }}>Phase: {phase}</p>
           <h2 className="feud-display__prompt">{feud.prompt || 'Submit your answers…'}</h2>
-          <p className="feud-display__muted" style={{ marginTop: 8, marginBottom: 16 }}>
+          <p className="feud-display__muted" style={{ marginTop: 8, marginBottom: 8 }}>
             Submissions open — answer on your phone.
           </p>
           {qrUrl && (
@@ -57,9 +64,22 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme, calmMode }
               <p className="feud-display__code">{code}</p>
             </div>
           )}
-          <p className="feud-display__muted" style={{ marginTop: 12, fontSize: '0.95rem' }}>
-            {submissionCount} submission{submissionCount !== 1 ? 's' : ''} so far
+          <p className="feud-display__muted" style={{ marginTop: 12, marginBottom: 8, fontSize: '0.95rem' }}>
+            {submissionCount} submission{submissionCount !== 1 ? 's' : ''} · {allAnswers.length} answer{allAnswers.length !== 1 ? 's' : ''} so far
           </p>
+          {allAnswers.length > 0 && (
+            <div className="feud-display__live-answers">
+              <p className="feud-display__muted" style={{ fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Answers coming in</p>
+              <ul className="feud-display__live-answers-list">
+                {allAnswers.slice(-24).map((a, i) => (
+                  <li key={`${i}-${a.text}-${a.displayName ?? ''}`} className="feud-display__live-answers-item" style={{ color: theme.text }}>
+                    {a.displayName ? <span style={{ color: theme.muted, marginRight: 6 }}>{a.displayName}:</span> : null}
+                    <span>{a.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     );

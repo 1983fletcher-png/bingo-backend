@@ -83,6 +83,37 @@
   letter-spacing: 0.15em;
 }
 
+.feud-display__live-answers {
+  width: 100%;
+  max-width: 560px;
+  max-height: 28vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.2));
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.feud-display__live-answers-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+}
+
+.feud-display__live-answers-item {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.feud-display__live-answers-item:last-child {
+  border-bottom: none;
+}
+
 .feud-display__muted {
   margin: 0;
   font-size: 1.125rem;

@@ -133,3 +133,56 @@
   --pr-duration-med: 200ms;
   --pr-duration-slow: 320ms;
 }
+
+/* -----------------------------------------------------------------------------
+   Safe baseline: decorative layers never block clicks; app content above.
+   Prevents ThemeLab / game shells from having "only top section clickable".
+   ----------------------------------------------------------------------------- */
+.pr-scene,
+.pr-scene-layer,
+.pr-scene > *,
+.pr-bg,
+.theme-scene,
+.theme-scene-layer,
+.pr-gameshell__scene,
+.pr-gameshell__scene *,
+.pr-vignette,
+.pr-noise,
+.pr-scanlines,
+.pr-lightbeams {
+  pointer-events: none !important;
+}
+
+/* Pseudo-elements used as decorative overlays must not capture clicks */
+.pr-page::before,
+.pr-page::after,
+.pr-gameshell::before,
+.pr-gameshell::after,
+.pr-scene::before,
+.pr-scene::after {
+  pointer-events: none !important;
+}
+
+.pr-app,
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* Theme/scene/motion variants for stage and scene layer (optional overrides) */
+[data-theme="retro-arcade"] .pr-stage {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--pr-glow) 25%, transparent);
+}
+[data-theme="prestige"] .pr-stage {
+  border-color: var(--pr-border);
+}
+[data-scene="arcadeCarpet"] .pr-scene-layer {
+  background: var(--pr-scene-bg);
+}
+[data-scene="mountains"] .pr-scene-layer {
+  background: var(--pr-scene-bg);
+}
+[data-motion="high-energy"] .pr-reveal,
+[data-motion="high-energy"] [class*="reveal"] {
+  transition-duration: var(--pr-duration-fast);
+}

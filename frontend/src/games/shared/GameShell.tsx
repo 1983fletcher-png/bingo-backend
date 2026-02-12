@@ -82,19 +82,21 @@ export function GameShell({
 
   return (
     <div
-      className={`pr-gameshell pr-gameshell--${viewMode} ${className}`.trim()}
+      className={`pr-app pr-gameshell pr-gameshell--${viewMode} ${className}`.trim()}
       data-game={gameKey}
       data-view={viewMode}
       data-pr-theme={themeId}
       data-pr-motion={motionLevel}
       style={themeStyle}
     >
-      <BackgroundScene
-        sceneId={sceneId}
-        intensity={1}
-        reducedMotion={reducedMotion}
-        className="pr-gameshell__scene"
-      />
+      <div className="pr-scene-layer" aria-hidden>
+        <BackgroundScene
+          sceneId={sceneId}
+          intensity={1}
+          reducedMotion={reducedMotion}
+          className="pr-gameshell__scene"
+        />
+      </div>
       <div className="pr-gameshell__chrome">
         <header className="pr-gameshell__header">
           <div className="pr-gameshell__header-left">

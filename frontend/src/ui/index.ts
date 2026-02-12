@@ -6,3 +6,5 @@ export { Panel } from './Panel';
 export type { PanelProps, PanelVariant } from './Panel';
 export { Input } from './Input';
 export type { InputProps } from './Input';
+export { GameShell } from './GameShell';
+export type { GameShellProps, ViewMode, FooterVariant } from './GameShell';

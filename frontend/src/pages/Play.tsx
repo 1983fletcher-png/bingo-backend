@@ -11,37 +11,11 @@ import type { Socket } from 'socket.io-client';
 import { TimerPill } from '../components/trivia-room';
 import { StandbyCard } from '../components/StandbyCard';
 import { GameShell } from '../games/shared/GameShell';
+import type { ThemeId } from '../theme/theme.types';
 import { getMarketMatchItem } from '../data/marketMatchDataset';
 import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
+import { FeudPlayerForm } from '../components/FeudPlayerForm';
 import '../styles/join.css';
-
-/**
- * Feud player: 1–3 short phrase answers, submit.
- */
-function FeudPlayerForm({ code, socket }: { code: string; socket: Socket | null }) {
-  const [a1, setA1] = useState('');
-  const [a2, setA2] = useState('');
-  const [a3, setA3] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const answers = [a1.trim(), a2.trim(), a3.trim()].filter(Boolean);
-    if (!socket || answers.length === 0) return;
-    socket.emit('feud:submit', { code: code.toUpperCase(), answers });
-    setSubmitted(true);
-  };
-  if (submitted) {
-    return <p style={{ margin: 0, color: 'var(--text-muted)', fontWeight: 500 }}>Thanks! Your answers are in.</p>;
-  }
-  return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <input type="text" className="join-page__input" placeholder="Answer 1" value={a1} onChange={(e) => setA1(e.target.value)} autoComplete="off" />
-      <input type="text" className="join-page__input" placeholder="Answer 2 (optional)" value={a2} onChange={(e) => setA2(e.target.value)} autoComplete="off" />
-      <input type="text" className="join-page__input" placeholder="Answer 3 (optional)" value={a3} onChange={(e) => setA3(e.target.value)} autoComplete="off" />
-      <button type="submit" className="join-page__btn" disabled={!a1.trim()}>Submit</button>
-    </form>
-  );
-}
 
 /**
  * Trivia player view: current question, multiple choice or text answer, then correct answer when revealed.
@@ -563,6 +537,9 @@ export default function Play() {
     gameType === 'feud' &&
     joinState?.feud &&
     joinState.feud.checkpointId !== 'STANDBY';
+  const sessionThemeId = (joinState?.eventConfig?.playroomThemeId && ['classic', 'prestige-retro', 'retro-studio', 'retro-arcade'].includes(joinState.eventConfig.playroomThemeId))
+    ? (joinState.eventConfig.playroomThemeId as ThemeId)
+    : undefined;
   if (gameType === 'feud' && joinState?.feud && (joinState.started || feudRoundActive)) {
     const feud = joinState.feud;
     const canSubmit = !feud.locked && (feud.checkpointId === 'R1_COLLECT' || feud.checkpointId === 'R1_TITLE');
@@ -571,6 +548,7 @@ export default function Play() {
         gameKey="survey_showdown"
         viewMode="player"
         title="Survey Showdown"
+        themeId={sessionThemeId}
         subtitle={feud.prompt ? undefined : 'Submit your answers'}
         mainSlot={
           <div style={{ maxWidth: 420, margin: '0 auto', padding: 24 }}>
@@ -589,7 +567,121 @@ export default function Play() {
     );
   }
 
-  // Waiting room: show until host starts (skip for feud when round already active — handled above)
+  // Market Match: show game view when we have state (host may not use Waiting room tab)
+  if (gameType === 'market-match' && joinState?.marketMatch) {
+    const item = getMarketMatchItem(joinState.marketMatch.currentIndex ?? 0);
+    const revealed = joinState.marketMatch.revealed === true;
+    return (
+      <GameShell
+        gameKey="market_match"
+        viewMode="player"
+        title="Market Match"
+        themeId={sessionThemeId}
+        subtitle={item ? `What did it cost in ${item.year}?` : undefined}
+        mainSlot={
+          <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
+            {item ? (
+              <>
+                <h2 style={{ margin: '0 0 12px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>
+                  {item.title}
+                </h2>
+                <p style={{ margin: 0, color: 'var(--pr-muted)' }}>
+                  What did it cost in {item.year}? ({item.unit})
+                </p>
+                {revealed ? (
+                  <p style={{ marginTop: 16, padding: 12, background: 'var(--pr-surface2)', borderRadius: 8, fontWeight: 600, color: 'var(--pr-brand)' }}>
+                    ${item.priceUsd.toFixed(2)} {item.unit}
+                  </p>
+                ) : (
+                  <p style={{ marginTop: 16, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>
+                )}
+              </>
+            ) : (
+              <p style={{ color: 'var(--pr-muted)' }}>Host will pick an item.</p>
+            )}
+          </div>
+        }
+        footerVariant="minimal"
+      />
+    );
+  }
+
+  // Crowd Control Trivia: show game view when we have state (host may not use Waiting room tab); full vote + question UI
+  if (gameType === 'crowd-control-trivia' && joinState?.crowdControl) {
+    const cct = joinState.crowdControl;
+    const phase = cct.phase ?? 'board';
+    const board = getBoard(cct.boardId ?? 0);
+    const question = getQuestion(cct.currentQuestionId ?? null);
+    const revealed = cct.revealed === true;
+    const vote = (categoryIndex: number) => {
+      if (socket && code) socket.emit('cct:vote', { code: code.toUpperCase(), categoryIndex });
+    };
+    return (
+      <GameShell
+        gameKey="crowd_control_trivia"
+        viewMode="player"
+        title="Crowd Control Trivia"
+        themeId={sessionThemeId}
+        subtitle={phase === 'vote' ? 'Pick the next category' : phase === 'question' || phase === 'reveal' ? (question?.prompt ? 'Answer on screen' : undefined) : undefined}
+        mainSlot={
+          <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
+            {phase === 'vote' && board && (
+              <>
+                <p style={{ margin: '0 0 16px', fontSize: 15, color: 'var(--pr-text)' }}>Vote for the next category:</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {(board.categories ?? []).map((cat, i) => {
+                    const used = (cct.usedSlots ?? [0,0,0,0,0,0])[i] ?? 0;
+                    const disabled = used >= 5;
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        className="join-page__btn"
+                        onClick={() => vote(i)}
+                        disabled={disabled}
+                        style={{ width: '100%' }}
+                      >
+                        {cat} {disabled ? '(done)' : `(${cct.voteCounts?.[i] ?? 0} votes)`}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            {(phase === 'question' || phase === 'reveal') && question && (
+              <>
+                <h2 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 600, color: 'var(--pr-text)' }}>
+                  {question.prompt}
+                </h2>
+                {!revealed && question.options && question.options.length > 0 && (
+                  <ul style={{ margin: '0 0 16px', paddingLeft: 20 }}>
+                    {question.options.map((opt, i) => (
+                      <li key={i} style={{ marginBottom: 6 }}>{opt}</li>
+                    ))}
+                  </ul>
+                )}
+                {!revealed && <p style={{ margin: 0, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>}
+                {revealed && (
+                  <div style={{ marginTop: 16, padding: 16, background: 'var(--pr-surface2)', borderRadius: 8 }}>
+                    <p style={{ margin: 0, fontWeight: 600, color: 'var(--pr-brand)' }}>{question.correctAnswer}</p>
+                    {question.explanation && (
+                      <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--pr-muted)' }}>{question.explanation}</p>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+            {phase === 'board' && (
+              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to open category vote.</p>
+            )}
+          </div>
+        }
+        footerVariant="minimal"
+      />
+    );
+  }
+
+  // Waiting room: show until host starts (skip for feud / market-match / crowd-control when already in game — handled above)
   if (joinState && !joinState.started) {
     return (
       <WaitingRoomView
@@ -664,6 +756,7 @@ export default function Play() {
         gameKey="crowd_control_trivia"
         viewMode="player"
         title={joinState?.eventConfig?.gameTitle || gameTypeLabel}
+        themeId={sessionThemeId}
         subtitle={`Question ${currentIndex + 1} of ${questions.length || 1}`}
         mainSlot={
           <TriviaPlayerView
@@ -690,118 +783,6 @@ export default function Play() {
     );
   }
 
-  // Market Match: price-guessing player view
-  if (gameType === 'market-match' && joinState?.marketMatch) {
-    const item = getMarketMatchItem(joinState.marketMatch.currentIndex ?? 0);
-    const revealed = joinState.marketMatch.revealed === true;
-    return (
-      <GameShell
-        gameKey="market_match"
-        viewMode="player"
-        title="Market Match"
-        subtitle={item ? `What did it cost in ${item.year}?` : undefined}
-        mainSlot={
-          <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
-            {item ? (
-              <>
-                <h2 style={{ margin: '0 0 12px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>
-                  {item.title}
-                </h2>
-                <p style={{ margin: 0, color: 'var(--pr-muted)' }}>
-                  What did it cost in {item.year}? ({item.unit})
-                </p>
-                {revealed ? (
-                  <p style={{ marginTop: 16, padding: 12, background: 'var(--pr-surface2)', borderRadius: 8, fontWeight: 600, color: 'var(--pr-brand)' }}>
-                    ${item.priceUsd.toFixed(2)} {item.unit}
-                  </p>
-                ) : (
-                  <p style={{ marginTop: 16, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>
-                )}
-              </>
-            ) : (
-              <p style={{ color: 'var(--pr-muted)' }}>Host will pick an item.</p>
-            )}
-          </div>
-        }
-        footerVariant="minimal"
-      />
-    );
-  }
-
-  // Crowd Control Trivia: vote for category, then see question / reveal
-  if (gameType === 'crowd-control-trivia' && joinState?.crowdControl) {
-    const cct = joinState.crowdControl;
-    const phase = cct.phase ?? 'board';
-    const board = getBoard(cct.boardId ?? 0);
-    const question = getQuestion(cct.currentQuestionId ?? null);
-    const revealed = cct.revealed === true;
-    const vote = (categoryIndex: number) => {
-      if (socket && code) socket.emit('cct:vote', { code: code.toUpperCase(), categoryIndex });
-    };
-    return (
-      <GameShell
-        gameKey="crowd_control_trivia"
-        viewMode="player"
-        title="Crowd Control Trivia"
-        subtitle={phase === 'vote' ? 'Pick the next category' : phase === 'question' || phase === 'reveal' ? (question?.prompt ? 'Answer on screen' : undefined) : undefined}
-        mainSlot={
-          <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
-            {phase === 'vote' && board && (
-              <>
-                <p style={{ margin: '0 0 16px', fontSize: 15, color: 'var(--pr-text)' }}>Vote for the next category:</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {(board.categories ?? []).map((cat, i) => {
-                    const used = (cct.usedSlots ?? [0,0,0,0,0,0])[i] ?? 0;
-                    const disabled = used >= 5;
-                    return (
-                      <button
-                        key={i}
-                        type="button"
-                        className="join-page__btn"
-                        onClick={() => vote(i)}
-                        disabled={disabled}
-                        style={{ width: '100%' }}
-                      >
-                        {cat} {disabled ? '(done)' : `(${cct.voteCounts?.[i] ?? 0} votes)`}
-                      </button>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-            {(phase === 'question' || phase === 'reveal') && question && (
-              <>
-                <h2 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 600, color: 'var(--pr-text)' }}>
-                  {question.prompt}
-                </h2>
-                {!revealed && question.options && question.options.length > 0 && (
-                  <ul style={{ margin: '0 0 16px', paddingLeft: 20 }}>
-                    {question.options.map((opt, i) => (
-                      <li key={i} style={{ marginBottom: 6 }}>{opt}</li>
-                    ))}
-                  </ul>
-                )}
-                {!revealed && <p style={{ margin: 0, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>}
-                {revealed && (
-                  <div style={{ marginTop: 16, padding: 16, background: 'var(--pr-surface2)', borderRadius: 8 }}>
-                    <p style={{ margin: 0, fontWeight: 600, color: 'var(--pr-brand)' }}>{question.correctAnswer}</p>
-                    {question.explanation && (
-                      <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--pr-muted)' }}>{question.explanation}</p>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-            {phase === 'board' && (
-              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to open category vote.</p>
-            )}
-          </div>
-        }
-        footerVariant="minimal"
-      />
-    );
-  }
-
   // Estimation Show / Category Grid: placeholder
   if (gameType === 'estimation' || gameType === 'jeopardy') {
     const title = gameType === 'estimation' ? 'Estimation Show' : 'Category Grid';
@@ -810,6 +791,7 @@ export default function Play() {
         gameKey="market_match"
         viewMode="player"
         title={title}
+        themeId={sessionThemeId}
         mainSlot={
           <div style={{ padding: 24, textAlign: 'center' }}>
             <h2 style={{ margin: '0 0 8px', color: 'var(--pr-text)' }}>{title}</h2>
