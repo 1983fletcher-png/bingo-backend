@@ -69,6 +69,7 @@ export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, di
   const reveal = (index: number) => {
     if (!socket) return;
     socket.emit('feud:reveal', { code: gameCode, hostToken, index });
+    socket.emit('feud:set-checkpoint', { code: gameCode, hostToken, checkpointId: `R1_BOARD_${index}` as FeudCheckpointId });
   };
 
   const strike = (index: number) => {

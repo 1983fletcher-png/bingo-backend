@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { getSocket } from '../lib/socket';
+import { getSocket, getSocketBackendLabel, isBackendUrlSet } from '../lib/socket';
 import { TimerPill } from '../components/trivia-room';
 import { FeudDisplay } from '../components/FeudDisplay';
 import type { FeudState } from '../types/feud';
@@ -190,6 +190,31 @@ export default function Display() {
           <h1 style={{ marginBottom: 8 }}>Game not found</h1>
           <p style={{ color: theme.muted }}>{error}</p>
           <p style={{ fontSize: 14, marginTop: 16 }}>Check the room code and try again.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Waiting for display:ok (e.g. socket not connected to backend) — show clear connecting state so it's not a "basic" blank screen
+  const hasCode = !!code?.trim();
+  const waitingForBackend = hasCode && !joinUrl && !eventTitle && !started && songPool.length === 0;
+  if (waitingForBackend) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: theme.bg, color: theme.text, padding: 24 }}>
+        <div style={{ textAlign: 'center', maxWidth: 420 }}>
+          <h1 style={{ marginBottom: 12, fontFamily: 'var(--pr-font-display)' }}>Connecting to game…</h1>
+          <p style={{ color: theme.muted, marginBottom: 8 }}>Room code: <strong>{code?.toUpperCase()}</strong></p>
+          <p style={{ fontSize: 14, color: theme.muted }}>
+            If this doesn’t update, the host may not have created the game yet, or the app may not be connected to the backend.
+          </p>
+          {!isBackendUrlSet() && (
+            <p style={{ fontSize: 13, color: 'var(--warning, #f6ad55)', marginTop: 16 }}>
+              Set <strong>VITE_SOCKET_URL</strong> in Netlify to your Railway backend URL and redeploy so the display can connect.
+            </p>
+          )}
+          {isBackendUrlSet() && (
+            <p style={{ fontSize: 12, color: theme.muted, marginTop: 16 }}>This build connects to: {getSocketBackendLabel()}</p>
+          )}
         </div>
       </div>
     );

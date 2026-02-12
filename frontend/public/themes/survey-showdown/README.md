@@ -2,9 +2,11 @@
 
 The app uses a **2-layer system**: (1) frame-only art, (2) live UI tiles. Do **not** use images that contain sample answers or point values.
 
-**Required frame-only PNGs:**
+**Required frame-only PNGs (exact filenames; case-sensitive):**
 - **survey-showdown-tv-frame.png** — 16:9. Logos, lights, gradients, background texture only. No answer text, no numbers.
 - **survey-showdown-player-frame.png** — Phone aspect. Same: frame only, no answers/numbers.
+
+These paths are used by `surveyShowdownConstants.ts`. In dev tools Network tab, both should return 200 (not 404). If you have different filenames (e.g. tv-display.png), rename or copy to the names above.
 
 Optional: very subtle empty slot outlines in the art (recommended: draw slot boxes in UI via `SurveyShowdownBoard` + `SurveyShowdownTile`).
 

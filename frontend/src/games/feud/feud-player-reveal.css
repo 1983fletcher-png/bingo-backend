@@ -23,3 +23,13 @@
   flex: 1 1 auto;
   min-height: 0;
 }
+
+.feud-player-reveal__hud {
+  flex: 0 0 auto;
+  padding: clamp(6px, 1vw, 10px);
+}
+
+.feud-player-reveal__boardWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+}

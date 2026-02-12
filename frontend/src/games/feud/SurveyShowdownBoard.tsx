@@ -46,7 +46,7 @@ export function SurveyShowdownBoard({ feud, variant }: SurveyShowdownBoardProps)
       data-debug={debug ? 'true' : undefined}
     >
       {items.map((item, i) => {
-        const revealed = typeof item.revealed === 'boolean' ? item.revealed : i < revealedCount;
+        const revealed = item.revealed === true || i < revealedCount;
         return (
           <SurveyShowdownTile
             key={i}

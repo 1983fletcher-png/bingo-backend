@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import '../styles/host-create.css';
 import '../styles/transport-bar.css';
-import { getSocket } from '../lib/socket';
+import { getSocket, getSocketBackendLabel } from '../lib/socket';
 import { TransportBar } from '../components/TransportBar';
 import { FeudHostPanel } from '../components/FeudHostPanel';
 import { MarketMatchHostPanel } from '../components/MarketMatchHostPanel';
@@ -767,9 +767,13 @@ export default function Host() {
             )}
           </>
         )}
-        {!BACKEND_CONFIGURED && (
-          <p style={{ fontSize: 11, color: '#f6ad55', marginBottom: 8 }}>
-            ⚠ Set VITE_SOCKET_URL in Netlify and redeploy for production.
+        {BACKEND_CONFIGURED ? (
+          <p style={{ fontSize: 11, color: 'var(--text-muted, #94a3b8)', marginBottom: 8 }}>
+            This build connects to: <strong>{getSocketBackendLabel()}</strong>
+          </p>
+        ) : (
+          <p style={{ fontSize: 12, color: '#f6ad55', marginBottom: 8, padding: 8, background: 'rgba(246,173,85,0.15)', borderRadius: 8 }}>
+            ⚠ Backend URL not set. Set <strong>VITE_SOCKET_URL</strong> in Netlify to your Railway URL (e.g. https://your-app.up.railway.app) and <strong>Clear cache and deploy site</strong> so the app can connect.
           </p>
         )}
         <div className="host-create__progress" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={3} aria-label="Creation progress">

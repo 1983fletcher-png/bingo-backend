@@ -14,9 +14,13 @@ type Props = {
 export function FeudPlayerReveal({ feud }: Props) {
   return (
     <div className="feud-player-reveal">
-      <p className="feud-player-reveal__prompt">{feud.prompt || 'Top answers'}</p>
       <SurveyShowdownFrame variant="player">
-        <SurveyShowdownBoard variant="player" feud={feud} />
+        <div className="feud-player-reveal__hud">
+          <p className="feud-player-reveal__prompt">{feud.prompt || 'Top answers'}</p>
+        </div>
+        <div className="feud-player-reveal__boardWrap">
+          <SurveyShowdownBoard variant="player" feud={feud} />
+        </div>
       </SurveyShowdownFrame>
     </div>
   );
