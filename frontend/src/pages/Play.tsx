@@ -10,7 +10,7 @@ import type { Song } from '../types/game';
 import type { Socket } from 'socket.io-client';
 import { TimerPill } from '../components/trivia-room';
 import { StandbyCard } from '../components/StandbyCard';
-import { GameShell } from '../games/shared/GameShell';
+import { GameShell } from '../components/GameShell';
 import type { ThemeId } from '../theme/theme.types';
 import { getMarketMatchItem } from '../data/marketMatchDataset';
 import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
@@ -548,24 +548,23 @@ export default function Play() {
     return (
       <GameShell
         gameKey="survey_showdown"
-        viewMode="player"
+        variant="player"
         title="Survey Showdown"
-        themeId={sessionThemeId}
         subtitle={feud.prompt ? undefined : 'Submit your answers'}
-        mainSlot={
-          <div style={{ maxWidth: 420, margin: '0 auto', padding: 24 }}>
-            <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
-            {feud.locked ? (
-              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Answers are locked. Watch the screen for the reveal!</p>
-            ) : canSubmit ? (
-              <FeudPlayerForm code={code!} socket={socket} />
-            ) : (
-              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
-            )}
-          </div>
-        }
-        footerVariant="minimal"
-      />
+        code={code ?? undefined}
+        themeId={sessionThemeId}
+      >
+        <div style={{ maxWidth: 420, margin: '0 auto', padding: 24 }}>
+          <h2 style={{ margin: '0 0 16px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
+          {feud.locked ? (
+            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Answers are locked. Watch the screen for the reveal!</p>
+          ) : canSubmit ? (
+            <FeudPlayerForm code={code!} socket={socket} />
+          ) : (
+            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
+          )}
+        </div>
+      </GameShell>
     );
   }
 
@@ -576,35 +575,34 @@ export default function Play() {
     return (
       <GameShell
         gameKey="market_match"
-        viewMode="player"
+        variant="player"
         title="Market Match"
-        themeId={sessionThemeId}
         subtitle={item ? `What did it cost in ${item.year}?` : undefined}
-        mainSlot={
-          <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
-            {item ? (
-              <>
-                <h2 style={{ margin: '0 0 12px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>
-                  {item.title}
-                </h2>
-                <p style={{ margin: 0, color: 'var(--pr-muted)' }}>
-                  What did it cost in {item.year}? ({item.unit})
+        code={code ?? undefined}
+        themeId={sessionThemeId}
+      >
+        <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
+          {item ? (
+            <>
+              <h2 style={{ margin: '0 0 12px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>
+                {item.title}
+              </h2>
+              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>
+                What did it cost in {item.year}? ({item.unit})
+              </p>
+              {revealed ? (
+                <p style={{ marginTop: 16, padding: 12, background: 'var(--pr-surface2)', borderRadius: 8, fontWeight: 600, color: 'var(--pr-brand)' }}>
+                  ${item.priceUsd.toFixed(2)} {item.unit}
                 </p>
-                {revealed ? (
-                  <p style={{ marginTop: 16, padding: 12, background: 'var(--pr-surface2)', borderRadius: 8, fontWeight: 600, color: 'var(--pr-brand)' }}>
-                    ${item.priceUsd.toFixed(2)} {item.unit}
-                  </p>
-                ) : (
-                  <p style={{ marginTop: 16, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>
-                )}
-              </>
-            ) : (
-              <p style={{ color: 'var(--pr-muted)' }}>Host will pick an item.</p>
-            )}
-          </div>
-        }
-        footerVariant="minimal"
-      />
+              ) : (
+                <p style={{ marginTop: 16, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>
+              )}
+            </>
+          ) : (
+            <p style={{ color: 'var(--pr-muted)' }}>Host will pick an item.</p>
+          )}
+        </div>
+      </GameShell>
     );
   }
 
@@ -621,13 +619,14 @@ export default function Play() {
     return (
       <GameShell
         gameKey="crowd_control_trivia"
-        viewMode="player"
+        variant="player"
         title="Crowd Control Trivia"
-        themeId={sessionThemeId}
         subtitle={phase === 'vote' ? 'Pick the next category' : phase === 'question' || phase === 'reveal' ? (question?.prompt ? 'Answer on screen' : undefined) : undefined}
-        mainSlot={
-          <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
-            {phase === 'vote' && board && (
+        code={code ?? undefined}
+        themeId={sessionThemeId}
+      >
+        <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
+          {phase === 'vote' && board && (
               <>
                 <p style={{ margin: '0 0 16px', fontSize: 15, color: 'var(--pr-text)' }}>Vote for the next category:</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -673,13 +672,11 @@ export default function Play() {
                 )}
               </>
             )}
-            {phase === 'board' && (
-              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to open category vote.</p>
-            )}
-          </div>
-        }
-        footerVariant="minimal"
-      />
+          {phase === 'board' && (
+            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to open category vote.</p>
+          )}
+        </div>
+      </GameShell>
     );
   }
 
@@ -756,32 +753,31 @@ export default function Play() {
     return (
       <GameShell
         gameKey="crowd_control_trivia"
-        viewMode="player"
+        variant="player"
         title={joinState?.eventConfig?.gameTitle || gameTypeLabel}
-        themeId={sessionThemeId}
         subtitle={`Question ${currentIndex + 1} of ${questions.length || 1}`}
-        mainSlot={
-          <TriviaPlayerView
-            eventConfig={joinState.eventConfig}
-            gameTitle={joinState?.eventConfig?.gameTitle || gameTypeLabel}
-            gameTypeLabel={gameTypeLabel}
-            currentIndex={currentIndex}
-            totalQuestions={questions.length}
-            currentQuestion={currentQ?.question}
-            correctAnswer={currentQ?.correctAnswer}
-            options={currentQ?.options}
-            revealed={revealed}
-            socket={socket}
-            code={code ?? ''}
-            questionStartAt={trivia?.questionStartAt}
-            timeLimitSec={trivia?.timeLimitSec}
-            leaderboardsVisibleToPlayers={trivia?.settings?.leaderboardsVisibleToPlayers !== false}
-            scores={trivia?.scores}
-            finalWagerEnabled={trivia?.finalWagerEnabled === true}
-          />
-        }
-        footerVariant="minimal"
-      />
+        code={code ?? undefined}
+        themeId={sessionThemeId}
+      >
+        <TriviaPlayerView
+          eventConfig={joinState.eventConfig}
+          gameTitle={joinState?.eventConfig?.gameTitle || gameTypeLabel}
+          gameTypeLabel={gameTypeLabel}
+          currentIndex={currentIndex}
+          totalQuestions={questions.length}
+          currentQuestion={currentQ?.question}
+          correctAnswer={currentQ?.correctAnswer}
+          options={currentQ?.options}
+          revealed={revealed}
+          socket={socket}
+          code={code ?? ''}
+          questionStartAt={trivia?.questionStartAt}
+          timeLimitSec={trivia?.timeLimitSec}
+          leaderboardsVisibleToPlayers={trivia?.settings?.leaderboardsVisibleToPlayers !== false}
+          scores={trivia?.scores}
+          finalWagerEnabled={trivia?.finalWagerEnabled === true}
+        />
+      </GameShell>
     );
   }
 
@@ -791,17 +787,16 @@ export default function Play() {
     return (
       <GameShell
         gameKey="market_match"
-        viewMode="player"
+        variant="player"
         title={title}
+        code={code ?? undefined}
         themeId={sessionThemeId}
-        mainSlot={
-          <div style={{ padding: 24, textAlign: 'center' }}>
-            <h2 style={{ margin: '0 0 8px', color: 'var(--pr-text)' }}>{title}</h2>
-            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>This game type is coming soon. You are in the room; full gameplay will be available in a future update.</p>
-          </div>
-        }
-        footerVariant="minimal"
-      />
+      >
+        <div style={{ padding: 24, textAlign: 'center' }}>
+          <h2 style={{ margin: '0 0 8px', color: 'var(--pr-text)' }}>{title}</h2>
+          <p style={{ margin: 0, color: 'var(--pr-muted)' }}>This game type is coming soon. You are in the room; full gameplay will be available in a future update.</p>
+        </div>
+      </GameShell>
     );
   }
 

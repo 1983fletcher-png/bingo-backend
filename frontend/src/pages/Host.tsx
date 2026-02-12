@@ -7,7 +7,7 @@ import { TransportBar } from '../components/TransportBar';
 import { FeudHostPanel } from '../components/FeudHostPanel';
 import { MarketMatchHostPanel } from '../components/MarketMatchHostPanel';
 import { CrowdControlHostPanel } from '../components/CrowdControlHostPanel';
-import { GameShell } from '../games/shared/GameShell';
+import { GameShell } from '../components/GameShell';
 import { DEFAULT_FEUD_STATE } from '../types/feud';
 import type { FeudState } from '../types/feud';
 import HostSongGrid from '../components/HostSongGrid';
@@ -1160,57 +1160,57 @@ p{word-break:break-all;font-size:14px;color:#333}
         ) : game.gameType === 'market-match' ? (
           <GameShell
             gameKey="market_match"
-            viewMode="host"
             title="Market Match"
-            mainSlot={
-              <MarketMatchHostPanel
-                gameCode={game.code}
-                hostToken={game.hostToken ?? null}
-                marketMatch={game.marketMatch ?? { currentIndex: 0, revealed: false }}
-                socket={socket}
-                joinUrl={joinUrlForQR}
-                displayUrl={displayUrl}
-                onEndSession={() => navigate('/activity')}
-              />
-            }
+            code={game.code}
+            variant="host"
             footerVariant="minimal"
-          />
+          >
+            <MarketMatchHostPanel
+              gameCode={game.code}
+              hostToken={game.hostToken ?? null}
+              marketMatch={game.marketMatch ?? { currentIndex: 0, revealed: false }}
+              socket={socket}
+              joinUrl={joinUrlForQR}
+              displayUrl={displayUrl}
+              onEndSession={() => navigate('/activity')}
+            />
+          </GameShell>
         ) : game.gameType === 'crowd-control-trivia' ? (
           <GameShell
             gameKey="crowd_control_trivia"
-            viewMode="host"
             title="Crowd Control Trivia"
-            mainSlot={
-              <CrowdControlHostPanel
-                gameCode={game.code}
-                hostToken={game.hostToken ?? null}
-                crowdControl={game.crowdControl ?? { boardId: 0, usedSlots: [0,0,0,0,0,0], phase: 'board', voteCounts: [0,0,0,0,0,0], winningCategoryIndex: null, currentValueIndex: null, currentQuestionId: null, revealed: false }}
-                socket={socket}
-                joinUrl={joinUrlForQR}
-                displayUrl={displayUrl}
-                onEndSession={() => navigate('/activity')}
-              />
-            }
+            code={game.code}
+            variant="host"
             footerVariant="minimal"
-          />
+          >
+            <CrowdControlHostPanel
+              gameCode={game.code}
+              hostToken={game.hostToken ?? null}
+              crowdControl={game.crowdControl ?? { boardId: 0, usedSlots: [0,0,0,0,0,0], phase: 'board', voteCounts: [0,0,0,0,0,0], winningCategoryIndex: null, currentValueIndex: null, currentQuestionId: null, revealed: false }}
+              socket={socket}
+              joinUrl={joinUrlForQR}
+              displayUrl={displayUrl}
+              onEndSession={() => navigate('/activity')}
+            />
+          </GameShell>
         ) : game.gameType === 'feud' ? (
           <GameShell
             gameKey="survey_showdown"
-            viewMode="host"
             title="Survey Showdown"
-            mainSlot={
-              <FeudHostPanel
-                gameCode={game.code}
-                feud={game.feud ?? DEFAULT_FEUD_STATE}
-                onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
-                socket={socket}
-                joinUrl={joinUrlForQR}
-                displayUrl={displayUrl}
-                onEndSession={() => navigate('/activity')}
-              />
-            }
+            code={game.code}
+            variant="host"
             footerVariant="minimal"
-          />
+          >
+            <FeudHostPanel
+              gameCode={game.code}
+              feud={game.feud ?? DEFAULT_FEUD_STATE}
+              onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
+              socket={socket}
+              joinUrl={joinUrlForQR}
+              displayUrl={displayUrl}
+              onEndSession={() => navigate('/activity')}
+            />
+          </GameShell>
         ) : (
         <>
         <div className="host-room__tabs">

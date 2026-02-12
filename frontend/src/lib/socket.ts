@@ -1,53 +1,24 @@
-import { io, type Socket } from 'socket.io-client';
+/**
+ * Socket client — single source. Re-exports from realtime/socketClient so the app
+ * uses one singleton and has joinRoom for players.
+ */
+import { getSocket as getSocketImpl, getSocketUrl, joinRoom as joinRoomImpl } from '../realtime/socketClient';
+import type { Socket } from 'socket.io-client';
 
-// Same backend URL as API: VITE_SOCKET_URL || VITE_API_URL || dev proxy / origin (see docs/FRONTEND-BACKEND-LINKING.md)
-function getSocketUrl(): string {
-  const raw =
-    import.meta.env.VITE_SOCKET_URL ||
-    import.meta.env.VITE_API_URL ||
-    (import.meta.env.DEV ? '' : window.location.origin);
-  if (!raw || typeof raw !== 'string') return window.location.origin;
-  const trimmed = raw.trim().replace(/\/+$/, '');
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
-  return `https://${trimmed}`;
+export const getSocket = getSocketImpl;
+
+/** Join a game room as player (emits player:join). Use after getSocket() when code + name are ready. */
+export function joinRoom(
+  socket: Socket,
+  opts: { code: string; role: 'player'; name: string }
+): void {
+  joinRoomImpl(socket, opts);
 }
 
-const url = getSocketUrl();
-
-let socketInstance: Socket | null = null;
-
-/** Single shared socket for the app. Prevents multiple connections and browser freeze. */
-export function getSocket(): Socket {
-  if (!socketInstance) {
-    socketInstance = io(url, {
-      path: '/socket.io',
-      transports: ['polling', 'websocket'],
-      // Limit reconnection attempts to prevent infinite retries and browser freezing
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      timeout: 20000,
-      // Don't auto-connect if initial connection fails immediately
-      autoConnect: true,
-    });
-    
-    // Add error handler to prevent silent failures
-    socketInstance.on('connect_error', (error) => {
-      console.warn('Socket connection error:', error.message);
-    });
-    
-    socketInstance.on('reconnect_failed', () => {
-      console.warn('Socket reconnection failed after maximum attempts');
-    });
-  }
-  return socketInstance;
-}
-
-/** For debug/status: hostname we connect to (so user can verify build has correct backend). */
+/** For debug/status: hostname we connect to. */
 export function getSocketBackendLabel(): string {
   try {
-    return new URL(url).hostname;
+    return new URL(getSocketUrl()).hostname;
   } catch {
     return typeof window !== 'undefined' ? window.location.hostname : 'unknown';
   }
