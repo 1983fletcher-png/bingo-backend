@@ -4,6 +4,7 @@ import { getSocket } from '../lib/socket';
 import { TimerPill } from '../components/trivia-room';
 import { FeudDisplay } from '../components/FeudDisplay';
 import type { FeudState } from '../types/feud';
+import { DEFAULT_FEUD_STATE } from '../types/feud';
 import type { Song } from '../types/game';
 import { getActivityTheme } from '../types/themes';
 import { songKey } from '../types/game';
@@ -54,6 +55,8 @@ type DisplayEventConfig = {
   instagramUrl?: string;
   /** Activity Room display theme: classic | calm | corporate */
   displayThemeId?: string;
+  /** Playroom skin for GameShell: classic | prestige-retro | retro-studio | retro-arcade */
+  playroomThemeId?: string;
 };
 
 export default function Display() {
@@ -170,6 +173,9 @@ export default function Display() {
 
   const activityTheme = getActivityTheme(eventConfig?.displayThemeId, darkMode);
   const { calmMode, ...theme } = activityTheme;
+  const displayPlayroomThemeId = (eventConfig?.playroomThemeId && ['classic', 'prestige-retro', 'retro-studio', 'retro-arcade'].includes(eventConfig.playroomThemeId))
+    ? eventConfig.playroomThemeId as 'classic' | 'prestige-retro' | 'retro-studio' | 'retro-arcade'
+    : undefined;
 
   if (error) {
     return (
@@ -199,6 +205,7 @@ export default function Display() {
       <GameShell
         gameKey="market_match"
         viewMode="display"
+        themeId={displayPlayroomThemeId}
         title={eventConfig?.gameTitle || eventTitle || 'Market Match'}
         subtitle={item ? `What did this cost in ${item.year}?` : undefined}
         headerRightSlot={code ? <span style={{ fontFamily: 'var(--pr-font-display)', letterSpacing: '0.1em' }}>{code.toUpperCase()}</span> : undefined}
@@ -246,6 +253,7 @@ export default function Display() {
       <GameShell
         gameKey="crowd_control_trivia"
         viewMode="display"
+        themeId={displayPlayroomThemeId}
         title={eventConfig?.gameTitle || eventTitle || 'Crowd Control Trivia'}
         subtitle={phase === 'vote' ? 'Vote for a category!' : board?.name}
         headerRightSlot={code ? <span style={{ fontFamily: 'var(--pr-font-display)', letterSpacing: '0.1em' }}>{code.toUpperCase()}</span> : undefined}
@@ -338,6 +346,7 @@ export default function Display() {
       <GameShell
         gameKey="market_match"
         viewMode="display"
+        themeId={displayPlayroomThemeId}
         title={title}
         mainSlot={
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48, textAlign: 'center' }}>
@@ -352,18 +361,20 @@ export default function Display() {
     );
   }
 
-  // Feud (Survey Showdown): checkpoint-driven TV view
-  if (gameType === 'feud' && feudState) {
+  // Feud (Survey Showdown): checkpoint-driven TV view — always show when gameType is feud so live submissions display (use default state until first feud:state)
+  if (gameType === 'feud') {
+    const feud = feudState ?? DEFAULT_FEUD_STATE;
     return (
       <GameShell
         gameKey="survey_showdown"
         viewMode="display"
         title={eventConfig?.gameTitle || eventTitle || 'Survey Showdown'}
-        subtitle={feudState.roundIndex ? `Round ${feudState.roundIndex}` : undefined}
+        subtitle={feud.roundIndex ? `Round ${feud.roundIndex}` : undefined}
         headerRightSlot={code ? <span style={{ fontFamily: 'var(--pr-font-display)', letterSpacing: '0.1em' }}>{code.toUpperCase()}</span> : undefined}
+        themeId={displayPlayroomThemeId}
         mainSlot={
           <FeudDisplay
-            feud={feudState}
+            feud={feud}
             joinUrl={effectiveJoinUrl}
             code={code?.toUpperCase() ?? ''}
             eventTitle={eventConfig?.gameTitle || eventTitle}
@@ -371,7 +382,7 @@ export default function Display() {
             calmMode={calmMode}
           />
         }
-        statusBarProps={{ joinCode: code?.toUpperCase() ?? '' }}
+        statusBarProps={{ joinCode: code?.toUpperCase() ?? '', stateBadge: `${feud.submissions?.length ?? 0} submissions` }}
       />
     );
   }
@@ -448,6 +459,7 @@ export default function Display() {
       <GameShell
         gameKey="crowd_control_trivia"
         viewMode="display"
+        themeId={displayPlayroomThemeId}
         title={gameName}
         subtitle={`Question ${idx + 1} of ${triviaState.questions.length}`}
         headerRightSlot={

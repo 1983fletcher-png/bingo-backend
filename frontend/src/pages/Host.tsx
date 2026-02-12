@@ -26,6 +26,7 @@ import { fetchJson, normalizeBackendUrl } from '../lib/safeFetch';
 import type { Song, EventConfig, VenueProfile, DisplayThemeId } from '../types/game';
 import { VENUE_PROFILES_KEY } from '../types/game';
 import { ACTIVITY_THEMES } from '../types/themes';
+import { THEME_IDS } from '../theme/themeRegistry';
 import { getPreset } from '../data/activityPresets';
 import type { Socket } from 'socket.io-client';
 
@@ -690,9 +691,12 @@ export default function Host() {
   if (!game) {
     const isBingo = createMode === 'music-bingo' || createMode === 'classic-bingo';
     const isFeud = createMode === 'feud';
+    const isMarketMatch = createMode === 'market-match';
+    const isCrowdControlTrivia = createMode === 'crowd-control-trivia';
     const isEstimation = createMode === 'estimation';
     const isJeopardy = createMode === 'jeopardy';
-    const isPackMode = !isBingo && !isFeud && !isEstimation && !isJeopardy;
+    const isNoPackGame = isFeud || isMarketMatch || isCrowdControlTrivia || isEstimation || isJeopardy;
+    const isPackMode = !isBingo && !isNoPackGame;
     const selectedTriviaPack = defaultTriviaPacks.find((p) => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
     const selectedIcebreakerPack = icebreakerPacks.find((p) => p.id === selectedIcebreakerPackId) ?? defaultIcebreakerPack;
     const selectedEdutainmentPack = edutainmentPacks.find((p) => p.id === selectedEdutainmentPackId) ?? defaultEdutainmentPack;
@@ -705,8 +709,8 @@ export default function Host() {
       : null;
     const packHasContent = packForMode && 'questions' in packForMode && packForMode.questions.length > 0;
     const canCreatePack = isPackMode && !!packHasContent;
-    const canCreate = socket?.connected && (isBingo || isFeud || isEstimation || isJeopardy || canCreatePack);
-    const step = isBingo || isFeud || isEstimation || isJeopardy ? (canCreate ? 3 : 1) : canCreate ? 3 : packForMode ? 2 : 1;
+    const canCreate = socket?.connected && (isBingo || isNoPackGame || canCreatePack);
+    const step = isBingo || isNoPackGame ? (canCreate ? 3 : 1) : canCreate ? 3 : packForMode ? 2 : 1;
 
     const handleCreate = () => {
       if (createMode === 'music-bingo') {
@@ -1274,6 +1278,15 @@ p{word-break:break-all;font-size:14px;color:#333}
                 ))}
               </select>
               <p style={{ fontSize: 12, color: '#a0aec0', margin: '4px 0 0' }}>Calm reduces motion and flash on the TV.</p>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'block', marginBottom: 4 }}>Display skin (TV look)</label>
+              <select value={eventConfig.playroomThemeId ?? 'classic'} onChange={(e) => setEventConfigState((c) => ({ ...c, playroomThemeId: e.target.value || undefined }))} onBlur={applyEventConfig} style={{ width: '100%', maxWidth: 400, padding: 8, borderRadius: 6 }}>
+                {THEME_IDS.map((id) => (
+                  <option key={id} value={id}>{id === 'classic' ? 'Classic' : id === 'prestige-retro' ? 'Prestige Retro' : id === 'retro-studio' ? 'Retro Studio' : id === 'retro-arcade' ? 'Retro Arcade' : id}</option>
+                ))}
+              </select>
+              <p style={{ fontSize: 12, color: '#a0aec0', margin: '4px 0 0' }}>Visual skin on the TV (classic, retro arcade, etc.).</p>
             </div>
             <div style={{ marginBottom: 12 }}>
               <label style={{ display: 'block', marginBottom: 4 }}>Scrape venue site (URL for logo &amp; colors)</label>

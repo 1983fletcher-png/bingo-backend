@@ -15,6 +15,8 @@ export interface EventConfig {
   themeLabel?: string;
   /** Activity Room TV theme (Playroom Classic / Calm / Corporate) */
   displayThemeId?: DisplayThemeId;
+  /** Playroom skin on TV (classic, prestige-retro, retro-studio, retro-arcade) */
+  playroomThemeId?: string;
   promoText?: string;
   bannerImageUrl?: string;
   facebookUrl?: string;
