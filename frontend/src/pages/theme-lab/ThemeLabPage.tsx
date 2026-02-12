@@ -1,24 +1,31 @@
 /**
  * Theme Lab — preview theme, scene, motion and sample components.
+ * All controls call ThemeProvider setters (site default persisted to localStorage).
  * Internal dev route: /theme-lab
  * @see docs/PLAYROOM-THEMING-SPEC.md §11
  */
 
 import { useState, useMemo, useCallback, useRef } from 'react';
-import type { ThemeId, SceneId, MotionLevel } from '../../theme/theme.types';
-import { THEME_IDS, getTheme } from '../../theme/themeRegistry';
+import { usePlayroomTheme } from '../../theme/ThemeProvider';
+import { SITE_THEMES, SITE_SCENES, SITE_MOTIONS } from '../../theme/themeTypes';
+import { getTheme } from '../../theme/themeRegistry';
 import { getThemeCSSVars } from '../../theme/applyTheme';
 import { MarqueeHeader, StageFrame, Tile, AnswerPlate } from '../../games/shared/chrome';
 import { GameShell } from '../../games/shared/GameShell';
 import { BackgroundScene } from '../../theme/scenes/BackgroundScene';
 
-const SCENE_IDS: SceneId[] = ['arcadeCarpet', 'studio', 'mountains'];
-const MOTION_LEVELS: MotionLevel[] = ['calm', 'standard', 'hype'];
-
 export default function ThemeLabPage() {
-  const [themeId, setThemeId] = useState<ThemeId>('classic');
-  const [sceneId, setSceneId] = useState<SceneId>('arcadeCarpet');
-  const [motionLevel, setMotionLevel] = useState<MotionLevel>('standard');
+  const {
+    themeId,
+    sceneId,
+    motionLevel,
+    theme,
+    motion,
+    setTheme,
+    setScene,
+    setMotion,
+    resetToDefaults
+  } = usePlayroomTheme();
   const [clickDebug, setClickDebug] = useState(false);
   const [lastClickedButton, setLastClickedButton] = useState<string | null>(null);
   const outlineRef = useRef<HTMLDivElement | null>(null);
@@ -80,19 +87,52 @@ export default function ThemeLabPage() {
         }}
       >
         <div style={{ fontWeight: 800, marginBottom: 12 }}>THEME LAB LOADED</div>
+        {/* Debug banner: current theme / scene / motion */}
+        <div
+          style={{
+            marginBottom: 12,
+            padding: '0.5rem 0.75rem',
+            background: 'var(--pr-surface2)',
+            borderRadius: 'var(--pr-radius-md)',
+            fontSize: 14,
+            color: 'var(--pr-muted)'
+          }}
+        >
+          Theme: <strong style={{ color: 'var(--pr-text)' }}>{theme}</strong>
+          {' / '}
+          Scene: <strong style={{ color: 'var(--pr-text)' }}>{sceneId}</strong>
+          {' / '}
+          Motion: <strong style={{ color: 'var(--pr-text)' }}>{motion}</strong>
+          {' — '}
+          <button
+            type="button"
+            onClick={resetToDefaults}
+            style={{
+              padding: '0.2rem 0.5rem',
+              fontSize: 12,
+              background: 'var(--pr-surface)',
+              color: 'var(--pr-text)',
+              border: '1px solid var(--pr-border)',
+              borderRadius: 'var(--pr-radius-sm)',
+              cursor: 'pointer'
+            }}
+          >
+            Reset to defaults
+          </button>
+        </div>
         <h1 style={{ fontFamily: 'var(--pr-font-display)', marginBottom: '0.5rem' }}>
           Theme Lab
         </h1>
         <p style={{ color: 'var(--pr-muted)', marginBottom: '1.5rem' }}>
-          Preview skins, scenes, and motion. Use dropdowns to switch.
+          Preview skins, scenes, and motion. Use dropdowns to switch (persisted to localStorage).
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', position: 'relative', zIndex: 2 }}>
           <label>
             Theme
             <select
-              value={themeId}
-              onChange={(e) => setThemeId(e.target.value as ThemeId)}
+              value={theme}
+              onChange={(e) => setTheme(e.target.value as typeof theme)}
               style={{
                 marginLeft: 8,
                 padding: '0.25rem 0.5rem',
@@ -102,7 +142,7 @@ export default function ThemeLabPage() {
                 borderRadius: 'var(--pr-radius-sm)'
               }}
             >
-              {THEME_IDS.map((id) => (
+              {SITE_THEMES.map((id) => (
                 <option key={id} value={id}>
                   {id}
                 </option>
@@ -113,7 +153,7 @@ export default function ThemeLabPage() {
             Scene
             <select
               value={sceneId}
-              onChange={(e) => setSceneId(e.target.value as SceneId)}
+              onChange={(e) => setScene(e.target.value as typeof sceneId)}
               style={{
                 marginLeft: 8,
                 padding: '0.25rem 0.5rem',
@@ -123,7 +163,7 @@ export default function ThemeLabPage() {
                 borderRadius: 'var(--pr-radius-sm)'
               }}
             >
-              {SCENE_IDS.map((id) => (
+              {SITE_SCENES.map((id) => (
                 <option key={id} value={id}>
                   {id}
                 </option>
@@ -133,8 +173,8 @@ export default function ThemeLabPage() {
           <label>
             Motion
             <select
-              value={motionLevel}
-              onChange={(e) => setMotionLevel(e.target.value as MotionLevel)}
+              value={motion}
+              onChange={(e) => setMotion(e.target.value as typeof motion)}
               style={{
                 marginLeft: 8,
                 padding: '0.25rem 0.5rem',
@@ -144,7 +184,7 @@ export default function ThemeLabPage() {
                 borderRadius: 'var(--pr-radius-sm)'
               }}
             >
-              {MOTION_LEVELS.map((l) => (
+              {SITE_MOTIONS.map((l) => (
                 <option key={l} value={l}>
                   {l}
                 </option>

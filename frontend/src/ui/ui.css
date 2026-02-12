@@ -1,0 +1,121 @@
+/**
+ * Shared UI components — tokens only (--pr-*), no hard-coded colors.
+ */
+
+/* Button base (variants in Button.tsx / component classes) */
+.pr-ui-btn {
+  font-family: var(--pr-font-ui);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: var(--pr-radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color var(--pr-duration-fast) var(--pr-easing),
+    color var(--pr-duration-fast) var(--pr-easing),
+    border-color var(--pr-duration-fast) var(--pr-easing),
+    box-shadow var(--pr-duration-fast) var(--pr-easing);
+}
+.pr-ui-btn:focus-visible {
+  outline: 2px solid var(--pr-brand);
+  outline-offset: 2px;
+}
+.pr-ui-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pr-ui-btn--primary {
+  background: var(--pr-brand);
+  color: var(--pr-accent-contrast, var(--pr-bg));
+  border-color: var(--pr-brand2);
+}
+.pr-ui-btn--primary:hover:not(:disabled) {
+  background: var(--pr-brand2);
+}
+
+.pr-ui-btn--secondary {
+  background: var(--pr-surface2);
+  color: var(--pr-text);
+  border-color: var(--pr-border);
+}
+.pr-ui-btn--secondary:hover:not(:disabled) {
+  background: var(--pr-surface);
+  border-color: var(--pr-muted);
+}
+
+.pr-ui-btn--ghost {
+  background: transparent;
+  color: var(--pr-text);
+  border-color: transparent;
+}
+.pr-ui-btn--ghost:hover:not(:disabled) {
+  background: var(--pr-surface2);
+}
+
+.pr-ui-btn--danger {
+  background: var(--pr-danger);
+  color: #fff;
+  border-color: transparent;
+}
+.pr-ui-btn--danger:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.pr-ui-btn--sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+}
+.pr-ui-btn--lg {
+  padding: 0.65rem 1.25rem;
+  font-size: 1rem;
+}
+
+/* Card */
+.pr-ui-card {
+  background: var(--pr-surface);
+  color: var(--pr-text);
+  border: 1px solid var(--pr-border);
+  border-radius: var(--pr-radius-lg);
+  box-shadow: var(--pr-shadow-sm);
+  overflow: hidden;
+}
+
+/* Panel */
+.pr-ui-panel {
+  border-radius: var(--pr-radius-md);
+  border: 1px solid var(--pr-border);
+  box-shadow: var(--pr-shadow-sm);
+}
+.pr-ui-panel--surface1 {
+  background: var(--pr-surface);
+  color: var(--pr-text);
+}
+.pr-ui-panel--surface2 {
+  background: var(--pr-surface2);
+  color: var(--pr-text);
+}
+
+/* Input */
+.pr-ui-input {
+  font-family: var(--pr-font-ui);
+  font-size: 1rem;
+  color: var(--pr-text);
+  background: var(--pr-surface2);
+  border: 1px solid var(--pr-border);
+  border-radius: var(--pr-radius-sm);
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color var(--pr-duration-fast) var(--pr-easing);
+}
+.pr-ui-input::placeholder {
+  color: var(--pr-muted);
+}
+.pr-ui-input:focus {
+  outline: none;
+  border-color: var(--pr-brand);
+}
+.pr-ui-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--pr-brand);
+}

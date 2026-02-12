@@ -1,0 +1,9 @@
+/**
+ * Shell GameShell — ensures decorative layers do not block clicks.
+ * Shared GameShell already sets .pr-gameshell__scene { pointer-events: none }.
+ * This file can add shell-specific overrides (e.g. --pr-scene-bg fallback).
+ */
+
+.pr-gameshell-shell__code {
+  font-variant-numeric: tabular-nums;
+}

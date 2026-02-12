@@ -9,7 +9,26 @@ import type { ThemeTokens, MotionLevel } from './theme.types';
 const STORAGE_KEY = 'pr_theme';
 const MOTION_KEY = 'pr_motion';
 
+/** Task spec: one source of truth for site default theme */
+export const SITE_THEME_KEY = 'playroom.siteTheme';
+export const SITE_SCENE_KEY = 'playroom.siteScene';
+export const SITE_MOTION_KEY = 'playroom.siteMotion';
+
 export { STORAGE_KEY as PR_THEME_STORAGE_KEY, MOTION_KEY as PR_MOTION_STORAGE_KEY };
+
+export type ApplyThemeToDomOptions = {
+  theme: string;
+  scene: string;
+  motion: string;
+};
+
+/** Apply theme/scene/motion to document for themes.css [data-theme], [data-scene], [data-motion]. */
+export function applyThemeToDom({ theme, scene, motion }: ApplyThemeToDomOptions): void {
+  const el = document.documentElement;
+  el.dataset.theme = theme;
+  el.dataset.scene = scene;
+  el.dataset.motion = motion;
+}
 
 /** Build CSS custom properties for a theme (for use on an element, e.g. GameShell wrapper). */
 export function getThemeCSSVars(
@@ -106,6 +125,63 @@ export function getStoredMotionLevel(): MotionLevel | null {
 export function setStoredMotionLevel(level: MotionLevel): void {
   try {
     localStorage.setItem(MOTION_KEY, level);
+  } catch {
+    // ignore
+  }
+}
+
+export type SiteScene = 'studio' | 'mountains' | 'arcadeCarpet';
+
+export function getStoredSceneId(): SiteScene | null {
+  try {
+    const v = localStorage.getItem(SITE_SCENE_KEY) || localStorage.getItem('pr_scene');
+    if (v === 'studio' || v === 'mountains' || v === 'arcadeCarpet') return v;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredSceneId(scene: SiteScene): void {
+  try {
+    localStorage.setItem(SITE_SCENE_KEY, scene);
+  } catch {
+    // ignore
+  }
+}
+
+export function getStoredSiteTheme(): string | null {
+  try {
+    return localStorage.getItem(SITE_THEME_KEY) || localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredSiteTheme(theme: string): void {
+  try {
+    localStorage.setItem(SITE_THEME_KEY, theme);
+    localStorage.setItem(STORAGE_KEY, theme === 'prestige' ? 'prestige-retro' : theme === 'retro' ? 'retro-studio' : theme);
+  } catch {
+    // ignore
+  }
+}
+
+export function getStoredSiteMotion(): string | null {
+  try {
+    return localStorage.getItem(SITE_MOTION_KEY) || localStorage.getItem(MOTION_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredSiteMotion(motion: string): void {
+  try {
+    localStorage.setItem(SITE_MOTION_KEY, motion);
+    const prMotion = motion === 'high-energy' ? 'hype' : motion;
+    if (prMotion === 'calm' || prMotion === 'standard' || prMotion === 'hype') {
+      localStorage.setItem(MOTION_KEY, prMotion);
+    }
   } catch {
     // ignore
   }

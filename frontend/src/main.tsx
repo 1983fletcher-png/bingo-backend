@@ -6,6 +6,7 @@ import { ThemeProvider } from './theme/ThemeProvider';
 import App from './App';
 import './index.css';
 import './theme/theme.css';
+import './theme/themes.css';
 
 applyStoredTheme();
 

@@ -1,0 +1,135 @@
+/**
+ * Theme tokens — data-theme, data-scene, data-motion driven.
+ * Base tokens + theme/scene/motion variants.
+ */
+
+:root {
+  --pr-font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --pr-font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --pr-weight-heading: 600;
+  --pr-weight-body: 400;
+  --pr-radius-sm: 6px;
+  --pr-radius-md: 10px;
+  --pr-radius-lg: 14px;
+  --pr-radius-xl: 20px;
+  --pr-shadow-sm: 0 1px 3px rgba(0,0,0,0.25);
+  --pr-shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+  --pr-shadow-lg: 0 8px 32px rgba(0,0,0,0.35);
+  --pr-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --pr-motion-fast: 1;
+  --pr-motion-med: 1;
+  --pr-motion-slow: 1;
+  --pr-duration-fast: 150ms;
+  --pr-duration-med: 250ms;
+  --pr-duration-slow: 400ms;
+}
+
+:root, [data-theme="classic"] {
+  --pr-bg: #0b0f14;
+  --pr-surface: #121826;
+  --pr-surface2: #182033;
+  --pr-text: #e8eefc;
+  --pr-text-muted: rgba(232,238,252,0.72);
+  --pr-muted: #9aa3ad;
+  --pr-border: rgba(232,238,252,0.12);
+  --pr-brand: #e8b923;
+  --pr-brand2: #c99700;
+  --pr-accent: #7df9ff;
+  --pr-accent-contrast: #0b0f14;
+  --pr-success: #34c759;
+  --pr-warning: #ff9f0a;
+  --pr-danger: #ff3b30;
+  --pr-glow: #e8b923;
+  --pr-noise-opacity: 0.02;
+  --pr-glow-strength: 0.15;
+  --pr-vignette-opacity: 0;
+  --pr-scanlines-opacity: 0;
+}
+
+[data-theme="prestige"] {
+  --pr-bg: #0d0d0f;
+  --pr-surface: #16161a;
+  --pr-surface2: #1e1e24;
+  --pr-text: #f0f0f2;
+  --pr-muted: #9898a0;
+  --pr-border: rgba(240,240,242,0.1);
+  --pr-brand: #c9a227;
+  --pr-brand2: #a67c00;
+  --pr-accent: #d4af37;
+  --pr-glow: #c9a227;
+  --pr-noise-opacity: 0.015;
+  --pr-glow-strength: 0.12;
+}
+
+[data-theme="retro"] {
+  --pr-bg: #0f1216;
+  --pr-surface: #1a1f26;
+  --pr-surface2: #242b33;
+  --pr-text: #e6edf2;
+  --pr-muted: #8b9cad;
+  --pr-border: rgba(230,237,242,0.14);
+  --pr-brand: #58a6ff;
+  --pr-brand2: #388bfd;
+  --pr-accent: #79c0ff;
+  --pr-glow: #58a6ff;
+  --pr-noise-opacity: 0.02;
+  --pr-glow-strength: 0.1;
+}
+
+[data-theme="retro-arcade"] {
+  --pr-bg: #0a0a0e;
+  --pr-surface: #12121a;
+  --pr-surface2: #1a1a26;
+  --pr-text: #f0e6ff;
+  --pr-muted: #a090c0;
+  --pr-border: rgba(240,230,255,0.15);
+  --pr-brand: #e94560;
+  --pr-brand2: #c73e54;
+  --pr-accent: #ff6b9d;
+  --pr-glow: #e94560;
+  --pr-noise-opacity: 0.03;
+  --pr-glow-strength: 0.2;
+  --pr-scanlines-opacity: 0.04;
+}
+
+:root, [data-scene="studio"] {
+  --pr-scene-bg: var(--pr-bg);
+  --pr-scene-tint: rgba(0,0,0,0);
+}
+
+[data-scene="mountains"] {
+  --pr-scene-bg: linear-gradient(180deg, #0b0f14 0%, #1a2332 50%, #0f1419 100%);
+  --pr-scene-tint: rgba(26,35,50,0.3);
+}
+
+[data-scene="arcadeCarpet"] {
+  --pr-scene-bg: radial-gradient(ellipse 120% 80% at 50% 100%, #1a0a2e 0%, #0b0f14 60%);
+  --pr-scene-tint: rgba(80,40,120,0.15);
+}
+
+[data-motion="standard"] {
+  --pr-motion-fast: 1;
+  --pr-motion-med: 1;
+  --pr-motion-slow: 1;
+  --pr-duration-fast: 150ms;
+  --pr-duration-med: 250ms;
+  --pr-duration-slow: 400ms;
+}
+
+[data-motion="calm"] {
+  --pr-motion-fast: 0.5;
+  --pr-motion-med: 0.6;
+  --pr-motion-slow: 0.7;
+  --pr-duration-fast: 220ms;
+  --pr-duration-med: 350ms;
+  --pr-duration-slow: 500ms;
+}
+
+[data-motion="high-energy"] {
+  --pr-motion-fast: 1.2;
+  --pr-motion-med: 1.1;
+  --pr-motion-slow: 1;
+  --pr-duration-fast: 120ms;
+  --pr-duration-med: 200ms;
+  --pr-duration-slow: 320ms;
+}
