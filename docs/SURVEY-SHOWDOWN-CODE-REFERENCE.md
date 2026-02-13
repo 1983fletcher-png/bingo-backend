@@ -156,13 +156,16 @@ All **feud:state** emissions go to `io.to(\`game:${game.code}\`)` (host, display
 
 - **surveyShowdownConstants.ts**
   - **TV_SAFE_AREA** / **PLAYER_SAFE_AREA** (x, y, w, h 0..1)
-  - **FRAME_ASSETS**: `tv: '/themes/survey-showdown/survey-showdown-tv-frame.png'`, `player: '/themes/survey-showdown/survey-showdown-player-frame.png'`
+  - **TV_FRAME**: `tv-display.png` (all TV phases)
+  - **PLAYER_FRAMES**: `answer` → player-answer.png, `waiting` → player-waiting.png, `reveal` → player-reveal.png
+  - **getFrameSrc(variant, scene?)** — resolves image URL: TV always same; player by scene (answer | waiting | reveal)
   - **isSurveyShowdownDebug()** — `?debug=1` or `localStorage playroom_debug=1` for debug outlines.
 
-- **Theme assets (expected in build):**
-  - `public/themes/survey-showdown/survey-showdown-tv-frame.png`
-  - `public/themes/survey-showdown/survey-showdown-player-frame.png`  
-  (Directory may also contain player-answer.png, player-reveal.png, etc.; frame components use the two names above.)
+- **Theme assets (in `public/themes/survey-showdown/`):**
+  - **tv-display.png** — TV/Display (standby, title, collect, locked, board, summary)
+  - **player-answer.png** — Player submit-answers screen
+  - **player-waiting.png** — Player “answers coming in” screen
+  - **player-reveal.png** — Player board-reveal screen
 
 - **themes.css** — Survey Showdown game-show theme references same frame paths for backgrounds where used.
 

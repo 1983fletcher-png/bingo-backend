@@ -27,19 +27,28 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
 
   if (checkpoint === 'STANDBY') {
     return (
-      <div className="feud-display feud-display--standby" style={{ background: theme.bg, color: theme.text }}>
-        <div className="feud-display__standby-card">
-          <p className="feud-display__standby-message">Host reviewing — next question starting soon.</p>
-        </div>
+      <div className="feud-display feud-display--standby feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
+        <SurveyShowdownFrame variant="tv">
+          <div className="feud-display__standby-inframe">
+            <div className="feud-display__standby-card feud-display__standby-card--gameshow">
+              <p className="feud-display__standby-message">Host reviewing — next question starting soon.</p>
+              <p className="feud-display__standby-sub">Lights, camera, action!</p>
+            </div>
+          </div>
+        </SurveyShowdownFrame>
       </div>
     );
   }
 
   if (checkpoint === 'R1_TITLE') {
     return (
-      <div className="feud-display feud-display--title" style={{ background: theme.bg, color: theme.text }}>
-        <h1 className="feud-display__game-name">{eventTitle || 'Survey Showdown'}</h1>
-        <p className="feud-display__round">Round {feud.roundIndex}</p>
+      <div className="feud-display feud-display--title feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
+        <SurveyShowdownFrame variant="tv">
+          <div className="feud-display__hud">
+            <h1 className="feud-display__game-name">{eventTitle || 'Survey Showdown'}</h1>
+            <p className="feud-display__round">Round {feud.roundIndex}</p>
+          </div>
+        </SurveyShowdownFrame>
       </div>
     );
   }
@@ -53,34 +62,36 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       });
     });
     return (
-      <div className="feud-display feud-display--collect" style={{ background: theme.bg, color: theme.text }}>
-        <div className="feud-display__collect-inner">
-          <h2 className="feud-display__prompt">{feud.prompt || 'Submit your answers…'}</h2>
-          <p className="feud-display__muted" style={{ marginTop: 8, marginBottom: 8 }}>
-            Submissions open — answer on your phone.
-          </p>
-          {qrUrl && (
-            <div className="feud-display__qr-wrap">
-              <img src={qrUrl} alt="Scan to join" className="feud-display__qr" />
-              <p className="feud-display__code">{code}</p>
-            </div>
-          )}
-          <p className="feud-display__muted" style={{ marginTop: 12, marginBottom: 8, fontSize: '0.95rem' }}>
-            {submissionCount} player{submissionCount !== 1 ? 's' : ''} have answered · {allAnswers.length} answer{allAnswers.length !== 1 ? 's' : ''} so far
-          </p>
-          {allAnswers.length > 0 && (
-            <div className="feud-display__live-answers">
-              <p className="feud-display__muted" style={{ fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Answers still coming in</p>
-              <ul className="feud-display__live-answers-list">
-                {allAnswers.slice(-24).map((a, i) => (
-                  <li key={`${i}-${a}`} className="feud-display__live-answers-item" style={{ color: theme.text }}>
-                    {a}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+      <div className="feud-display feud-display--collect feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
+        <SurveyShowdownFrame variant="tv">
+          <div className="feud-display__collect-inner feud-display__collect-inner--inframe">
+            <h2 className="feud-display__prompt">{feud.prompt || 'Submit your answers…'}</h2>
+            <p className="feud-display__muted" style={{ marginTop: 8, marginBottom: 8 }}>
+              Submissions open — answer on your phone.
+            </p>
+            {qrUrl && (
+              <div className="feud-display__qr-wrap">
+                <img src={qrUrl} alt="Scan to join" className="feud-display__qr" />
+                <p className="feud-display__code">{code}</p>
+              </div>
+            )}
+            <p className="feud-display__muted" style={{ marginTop: 12, marginBottom: 8, fontSize: '0.95rem' }}>
+              {submissionCount} player{submissionCount !== 1 ? 's' : ''} have answered · {allAnswers.length} answer{allAnswers.length !== 1 ? 's' : ''} so far
+            </p>
+            {allAnswers.length > 0 && (
+              <div className="feud-display__live-answers">
+                <p className="feud-display__muted" style={{ fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Answers still coming in</p>
+                <ul className="feud-display__live-answers-list">
+                  {allAnswers.slice(-24).map((a, i) => (
+                    <li key={`${i}-${a}`} className="feud-display__live-answers-item" style={{ color: theme.text }}>
+                      {a}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </SurveyShowdownFrame>
       </div>
     );
   }
@@ -90,17 +101,21 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
 
   if (checkpoint === 'R1_LOCKED' && !hasBoardData) {
     return (
-      <div className="feud-display feud-display--locked" style={{ background: theme.bg, color: theme.text }}>
-        <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 8 }}>Phase: {phase}</p>
-        <h2 className="feud-display__prompt">{feud.prompt || 'Answers locked'}</h2>
-        <p className="feud-display__muted">Revealing top answers…</p>
+      <div className="feud-display feud-display--locked feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
+        <SurveyShowdownFrame variant="tv">
+          <div className="feud-display__hud">
+            <p className="feud-display__muted" style={{ fontSize: 12, marginBottom: 8 }}>Phase: {phase}</p>
+            <h2 className="feud-display__prompt feud-display__prompt--inframe">{feud.prompt || 'Answers locked'}</h2>
+            <p className="feud-display__muted">Revealing top answers…</p>
+          </div>
+        </SurveyShowdownFrame>
       </div>
     );
   }
 
   if (isBoard || checkpoint === 'R1_SUMMARY' || (checkpoint === 'R1_LOCKED' && hasBoardData)) {
     return (
-      <div className="feud-display feud-display--board feud-display--board-live" style={{ background: theme.bg, color: theme.text }}>
+      <div className="feud-display feud-display--board feud-display--board-live feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownFrame variant="tv">
           <div className="feud-display__hud">
             <h2 className="feud-display__prompt feud-display__prompt--inframe">

@@ -15,11 +15,29 @@
   justify-content: center;
 }
 
+.feud-display__standby-inframe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
 .feud-display__standby-card {
   padding: 2rem 3rem;
   background: var(--surface, rgba(255, 255, 255, 0.06));
   border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
   border-radius: 16px;
+}
+
+.feud-display__standby-card--gameshow {
+  background: rgba(13, 5, 21, 0.85);
+  border: 2px solid var(--pr-brand, #d4af37);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.3),
+    0 0 24px color-mix(in srgb, var(--pr-glow, #d4af37) 35%, transparent),
+    inset 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 .feud-display__standby-message {
@@ -29,10 +47,20 @@
   color: var(--text-muted, rgba(255, 255, 255, 0.7));
 }
 
+.feud-display__standby-sub {
+  margin: 0.75rem 0 0;
+  font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+  font-weight: 600;
+  color: var(--pr-brand, #d4af37);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .feud-display__game-name {
   margin: 0 0 0.5rem;
   font-size: clamp(1.75rem, 4vw, 3rem);
   font-weight: 800;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5), 0 0 24px color-mix(in srgb, var(--pr-glow, #d4af37) 25%, transparent);
 }
 
 .feud-display__round {
@@ -222,6 +250,48 @@
   visibility: hidden;
 }
 
+/* Any view that uses SurveyShowdownFrame (standby, title, collect, locked, board) — frame fills, transparent bg */
+.feud-display--inframe {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+}
+
+.feud-display--inframe .survey-showdown-frame {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Game-show accent: gold line under header area (TV) */
+.feud-display--inframe .survey-showdown-frame--tv .feud-display__hud {
+  position: relative;
+}
+.feud-display--inframe .survey-showdown-frame--tv .feud-display__hud::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  transform: translateX(-50%);
+  width: 60%;
+  min-width: 200px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--pr-brand, #d4af37), transparent);
+  opacity: 0.7;
+}
+
+.feud-display__collect-inner--inframe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(8px, 1.5vw, 16px);
+}
+
 /* Board with live 2-layer frame + tiles (SurveyShowdownFrame + SurveyShowdownBoard) */
 .feud-display--board-live {
   display: flex;
@@ -250,10 +320,10 @@
   margin: 0;
   text-align: center;
   font-weight: 800;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.02em;
   font-size: clamp(18px, 2.0vw, 32px);
   color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 20px color-mix(in srgb, var(--pr-glow, #d4af37) 20%, transparent);
 }
 
 .feud-display__boardWrap {

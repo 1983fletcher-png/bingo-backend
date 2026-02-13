@@ -1,14 +1,26 @@
-# Survey Showdown — frame-only assets (NO baked answers/numbers)
+# Survey Showdown — game-show frames (lights, camera, action!)
 
-The app uses a **2-layer system**: (1) frame-only art, (2) live UI tiles. Do **not** use images that contain sample answers or point values.
+The app uses a **2-layer system** on every screen: (1) full-bleed frame art, (2) live UI inside the safe area. Each screen uses the frame that matches its purpose so the experience feels finished and professional.
 
-**Required frame-only PNGs (exact filenames; case-sensitive):**
-- **survey-showdown-tv-frame.png** — 16:9. Logos, lights, gradients, background texture only. No answer text, no numbers.
-- **survey-showdown-player-frame.png** — Phone aspect. Same: frame only, no answers/numbers.
+## Required frame PNGs (exact filenames; case-sensitive)
 
-These paths are used by `surveyShowdownConstants.ts`. In dev tools Network tab, both should return 200 (not 404). If you have different filenames (e.g. tv-display.png), rename or copy to the names above.
+| File | Used on | Description |
+|------|---------|-------------|
+| **tv-display.png** | All TV/Display views | 16:9. Standby, Round title, Submissions open (collect), Locked, Board reveal, Summary. One frame for the whole show. |
+| **player-answer.png** | Player: submit answers | Phone aspect. Prompt + “Round collecting” + answer form. |
+| **player-waiting.png** | Player: answers submitted | Phone aspect. “Answers still coming in” + live answer list. |
+| **player-reveal.png** | Player: board reveal | Phone aspect. Top answers board (same content as TV reveal). |
 
-Optional: very subtle empty slot outlines in the art (recommended: draw slot boxes in UI via `SurveyShowdownBoard` + `SurveyShowdownTile`).
+These paths are defined in `frontend/src/games/feud/surveyShowdownConstants.ts`. In the Network tab, all four should return 200 (not 404).
 
-**Deprecated (do not use for board/reveal):**
-- tv-display.png, player-answer.png, player-waiting.png, player-reveal.png — if they contain baked answers or numbers, they must not be used. The app now uses the frame-only assets above and renders all tiles live.
+## Screen → frame mapping
+
+- **TV:** Standby, R1_TITLE, R1_COLLECT, R1_LOCKED, R1_BOARD_0…8, R1_SUMMARY → `tv-display.png`
+- **Player answer** (can submit) → `player-answer.png`
+- **Player waiting** (submitted, waiting for others) → `player-waiting.png`
+- **Player reveal** (locked, showing board) → `player-reveal.png`
+
+## Art guidelines
+
+- Frame art can include logos, lights, gradients, and background texture. No baked answer text or point numbers; those are rendered live by `SurveyShowdownBoard` and tiles.
+- Optional: very subtle empty slot outlines in the art; the UI also draws the tile grid.

@@ -14,7 +14,7 @@ type Props = {
 export function FeudPlayerReveal({ feud }: Props) {
   return (
     <div className="feud-player-reveal">
-      <SurveyShowdownFrame variant="player">
+      <SurveyShowdownFrame variant="player" scene="reveal">
         <div className="feud-player-reveal__hud">
           <p className="feud-player-reveal__prompt">{feud.prompt || 'Top answers'}</p>
         </div>

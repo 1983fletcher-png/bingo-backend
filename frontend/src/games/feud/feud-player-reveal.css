@@ -15,8 +15,9 @@
   flex: 0 0 auto;
   margin: 0 0 8px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--pr-text);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
 }
 
 .feud-player-reveal .survey-showdown-frame {
@@ -32,4 +33,36 @@
 .feud-player-reveal__boardWrap {
   flex: 1 1 auto;
   min-height: 0;
+}
+
+/* Player answer/waiting views (Play.tsx) — frame wraps prompt + form inside safe area */
+.feud-player-answer__hud {
+  flex: 0 0 auto;
+  padding: clamp(8px, 1.5vw, 12px);
+  text-align: center;
+}
+
+.feud-player-answer__formWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(8px, 1.5vw, 16px);
+  overflow-y: auto;
+}
+
+/* Game-show polish: gold accent bar above content (player) */
+.survey-showdown-frame--player::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 14%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--pr-brand, #d4af37) 15%, var(--pr-brand, #d4af37) 85%, transparent 100%);
+  opacity: 0.55;
+  z-index: 2;
+  pointer-events: none;
 }

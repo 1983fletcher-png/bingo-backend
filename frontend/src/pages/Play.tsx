@@ -16,6 +16,7 @@ import { getMarketMatchItem } from '../data/marketMatchDataset';
 import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
 import { PlayerLayout, TextAnswerInput } from '../components/PlayerLayout';
 import { FeudPlayerReveal } from '../games/feud/FeudPlayerReveal';
+import { SurveyShowdownFrame } from '../games/feud/SurveyShowdownFrame';
 import '../styles/join.css';
 
 /**
@@ -584,28 +585,47 @@ export default function Play() {
     const miniStage = showReveal ? (
       <FeudPlayerReveal feud={feud} />
     ) : showWaiting ? (
-      <div className="feud-player-waiting" style={{ padding: 16, maxWidth: 420, margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: 600, color: 'var(--pr-text)' }}>Answers still coming in</h2>
-        <p style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--pr-muted)' }}>
-          {submissionCount} player{submissionCount !== 1 ? 's' : ''} have answered
-        </p>
-        {liveAnswers.length > 0 && (
-          <ul style={{ margin: 0, padding: 12, listStyle: 'none', textAlign: 'left', border: '1px solid var(--pr-border)', borderRadius: 12, background: 'rgba(0,0,0,0.15)', maxHeight: 200, overflowY: 'auto' }}>
-            {liveAnswers.slice(-24).map((a, i) => (
-              <li key={`${i}-${a}`} style={{ padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', color: 'var(--pr-text)', fontSize: 14 }}>
-                {a}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <SurveyShowdownFrame variant="player" scene="waiting">
+        <div className="feud-player-answer__hud">
+          <h2 style={{ margin: '0 0 4px', fontSize: '1.1rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--pr-muted)' }}>Answers still coming in</p>
+        </div>
+        <div className="feud-player-answer__formWrap">
+          <div className="feud-player-waiting" style={{ padding: 16, maxWidth: 420, margin: '0 auto', textAlign: 'center' }}>
+            <p style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--pr-muted)' }}>
+              {submissionCount} player{submissionCount !== 1 ? 's' : ''} have answered
+            </p>
+            {liveAnswers.length > 0 && (
+              <ul style={{ margin: 0, padding: 12, listStyle: 'none', textAlign: 'left', border: '1px solid var(--pr-border)', borderRadius: 12, background: 'rgba(0,0,0,0.15)', maxHeight: 200, overflowY: 'auto' }}>
+                {liveAnswers.slice(-24).map((a, i) => (
+                  <li key={`${i}-${a}`} style={{ padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.06)', color: 'var(--pr-text)', fontSize: 14 }}>
+                    {a}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </SurveyShowdownFrame>
+    ) : canSubmit ? (
+      <SurveyShowdownFrame variant="player" scene="answer">
+        <div className="feud-player-answer__hud">
+          <h2 style={{ margin: '0 0 4px', fontSize: '1.1rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--pr-muted)' }}>
+            {feud.checkpointId === 'R1_COLLECT' ? 'Round collecting' : 'Round in progress'}
+          </p>
+        </div>
+        <div className="feud-player-answer__formWrap">
+          <TextAnswerInput onSubmit={handleFeudSubmit} maxFields={3} placeholder="Answer" submitLabel="Submit" disabled={!socket} hint="Your top 3 answers" />
+        </div>
+      </SurveyShowdownFrame>
     ) : (
-      <div style={{ textAlign: 'center' }}>
-        <h2 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
-        <p style={{ margin: 0, fontSize: 14, color: 'var(--pr-muted)' }}>
-          {feud.checkpointId === 'R1_COLLECT' ? 'Round collecting' : 'Round in progress'}
-        </p>
-      </div>
+      <SurveyShowdownFrame variant="player" scene="answer">
+        <div className="feud-player-answer__hud">
+          <h2 style={{ margin: '0 0 4px', fontSize: '1.1rem', fontWeight: 600, color: 'var(--pr-text)' }}>{feud.prompt || 'Submit your answers'}</h2>
+          <p style={{ margin: 0, fontSize: 14, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
+        </div>
+      </SurveyShowdownFrame>
     );
 
     const inputSlot = showReveal ? (
@@ -613,7 +633,7 @@ export default function Play() {
     ) : showWaiting ? (
       <p style={{ margin: 0, color: 'var(--pr-muted)', fontWeight: 500 }}>Your answers are in. Answers still coming in.</p>
     ) : canSubmit ? (
-      <TextAnswerInput onSubmit={handleFeudSubmit} maxFields={3} placeholder="Answer" submitLabel="Submit" disabled={!socket} hint="Your top 3 answers" />
+      <p style={{ margin: 0, fontSize: 12, color: 'var(--pr-muted)' }}>Enter your top 3 answers above.</p>
     ) : (
       <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to show the question.</p>
     );

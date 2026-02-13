@@ -1,23 +1,30 @@
 /**
- * Survey Showdown — Layer 1: frame-only art + safe area. No baked answers/numbers.
+ * Survey Showdown — Layer 1: frame art + safe area. Right frame per screen (TV vs player answer/waiting/reveal).
  */
 import React from 'react';
-import { TV_SAFE_AREA, PLAYER_SAFE_AREA, FRAME_ASSETS, isSurveyShowdownDebug } from './surveyShowdownConstants';
+import { TV_SAFE_AREA, PLAYER_SAFE_AREA, getFrameSrc, type PlayerFrameScene, isSurveyShowdownDebug } from './surveyShowdownConstants';
 import './SurveyShowdownFrame.css';
 
 export interface SurveyShowdownFrameProps {
   variant: 'tv' | 'player';
+  /** Player only: which screen so the correct frame is used (answer | waiting | reveal). */
+  scene?: PlayerFrameScene;
   children: React.ReactNode;
 }
 
-export function SurveyShowdownFrame({ variant, children }: SurveyShowdownFrameProps) {
+export function SurveyShowdownFrame({ variant, scene, children }: SurveyShowdownFrameProps) {
   const safe = variant === 'tv' ? TV_SAFE_AREA : PLAYER_SAFE_AREA;
   const debug = isSurveyShowdownDebug();
+  const src = getFrameSrc(variant, scene);
 
   return (
-    <div className={`survey-showdown-frame survey-showdown-frame--${variant}`} data-variant={variant}>
+    <div
+      className={`survey-showdown-frame survey-showdown-frame--${variant}${scene ? ` survey-showdown-frame--${scene}` : ''}`}
+      data-variant={variant}
+      data-scene={scene ?? undefined}
+    >
       <img
-        src={FRAME_ASSETS[variant]}
+        src={src}
         alt=""
         className="survey-showdown-frame__img"
         role="presentation"
