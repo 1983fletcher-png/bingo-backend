@@ -35,6 +35,8 @@ export interface GameShellProps {
   footerVariant?: 'minimal' | 'statusbar' | 'none';
   /** Survey Showdown player view state — picks which mockup overlay to show (answer | waiting | reveal) */
   feudView?: 'answer' | 'waiting' | 'reveal';
+  /** When "mockup", shell layout is neutralized so SurveyShowdownFrame slot geometry is stable. */
+  frameMode?: 'mockup' | 'css';
 }
 
 /** Map variant to shared viewMode */
@@ -51,12 +53,14 @@ export function GameShell({
   statusBarProps: statusBarOverride,
   footerVariant: footerOverride,
   feudView,
+  frameMode,
 }: GameShellProps) {
   const { theme } = useTheme();
   const themeIdResolved = themeId ?? (siteThemeToRegistryId(theme) as ThemeId);
   const statusBarProps = statusBarOverride ?? (code ? { joinCode: code.toUpperCase() } : undefined);
   const footerVariant = footerOverride ?? (variant === 'player' ? 'minimal' : 'statusbar');
-  const optionalData = feudView ? { 'data-feud-view': feudView } : undefined;
+  const optionalData: Record<string, string> = { ...(feudView ? { 'data-feud-view': feudView } : {}), ...(frameMode ? { 'data-frame': frameMode } : {}) };
+  const optionalDataOrUndefined = Object.keys(optionalData).length > 0 ? optionalData : undefined;
 
   return (
     <SharedGameShell
@@ -65,7 +69,7 @@ export function GameShell({
       title={title}
       subtitle={subtitle}
       themeId={themeIdResolved}
-      optionalData={optionalData}
+      optionalData={optionalDataOrUndefined}
       headerRightSlot={
         code ? (
           <span style={{ fontSize: '0.875rem', color: 'var(--pr-muted)', letterSpacing: '0.1em' }}>

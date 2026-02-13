@@ -292,6 +292,7 @@ export default function Display() {
       <GameShell
         gameKey="survey_showdown"
         variant="display"
+        frameMode="mockup"
         title={eventConfig?.gameTitle || eventTitle || 'Survey Showdown'}
         subtitle={feud.roundIndex ? `Round ${feud.roundIndex}` : undefined}
         code={code ?? undefined}

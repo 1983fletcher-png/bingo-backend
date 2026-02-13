@@ -1,0 +1,40 @@
+.ss-player-wrap {
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.ss-player-stage {
+  width: min(96vw, 1180px);
+}
+
+.ss-player-content {
+  width: min(92vw, 560px);
+  margin: 0 auto;
+}
+
+.ss-player-prompt {
+  margin: 0;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pr-text);
+  text-shadow: 0 2px 18px rgba(0,0,0,0.35);
+}
+
+.ss-player-banner {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(14px, 3vw, 28px);
+  transform: translateX(-50%);
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(10,10,12,0.82);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.92);
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}

@@ -83,6 +83,13 @@ export function GameShell({
       ? 'marqueePop'
       : headerVariant;
 
+  React.useEffect(() => {
+    if (gameKey !== 'survey_showdown') return;
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/d66f648c-52ab-4d0d-8633-ae9fa71a16a6', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'GameShell.tsx:MarqueeHeader', message: 'survey_showdown header props', data: { hypothesisId: 'H2', title, subtitle: subtitle ?? null, subtitleLength: (subtitle ?? '').length }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
+  }, [gameKey, title, subtitle]);
+
   return (
     <div
       className={`pr-app pr-gameshell pr-gameshell--${viewMode} ${className}`.trim()}

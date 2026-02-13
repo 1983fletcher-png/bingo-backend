@@ -1,13 +1,20 @@
 /**
- * Survey Showdown frame — full-bleed frame image + percentage-based safe area.
- * Layer order: frame img (z-index:0) behind, safe area (z-index:1) above. Debug outline on top.
+ * Survey Showdown frame — stable 16:9 stage + percentage-based slots.
+ * Layer order: frame img (z-index:0), FX (z-index:0), slots/safe (z-index:1), debug (z-index:2).
  */
 .survey-showdown-frame {
   position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 200px;
+  width: min(96vw, 1180px);
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+
+  border-radius: 22px;
   overflow: hidden;
+  transform: translateZ(0);
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.06);
 }
 
 .survey-showdown-frame__img {
@@ -15,7 +22,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   pointer-events: none;
   user-select: none;
@@ -37,6 +44,57 @@
   background: rgba(0, 255, 128, 0.06);
 }
 
+/* Slot-based layout: each region is absolutely positioned; content centered and contained */
+.survey-showdown-frame__slot {
+  position: absolute;
+  box-sizing: border-box;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(6px, 1.2vw, 14px);
+  text-align: center;
+}
+
+.survey-showdown-frame__slot--title {
+  justify-content: center;
+}
+
+.survey-showdown-frame__slot--prompt {
+  justify-content: center;
+  padding-top: clamp(4px, 0.8vw, 10px);
+  padding-bottom: clamp(4px, 0.8vw, 10px);
+}
+
+.survey-showdown-frame__slot--content {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 0;
+}
+
+/* Board in content slot: fill the slot so tiles have room (min-height:0 chain) */
+.survey-showdown-frame__slot--content .feud-display__boardWrap {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* UI overlay channel: above bg/fx, same tier as slots; children receive pointer events */
+.survey-showdown-frame__ui {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.survey-showdown-frame__ui > * {
+  pointer-events: auto;
+}
+
 .survey-showdown-frame__debug-outline--frame {
   position: absolute;
   inset: 0;
@@ -50,4 +108,58 @@
 .survey-showdown-board[data-debug="true"] .survey-showdown-tile {
   outline: 1px solid rgba(255, 100, 255, 0.7);
   outline-offset: -1px;
+}
+
+/* FX layer: marquee lights + sweep + sparkle (behind slots, no layout impact) */
+.survey-showdown-frame__fx {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.survey-showdown-frame__marquee {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(40px 40px at 18% 14%, rgba(255,255,255,0.22), transparent 65%),
+    radial-gradient(54px 54px at 82% 18%, rgba(255,210,120,0.20), transparent 65%),
+    radial-gradient(46px 46px at 64% 86%, rgba(180,120,255,0.18), transparent 65%);
+  animation: ss-marquee-float 3.6s ease-in-out infinite alternate;
+}
+
+@keyframes ss-marquee-float {
+  from { transform: translateY(-1.2%) scale(1.01); filter: blur(0px); opacity: 0.9; }
+  to   { transform: translateY( 1.2%) scale(1.02); filter: blur(0.4px); opacity: 0.7; }
+}
+
+.survey-showdown-frame__sweep {
+  position: absolute;
+  inset: -20% -40%;
+  background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,0.10) 45%, transparent 55%);
+  animation: ss-sweep 3.2s ease-in-out infinite;
+}
+
+@keyframes ss-sweep {
+  0%   { transform: translateX(-35%) rotate(0.6deg); opacity: 0.0; }
+  18%  { opacity: 0.9; }
+  50%  { transform: translateX(35%) rotate(-0.6deg); opacity: 0.8; }
+  100% { transform: translateX(45%) rotate(-0.6deg); opacity: 0.0; }
+}
+
+.survey-showdown-frame__sparkle {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(2px 2px at 18% 22%, rgba(255,255,255,0.45), transparent 60%),
+    radial-gradient(2px 2px at 62% 36%, rgba(255,210,120,0.35), transparent 60%),
+    radial-gradient(2px 2px at 82% 68%, rgba(190,140,255,0.35), transparent 60%);
+  opacity: 0.55;
+  animation: ss-sparkle 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes ss-sparkle {
+  from { transform: scale(1.0); filter: blur(0px); }
+  to   { transform: scale(1.02); filter: blur(0.4px); }
 }

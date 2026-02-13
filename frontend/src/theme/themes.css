@@ -119,6 +119,47 @@
 
 /* Survey Showdown game-show: frame-only art (NO baked answers/numbers). Live tiles in SurveyShowdownBoard. */
 /* Force: only SurveyShowdownFrame <img> paints the frame; theme must NOT paint any board/mock image. */
+
+/* ============================================================================
+   Survey Showdown MOCKUP MODE
+   The SurveyShowdownFrame <img> is the ONLY stage/frame. Neutralize shell layout
+   forces (padding/min-height/overlays) that distort slot geometry.
+   ============================================================================ */
+[data-game="survey_showdown"][data-frame="mockup"] .pr-gameshell__main,
+[data-game="survey_showdown"][data-frame="mockup"] .pr-stage,
+[data-game="survey_showdown"][data-frame="mockup"] .stage-frame,
+[data-game="survey_showdown"][data-frame="mockup"] .pr-stage__content,
+[data-game="survey_showdown"][data-frame="mockup"] .pr-scene-layer,
+[data-game="survey_showdown"][data-frame="mockup"] .feud-display,
+[data-game="survey_showdown"][data-frame="mockup"] .player-layout {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Display: remove padding/min-height that warps stage geometry */
+[data-game="survey_showdown"][data-frame="mockup"][data-view="display"] .feud-display {
+  padding: 0 !important;
+  min-height: auto !important;
+  overflow: visible !important;
+}
+
+/* Player: stop forcing fixed vh heights */
+[data-game="survey_showdown"][data-frame="mockup"][data-view="player"] .player-layout,
+[data-game="survey_showdown"][data-frame="mockup"][data-view="player"] .player-layout__stage {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* Center the frame stage nicely in shell */
+[data-game="survey_showdown"][data-frame="mockup"] .pr-stage__content,
+[data-game="survey_showdown"][data-frame="mockup"] .pr-gameshell__main {
+  display: grid;
+  place-items: center;
+}
+
 [data-game="survey_showdown"] .pr-scene-layer,
 [data-game="survey_showdown"] .player-layout__stage {
   background-image: none !important;
@@ -247,6 +288,10 @@
 }
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .player-layout__stage {
   overflow: hidden;
+  /* Give frame room: taller stage, no padding so frame art fills and slots align */
+  min-height: 50vh;
+  height: 52vh;
+  padding: 0;
 }
 [data-pr-theme="game-show"][data-game="survey_showdown"][data-feud-view] .feud-player-waiting ul {
   max-height: 140px;
