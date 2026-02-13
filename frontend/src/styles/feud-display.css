@@ -262,7 +262,7 @@
   visibility: hidden;
 }
 
-/* Any view that uses SurveyShowdownFrame (standby, title, collect, locked, board) — frame fills, transparent bg */
+/* Any view that uses SurveyShowdownStage (standby, title, collect, locked, board) — stage fills, transparent bg */
 .feud-display--inframe {
   display: flex;
   flex-direction: column;
@@ -270,16 +270,16 @@
   padding: 0;
 }
 
-.feud-display--inframe .survey-showdown-frame {
+.feud-display--inframe .survey-showdown-stage {
   flex: 1 1 auto;
   min-height: 0;
 }
 
 /* Game-show accent: gold line under header area (TV) */
-.feud-display--inframe .survey-showdown-frame--tv .feud-display__hud {
+.feud-display--inframe .survey-showdown-stage--tv .feud-display__hud {
   position: relative;
 }
-.feud-display--inframe .survey-showdown-frame--tv .feud-display__hud::after {
+.feud-display--inframe .survey-showdown-stage--tv .feud-display__hud::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -289,7 +289,7 @@
   min-width: 200px;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--pr-brand, #d4af37), transparent);
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .feud-display__collect-inner--inframe {
@@ -315,7 +315,7 @@
   flex: 0 0 auto;
 }
 
-.feud-display--board-live .survey-showdown-frame {
+.feud-display--board-live .survey-showdown-stage {
   flex: 1 1 auto;
   min-height: 0;
 }
