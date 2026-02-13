@@ -84,6 +84,20 @@
   place-items: center;
 }
 
+/* Art masks: hide baked placeholder regions until blank assets; above image/fx, below slots */
+.survey-showdown-frame__mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.survey-showdown-frame__maskRect {
+  position: absolute;
+  border-radius: 10px;
+  background: rgba(8, 4, 16, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
 /* UI overlay channel: above bg/fx, same tier as slots; children receive pointer events */
 .survey-showdown-frame__ui {
   position: absolute;

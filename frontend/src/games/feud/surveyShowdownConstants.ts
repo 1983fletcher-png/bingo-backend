@@ -19,11 +19,19 @@ export const PLAYER_SLOTS = {
   content: { x: 0.08, y: 0.42, w: 0.84, h: 0.50 } as SafeArea,
 } as const;
 
-/** One frame for all TV/display phases (standby, title, collect, locked, board). */
-export const TV_FRAME = '/themes/survey-showdown/tv-display.png';
+/** Blank frame assets (no baked prompts/answers) — use these so slot content aligns. Same dimensions as originals. */
+export const TV_FRAME = '/themes/survey-showdown/tv-display-blank.png';
 
-/** Player frames: right skin per screen for a finished game-show look. */
+/** Player blank frames (no baked placeholder text). */
 export const PLAYER_FRAMES = {
+  answer: '/themes/survey-showdown/player-answer-blank.png',
+  waiting: '/themes/survey-showdown/player-waiting-blank.png',
+  reveal: '/themes/survey-showdown/player-reveal-blank.png',
+} as const;
+
+/** Legacy (baked art) — fallback only; do not use in mockup mode. */
+export const TV_FRAME_LEGACY = '/themes/survey-showdown/tv-display.png';
+export const PLAYER_FRAMES_LEGACY = {
   answer: '/themes/survey-showdown/player-answer.png',
   waiting: '/themes/survey-showdown/player-waiting.png',
   reveal: '/themes/survey-showdown/player-reveal.png',

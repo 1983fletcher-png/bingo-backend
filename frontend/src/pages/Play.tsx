@@ -15,9 +15,16 @@ import type { ThemeId } from '../theme/theme.types';
 import { getMarketMatchItem } from '../data/marketMatchDataset';
 import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
 import { TextAnswerInput } from '../components/PlayerLayout';
+import type { SafeArea } from '../games/feud/surveyShowdownConstants';
 import { SurveyShowdownFrame } from '../games/feud/SurveyShowdownFrame';
 import { SurveyShowdownBoard } from '../games/feud/SurveyShowdownBoard';
 import '../games/feud/feud-player-reveal.css';
+
+/** Optional: mask baked placeholder regions when using legacy player art. Remove once blank assets are in use. */
+const PLAYER_MASKS: SafeArea[] = [
+  { x: 0.16, y: 0.25, w: 0.68, h: 0.18 },
+  { x: 0.14, y: 0.45, w: 0.72, h: 0.38 },
+];
 import '../games/feud/SurveyShowdownPlayerStage.css';
 import '../styles/join.css';
 
@@ -635,6 +642,7 @@ export default function Play() {
             <SurveyShowdownFrame
               variant="player"
               scene={scene}
+              maskRects={PLAYER_MASKS}
               promptSlot={promptSlot}
               contentSlot={<div className="ss-player-content">{contentSlot}</div>}
               uiSlot={!showReveal && !showWaiting ? <div className="ss-player-banner">TOP 3</div> : null}

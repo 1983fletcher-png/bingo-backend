@@ -1,13 +1,20 @@
 /**
  * Survey Showdown (Feud) TV/Display view. Checkpoint-based: STANDBY, R1_TITLE, R1_COLLECT, board with hinge-down reveal, R1_SUMMARY.
- * Slot-based layout: title, prompt, and content go in fixed regions of the frame for game-show polish.
+ * Slot-based layout: title, prompt, and content go in fixed regions of the frame (contain-aware).
  * @see docs/ACTIVITY-ROOM-SPEC.md §8.1
  */
 import type { FeudState, FeudCheckpointId } from '../types/feud';
 import { feudCheckpointToPhase } from '../types/feud';
+import type { SafeArea } from '../games/feud/surveyShowdownConstants';
 import { SurveyShowdownFrame } from '../games/feud/SurveyShowdownFrame';
 import { SurveyShowdownBoard } from '../games/feud/SurveyShowdownBoard';
 import '../styles/feud-display.css';
+
+/** Optional: mask baked placeholder regions when using legacy (non-blank) frame art. Remove once blank assets are in use. */
+const TV_MASKS: SafeArea[] = [
+  { x: 0.16, y: 0.28, w: 0.68, h: 0.14 },
+  { x: 0.18, y: 0.42, w: 0.64, h: 0.40 },
+];
 
 type Props = {
   feud: FeudState;
@@ -31,6 +38,7 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--standby feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownFrame
           variant="tv"
+          maskRects={TV_MASKS}
           contentSlot={
             <div className="feud-display__standby-inframe">
               <div className="feud-display__standby-card feud-display__standby-card--gameshow">
@@ -49,6 +57,7 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--title feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownFrame
           variant="tv"
+          maskRects={TV_MASKS}
           titleSlot={
             <div className="feud-display__hud feud-display__hud--slot">
               <h1 className="feud-display__game-name">{eventTitle || 'Survey Showdown'}</h1>
@@ -72,6 +81,7 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--collect feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownFrame
           variant="tv"
+          maskRects={TV_MASKS}
           promptSlot={
             <h2 className="feud-display__prompt feud-display__prompt--inframe">
               {feud.prompt || 'Submit your answers…'}
@@ -118,6 +128,7 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--locked feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownFrame
           variant="tv"
+          maskRects={TV_MASKS}
           promptSlot={
             <>
               <p className="feud-display__muted feud-display__muted--gameshow" style={{ fontSize: 12, marginBottom: 6 }}>Phase: {phase}</p>
@@ -137,6 +148,7 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--board feud-display--board-live feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownFrame
           variant="tv"
+          maskRects={TV_MASKS}
           promptSlot={
             <h2 className="feud-display__prompt feud-display__prompt--inframe">
               {feud.prompt || 'Top answers'}
