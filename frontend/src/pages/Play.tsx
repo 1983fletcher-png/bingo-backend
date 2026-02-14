@@ -898,7 +898,7 @@ export default function Play() {
     );
   }
 
-  // Crowd Control Trivia: interactive answers (select or text), score by tile value (100–500)
+  // Crowd Control Trivia: arcade game-show stage + interactive answers (same look as TV display)
   if (gameType === 'crowd-control-trivia' && joinState?.crowdControl) {
     const cct = joinState.crowdControl;
     const phase = cct.phase ?? 'board';
@@ -914,14 +914,22 @@ export default function Play() {
         code={code ?? undefined}
         themeId={sessionThemeId}
       >
-        <CCTPlayerContent
-          cct={cct}
-          question={question}
-          phase={phase}
-          revealed={revealed}
-          socket={socket}
-          code={code ?? undefined}
-          board={board}
+        <SurveyShowdownStage
+          variant="player"
+          stageTheme="arcade"
+          marqueeSubtitle="Playroom"
+          marqueeTitle="Crowd Control Trivia"
+          contentSlot={
+            <CCTPlayerContent
+              cct={cct}
+              question={question}
+              phase={phase}
+              revealed={revealed}
+              socket={socket}
+              code={code ?? undefined}
+              board={board}
+            />
+          }
         />
       </GameShell>
     );

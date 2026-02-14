@@ -8,6 +8,13 @@
   font-family: var(--pr-font-ui);
 }
 
+/* Display (TV): fixed viewport, no scroll — solid game-show page */
+.pr-gameshell--display {
+  height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
 /* Wrapper for scene so .pr-scene-layer gets global pointer-events: none */
 .pr-gameshell .pr-scene-layer {
   position: absolute;
@@ -65,14 +72,26 @@
   border-top: 1px solid var(--pr-border);
 }
 
-/* Display: max width, large typography */
+/* Display: max width, large typography, no scroll — content fits viewport */
 .pr-gameshell--display .pr-gameshell__stage-wrap {
   max-width: 90vw;
   margin: 0 auto;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .pr-gameshell--display .pr-gameshell__main {
   font-size: clamp(1rem, 2.5vw, 1.25rem);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Player: stack, large tap targets */

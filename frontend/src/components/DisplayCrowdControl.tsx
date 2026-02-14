@@ -23,7 +23,12 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
 
   if (isQuestion && question) {
     return (
-      <SurveyShowdownStage variant="tv" contentSlot={
+      <SurveyShowdownStage
+        variant="tv"
+        stageTheme="arcade"
+        marqueeSubtitle="Playroom"
+        marqueeTitle="Crowd Control Trivia"
+        contentSlot={
         <div className="cct-question-block">
           <h2 className="cct-question-prompt">{question.prompt}</h2>
           {!revealed && question.options && question.options.length > 0 && (
@@ -43,7 +48,8 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
             </div>
           )}
         </div>
-      } />
+      }
+      />
     );
   }
 
@@ -52,6 +58,9 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
     return (
       <SurveyShowdownStage
         variant="tv"
+        stageTheme="arcade"
+        marqueeSubtitle="Playroom"
+        marqueeTitle="Crowd Control Trivia"
         contentSlot={
           <div className="cct-stage-wrap">
             {/* Categories across top (golden header), values 100–500 down the left */}
@@ -97,6 +106,9 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
   return (
     <SurveyShowdownStage
       variant="tv"
+      stageTheme="arcade"
+      marqueeSubtitle="Playroom"
+      marqueeTitle="Crowd Control Trivia"
       contentSlot={
         <div style={{ padding: 48, textAlign: 'center', color: 'var(--pr-muted)' }}>
           Board loading…

@@ -19,6 +19,9 @@ export function DisplayMarketMatch({ state }: DisplayMarketMatchProps) {
     return (
       <SurveyShowdownStage
         variant="tv"
+        stageTheme="arcade"
+        marqueeSubtitle="Playroom"
+        marqueeTitle="Market Match"
         contentSlot={
           <div className="mm-display-wrap">
             <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Host will pick an item.</p>
@@ -35,7 +38,9 @@ export function DisplayMarketMatch({ state }: DisplayMarketMatchProps) {
   return (
     <SurveyShowdownStage
       variant="tv"
-      titleSlot={<h1 className="mm-title">Market Match</h1>}
+      stageTheme="arcade"
+      marqueeSubtitle="Playroom"
+      marqueeTitle="Market Match"
       promptSlot={
         <div className="mm-question-panel">
           <p className="mm-question-text">

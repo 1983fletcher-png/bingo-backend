@@ -31,6 +31,9 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--standby feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownStage
           variant="tv"
+          stageTheme="arcade"
+          marqueeSubtitle="Playroom"
+          marqueeTitle="Survey Showdown"
           contentSlot={
             <div className="feud-display__standby-inframe">
               <div className="feud-display__standby-card feud-display__standby-card--gameshow">
@@ -49,6 +52,9 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--title feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownStage
           variant="tv"
+          stageTheme="arcade"
+          marqueeSubtitle="Playroom"
+          marqueeTitle="Survey Showdown"
           titleSlot={
             <div className="feud-display__hud feud-display__hud--slot">
               <h1 className="feud-display__game-name">{eventTitle || 'Survey Showdown'}</h1>
@@ -72,6 +78,9 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--collect feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownStage
           variant="tv"
+          stageTheme="arcade"
+          marqueeSubtitle="Playroom"
+          marqueeTitle="Survey Showdown"
           promptSlot={
             <h2 className="feud-display__prompt feud-display__prompt--inframe">
               {feud.prompt || 'Submit your answers…'}
@@ -118,6 +127,9 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--locked feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownStage
           variant="tv"
+          stageTheme="arcade"
+          marqueeSubtitle="Playroom"
+          marqueeTitle="Survey Showdown"
           promptSlot={
             <>
               <p className="feud-display__muted feud-display__muted--gameshow" style={{ fontSize: 12, marginBottom: 6 }}>Phase: {phase}</p>
@@ -137,6 +149,9 @@ export function FeudDisplay({ feud, joinUrl, code, eventTitle, theme }: Props) {
       <div className="feud-display feud-display--board feud-display--board-live feud-display--inframe" style={{ background: 'transparent', color: theme.text }}>
         <SurveyShowdownStage
           variant="tv"
+          stageTheme="arcade"
+          marqueeSubtitle="Playroom"
+          marqueeTitle="Survey Showdown"
           promptSlot={
             <h2 className="feud-display__prompt feud-display__prompt--inframe">
               {feud.prompt || 'Top answers'}
