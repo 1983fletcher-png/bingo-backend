@@ -12,10 +12,11 @@ import { TimerPill } from '../components/trivia-room';
 import { StandbyCard } from '../components/StandbyCard';
 import { GameShell } from '../components/GameShell';
 import type { ThemeId } from '../theme/theme.types';
-import { getMarketMatchItem } from '../data/marketMatchDataset';
+import { getMarketMatchItem, type MarketMatchItem } from '../data/marketMatchDataset';
 import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
 import { TextAnswerInput } from '../components/PlayerLayout';
 import { SurveyShowdownStage } from '../games/feud/SurveyShowdownStage';
+import '../components/DisplayMarketMatch.css';
 import { SurveyShowdownBoard } from '../games/feud/SurveyShowdownBoard';
 import '../games/feud/feud-player-reveal.css';
 import '../games/feud/SurveyShowdownPlayerStage.css';
@@ -287,6 +288,105 @@ interface JoinState {
     scores?: Record<string, number>;
     finalWagerEnabled?: boolean;
   };
+}
+
+/** Market Match player: image, question, four choices; reveal shows correct/wrong. */
+function MarketMatchPlayerContent({
+  item,
+  revealed,
+  code,
+}: {
+  item: MarketMatchItem | null;
+  revealed: boolean;
+  code?: string;
+}) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  if (!item) {
+    return (
+      <div className="mm-player-wrap">
+        <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Host will pick an item.</p>
+      </div>
+    );
+  }
+
+  const questionText = `What did it cost in ${item.year}?`;
+  const options = item.options ?? [];
+  const correctIndex = item.correctIndex ?? 0;
+  const isCorrect = selectedIndex !== null && selectedIndex === correctIndex;
+  const correctLabel = options[correctIndex] ?? '';
+
+  const handleSelect = (index: number) => {
+    if (submitted || revealed) return;
+    setSelectedIndex(index);
+    setSubmitted(true);
+  };
+
+  return (
+    <div className="mm-player-wrap">
+      {code && (
+        <div className="mm-player-code-bar">{code.toUpperCase()}</div>
+      )}
+      <div className="mm-player-question-panel">
+        <p className="mm-player-question-text">{questionText} ({item.unit})</p>
+      </div>
+      <div className="mm-player-content-block">
+        {item.imageUrl ? (
+          <img src={item.imageUrl} alt="" className="mm-item-image" style={{ marginBottom: 12 }} />
+        ) : (
+          <div className="mm-item-image-wrap" style={{ marginBottom: 12 }}>Image</div>
+        )}
+        <p className="mm-player-item-title">{item.title}</p>
+        <p className="mm-player-item-meta">{item.year} · {item.unit}</p>
+
+        {!submitted && !revealed && options.length > 0 && (
+          <div className="mm-player-options">
+            {options.map((label, i) => (
+              <button
+                key={i}
+                type="button"
+                className="mm-player-option"
+                onClick={() => handleSelect(i)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {submitted && !revealed && (
+          <>
+            <p className="mm-player-submitted-label">Answer Submitted</p>
+            <p className="mm-player-submitted-value">
+              {selectedIndex !== null ? options[selectedIndex] : '—'}
+            </p>
+            <p className="mm-player-waiting">Host will reveal the answer.</p>
+          </>
+        )}
+
+        {revealed && (
+          <>
+            <p className="mm-player-reveal-round">Round</p>
+            <p className="mm-player-reveal-correct">
+              {correctLabel} {item.unit}
+            </p>
+            {item.citation && (
+              <p className="mm-player-reveal-explanation">{item.citation}</p>
+            )}
+            {selectedIndex !== null && (
+              <div className={`mm-player-your-guess ${isCorrect ? 'mm-player-your-guess--correct' : 'mm-player-your-guess--incorrect'}`}>
+                <span className="mm-player-your-guess-value">
+                  Your answer: {options[selectedIndex]}
+                </span>
+                <span className="mm-player-your-guess-icon" aria-hidden>{isCorrect ? '✓' : '✗'}</span>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function Play() {
@@ -644,7 +744,7 @@ export default function Play() {
     );
   }
 
-  // Market Match: show game view when we have state (host may not use Waiting room tab)
+  // Market Match: game-show player UI — code bar, question panel, guess input / submitted / reveal
   if (gameType === 'market-match' && joinState?.marketMatch) {
     const item = getMarketMatchItem(joinState.marketMatch.currentIndex ?? 0);
     const revealed = joinState.marketMatch.revealed === true;
@@ -657,27 +757,17 @@ export default function Play() {
         code={code ?? undefined}
         themeId={sessionThemeId}
       >
-        <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
-          {item ? (
-            <>
-              <h2 style={{ margin: '0 0 12px', fontSize: '1.25rem', fontWeight: 600, color: 'var(--pr-text)' }}>
-                {item.title}
-              </h2>
-              <p style={{ margin: 0, color: 'var(--pr-muted)' }}>
-                What did it cost in {item.year}? ({item.unit})
-              </p>
-              {revealed ? (
-                <p style={{ marginTop: 16, padding: 12, background: 'var(--pr-surface2)', borderRadius: 8, fontWeight: 600, color: 'var(--pr-brand)' }}>
-                  ${item.priceUsd.toFixed(2)} {item.unit}
-                </p>
-              ) : (
-                <p style={{ marginTop: 16, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>
-              )}
-            </>
-          ) : (
-            <p style={{ color: 'var(--pr-muted)' }}>Host will pick an item.</p>
-          )}
-        </div>
+        <SurveyShowdownStage
+          variant="player"
+          contentSlot={
+            <MarketMatchPlayerContent
+              key={joinState.marketMatch.currentIndex}
+              item={item}
+              revealed={revealed}
+              code={code ?? undefined}
+            />
+          }
+        />
       </GameShell>
     );
   }

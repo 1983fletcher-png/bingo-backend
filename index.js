@@ -968,20 +968,26 @@ function getGame(code) {
 const TRIVIA_LIKE_TYPES = ['trivia', 'icebreakers', 'edutainment', 'team-building'];
 const FEUD_CHECKPOINTS = ['STANDBY', 'R1_TITLE', 'R1_COLLECT', 'R1_LOCKED', 'R1_BOARD_0', 'R1_BOARD_1', 'R1_BOARD_2', 'R1_BOARD_3', 'R1_BOARD_4', 'R1_BOARD_5', 'R1_BOARD_6', 'R1_BOARD_7', 'R1_BOARD_8', 'R1_SUMMARY'];
 
-/** Recompute topAnswers from submissions (same as feud:lock). Mutates game.feud.topAnswers. */
+/** Recompute topAnswers from submissions (same as feud:lock). Mutates game.feud.topAnswers. Preserves display casing (first occurrence). */
 function feudRecomputeTopAnswers(game) {
   if (!game?.feud?.submissions?.length) return;
-  const counts = new Map();
+  const byKey = new Map(); // key (normalized) -> { count, displayAnswer }
   for (const sub of game.feud.submissions) {
     for (const a of sub.answers) {
-      const key = String(a).toLowerCase().replace(/\s+/g, ' ').trim();
+      const raw = String(a).trim();
+      const key = raw.toLowerCase().replace(/\s+/g, ' ').trim();
       if (!key) continue;
-      counts.set(key, (counts.get(key) || 0) + 1);
+      const existing = byKey.get(key);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        byKey.set(key, { count: 1, displayAnswer: raw });
+      }
     }
   }
-  const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
-  const topEight = sorted.map(([answer, count], i) => ({
-    answer,
+  const sorted = [...byKey.entries()].sort((a, b) => b[1].count - a[1].count).slice(0, 8);
+  const topEight = sorted.map(([_, { count, displayAnswer }], i) => ({
+    answer: displayAnswer,
     count,
     points: 8 - i,
     revealed: false,
@@ -1612,18 +1618,24 @@ io.on('connection', (socket) => {
     if (!assertHost(game, socket, hostToken)) return;
     game.feud.locked = true;
     game.feud.checkpointId = 'R1_LOCKED';
-    const counts = new Map();
+    const byKey = new Map(); // key (normalized) -> { count, displayAnswer }
     for (const sub of game.feud.submissions) {
       for (const a of sub.answers) {
-        const key = String(a).toLowerCase().replace(/\s+/g, ' ').trim();
+        const raw = String(a).trim();
+        const key = raw.toLowerCase().replace(/\s+/g, ' ').trim();
         if (!key) continue;
-        counts.set(key, (counts.get(key) || 0) + 1);
+        const existing = byKey.get(key);
+        if (existing) {
+          existing.count += 1;
+        } else {
+          byKey.set(key, { count: 1, displayAnswer: raw });
+        }
       }
     }
-    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
-    const topEight = sorted.map(([answer, count], i) => ({
-      answer: answer,
-      count: count,
+    const sorted = [...byKey.entries()].sort((a, b) => b[1].count - a[1].count).slice(0, 8);
+    const topEight = sorted.map(([_, { count, displayAnswer }], i) => ({
+      answer: displayAnswer,
+      count,
       points: 8 - i,
       revealed: false,
       strike: false

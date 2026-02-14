@@ -1,0 +1,374 @@
+/**
+ * Market Match — game-show UI inspired by main display + player screens.
+ * Dark brown question panel, beige content block, gold accents, marquee stage.
+ */
+
+/* ---- Display (TV): stage content blocks ---- */
+.mm-display-wrap {
+  width: 100%;
+  max-width: min(92vw, 720px);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.mm-title {
+  margin: 0 0 clamp(12px, 2vw, 20px);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 600;
+  color: var(--pr-brand);
+  text-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+  letter-spacing: 0.02em;
+}
+
+/* Question panel: dark brown, rounded, white text */
+.mm-question-panel {
+  margin: 0 0 clamp(16px, 2.5vw, 24px);
+  padding: clamp(14px, 2vw, 20px) clamp(20px, 3vw, 28px);
+  background: linear-gradient(165deg, #3d2914 0%, #2d1f0f 50%, #251a0c 100%);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.mm-question-text {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.35;
+}
+
+/* Content block: light beige, rounded (item + instruction or reveal) */
+.mm-content-block {
+  padding: clamp(20px, 3vw, 28px) clamp(24px, 3.5vw, 32px);
+  background: linear-gradient(165deg, #f5f0e6 0%, #e8e0d2 50%, #e0d8c8 100%);
+  border: 1px solid rgba(139, 119, 81, 0.4);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 6px 24px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.mm-content-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 2vw, 18px);
+}
+
+/* Item image: interchangeable per item (Corvette, bread, etc.) */
+.mm-item-image-wrap,
+.mm-item-image {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 4/3;
+  border-radius: 10px;
+  border: 1px solid rgba(139, 119, 81, 0.35);
+  object-fit: cover;
+}
+
+.mm-item-image-wrap {
+  background: rgba(60, 50, 40, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(80, 70, 60, 0.5);
+  font-size: 0.85rem;
+}
+
+.mm-item-image {
+  display: block;
+  background: #ddd;
+}
+
+/* Item description (right of image in concept; we stack on small) */
+.mm-item-title {
+  margin: 0;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 600;
+  color: #2c2416;
+  line-height: 1.35;
+}
+
+.mm-item-meta {
+  margin: 0;
+  font-size: clamp(0.9rem, 1.6vw, 1rem);
+  color: #5c5244;
+}
+
+/* Four multiple-choice options (display: read-only pills) */
+.mm-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 14px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.mm-option {
+  padding: 12px 16px;
+  text-align: center;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  font-weight: 700;
+  color: #2c2416;
+  background: rgba(45, 35, 25, 0.12);
+  border: 2px solid rgba(212, 175, 55, 0.45);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.mm-option--correct {
+  border-color: var(--pr-brand);
+  background: rgba(212, 175, 55, 0.2);
+  color: #1a1508;
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.4);
+}
+
+/* Instruction below content block */
+.mm-instruction {
+  margin: clamp(14px, 2vw, 20px) 0 0;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Reveal: correct price in gold */
+.mm-reveal-wrap {
+  margin-top: 8px;
+}
+
+.mm-reveal-price {
+  margin: 0;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  color: var(--pr-brand);
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.mm-reveal-unit {
+  margin: 4px 0 0;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  color: #5c5244;
+}
+
+.mm-reveal-citation {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: #8a7f6e;
+}
+
+/* ---- Player: code bar, question panel, content, states ---- */
+.mm-player-wrap {
+  width: 100%;
+  max-width: min(96vw, 440px);
+  margin: 0 auto;
+}
+
+.mm-player-code-bar {
+  padding: 10px 16px;
+  margin-bottom: 14px;
+  background: linear-gradient(165deg, #3d2914 0%, #2d1f0f 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.mm-player-question-panel {
+  margin-bottom: 14px;
+  padding: 14px 18px;
+  background: linear-gradient(165deg, #4a3820 0%, #3d2e18 100%);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.mm-player-question-text {
+  margin: 0;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.mm-player-content-block {
+  padding: 18px 20px;
+  background: linear-gradient(165deg, #f5f0e6 0%, #e8e0d2 100%);
+  border: 1px solid rgba(139, 119, 81, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.mm-player-item-title {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c2416;
+}
+
+.mm-player-item-meta {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: #5c5244;
+}
+
+/* Player: four choice buttons */
+.mm-player-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 12px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.mm-player-option {
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2c2416;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.mm-player-option:hover:not(:disabled) {
+  border-color: rgba(212, 175, 55, 0.8);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.mm-player-option:disabled {
+  cursor: default;
+}
+
+.mm-player-option--selected {
+  border-color: var(--pr-brand);
+  background: rgba(212, 175, 55, 0.25);
+}
+
+.mm-player-option--correct {
+  border-color: var(--pr-success);
+  background: rgba(52, 199, 89, 0.2);
+  color: #0d3d1a;
+}
+
+.mm-player-option--wrong {
+  border-color: rgba(255, 59, 48, 0.5);
+  background: rgba(255, 59, 48, 0.1);
+  color: #5c2416;
+}
+
+/* Answer input: gold border (legacy / fallback) */
+.mm-player-input-wrap {
+  margin-top: 12px;
+}
+
+.mm-player-input-wrap .join-page__input {
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  background: rgba(45, 35, 25, 0.15);
+  color: var(--pr-text);
+  font-weight: 600;
+}
+
+.mm-player-input-wrap .join-page__btn {
+  border: 2px solid rgba(212, 175, 55, 0.6);
+  background: linear-gradient(165deg, #3d2914 0%, #2d1f0f 100%);
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 700;
+}
+
+/* Submitted state */
+.mm-player-submitted-label {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: #5c5244;
+}
+
+.mm-player-submitted-value {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+  color: var(--pr-brand);
+}
+
+.mm-player-waiting {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  color: #8a7f6e;
+}
+
+/* Reveal state: correct + your result */
+.mm-player-reveal-round {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--pr-brand);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mm-player-reveal-correct {
+  margin: 0 0 4px;
+  font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+  font-weight: 800;
+  color: var(--pr-brand);
+}
+
+.mm-player-reveal-explanation {
+  margin: 12px 0 0;
+  font-size: 0.95rem;
+  color: #5c5244;
+  line-height: 1.4;
+}
+
+.mm-player-your-guess {
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  background: rgba(45, 35, 25, 0.2);
+  border-radius: 10px;
+  border: 1px solid rgba(139, 119, 81, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mm-player-your-guess--correct {
+  border-color: rgba(52, 199, 89, 0.5);
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.mm-player-your-guess--incorrect {
+  border-color: rgba(255, 59, 48, 0.4);
+  background: rgba(255, 59, 48, 0.08);
+}
+
+.mm-player-your-guess-value {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #2c2416;
+}
+
+.mm-player-your-guess-icon {
+  font-size: 1.25rem;
+}
+
+.mm-player-your-guess--correct .mm-player-your-guess-icon {
+  color: var(--pr-success);
+}
+
+.mm-player-your-guess--incorrect .mm-player-your-guess-icon {
+  color: var(--pr-danger);
+}

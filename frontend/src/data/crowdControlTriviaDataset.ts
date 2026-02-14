@@ -4,7 +4,8 @@
  */
 import seed from './trivia-seed-v1.json';
 
-export const VALUE_LADDER = [200, 300, 400, 500, 600] as const;
+/** Display values for tiles (100–500). Question IDs in seed still use 200–600; valueIndex 0→100, 1→200, etc. */
+export const VALUE_LADDER = [100, 200, 300, 400, 500] as const;
 
 type SeedBoard = {
   board_id: string;

@@ -1,0 +1,167 @@
+/**
+ * Crowd Control Trivia — game-show board: 6 subjects on top, tiles 100–500.
+ * Built into the stage; purple panels, gold borders, aligned grid.
+ */
+
+.cct-stage-wrap {
+  width: 100%;
+  max-width: min(96vw, 1100px);
+  margin: 0 auto;
+}
+
+/* Subject row: 6 panels across the top */
+.cct-subjects-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(6px, 1vw, 12px);
+  margin-bottom: clamp(8px, 1.5vw, 14px);
+}
+
+.cct-subject {
+  padding: clamp(10px, 1.8vw, 16px) clamp(8px, 1.2vw, 12px);
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 12px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Tile grid: 6 columns × 5 rows (100–500) */
+.cct-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: clamp(6px, 1vw, 12px);
+  flex: 1;
+  min-height: 0;
+}
+
+.cct-tile {
+  aspect-ratio: 1.1;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: clamp(1rem, 2.2vw, 1.75rem);
+  color: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(165deg, rgba(80, 50, 120, 0.6) 0%, rgba(45, 27, 78, 0.85) 100%);
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cct-tile:not(.cct-tile--used):not(.cct-tile--current):hover {
+  border-color: rgba(212, 175, 55, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 0 20px rgba(212, 175, 55, 0.25);
+}
+
+.cct-tile--used {
+  background: rgba(30, 20, 50, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cct-tile--current {
+  background: linear-gradient(165deg, rgba(212, 175, 55, 0.35) 0%, rgba(180, 140, 50, 0.5) 100%);
+  border-color: rgba(255, 248, 224, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 0 24px rgba(212, 175, 55, 0.4);
+  color: #fffef5;
+}
+
+/* Question/reveal view inside stage */
+.cct-question-block {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: clamp(16px, 2.5vw, 24px);
+  text-align: center;
+}
+
+.cct-question-prompt {
+  margin: 0 0 clamp(20px, 3vw, 28px);
+  font-size: clamp(1.15rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.cct-question-options {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.cct-question-option {
+  width: 100%;
+  max-width: 420px;
+  padding: 14px 20px;
+  text-align: left;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  font-weight: 500;
+  color: var(--pr-text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.cct-question-muted {
+  margin: 0;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  color: var(--pr-muted);
+}
+
+.cct-reveal-answer {
+  margin: clamp(20px, 3vw, 28px) 0 0;
+  padding: clamp(18px, 2.5vw, 24px) clamp(24px, 3vw, 32px);
+  display: inline-block;
+  background: linear-gradient(165deg, rgba(212, 175, 55, 0.2) 0%, rgba(60, 40, 90, 0.6) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.cct-reveal-answer-text {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  color: var(--pr-brand);
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.cct-reveal-explanation {
+  margin: 12px 0 0;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  color: var(--pr-muted);
+  max-width: 480px;
+}
+
+.cct-vote-prompt {
+  margin: clamp(12px, 2vw, 20px) 0 0;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  color: var(--pr-muted);
+}
