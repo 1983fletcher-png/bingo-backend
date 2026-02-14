@@ -1,6 +1,6 @@
 /**
- * Crowd Control Trivia — Jeopardy-style board: categories on left, value columns ($100–$500).
- * Matches host panel layout; everything visible on TV.
+ * Crowd Control Trivia — categories across top (golden header), values 100–500 down the left.
+ * Classic Jeopardy-style: top row = category names, first column = point values.
  */
 
 .cct-stage-wrap {
@@ -9,16 +9,16 @@
   margin: 0 auto;
 }
 
-/* Board: 1 category column + 5 value columns; header row + 6 category rows */
+/* Board: corner + 6 category columns; header row + 5 value rows */
 .cct-board {
   display: grid;
-  grid-template-columns: minmax(120px, 1.4fr) repeat(5, minmax(64px, 1fr));
+  grid-template-columns: minmax(64px, 0.8fr) repeat(6, minmax(80px, 1fr));
   grid-auto-rows: minmax(52px, auto);
   gap: clamp(4px, 0.8vw, 10px);
   width: 100%;
 }
 
-/* Header row: "Category" | $100 | $200 | $300 | $400 | $500 */
+/* Header row: corner + 6 category names (golden / prestige style) */
 .cct-board-head {
   display: contents;
 }
@@ -26,49 +26,54 @@
 .cct-board-head-cell {
   padding: clamp(8px, 1.2vw, 12px) clamp(6px, 1vw, 10px);
   font-weight: 800;
-  font-size: clamp(0.85rem, 1.6vw, 1.1rem);
+  font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+  text-align: center;
+  line-height: 1.2;
+  color: rgba(30, 22, 45, 0.95);
+  background: linear-gradient(165deg, rgba(255, 235, 150, 0.95) 0%, rgba(212, 175, 55, 0.9) 50%, rgba(180, 140, 50, 0.95) 100%);
+  border: 1px solid rgba(140, 110, 30, 0.6);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 2px 10px rgba(0, 0, 0, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.cct-board-head-cell--corner {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(212, 175, 55, 0.35);
+  color: transparent;
+}
+
+.cct-board-head-cell--category {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* One row per value: value label (100–500) + 6 tiles */
+.cct-board-row {
+  display: contents;
+}
+
+.cct-board-value {
+  padding: clamp(8px, 1.2vw, 12px);
+  font-weight: 800;
+  font-size: clamp(0.9rem, 1.8vw, 1.2rem);
   text-align: center;
   color: rgba(255, 248, 224, 0.95);
-  background: linear-gradient(165deg, rgba(212, 175, 55, 0.25) 0%, rgba(180, 140, 50, 0.35) 100%);
+  background: linear-gradient(165deg, rgba(212, 175, 55, 0.3) 0%, rgba(140, 110, 30, 0.5) 100%);
   border: 1px solid rgba(212, 175, 55, 0.5);
   border-radius: 10px;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
     0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.cct-board-head-cell--category {
-  text-align: left;
-  padding-left: clamp(10px, 1.5vw, 14px);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.cct-board-head-cell--value {
-  min-width: 0;
-}
-
-/* One row per category: category label + 5 tiles */
-.cct-board-row {
-  display: contents;
-}
-
-.cct-board-category {
-  padding: clamp(10px, 1.5vw, 14px) clamp(10px, 1.2vw, 14px);
-  font-weight: 700;
-  font-size: clamp(0.8rem, 1.5vw, 1rem);
-  line-height: 1.25;
-  color: rgba(255, 255, 255, 0.95);
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: 10px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 2px 10px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  justify-content: center;
 }
 
 .cct-tile {

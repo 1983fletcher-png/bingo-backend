@@ -108,21 +108,21 @@ export function CrowdControlHostPanel({
 
   return (
     <div className="host-room__panel" style={{ padding: 24 }}>
-      {/* Board: same Jeopardy layout as TV display — category left, $100–$500 columns */}
+      {/* Board: categories across top, values 100–500 down the left (matches TV display) */}
       {board && (
         <div style={{ marginBottom: 24 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 18 }}>{board.name}</h3>
           <div className="cct-host-board">
             <div className="cct-host-board__head" aria-hidden="true">
-              <div className="cct-host-board__head-cell cct-host-board__head-cell--category">Category</div>
-              {VALUE_LADDER.map((v) => (
-                <div key={v} className="cct-host-board__head-cell">${v}</div>
+              <div className="cct-host-board__head-cell cct-host-board__head-cell--corner"> </div>
+              {categories.map((cat, ci) => (
+                <div key={ci} className="cct-host-board__head-cell cct-host-board__head-cell--category">{cat}</div>
               ))}
             </div>
-            {categories.map((cat, ci) => (
-              <div key={ci} className="cct-host-board__row">
-                <div className="cct-host-board__category">{cat}</div>
-                {VALUE_LADDER.map((_, vi) => {
+            {VALUE_LADDER.map((value, vi) => (
+              <div key={vi} className="cct-host-board__row">
+                <div className="cct-host-board__value">{value}</div>
+                {categories.map((_, ci) => {
                   const used = (usedSlots[ci] ?? 0) > vi;
                   const isCurrent =
                     isQuestion &&
@@ -130,7 +130,7 @@ export function CrowdControlHostPanel({
                     crowdControl.currentValueIndex === vi;
                   return (
                     <div
-                      key={vi}
+                      key={ci}
                       className={`cct-host-board__tile ${used ? 'cct-host-board__tile--used' : ''} ${isCurrent ? 'cct-host-board__tile--current' : ''}`}
                     >
                       {used ? (isCurrent ? '▶' : '✓') : '—'}

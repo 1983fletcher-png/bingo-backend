@@ -1,15 +1,15 @@
 /**
- * Crowd Control Trivia — host board: same Jeopardy layout as TV display.
- * Category column left, value columns $100–$500; clear headers and cells.
+ * Crowd Control Trivia — host board: categories across top, values 100–500 down the left.
+ * Matches TV display layout.
  */
 
 .cct-host-board {
   display: grid;
-  grid-template-columns: minmax(120px, 1.4fr) repeat(5, minmax(56px, 1fr));
+  grid-template-columns: minmax(48px, 0.6fr) repeat(6, minmax(72px, 1fr));
   grid-auto-rows: minmax(44px, auto);
   gap: 6px;
   width: 100%;
-  max-width: 640px;
+  max-width: 720px;
   padding: 12px;
   background: var(--surface2);
   border-radius: 10px;
@@ -23,38 +23,42 @@
 .cct-host-board__head-cell {
   padding: 10px 8px;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   text-align: center;
   color: var(--text);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.cct-host-board__head-cell--corner {
+  background: var(--surface2);
+  color: transparent;
 }
 
 .cct-host-board__head-cell--category {
-  text-align: left;
-  padding-left: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
+  min-width: 0;
+  line-height: 1.2;
 }
 
 .cct-host-board__row {
   display: contents;
 }
 
-.cct-host-board__category {
-  padding: 10px 12px;
+.cct-host-board__value {
+  padding: 8px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
+  text-align: center;
   color: var(--text);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   display: flex;
   align-items: center;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  justify-content: center;
 }
 
 .cct-host-board__tile {

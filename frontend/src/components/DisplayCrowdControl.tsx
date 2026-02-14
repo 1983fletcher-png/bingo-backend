@@ -54,20 +54,20 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
         variant="tv"
         contentSlot={
           <div className="cct-stage-wrap">
-            {/* Jeopardy-style board: categories on left, value columns ($100–$500) — matches host layout */}
+            {/* Categories across top (golden header), values 100–500 down the left */}
             <div className="cct-board">
-              {/* Header row: corner + value columns */}
+              {/* Header row: corner + 6 category names */}
               <div className="cct-board-head" aria-hidden="true">
-                <div className="cct-board-head-cell cct-board-head-cell--category">Category</div>
-                {VALUE_LADDER.map((v) => (
-                  <div key={v} className="cct-board-head-cell cct-board-head-cell--value">${v}</div>
+                <div className="cct-board-head-cell cct-board-head-cell--corner"> </div>
+                {categories.slice(0, 6).map((cat, ci) => (
+                  <div key={ci} className="cct-board-head-cell cct-board-head-cell--category">{cat}</div>
                 ))}
               </div>
-              {/* One row per category: name + 5 tiles */}
-              {categories.slice(0, 6).map((cat, ci) => (
-                <div key={ci} className="cct-board-row">
-                  <div className="cct-board-category">{cat}</div>
-                  {VALUE_LADDER.map((value, vi) => {
+              {/* One row per value: $100, $200, … down the left, then 6 tiles (one per category) */}
+              {VALUE_LADDER.map((value, vi) => (
+                <div key={vi} className="cct-board-row">
+                  <div className="cct-board-value">{value}</div>
+                  {categories.slice(0, 6).map((_, ci) => {
                     const used = (usedSlots[ci] ?? 0) > vi;
                     const current =
                       phase !== 'board' &&
@@ -75,7 +75,7 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
                       currentValueIndex === vi;
                     return (
                       <div
-                        key={vi}
+                        key={ci}
                         className={`cct-tile ${used ? 'cct-tile--used' : ''} ${current ? 'cct-tile--current' : ''}`}
                       >
                         {used ? (current ? '▶' : '✓') : value}
