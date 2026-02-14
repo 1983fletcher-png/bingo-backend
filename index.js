@@ -1112,7 +1112,11 @@ function createGame(opts = {}) {
       revealed: false
     } : null
   };
-  if (game.crowdControl) game.cctPlayerVotes = new Map(); // socketId -> categoryIndex (server-only)
+  if (game.crowdControl) {
+    game.cctPlayerVotes = new Map(); // socketId -> categoryIndex (server-only)
+    game.cctPlayerAnswers = new Map(); // socketId -> { selectedIndex?, textAnswer? } for current question
+    game.cctScores = new Map(); // socketId -> total score
+  }
   games.set(code, game);
   return game;
 }
@@ -1460,8 +1464,15 @@ io.on('connection', (socket) => {
   });
 
   // --- Crowd Control Trivia ---
+  const CCT_VALUE_LADDER = [100, 200, 300, 400, 500];
   function emitCctState(game) {
-    if (game?.crowdControl) io.to(`game:${game.code}`).emit('cct:state', game.crowdControl);
+    if (!game?.crowdControl) return;
+    const { correctAnswer, ...rest } = game.crowdControl;
+    const payload = { ...rest, playerScores: Object.fromEntries(game.cctScores || []) };
+    io.to(`game:${game.code}`).emit('cct:state', payload);
+  }
+  function normalizeAnswer(s) {
+    return String(s).toLowerCase().replace(/\s+/g, ' ').trim();
   }
   socket.on('cct:open-vote', ({ code, hostToken }) => {
     const game = getGame(code);
@@ -1508,13 +1519,60 @@ io.on('connection', (socket) => {
     cc.usedSlots[winningCat] = valueIndex + 1;
     cc.phase = 'question';
     cc.revealed = false;
+    cc.currentPoints = CCT_VALUE_LADDER[valueIndex] ?? 100;
+    cc.correctAnswer = undefined;
+    cc.options = undefined;
+    if (game.cctPlayerAnswers) game.cctPlayerAnswers.clear();
+    emitCctState(game);
+  });
+  socket.on('cct:question-details', ({ code, hostToken, correctAnswer, points, options }) => {
+    const game = getGame(code);
+    if (!game?.crowdControl) return;
+    if (!assertHost(game, socket, hostToken)) return;
+    const cc = game.crowdControl;
+    if (cc.phase !== 'question') return;
+    cc.correctAnswer = correctAnswer != null ? String(correctAnswer) : undefined;
+    cc.currentPoints = Number.isFinite(points) ? points : undefined;
+    cc.options = Array.isArray(options) ? options : undefined;
+    emitCctState(game);
+  });
+  socket.on('cct:answer', ({ code, selectedIndex, textAnswer }) => {
+    const game = getGame(code);
+    if (!game?.crowdControl) return;
+    const cc = game.crowdControl;
+    if (cc.phase !== 'question' || cc.revealed) return;
+    if (!game.cctPlayerAnswers) game.cctPlayerAnswers = new Map();
+    game.cctPlayerAnswers.set(socket.id, {
+      selectedIndex: selectedIndex !== undefined && selectedIndex !== null ? parseInt(selectedIndex, 10) : undefined,
+      textAnswer: textAnswer != null ? String(textAnswer).trim() : undefined
+    });
     emitCctState(game);
   });
   socket.on('cct:reveal', ({ code, hostToken }) => {
     const game = getGame(code);
     if (!game?.crowdControl) return;
     if (!assertHost(game, socket, hostToken)) return;
-    game.crowdControl.revealed = true;
+    const cc = game.crowdControl;
+    const points = cc.currentPoints || 100;
+    const correctNorm = cc.correctAnswer ? normalizeAnswer(cc.correctAnswer) : '';
+    const options = cc.options || [];
+    if (game.cctPlayerAnswers) {
+      if (!game.cctScores) game.cctScores = new Map();
+      for (const [playerId, ans] of game.cctPlayerAnswers) {
+        let correct = false;
+        if (ans.selectedIndex !== undefined && ans.selectedIndex !== null && options[ans.selectedIndex] !== undefined) {
+          correct = normalizeAnswer(options[ans.selectedIndex]) === correctNorm;
+        } else if (ans.textAnswer !== undefined && ans.textAnswer !== '') {
+          correct = normalizeAnswer(ans.textAnswer) === correctNorm;
+        }
+        if (correct) {
+          const prev = game.cctScores.get(playerId) || 0;
+          game.cctScores.set(playerId, prev + points);
+        }
+      }
+      game.cctPlayerAnswers.clear();
+    }
+    cc.revealed = true;
     emitCctState(game);
   });
   socket.on('cct:back-to-board', ({ code, hostToken }) => {
@@ -1527,6 +1585,10 @@ io.on('connection', (socket) => {
     cc.revealed = false;
     cc.winningCategoryIndex = null;
     cc.currentValueIndex = null;
+    cc.currentPoints = undefined;
+    cc.correctAnswer = undefined;
+    cc.options = undefined;
+    if (game.cctPlayerAnswers) game.cctPlayerAnswers.clear();
     emitCctState(game);
   });
 

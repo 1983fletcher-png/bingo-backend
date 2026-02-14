@@ -1,6 +1,6 @@
 /**
- * Crowd Control Trivia — game-show board: 6 subjects on top, tiles 100–500.
- * Built into the stage; purple panels, gold borders, aligned grid.
+ * Crowd Control Trivia — Jeopardy-style board: categories on left, value columns ($100–$500).
+ * Matches host panel layout; everything visible on TV.
  */
 
 .cct-stage-wrap {
@@ -9,43 +9,69 @@
   margin: 0 auto;
 }
 
-/* Subject row: 6 panels across the top */
-.cct-subjects-row {
+/* Board: 1 category column + 5 value columns; header row + 6 category rows */
+.cct-board {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(6px, 1vw, 12px);
-  margin-bottom: clamp(8px, 1.5vw, 14px);
+  grid-template-columns: minmax(120px, 1.4fr) repeat(5, minmax(64px, 1fr));
+  grid-auto-rows: minmax(52px, auto);
+  gap: clamp(4px, 0.8vw, 10px);
+  width: 100%;
 }
 
-.cct-subject {
-  padding: clamp(10px, 1.8vw, 16px) clamp(8px, 1.2vw, 12px);
+/* Header row: "Category" | $100 | $200 | $300 | $400 | $500 */
+.cct-board-head {
+  display: contents;
+}
+
+.cct-board-head-cell {
+  padding: clamp(8px, 1.2vw, 12px) clamp(6px, 1vw, 10px);
+  font-weight: 800;
+  font-size: clamp(0.85rem, 1.6vw, 1.1rem);
   text-align: center;
+  color: rgba(255, 248, 224, 0.95);
+  background: linear-gradient(165deg, rgba(212, 175, 55, 0.25) 0%, rgba(180, 140, 50, 0.35) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cct-board-head-cell--category {
+  text-align: left;
+  padding-left: clamp(10px, 1.5vw, 14px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cct-board-head-cell--value {
+  min-width: 0;
+}
+
+/* One row per category: category label + 5 tiles */
+.cct-board-row {
+  display: contents;
+}
+
+.cct-board-category {
+  padding: clamp(10px, 1.5vw, 14px) clamp(10px, 1.2vw, 14px);
   font-weight: 700;
-  font-size: clamp(0.75rem, 1.4vw, 0.95rem);
-  line-height: 1.2;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  line-height: 1.25;
   color: rgba(255, 255, 255, 0.95);
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
   border: 1px solid rgba(212, 175, 55, 0.35);
   border-radius: 10px;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 2px 12px rgba(0, 0, 0, 0.2);
+    0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
 
-/* Tile grid: 6 columns × 5 rows (100–500) */
-.cct-tile-grid {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  grid-template-rows: repeat(5, minmax(0, 1fr));
-  gap: clamp(6px, 1vw, 12px);
-  flex: 1;
-  min-height: 0;
-}
-
 .cct-tile {
-  aspect-ratio: 1.1;
   min-height: 52px;
   display: flex;
   align-items: center;

@@ -138,6 +138,7 @@ export default function Host() {
   const createTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prebuiltSongsRef = useRef<Song[] | null>(null);
   const gameRef = useRef<GameCreated | null>(null);
+  const hostKeyboardRef = useRef<{ forward?: () => void; back?: () => void } | null>(null);
   // Event & venue: full config, scrape, venue profiles
   const [eventConfig, setEventConfigState] = useState<EventConfig>(() => ({
     gameTitle: 'Music Bingo',
@@ -193,6 +194,23 @@ export default function Host() {
   useEffect(() => {
     gameRef.current = game;
   }, [game]);
+
+  useEffect(() => {
+    if (!game || !['feud', 'market-match', 'crowd-control-trivia'].includes(game.gameType)) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      if (active && (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement || (active as HTMLElement).isContentEditable)) return;
+      if (e.key === ' ' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        hostKeyboardRef.current?.forward?.();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        hostKeyboardRef.current?.back?.();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [game?.gameType]);
 
   useEffect(() => {
     const s = getSocket();
@@ -1095,6 +1113,7 @@ p{word-break:break-all;font-size:14px;color:#333}
             {(game.gameType === 'feud' || game.gameType === 'market-match' || game.gameType === 'crowd-control-trivia') && (
               <>
                 <hr className="host-room__left-divider" />
+                <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0 0 8px' }}>Keyboard: <kbd>Space</kbd> or <kbd>→</kbd> advance · <kbd>←</kbd> back</p>
                 <span className="host-room__link-label">Display theme</span>
                 <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '4px 0 8px' }}>TV and player screens use this look.</p>
                 <select
@@ -1182,6 +1201,7 @@ p{word-break:break-all;font-size:14px;color:#333}
               joinUrl={joinUrlForQR}
               displayUrl={displayUrl}
               onEndSession={() => navigate('/activity')}
+              hostKeyboardRef={hostKeyboardRef}
             />
           </GameShell>
         ) : game.gameType === 'crowd-control-trivia' ? (
@@ -1200,6 +1220,7 @@ p{word-break:break-all;font-size:14px;color:#333}
               joinUrl={joinUrlForQR}
               displayUrl={displayUrl}
               onEndSession={() => navigate('/activity')}
+              hostKeyboardRef={hostKeyboardRef}
             />
           </GameShell>
         ) : game.gameType === 'feud' ? (
@@ -1218,6 +1239,7 @@ p{word-break:break-all;font-size:14px;color:#333}
               joinUrl={joinUrlForQR}
               displayUrl={displayUrl}
               onEndSession={() => navigate('/activity')}
+              hostKeyboardRef={hostKeyboardRef}
             />
           </GameShell>
         ) : (

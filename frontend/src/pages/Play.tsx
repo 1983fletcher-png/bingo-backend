@@ -13,7 +13,7 @@ import { StandbyCard } from '../components/StandbyCard';
 import { GameShell } from '../components/GameShell';
 import type { ThemeId } from '../theme/theme.types';
 import { getMarketMatchItem, type MarketMatchItem } from '../data/marketMatchDataset';
-import { getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
+import { getBoard, getQuestion, VALUE_LADDER } from '../data/crowdControlTriviaDataset';
 import { TextAnswerInput } from '../components/PlayerLayout';
 import { SurveyShowdownStage } from '../games/feud/SurveyShowdownStage';
 import '../components/DisplayMarketMatch.css';
@@ -385,6 +385,132 @@ function MarketMatchPlayerContent({
           </>
         )}
       </div>
+    </div>
+  );
+}
+
+/** Crowd Control Trivia player: selectable options or text input, submit answer, score by tile value. */
+function CCTPlayerContent({
+  cct,
+  question,
+  phase,
+  revealed,
+  socket,
+  code,
+  board,
+}: {
+  cct: import('../types/crowdControlTrivia').CrowdControlState;
+  question: import('../data/crowdControlTriviaDataset').CCTQuestionDisplay | null;
+  phase: string;
+  revealed: boolean;
+  socket: Socket | null;
+  code: string | undefined;
+  board: { name: string; categories: string[] } | null;
+}) {
+  const [submitted, setSubmitted] = useState(false);
+  const valueIndex = cct.currentValueIndex ?? 0;
+  const points = VALUE_LADDER[valueIndex] ?? 100;
+  const myScore = (socket?.id && cct.playerScores?.[socket.id]) ?? 0;
+
+  useEffect(() => {
+    setSubmitted(false);
+  }, [cct.currentQuestionId]);
+
+  const vote = (categoryIndex: number) => {
+    if (socket && code) socket.emit('cct:vote', { code: code.toUpperCase(), categoryIndex });
+  };
+
+  const submitOption = (selectedIndex: number) => {
+    if (submitted || revealed || !socket || !code) return;
+    socket.emit('cct:answer', { code: code.toUpperCase(), selectedIndex });
+    setSubmitted(true);
+  };
+
+  const submitText = (values: string[]) => {
+    if (submitted || revealed || !socket || !code) return;
+    const text = (values[0] ?? '').trim();
+    if (!text) return;
+    socket.emit('cct:answer', { code: code.toUpperCase(), textAnswer: text });
+    setSubmitted(true);
+  };
+
+  return (
+    <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
+      {(cct.playerScores && Object.keys(cct.playerScores).length > 0) && (
+        <p style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: 'var(--pr-brand)' }}>
+          Your score: {myScore}
+        </p>
+      )}
+      {phase === 'vote' && board && (
+        <>
+          <p style={{ margin: '0 0 16px', fontSize: 15, color: 'var(--pr-text)' }}>Vote for the next category:</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {(board.categories ?? []).map((cat, i) => {
+              const used = (cct.usedSlots ?? [0, 0, 0, 0, 0, 0])[i] ?? 0;
+              const disabled = used >= 5;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  className="join-page__btn"
+                  onClick={() => vote(i)}
+                  disabled={disabled}
+                  style={{ width: '100%' }}
+                >
+                  {cat} {disabled ? '(done)' : `(${cct.voteCounts?.[i] ?? 0} votes)`}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+      {(phase === 'question' || phase === 'reveal') && question && (
+        <>
+          <p style={{ margin: '0 0 4px', fontSize: 12, fontWeight: 600, color: 'var(--pr-muted)' }}>
+            Worth {points} points
+          </p>
+          <h2 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 600, color: 'var(--pr-text)' }}>
+            {question.prompt}
+          </h2>
+          {!revealed && question.options && question.options.length > 0 && !submitted && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {question.options.map((opt, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="join-page__btn"
+                  onClick={() => submitOption(i)}
+                  style={{ width: '100%', textAlign: 'left' }}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          )}
+          {!revealed && (!question.options || question.options.length === 0) && !submitted && (
+            <TextAnswerInput
+              onSubmit={submitText}
+              placeholder="Your answer"
+              submitLabel="Submit"
+            />
+          )}
+          {!revealed && submitted && (
+            <p style={{ margin: 0, color: 'var(--pr-muted)', fontSize: 14 }}>Answer submitted. Wait for reveal.</p>
+          )}
+          {revealed && (
+            <div style={{ marginTop: 16, padding: 16, background: 'var(--pr-surface2)', borderRadius: 8 }}>
+              <p style={{ margin: 0, fontWeight: 600, color: 'var(--pr-brand)' }}>{question.correctAnswer}</p>
+              {question.explanation && (
+                <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--pr-muted)' }}>{question.explanation}</p>
+              )}
+              <p style={{ margin: '12px 0 0', fontSize: 14, fontWeight: 600, color: 'var(--pr-text)' }}>Your score: {myScore}</p>
+            </div>
+          )}
+        </>
+      )}
+      {phase === 'board' && (
+        <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to open category vote.</p>
+      )}
     </div>
   );
 }
@@ -772,76 +898,31 @@ export default function Play() {
     );
   }
 
-  // Crowd Control Trivia: show game view when we have state (host may not use Waiting room tab); full vote + question UI
+  // Crowd Control Trivia: interactive answers (select or text), score by tile value (100–500)
   if (gameType === 'crowd-control-trivia' && joinState?.crowdControl) {
     const cct = joinState.crowdControl;
     const phase = cct.phase ?? 'board';
     const board = getBoard(cct.boardId ?? 0);
     const question = getQuestion(cct.currentQuestionId ?? null);
     const revealed = cct.revealed === true;
-    const vote = (categoryIndex: number) => {
-      if (socket && code) socket.emit('cct:vote', { code: code.toUpperCase(), categoryIndex });
-    };
     return (
       <GameShell
         gameKey="crowd_control_trivia"
         variant="player"
         title="Crowd Control Trivia"
-        subtitle={phase === 'vote' ? 'Pick the next category' : phase === 'question' || phase === 'reveal' ? (question?.prompt ? 'Answer on screen' : undefined) : undefined}
+        subtitle={phase === 'vote' ? 'Pick the next category' : phase === 'question' || phase === 'reveal' ? (question?.prompt ? `Worth ${VALUE_LADDER[cct.currentValueIndex ?? 0] ?? 100} pts` : undefined) : undefined}
         code={code ?? undefined}
         themeId={sessionThemeId}
       >
-        <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
-          {phase === 'vote' && board && (
-              <>
-                <p style={{ margin: '0 0 16px', fontSize: 15, color: 'var(--pr-text)' }}>Vote for the next category:</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {(board.categories ?? []).map((cat, i) => {
-                    const used = (cct.usedSlots ?? [0,0,0,0,0,0])[i] ?? 0;
-                    const disabled = used >= 5;
-                    return (
-                      <button
-                        key={i}
-                        type="button"
-                        className="join-page__btn"
-                        onClick={() => vote(i)}
-                        disabled={disabled}
-                        style={{ width: '100%' }}
-                      >
-                        {cat} {disabled ? '(done)' : `(${cct.voteCounts?.[i] ?? 0} votes)`}
-                      </button>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-            {(phase === 'question' || phase === 'reveal') && question && (
-              <>
-                <h2 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 600, color: 'var(--pr-text)' }}>
-                  {question.prompt}
-                </h2>
-                {!revealed && question.options && question.options.length > 0 && (
-                  <ul style={{ margin: '0 0 16px', paddingLeft: 20 }}>
-                    {question.options.map((opt, i) => (
-                      <li key={i} style={{ marginBottom: 6 }}>{opt}</li>
-                    ))}
-                  </ul>
-                )}
-                {!revealed && <p style={{ margin: 0, color: 'var(--pr-muted)', fontSize: 14 }}>Watch the screen for the reveal.</p>}
-                {revealed && (
-                  <div style={{ marginTop: 16, padding: 16, background: 'var(--pr-surface2)', borderRadius: 8 }}>
-                    <p style={{ margin: 0, fontWeight: 600, color: 'var(--pr-brand)' }}>{question.correctAnswer}</p>
-                    {question.explanation && (
-                      <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--pr-muted)' }}>{question.explanation}</p>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-          {phase === 'board' && (
-            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to open category vote.</p>
-          )}
-        </div>
+        <CCTPlayerContent
+          cct={cct}
+          question={question}
+          phase={phase}
+          revealed={revealed}
+          socket={socket}
+          code={code ?? undefined}
+          board={board}
+        />
       </GameShell>
     );
   }

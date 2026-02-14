@@ -1,10 +1,13 @@
 /**
  * Crowd Control Trivia — host panel: board grid, category vote, question modal.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, type MutableRefObject } from 'react';
 import type { Socket } from 'socket.io-client';
 import type { CrowdControlState } from '../types/crowdControlTrivia';
 import { VALUE_LADDER, getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
+import './CrowdControlHostPanel.css';
+
+export type HostKeyboardRef = MutableRefObject<{ forward?: () => void; back?: () => void } | null>;
 
 export interface CrowdControlHostPanelProps {
   gameCode: string;
@@ -14,6 +17,7 @@ export interface CrowdControlHostPanelProps {
   joinUrl: string;
   displayUrl: string;
   onEndSession: () => void;
+  hostKeyboardRef?: HostKeyboardRef | null;
 }
 
 const HOST_TOKEN_KEY = (code: string) => `playroom:hostToken:${code}`;
@@ -25,7 +29,8 @@ export function CrowdControlHostPanel({
   socket,
   joinUrl,
   displayUrl,
-  onEndSession
+  onEndSession,
+  hostKeyboardRef
 }: CrowdControlHostPanelProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const hostToken =
@@ -39,6 +44,37 @@ export function CrowdControlHostPanel({
   const currentQuestionId = crowdControl.currentQuestionId ?? null;
   const revealed = crowdControl.revealed === true;
   const question = getQuestion(currentQuestionId);
+  const valueIndex = crowdControl.currentValueIndex ?? 0;
+  const points = VALUE_LADDER[valueIndex] ?? 100;
+  const lastSentQuestionId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!hostKeyboardRef) return;
+    const forward = () => {
+      if (phase === 'vote') lockVote();
+      else if ((phase === 'question' || phase === 'reveal') && !revealed) reveal();
+    };
+    const back = () => {
+      if (phase === 'question' || phase === 'reveal') backToBoard();
+    };
+    hostKeyboardRef.current = { forward, back };
+    return () => {
+      hostKeyboardRef.current = null;
+    };
+  }, [hostKeyboardRef, phase, revealed]);
+
+  useEffect(() => {
+    if (phase !== 'question' || !currentQuestionId || !question || !socket || !gameCode || !hostToken) return;
+    if (lastSentQuestionId.current === currentQuestionId) return;
+    lastSentQuestionId.current = currentQuestionId;
+    socket.emit('cct:question-details', {
+      code: gameCode,
+      hostToken,
+      correctAnswer: question.correctAnswer,
+      points,
+      options: question.options ?? undefined
+    });
+  }, [phase, currentQuestionId, question, socket, gameCode, hostToken]);
 
   const openVote = () => {
     if (socket && gameCode && hostToken) {
@@ -61,6 +97,7 @@ export function CrowdControlHostPanel({
 
   const backToBoard = () => {
     if (socket && gameCode && hostToken) {
+      lastSentQuestionId.current = null;
       socket.emit('cct:back-to-board', { code: gameCode, hostToken });
       setModalOpen(false);
     }
@@ -71,32 +108,20 @@ export function CrowdControlHostPanel({
 
   return (
     <div className="host-room__panel" style={{ padding: 24 }}>
-      {/* Board grid */}
+      {/* Board: same Jeopardy layout as TV display — category left, $100–$500 columns */}
       {board && (
         <div style={{ marginBottom: 24 }}>
           <h3 style={{ margin: '0 0 12px', fontSize: 18 }}>{board.name}</h3>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: `minmax(100px, 1fr) repeat(${VALUE_LADDER.length}, minmax(56px, 1fr))`,
-              gap: 4,
-              background: 'var(--surface2)',
-              padding: 12,
-              borderRadius: 8,
-              border: '1px solid var(--border)'
-            }}
-          >
-            <div style={{ padding: 8, fontWeight: 600, fontSize: 12, color: 'var(--text-muted)' }}>Category</div>
-            {VALUE_LADDER.map((v) => (
-              <div key={v} style={{ padding: 8, fontWeight: 600, fontSize: 12, textAlign: 'center', color: 'var(--text-muted)' }}>
-                ${v}
-              </div>
-            ))}
+          <div className="cct-host-board">
+            <div className="cct-host-board__head" aria-hidden="true">
+              <div className="cct-host-board__head-cell cct-host-board__head-cell--category">Category</div>
+              {VALUE_LADDER.map((v) => (
+                <div key={v} className="cct-host-board__head-cell">${v}</div>
+              ))}
+            </div>
             {categories.map((cat, ci) => (
-              <React.Fragment key={ci}>
-                <div style={{ padding: 8, fontSize: 13, fontWeight: 500 }}>
-                  {cat}
-                </div>
+              <div key={ci} className="cct-host-board__row">
+                <div className="cct-host-board__category">{cat}</div>
                 {VALUE_LADDER.map((_, vi) => {
                   const used = (usedSlots[ci] ?? 0) > vi;
                   const isCurrent =
@@ -105,21 +130,14 @@ export function CrowdControlHostPanel({
                     crowdControl.currentValueIndex === vi;
                   return (
                     <div
-                      key={`${ci}-${vi}`}
-                      style={{
-                        padding: 8,
-                        textAlign: 'center',
-                        fontSize: 12,
-                        background: isCurrent ? 'var(--accent)' : used ? 'var(--surface)' : 'transparent',
-                        color: isCurrent ? 'var(--bg)' : used ? 'var(--text-muted)' : 'var(--text)',
-                        borderRadius: 4
-                      }}
+                      key={vi}
+                      className={`cct-host-board__tile ${used ? 'cct-host-board__tile--used' : ''} ${isCurrent ? 'cct-host-board__tile--current' : ''}`}
                     >
                       {used ? (isCurrent ? '▶' : '✓') : '—'}
                     </div>
                   );
                 })}
-              </React.Fragment>
+              </div>
             ))}
           </div>
         </div>

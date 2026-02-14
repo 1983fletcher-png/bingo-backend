@@ -54,31 +54,36 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
         variant="tv"
         contentSlot={
           <div className="cct-stage-wrap">
-            {/* 6 subject headers on top */}
-            <div className="cct-subjects-row">
-              {categories.slice(0, 6).map((cat, i) => (
-                <div key={i} className="cct-subject">{cat}</div>
+            {/* Jeopardy-style board: categories on left, value columns ($100–$500) — matches host layout */}
+            <div className="cct-board">
+              {/* Header row: corner + value columns */}
+              <div className="cct-board-head" aria-hidden="true">
+                <div className="cct-board-head-cell cct-board-head-cell--category">Category</div>
+                {VALUE_LADDER.map((v) => (
+                  <div key={v} className="cct-board-head-cell cct-board-head-cell--value">${v}</div>
+                ))}
+              </div>
+              {/* One row per category: name + 5 tiles */}
+              {categories.slice(0, 6).map((cat, ci) => (
+                <div key={ci} className="cct-board-row">
+                  <div className="cct-board-category">{cat}</div>
+                  {VALUE_LADDER.map((value, vi) => {
+                    const used = (usedSlots[ci] ?? 0) > vi;
+                    const current =
+                      phase !== 'board' &&
+                      winningCategoryIndex === ci &&
+                      currentValueIndex === vi;
+                    return (
+                      <div
+                        key={vi}
+                        className={`cct-tile ${used ? 'cct-tile--used' : ''} ${current ? 'cct-tile--current' : ''}`}
+                      >
+                        {used ? (current ? '▶' : '✓') : value}
+                      </div>
+                    );
+                  })}
+                </div>
               ))}
-            </div>
-            {/* 5 rows of tiles (100–500), 6 columns — row-major for grid */}
-            <div className="cct-tile-grid">
-              {VALUE_LADDER.flatMap((value, vi) =>
-                Array.from({ length: 6 }, (_, ci) => {
-                  const used = (usedSlots[ci] ?? 0) > vi;
-                  const current =
-                    phase !== 'board' &&
-                    winningCategoryIndex === ci &&
-                    currentValueIndex === vi;
-                  return (
-                    <div
-                      key={`${ci}-${vi}`}
-                      className={`cct-tile ${used ? 'cct-tile--used' : ''} ${current ? 'cct-tile--current' : ''}`}
-                    >
-                      {used ? (current ? '▶' : '✓') : value}
-                    </div>
-                  );
-                })
-              )}
             </div>
             {phase === 'vote' && (
               <p className="cct-vote-prompt">Pick the next category on your phone!</p>

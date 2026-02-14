@@ -1,9 +1,12 @@
 /**
  * Market Match — host controls: pick next item, reveal.
  */
+import { useEffect, type MutableRefObject } from 'react';
 import type { Socket } from 'socket.io-client';
 import { MARKET_MATCH_DATASET, getMarketMatchItem } from '../data/marketMatchDataset';
 import type { MarketMatchState } from '../types/marketMatch';
+
+export type HostKeyboardRef = MutableRefObject<{ forward?: () => void; back?: () => void } | null>;
 
 export interface MarketMatchHostPanelProps {
   gameCode: string;
@@ -13,6 +16,7 @@ export interface MarketMatchHostPanelProps {
   joinUrl: string;
   displayUrl: string;
   onEndSession: () => void;
+  hostKeyboardRef?: HostKeyboardRef | null;
 }
 
 export function MarketMatchHostPanel({
@@ -22,13 +26,29 @@ export function MarketMatchHostPanel({
   socket,
   joinUrl,
   displayUrl,
-  onEndSession
+  onEndSession,
+  hostKeyboardRef
 }: MarketMatchHostPanelProps) {
   const currentIndex = marketMatch.currentIndex ?? 0;
   const revealed = marketMatch.revealed === true;
   const item = getMarketMatchItem(currentIndex);
   const canNext = currentIndex < MARKET_MATCH_DATASET.length - 1;
   const canPrev = currentIndex > 0;
+
+  useEffect(() => {
+    if (!hostKeyboardRef) return;
+    const forward = () => {
+      if (!revealed) sendReveal();
+      else if (canNext) sendNext();
+    };
+    const back = () => {
+      if (canPrev) sendPrev();
+    };
+    hostKeyboardRef.current = { forward, back };
+    return () => {
+      hostKeyboardRef.current = null;
+    };
+  }, [hostKeyboardRef, revealed, canNext, canPrev]);
 
   const sendNext = () => {
     if (socket && gameCode && hostToken) {

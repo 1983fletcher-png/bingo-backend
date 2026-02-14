@@ -15,4 +15,8 @@ export interface CrowdControlState {
   currentValueIndex: number | null;
   currentQuestionId: string | null;
   revealed: boolean;
+  /** Points for current question (100–500 by tile value). */
+  currentPoints?: number;
+  /** Player scores: socketId -> total score. */
+  playerScores?: Record<string, number>;
 }

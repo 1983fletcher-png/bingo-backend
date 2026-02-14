@@ -2,7 +2,7 @@
  * Host controls for Survey Showdown (Feud). Transport bar + prompt + lock + reveal/strike.
  * @see docs/ACTIVITY-ROOM-SPEC.md §8.1
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type MutableRefObject } from 'react';
 import { TransportBar } from './TransportBar';
 import type { FeudState, FeudCheckpointId } from '../types/feud';
 import { FEUD_CHECKPOINTS, feudCheckpointToPhase } from '../types/feud';
@@ -20,6 +20,8 @@ const FEUD_PROMPT_IDEAS = [
   'Name a place where you wait in line',
 ];
 
+export type HostKeyboardRef = MutableRefObject<{ forward?: () => void; back?: () => void } | null>;
+
 type Props = {
   gameCode: string;
   feud: FeudState;
@@ -29,11 +31,13 @@ type Props = {
   displayUrl: string;
   /** Called when host ends session (e.g. navigate away). */
   onEndSession?: () => void;
+  /** Optional ref for host keyboard shortcuts (Space/←/→). */
+  hostKeyboardRef?: HostKeyboardRef | null;
 };
 
 const IS_DEV = typeof import.meta !== 'undefined' && import.meta.env?.DEV;
 
-export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, displayUrl, onEndSession }: Props) {
+export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, displayUrl, onEndSession, hostKeyboardRef }: Props) {
   const [promptDraft, setPromptDraft] = useState(feud.prompt);
   const [debugOpen, setDebugOpen] = useState(false);
   const [lastEvent, setLastEvent] = useState<{ name: string; ts: number } | null>(null);
@@ -106,6 +110,34 @@ export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl, di
 
   const submissionCount = feud.submissions?.length ?? 0;
   const connectionStatus = socket?.connected ? 'connected' : 'disconnected';
+
+  useEffect(() => {
+    if (!hostKeyboardRef) return;
+    const cp = feud.checkpointId;
+    const forward = () => {
+      if (inLobby && canStartRound) setCheckpoint('R1_COLLECT');
+      else if (isCollecting && canLock) lock();
+      else if (cp === 'R1_LOCKED' && feud.topAnswers.length > 0) reveal(0);
+      else if (cp.startsWith('R1_BOARD_')) {
+        const n = parseInt(cp.replace('R1_BOARD_', ''), 10);
+        if (n < 8) reveal(n + 1);
+        else if (n === 8) setCheckpoint('R1_SUMMARY');
+      }
+    };
+    const back = () => {
+      if (cp === 'R1_COLLECT') setCheckpoint('R1_TITLE');
+      else if (cp === 'R1_LOCKED') setCheckpoint('R1_COLLECT');
+      else if (cp === 'R1_BOARD_0') setCheckpoint('R1_LOCKED');
+      else if (cp.startsWith('R1_BOARD_')) {
+        const n = parseInt(cp.replace('R1_BOARD_', ''), 10);
+        if (n >= 1) setCheckpoint(`R1_BOARD_${n - 1}` as FeudCheckpointId);
+      } else if (cp === 'R1_SUMMARY') setCheckpoint('R1_BOARD_8');
+    };
+    hostKeyboardRef.current = { forward, back };
+    return () => {
+      hostKeyboardRef.current = null;
+    };
+  }, [hostKeyboardRef, feud.checkpointId, feud.topAnswers.length, inLobby, canStartRound, isCollecting, canLock]);
 
   return (
     <div className="feud-host-panel">
