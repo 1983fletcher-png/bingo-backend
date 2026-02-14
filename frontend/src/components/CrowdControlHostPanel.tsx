@@ -1,7 +1,7 @@
 /**
  * Crowd Control Trivia — host panel: board grid, category vote, question modal.
  */
-import React, { useState, useEffect, useRef, type MutableRefObject } from 'react';
+import { useState, useEffect, useRef, type MutableRefObject } from 'react';
 import type { Socket } from 'socket.io-client';
 import type { CrowdControlState } from '../types/crowdControlTrivia';
 import { VALUE_LADDER, getBoard, getQuestion } from '../data/crowdControlTriviaDataset';
