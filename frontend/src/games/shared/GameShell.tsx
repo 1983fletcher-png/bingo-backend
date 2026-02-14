@@ -28,6 +28,8 @@ export interface GameShellProps {
   motionLevel?: MotionLevel;
   headerVariant?: MarqueeVariant;
   footerVariant?: FooterVariant;
+  /** When true, hide the marquee header so the stage fills from the top (e.g. Crowd Control Trivia TV) */
+  hideHeader?: boolean;
   /** Optional data attributes on root (e.g. data-feud-view for Survey Showdown overlay) */
   optionalData?: Record<string, string>;
   headerRightSlot?: React.ReactNode;
@@ -54,6 +56,7 @@ export function GameShell({
   motionLevel: motionOverride,
   headerVariant = 'banner',
   footerVariant = 'statusbar',
+  hideHeader = false,
   optionalData,
   headerRightSlot,
   mainSlot,
@@ -92,7 +95,7 @@ export function GameShell({
 
   return (
     <div
-      className={`pr-app pr-gameshell pr-gameshell--${viewMode} ${className}`.trim()}
+      className={`pr-app pr-gameshell pr-gameshell--${viewMode} ${hideHeader ? ' pr-gameshell--no-header' : ''} ${className}`.trim()}
       data-game={gameKey}
       data-view={viewMode}
       data-pr-theme={themeId}
@@ -109,18 +112,20 @@ export function GameShell({
         />
       </div>
       <div className="pr-gameshell__chrome">
-        <header className="pr-gameshell__header">
-          <div className="pr-gameshell__header-left">
-            <MarqueeHeader
-              title={title}
-              subtitle={subtitle}
-              variant={effectiveHeaderVariant}
-            />
-          </div>
-          {headerRightSlot && (
-            <div className="pr-gameshell__header-right">{headerRightSlot}</div>
-          )}
-        </header>
+        {!hideHeader && (
+          <header className="pr-gameshell__header">
+            <div className="pr-gameshell__header-left">
+              <MarqueeHeader
+                title={title}
+                subtitle={subtitle}
+                variant={effectiveHeaderVariant}
+              />
+            </div>
+            {headerRightSlot && (
+              <div className="pr-gameshell__header-right">{headerRightSlot}</div>
+            )}
+          </header>
+        )}
         <div className="pr-gameshell__stage-wrap">
           <StageFrame
             variant={stageVariant}

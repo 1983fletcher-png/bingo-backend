@@ -15,7 +15,6 @@ import { getMarketMatchItem } from '../data/marketMatchDataset';
 import type { CrowdControlState } from '../types/crowdControlTrivia';
 import { DisplayMarketMatch } from '../components/DisplayMarketMatch';
 import { DisplayCrowdControl } from '../components/DisplayCrowdControl';
-import { getBoard } from '../data/crowdControlTriviaDataset';
 
 const COLUMNS = ['B', 'I', 'N', 'G', 'O'] as const;
 const ROWS_PER_COL = 15;
@@ -245,17 +244,16 @@ export default function Display() {
     );
   }
 
-  // Crowd Control Trivia: board or question/reveal
+  // Crowd Control Trivia: full-bleed game-show stage — no header block; board/stage slides to top
   if (gameType === 'crowd-control-trivia' && crowdControlState) {
-    const board = getBoard(crowdControlState.boardId ?? 0);
-    const phase = crowdControlState.phase ?? 'board';
     return (
       <SharedGameShell
         gameKey="crowd_control_trivia"
         viewMode="display"
         themeId={displayPlayroomThemeId}
-        title={eventConfig?.gameTitle || eventTitle || 'Crowd Control Trivia'}
-        subtitle={phase === 'vote' ? 'Vote for a category!' : board?.name}
+        hideHeader
+        title=""
+        subtitle={undefined}
         headerRightSlot={code ? <span style={{ fontFamily: 'var(--pr-font-display)', letterSpacing: '0.1em' }}>{code.toUpperCase()}</span> : undefined}
         mainSlot={<DisplayCrowdControl state={crowdControlState} />}
         statusBarProps={{ joinCode: code?.toUpperCase() ?? '' }}

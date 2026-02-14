@@ -349,6 +349,15 @@
     0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
+/* Stage content at top (e.g. Crowd Control Trivia TV — board slides up) */
+.survey-showdown-stage--content-top .survey-showdown-stage__block--content {
+  justify-content: flex-start;
+  align-items: center;
+}
+.survey-showdown-stage--content-top .survey-showdown-stage__inner {
+  justify-content: flex-start;
+}
+
 .survey-showdown-stage__block--content .feud-display__boardWrap {
   width: 100%;
   height: 100%;

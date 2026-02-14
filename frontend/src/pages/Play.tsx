@@ -20,6 +20,8 @@ import '../components/DisplayMarketMatch.css';
 import { SurveyShowdownBoard } from '../games/feud/SurveyShowdownBoard';
 import '../games/feud/feud-player-reveal.css';
 import '../games/feud/SurveyShowdownPlayerStage.css';
+import '../components/CrowdControlPlayerLayout.css';
+import '../components/DisplayCrowdControl.css';
 import '../styles/join.css';
 
 /**
@@ -389,7 +391,113 @@ function MarketMatchPlayerContent({
   );
 }
 
-/** Crowd Control Trivia player: selectable options or text input, submit answer, score by tile value. */
+/** Crowd Control Trivia — top-half stage view only (TV mirror): board, vote prompt, or question/reveal. */
+function CCTPlayerStageView({
+  cct,
+  board,
+  question,
+  phase,
+  revealed,
+}: {
+  cct: import('../types/crowdControlTrivia').CrowdControlState;
+  board: { name: string; categories: string[] } | null;
+  question: import('../data/crowdControlTriviaDataset').CCTQuestionDisplay | null;
+  phase: string;
+  revealed: boolean;
+}) {
+  const usedSlots = cct.usedSlots ?? [0, 0, 0, 0, 0, 0];
+  const winningCategoryIndex = cct.winningCategoryIndex ?? null;
+  const currentValueIndex = cct.currentValueIndex ?? null;
+  const valueIndex = cct.currentValueIndex ?? 0;
+  const points = VALUE_LADDER[valueIndex] ?? 100;
+
+  const content =
+    phase === 'board' ? (
+      <div className="cct-stage-wrap">
+        {board && (
+          <div className={`cct-board cct-player-board`}>
+            <div className="cct-board-head" aria-hidden="true">
+              <div className="cct-board-head-cell cct-board-head-cell--corner"> </div>
+              {(board.categories ?? []).slice(0, 6).map((cat, ci) => (
+                <div key={ci} className="cct-board-head-cell cct-board-head-cell--category">{cat}</div>
+              ))}
+            </div>
+            {VALUE_LADDER.map((value, vi) => (
+              <div key={vi} className="cct-board-row">
+                <div className="cct-board-value">{value}</div>
+                {(board.categories ?? []).slice(0, 6).map((_, ci) => {
+                  const used = (usedSlots[ci] ?? 0) > vi;
+                  const current = winningCategoryIndex === ci && currentValueIndex === vi;
+                  return (
+                    <div
+                      key={ci}
+                      className={`cct-tile ${used ? 'cct-tile--used' : ''} ${current ? 'cct-tile--current' : ''}`}
+                    >
+                      {used ? (current ? '▶' : '✓') : value}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="cct-wait-prompt">Wait for the host to open category vote.</p>
+      </div>
+    ) : phase === 'vote' ? (
+      <div className="cct-stage-wrap">
+        {board && (
+          <div className={`cct-board cct-player-board`}>
+            <div className="cct-board-head" aria-hidden="true">
+              <div className="cct-board-head-cell cct-board-head-cell--corner"> </div>
+              {(board.categories ?? []).slice(0, 6).map((cat, ci) => (
+                <div key={ci} className="cct-board-head-cell cct-board-head-cell--category">{cat}</div>
+              ))}
+            </div>
+            {VALUE_LADDER.map((value, vi) => (
+              <div key={vi} className="cct-board-row">
+                <div className="cct-board-value">{value}</div>
+                {(board.categories ?? []).slice(0, 6).map((_, ci) => {
+                  const used = (usedSlots[ci] ?? 0) > vi;
+                  return (
+                    <div key={ci} className={`cct-tile ${used ? 'cct-tile--used' : ''}`}>
+                      {used ? '✓' : value}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="cct-vote-prompt">Pick the next category on your phone!</p>
+      </div>
+    ) : (phase === 'question' || phase === 'reveal') && question ? (
+      <div className="cct-question-block">
+        <p className="cct-question-value">Worth {points} points</p>
+        <h2 className="cct-question-prompt">{question.prompt}</h2>
+        {revealed && (
+          <div className="cct-reveal-answer">
+            <p className="cct-reveal-answer-text">{question.correctAnswer}</p>
+            {question.explanation && (
+              <p className="cct-reveal-explanation">{question.explanation}</p>
+            )}
+          </div>
+        )}
+      </div>
+    ) : (
+      <div style={{ padding: 24, textAlign: 'center', color: 'var(--pr-muted)' }}>Loading…</div>
+    );
+
+  return (
+    <SurveyShowdownStage
+      variant="player"
+      stageTheme="arcade"
+      contentPosition="top"
+      contentSlot={content}
+    />
+  );
+}
+
+/** Crowd Control Trivia player: bottom-half input only — vote, multiple choice, text, or reveal feedback. */
 function CCTPlayerContent({
   cct,
   question,
@@ -408,8 +516,6 @@ function CCTPlayerContent({
   board: { name: string; categories: string[] } | null;
 }) {
   const [submitted, setSubmitted] = useState(false);
-  const valueIndex = cct.currentValueIndex ?? 0;
-  const points = VALUE_LADDER[valueIndex] ?? 100;
   const myScore = (socket?.id && cct.playerScores?.[socket.id]) ?? 0;
 
   useEffect(() => {
@@ -435,15 +541,15 @@ function CCTPlayerContent({
   };
 
   return (
-    <div style={{ padding: 24, maxWidth: 420, margin: '0 auto' }}>
+    <div className="cct-player-input__inner">
       {(cct.playerScores && Object.keys(cct.playerScores).length > 0) && (
-        <p style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: 'var(--pr-brand)' }}>
+        <p style={{ margin: '0 0 10px', fontSize: 14, fontWeight: 700, color: 'var(--pr-brand)' }}>
           Your score: {myScore}
         </p>
       )}
       {phase === 'vote' && board && (
         <>
-          <p style={{ margin: '0 0 16px', fontSize: 15, color: 'var(--pr-text)' }}>Vote for the next category:</p>
+          <p style={{ margin: '0 0 12px', fontSize: 15, color: 'var(--pr-text)' }}>Vote for the next category:</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {(board.categories ?? []).map((cat, i) => {
               const used = (cct.usedSlots ?? [0, 0, 0, 0, 0, 0])[i] ?? 0;
@@ -466,12 +572,6 @@ function CCTPlayerContent({
       )}
       {(phase === 'question' || phase === 'reveal') && question && (
         <>
-          <p style={{ margin: '0 0 4px', fontSize: 12, fontWeight: 600, color: 'var(--pr-muted)' }}>
-            Worth {points} points
-          </p>
-          <h2 style={{ margin: '0 0 16px', fontSize: '1.2rem', fontWeight: 600, color: 'var(--pr-text)' }}>
-            {question.prompt}
-          </h2>
           {!revealed && question.options && question.options.length > 0 && !submitted && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {question.options.map((opt, i) => (
@@ -498,7 +598,7 @@ function CCTPlayerContent({
             <p style={{ margin: 0, color: 'var(--pr-muted)', fontSize: 14 }}>Answer submitted. Wait for reveal.</p>
           )}
           {revealed && (
-            <div style={{ marginTop: 16, padding: 16, background: 'var(--pr-surface2)', borderRadius: 8 }}>
+            <div style={{ marginTop: 12, padding: 14, background: 'var(--pr-surface2)', borderRadius: 8 }}>
               <p style={{ margin: 0, fontWeight: 600, color: 'var(--pr-brand)' }}>{question.correctAnswer}</p>
               {question.explanation && (
                 <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--pr-muted)' }}>{question.explanation}</p>
@@ -509,7 +609,7 @@ function CCTPlayerContent({
         </>
       )}
       {phase === 'board' && (
-        <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Wait for the host to open category vote.</p>
+        <p style={{ margin: 0, color: 'var(--pr-muted)', fontSize: 14 }}>Wait for the host to open category vote.</p>
       )}
     </div>
   );
@@ -898,7 +998,7 @@ export default function Play() {
     );
   }
 
-  // Crowd Control Trivia: arcade game-show stage + interactive answers (same look as TV display)
+  // Crowd Control Trivia: top half = stage (TV mirror), bottom half = input; no header, no scroll
   if (gameType === 'crowd-control-trivia' && joinState?.crowdControl) {
     const cct = joinState.crowdControl;
     const phase = cct.phase ?? 'board';
@@ -909,17 +1009,23 @@ export default function Play() {
       <GameShell
         gameKey="crowd_control_trivia"
         variant="player"
+        hideHeader
         title="Crowd Control Trivia"
-        subtitle={phase === 'vote' ? 'Pick the next category' : phase === 'question' || phase === 'reveal' ? (question?.prompt ? `Worth ${VALUE_LADDER[cct.currentValueIndex ?? 0] ?? 100} pts` : undefined) : undefined}
+        subtitle={undefined}
         code={code ?? undefined}
         themeId={sessionThemeId}
       >
-        <SurveyShowdownStage
-          variant="player"
-          stageTheme="arcade"
-          marqueeSubtitle="Playroom"
-          marqueeTitle="Crowd Control Trivia"
-          contentSlot={
+        <div className="cct-player-layout">
+          <div className="cct-player-stage">
+            <CCTPlayerStageView
+              cct={cct}
+              board={board}
+              question={question}
+              phase={phase}
+              revealed={revealed}
+            />
+          </div>
+          <div className="cct-player-input">
             <CCTPlayerContent
               cct={cct}
               question={question}
@@ -929,8 +1035,8 @@ export default function Play() {
               code={code ?? undefined}
               board={board}
             />
-          }
-        />
+          </div>
+        </div>
       </GameShell>
     );
   }

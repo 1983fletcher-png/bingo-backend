@@ -23,6 +23,8 @@ export interface SurveyShowdownStageProps {
   marqueeSubtitle?: string;
   /** Marquee main title (e.g. "Crowd Control Trivia") — center pop-out, bold */
   marqueeTitle?: string;
+  /** Content block alignment: 'center' (default) or 'top' (stage fills from top, e.g. CCT TV) */
+  contentPosition?: 'center' | 'top';
 }
 
 export function SurveyShowdownStage({
@@ -35,15 +37,17 @@ export function SurveyShowdownStage({
   stageTheme = 'default',
   marqueeSubtitle,
   marqueeTitle,
+  contentPosition = 'center',
 }: SurveyShowdownStageProps) {
   const isArcade = stageTheme === 'arcade';
   const hasArcadeMarquee = isArcade && (marqueeSubtitle != null || marqueeTitle != null);
 
   return (
     <div
-      className={`survey-showdown-stage survey-showdown-stage--${variant}${isArcade ? ' survey-showdown-stage--arcade' : ''}`}
+      className={`survey-showdown-stage survey-showdown-stage--${variant}${isArcade ? ' survey-showdown-stage--arcade' : ''}${contentPosition === 'top' ? ' survey-showdown-stage--content-top' : ''}`}
       data-variant={variant}
       data-stage-theme={stageTheme}
+      data-content-position={contentPosition}
     >
       {/* Big light marquee — border of bulbs around the stage (arcade: multi-color cycle) */}
       <div className="survey-showdown-stage__marquee-lights" aria-hidden>

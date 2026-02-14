@@ -26,8 +26,7 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
       <SurveyShowdownStage
         variant="tv"
         stageTheme="arcade"
-        marqueeSubtitle="Playroom"
-        marqueeTitle="Crowd Control Trivia"
+        contentPosition="top"
         contentSlot={
         <div className="cct-question-block">
           <h2 className="cct-question-prompt">{question.prompt}</h2>
@@ -59,8 +58,7 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
       <SurveyShowdownStage
         variant="tv"
         stageTheme="arcade"
-        marqueeSubtitle="Playroom"
-        marqueeTitle="Crowd Control Trivia"
+        contentPosition="top"
         contentSlot={
           <div className="cct-stage-wrap">
             {/* Categories across top (golden header), values 100–500 down the left */}
@@ -107,8 +105,7 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
     <SurveyShowdownStage
       variant="tv"
       stageTheme="arcade"
-      marqueeSubtitle="Playroom"
-      marqueeTitle="Crowd Control Trivia"
+      contentPosition="top"
       contentSlot={
         <div style={{ padding: 48, textAlign: 'center', color: 'var(--pr-muted)' }}>
           Board loading…

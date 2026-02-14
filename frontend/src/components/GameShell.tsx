@@ -37,6 +37,8 @@ export interface GameShellProps {
   feudView?: 'answer' | 'waiting' | 'reveal';
   /** When "mockup", shell layout is neutralized so SurveyShowdownFrame slot geometry is stable. */
   frameMode?: 'mockup' | 'css';
+  /** When true, hide the marquee header (e.g. Crowd Control Trivia full-stage layout). */
+  hideHeader?: boolean;
 }
 
 /** Map variant to shared viewMode */
@@ -54,6 +56,7 @@ export function GameShell({
   footerVariant: footerOverride,
   feudView,
   frameMode,
+  hideHeader = false,
 }: GameShellProps) {
   const { theme } = useTheme();
   const themeIdResolved = themeId ?? (siteThemeToRegistryId(theme) as ThemeId);
@@ -69,6 +72,7 @@ export function GameShell({
       title={title}
       subtitle={subtitle}
       themeId={themeIdResolved}
+      hideHeader={hideHeader}
       optionalData={optionalDataOrUndefined}
       headerRightSlot={
         code ? (

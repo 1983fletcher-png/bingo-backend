@@ -39,6 +39,11 @@
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
+/* Full-bleed stage when header is hidden (e.g. Crowd Control Trivia TV) */
+.pr-gameshell--no-header .pr-gameshell__stage-wrap {
+  padding-top: 0;
+}
+
 .pr-gameshell__header {
   display: flex;
   align-items: center;
@@ -94,6 +99,12 @@
   justify-content: center;
 }
 
+/* Crowd Control Trivia display: stage slides to top, no centering */
+.pr-gameshell--display[data-game="crowd_control_trivia"] .pr-gameshell__main {
+  justify-content: flex-start;
+  padding: clamp(12px, 2vw, 20px) 0 0;
+}
+
 /* Player: stack, large tap targets */
 .pr-gameshell--player .pr-gameshell__main {
   padding: 0.5rem 0;
@@ -101,4 +112,25 @@
 
 .pr-gameshell--player .pr-gameshell__stage-wrap {
   padding: 0.75rem;
+}
+
+/* Crowd Control Trivia player: full viewport, no scroll — stage + input split */
+.pr-gameshell--player[data-game="crowd_control_trivia"] {
+  height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.pr-gameshell--player[data-game="crowd_control_trivia"] .pr-gameshell__stage-wrap {
+  flex: 1;
+  min-height: 0;
+  padding: 0.5rem;
+}
+
+.pr-gameshell--player[data-game="crowd_control_trivia"] .pr-gameshell__main {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
