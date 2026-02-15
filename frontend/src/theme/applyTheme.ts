@@ -22,10 +22,10 @@ export type ApplyThemeToDomOptions = {
   motion: string;
 };
 
-/** Apply theme/scene/motion to document for themes.css [data-theme], [data-scene], [data-motion]. */
+/** Apply playroom theme/scene/motion to document. Uses data-playroom-theme so host UI light/dark (data-theme) is not overwritten. */
 export function applyThemeToDom({ theme, scene, motion }: ApplyThemeToDomOptions): void {
   const el = document.documentElement;
-  el.dataset.theme = theme;
+  el.dataset.playroomTheme = theme;
   el.dataset.scene = scene;
   el.dataset.motion = motion;
 }

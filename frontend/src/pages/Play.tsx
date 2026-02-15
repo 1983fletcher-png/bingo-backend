@@ -292,7 +292,16 @@ interface JoinState {
   };
 }
 
-/** Market Match player: image, question, four choices; reveal shows correct/wrong. */
+/** Format price for display (e.g. $1.20 or $4,320). */
+function formatPrice(price: number): string {
+  const isSmall = price > 0 && price < 100 && Math.round(price * 100) !== price * 100;
+  return '$' + price.toLocaleString(undefined, {
+    minimumFractionDigits: isSmall || (price >= 0.01 && price < 10) ? 2 : 0,
+    maximumFractionDigits: price >= 10 ? 0 : 2,
+  });
+}
+
+/** Market Match player: image, question; four choices OR closest-to input; reveal shows correct/your guess. */
 function MarketMatchPlayerContent({
   item,
   revealed,
@@ -303,6 +312,8 @@ function MarketMatchPlayerContent({
   code?: string;
 }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [closestToValue, setClosestToValue] = useState<string>('');
+  const [submittedClosest, setSubmittedClosest] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   if (!item) {
@@ -313,11 +324,12 @@ function MarketMatchPlayerContent({
     );
   }
 
-  const questionText = `What did it cost in ${item.year}?`;
+  const questionText = item.question ?? `What did it cost in ${item.year}?`;
   const options = item.options ?? [];
   const correctIndex = item.correctIndex ?? 0;
-  const isCorrect = selectedIndex !== null && selectedIndex === correctIndex;
-  const correctLabel = options[correctIndex] ?? '';
+  const isClosestTo = item.answerMode === 'closest_to';
+  const isCorrect = !isClosestTo && selectedIndex !== null && selectedIndex === correctIndex;
+  const correctLabel = options[correctIndex] ?? formatPrice(item.priceUsd);
 
   const handleSelect = (index: number) => {
     if (submitted || revealed) return;
@@ -325,30 +337,68 @@ function MarketMatchPlayerContent({
     setSubmitted(true);
   };
 
-  return (
-    <div className="mm-player-wrap">
-      {code && (
-        <div className="mm-player-code-bar">{code.toUpperCase()}</div>
-      )}
-      <div className="mm-player-question-panel">
-        <p className="mm-player-question-text">{questionText} ({item.unit})</p>
-      </div>
-      <div className="mm-player-content-block">
-        {item.imageUrl ? (
-          <img src={item.imageUrl} alt="" className="mm-item-image" style={{ marginBottom: 12 }} />
-        ) : (
-          <div className="mm-item-image-wrap" style={{ marginBottom: 12 }}>Image</div>
-        )}
-        <p className="mm-player-item-title">{item.title}</p>
-        <p className="mm-player-item-meta">{item.year} · {item.unit}</p>
+  const handleClosestToSubmit = () => {
+    if (submitted || revealed) return;
+    const parsed = parseFloat(closestToValue.replace(/[^0-9.]/g, ''));
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      setSubmittedClosest(parsed);
+      setSubmitted(true);
+    }
+  };
 
-        {!submitted && !revealed && options.length > 0 && (
-          <div className="mm-player-options">
+  return (
+    <div className="mm-player mm-player--card">
+      {code && (
+        <div className="mm-player__code">{code.toUpperCase()}</div>
+      )}
+      {/* Top half: retro card — image, title, question */}
+      <div className="mm-player__card">
+        <div className="mm-player__card-inner">
+          {item.imageUrl ? (
+            <img src={item.imageUrl} alt="" className="mm-player__card-img" />
+          ) : (
+            <div className="mm-player__card-img-placeholder">Image</div>
+          )}
+          <h2 className="mm-player__card-title">{item.title}</h2>
+          <p className="mm-player__card-meta">{item.year} · {item.unit}</p>
+          <p className="mm-player__card-question">{questionText}</p>
+        </div>
+      </div>
+      {/* Bottom half: options, closest-to input, or submitted/reveal state */}
+      <div className="mm-player__choices">
+        {!submitted && !revealed && isClosestTo && (
+          <div className="mm-player__closest-to">
+            <p className="mm-player__closest-to-label">Closest guess wins — enter your answer:</p>
+            <div className="mm-player__closest-to-row">
+              <span className="mm-player__closest-to-prefix">$</span>
+              <input
+                type="text"
+                inputMode="decimal"
+                placeholder="0.00"
+                className="mm-player__closest-to-input"
+                value={closestToValue}
+                onChange={(e) => setClosestToValue(e.target.value)}
+                aria-label="Your price guess in dollars"
+              />
+              <button
+                type="button"
+                className="mm-player__closest-to-btn"
+                onClick={handleClosestToSubmit}
+                disabled={!closestToValue.trim() || Number.isNaN(parseFloat(closestToValue.replace(/[^0-9.]/g, '')))}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!submitted && !revealed && !isClosestTo && options.length > 0 && (
+          <div className="mm-player__options">
             {options.map((label, i) => (
               <button
                 key={i}
                 type="button"
-                className="mm-player-option"
+                className="mm-player__option"
                 onClick={() => handleSelect(i)}
               >
                 {label}
@@ -358,33 +408,35 @@ function MarketMatchPlayerContent({
         )}
 
         {submitted && !revealed && (
-          <>
-            <p className="mm-player-submitted-label">Answer Submitted</p>
-            <p className="mm-player-submitted-value">
-              {selectedIndex !== null ? options[selectedIndex] : '—'}
+          <div className="mm-player__submitted">
+            <p className="mm-player__submitted-label">Answer submitted</p>
+            <p className="mm-player__submitted-value">
+              {isClosestTo && submittedClosest !== null ? formatPrice(submittedClosest) : !isClosestTo && selectedIndex !== null ? options[selectedIndex] : '—'}
             </p>
-            <p className="mm-player-waiting">Host will reveal the answer.</p>
-          </>
+            <p className="mm-player__waiting">Host will reveal the answer.</p>
+          </div>
         )}
 
         {revealed && (
-          <>
-            <p className="mm-player-reveal-round">Round</p>
-            <p className="mm-player-reveal-correct">
-              {correctLabel} {item.unit}
+          <div className="mm-player__reveal">
+            <p className="mm-player__reveal-correct">
+              {isClosestTo ? formatPrice(item.priceUsd) : correctLabel} {item.unit}
             </p>
             {item.citation && (
-              <p className="mm-player-reveal-explanation">{item.citation}</p>
+              <p className="mm-player__reveal-citation">{item.citation}</p>
             )}
-            {selectedIndex !== null && (
-              <div className={`mm-player-your-guess ${isCorrect ? 'mm-player-your-guess--correct' : 'mm-player-your-guess--incorrect'}`}>
-                <span className="mm-player-your-guess-value">
-                  Your answer: {options[selectedIndex]}
-                </span>
-                <span className="mm-player-your-guess-icon" aria-hidden>{isCorrect ? '✓' : '✗'}</span>
+            {isClosestTo && submittedClosest !== null && (
+              <div className="mm-player__your-guess mm-player__your-guess--closest">
+                <span className="mm-player__your-guess-value">Your guess: {formatPrice(submittedClosest)}</span>
               </div>
             )}
-          </>
+            {!isClosestTo && selectedIndex !== null && (
+              <div className={`mm-player__your-guess ${isCorrect ? 'mm-player__your-guess--correct' : 'mm-player__your-guess--wrong'}`}>
+                <span className="mm-player__your-guess-value">Your answer: {options[selectedIndex]}</span>
+                <span className="mm-player__your-guess-icon" aria-hidden>{isCorrect ? '✓' : '✗'}</span>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

@@ -1,10 +1,8 @@
 /**
- * Market Match display — game-show stage: title, image, question, four options.
- * One correct, three wrong; reveal highlights the correct choice.
+ * Market Match display — full-screen, no scroll. Single retro card: image, title, question, options/reveal.
  */
 import type { MarketMatchState } from '../types/marketMatch';
 import { getMarketMatchItem } from '../data/marketMatchDataset';
-import { SurveyShowdownStage } from '../games/feud/SurveyShowdownStage';
 import './DisplayMarketMatch.css';
 
 export interface DisplayMarketMatchProps {
@@ -17,80 +15,69 @@ export function DisplayMarketMatch({ state }: DisplayMarketMatchProps) {
 
   if (!item) {
     return (
-      <SurveyShowdownStage
-        variant="tv"
-        stageTheme="arcade"
-        marqueeSubtitle="Playroom"
-        marqueeTitle="Market Match"
-        contentSlot={
-          <div className="mm-display-wrap">
-            <p style={{ margin: 0, color: 'var(--pr-muted)' }}>Host will pick an item.</p>
-          </div>
-        }
-      />
+      <div className="mm-display mm-display--empty">
+        <p className="mm-display__empty-text">Host will pick an item.</p>
+      </div>
     );
   }
 
-  const questionText = `What did it cost in ${item.year}?`;
-  const questionSub = item.unit ? `(${item.unit})` : '';
+  const questionText = item.question ?? `What did it cost in ${item.year}?`;
+  const questionSub = item.unit ? ` (${item.unit})` : '';
   const options = item.options ?? [];
+  const isClosestTo = item.answerMode === 'closest_to';
+  const showOptions = !isClosestTo && options.length > 0;
+
+  const formatPrice = (): string => {
+    const p = item.priceUsd;
+    const isSmall = p > 0 && p < 100 && Math.round(p * 100) !== p * 100;
+    return '$' + p.toLocaleString(undefined, {
+      minimumFractionDigits: isSmall || (p >= 0.01 && p < 10) ? 2 : 0,
+      maximumFractionDigits: p >= 10 ? 0 : 2,
+    });
+  };
 
   return (
-    <SurveyShowdownStage
-      variant="tv"
-      stageTheme="arcade"
-      marqueeSubtitle="Playroom"
-      marqueeTitle="Market Match"
-      promptSlot={
-        <div className="mm-question-panel">
-          <p className="mm-question-text">
-            {questionText} {questionSub && <span style={{ fontWeight: 500, opacity: 0.9 }}> {questionSub}</span>}
-          </p>
-        </div>
-      }
-      contentSlot={
-        <div className="mm-display-wrap">
-          <div className="mm-content-block">
-            <div className="mm-content-inner">
-              {item.imageUrl ? (
-                <img src={item.imageUrl} alt="" className="mm-item-image" />
-              ) : (
-                <div className="mm-item-image-wrap">Image</div>
-              )}
-              <p className="mm-item-title">{item.title}</p>
-              <p className="mm-item-meta">
-                {item.year} · {item.unit}
-              </p>
+    <div className="mm-display mm-display--fullscreen">
+      <div className="mm-display__card">
+        <div className="mm-display__card-inner">
+          {item.imageUrl ? (
+            <img src={item.imageUrl} alt="" className="mm-display__card-img" />
+          ) : (
+            <div className="mm-display__card-img-placeholder">Image</div>
+          )}
+          <h2 className="mm-display__card-title">{item.title}</h2>
+          <p className="mm-display__card-meta">{item.year} · {item.unit}</p>
+          <p className="mm-display__card-question">{questionText}{questionSub}</p>
 
-              {options.length > 0 && (
-                <div className="mm-options">
-                  {options.map((label, i) => (
-                    <div
-                      key={i}
-                      className={`mm-option ${revealed && i === item.correctIndex ? 'mm-option--correct' : ''}`}
-                    >
-                      {label}
-                    </div>
-                  ))}
+          {showOptions && (
+            <div className="mm-display__options">
+              {options.map((label, i) => (
+                <div
+                  key={i}
+                  className={`mm-display__option ${revealed && i === item.correctIndex ? 'mm-display__option--correct' : ''}`}
+                >
+                  {label}
                 </div>
-              )}
-
-              {revealed && (
-                <div className="mm-reveal-wrap">
-                  <p className="mm-reveal-price">
-                    ${item.priceUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </p>
-                  <p className="mm-reveal-unit">{item.unit}</p>
-                  {item.citation && <p className="mm-reveal-citation">{item.citation}</p>}
-                </div>
-              )}
+              ))}
             </div>
-          </div>
-          {!revealed && (
-            <p className="mm-instruction">Pick one on your phone — host will reveal.</p>
+          )}
+
+          {isClosestTo && !revealed && (
+            <p className="mm-display__closest-prompt">Enter your guess on your phone — closest wins!</p>
+          )}
+
+          {revealed && (
+            <div className="mm-display__reveal">
+              <p className="mm-display__reveal-price">{formatPrice()}</p>
+              <p className="mm-display__reveal-unit">{item.unit}</p>
+              {item.citation && <p className="mm-display__reveal-citation">{item.citation}</p>}
+            </div>
           )}
         </div>
-      }
-    />
+      </div>
+      {!revealed && !isClosestTo && (
+        <p className="mm-display__instruction">Pick one on your phone — host will reveal.</p>
+      )}
+    </div>
   );
 }

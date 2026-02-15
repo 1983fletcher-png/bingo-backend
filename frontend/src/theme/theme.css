@@ -61,15 +61,8 @@
 
 body {
   margin: 0;
-  background: var(--pr-bg);
-  color: var(--pr-text);
   font-family: var(--pr-font-ui);
-}
-
-/* When theme is applied, root inherits so all routes (Home, Host, Display, Play) use theme tokens */
-[data-theme] #root {
-  background: var(--pr-bg);
-  color: var(--pr-text);
+  /* Background and color come from design-system (--bg, --text) so host/create respect light/dark toggle. */
 }
 
 /* Playroom-themed page shell (optional: use on body or #root when full reskin) */

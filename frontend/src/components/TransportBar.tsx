@@ -16,6 +16,10 @@ export type TransportBarProps = {
   paused?: boolean;
   jumpCheckpoints?: { id: string; label: string }[];
   disabled?: boolean;
+  /** Override confirm dialog message for End session */
+  endSessionConfirmMessage?: string;
+  /** Override confirm button label */
+  endSessionButtonLabel?: string;
 };
 
 export function TransportBar({
@@ -29,6 +33,8 @@ export function TransportBar({
   paused = false,
   jumpCheckpoints = [],
   disabled = false,
+  endSessionConfirmMessage,
+  endSessionButtonLabel,
 }: TransportBarProps) {
   const [showJump, setShowJump] = useState(false);
   const [showReset, setShowReset] = useState(false);
@@ -136,11 +142,11 @@ export function TransportBar({
               End session
             </button>
             {showEnd && (
-              <div className="transport-bar__confirm" role="dialog" aria-label="Confirm end session">
-                <p>End this session? Players will be disconnected.</p>
+              <div className="transport-bar__confirm" role="dialog" aria-label="Confirm end game">
+                <p>{endSessionConfirmMessage ?? 'End this session? Players will be disconnected.'}</p>
                 <div className="transport-bar__confirm-actions">
                   <button type="button" className="transport-bar__btn transport-bar__btn--secondary" onClick={() => setShowEnd(false)}>Cancel</button>
-                  <button type="button" className="transport-bar__btn transport-bar__btn--danger" onClick={() => { onEndSession(); setShowEnd(false); }}>End session</button>
+                  <button type="button" className="transport-bar__btn transport-bar__btn--danger" onClick={() => { onEndSession(); setShowEnd(false); }}>{endSessionButtonLabel ?? 'End session'}</button>
                 </div>
               </div>
             )}

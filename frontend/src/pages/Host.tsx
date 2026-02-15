@@ -1190,38 +1190,26 @@ p{word-break:break-all;font-size:14px;color:#333}
             </section>
           </>
         ) : game.gameType === 'feud' ? (
-          <>
-            <GameShell
-              gameKey="survey_showdown"
-              title="Survey Showdown"
-              code={game.code}
-              variant="host"
-              footerVariant="minimal"
-            >
-              <FeudHostPanel
-                gameCode={game.code}
-                feud={game.feud ?? DEFAULT_FEUD_STATE}
-                onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
-                socket={socket}
-                joinUrl={joinUrlForQR}
-                displayUrl={displayUrl}
-                onEndSession={() => navigate('/activity')}
-                hostKeyboardRef={hostKeyboardRef}
-              />
-            </GameShell>
-            <section className="host-room__previews host-room__previews--bottom" aria-label="Live previews">
-              <div className="host-room__previews-inner">
-                <div className="host-room__preview-card">
-                  <div className="host-room__preview-head"><span>Player view</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
-                  <iframe title="Player view" src={joinUrlForQR} className="host-room__preview-iframe" />
-                </div>
-                <div className="host-room__preview-card">
-                  <div className="host-room__preview-head"><span>Display (TV)</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
-                  <iframe title="TV display" src={displayUrl} className="host-room__preview-iframe" />
-                </div>
-              </div>
-            </section>
-          </>
+          <div className="host-room__feud-main">
+            <FeudHostPanel
+              gameCode={game.code}
+              feud={game.feud ?? DEFAULT_FEUD_STATE}
+              onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
+              socket={socket}
+              joinUrl={joinUrlForQR}
+              displayUrl={displayUrl}
+              onEndSession={() => {
+                setGame(null);
+                setGameStarted(false);
+                navigate('/host');
+              }}
+              onBackToPlayroom={() => {
+                setGame(null);
+                setGameStarted(false);
+              }}
+              hostKeyboardRef={hostKeyboardRef}
+            />
+          </div>
         ) : (
         <>
         <div className="host-room__tabs">

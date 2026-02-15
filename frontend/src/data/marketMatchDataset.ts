@@ -4,16 +4,24 @@
  * @see docs/MARKET-MATCH-SURVEY-SHOWDOWN-SPEC.md
  */
 
+import { MARKET_MATCH_SEED } from './marketMatchSeedData';
+
+export type MarketMatchAnswerMode = 'multiple_choice' | 'closest_to';
+
 export interface MarketMatchItem {
   id: string;
   title: string;
+  /** Optional prompt text (e.g. "How much did a brand-new 1968 Corvette cost?"). If omitted, built from year + unit. */
+  question?: string;
   year: number;
   priceUsd: number;
   unit: string;
   citation?: string;
-  /** Optional image URL (e.g. Corvette, loaf of bread). Interchangeable per item. */
+  /** Optional image URL — PD/CC/Unsplash; must match the item (bread, car, eggs, etc.). */
   imageUrl?: string;
-  /** Four options shown to the player; one correct, three wrong. */
+  /** How players answer: four options, or type a number (closest to wins). Default multiple_choice. */
+  answerMode?: MarketMatchAnswerMode;
+  /** Four options (used when answerMode is multiple_choice). */
   options: [string, string, string, string];
   /** Index of the correct answer in options (0–3). */
   correctIndex: 0 | 1 | 2 | 3;
@@ -70,108 +78,18 @@ function buildOptionsSeeded(priceUsd: number, seed: number): { options: [string,
   return { options: [all[0]!, all[1]!, all[2]!, all[3]!], correctIndex };
 }
 
-export const MARKET_MATCH_DATASET: MarketMatchItem[] = [
-  {
-    id: '1',
-    title: 'Gallon of gasoline (U.S. city average)',
-    year: 1985,
-    priceUsd: 1.2,
-    unit: 'per gallon',
-    citation: 'BLS CPI Average Price Data',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(1.2, 1),
-  },
-  {
-    id: '2',
-    title: 'Movie ticket (U.S. average)',
-    year: 1990,
-    priceUsd: 4.22,
-    unit: 'per ticket',
-    citation: 'National Association of Theatre Owners',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(4.22, 2),
-  },
-  {
-    id: '3',
-    title: 'White bread (1 lb)',
-    year: 1980,
-    priceUsd: 0.5,
-    unit: 'per lb',
-    citation: 'BLS CPI Average Price Data',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(0.5, 3),
-  },
-  {
-    id: '4',
-    title: 'Gallon of whole milk',
-    year: 1995,
-    priceUsd: 2.5,
-    unit: 'per gallon',
-    citation: 'BLS CPI Average Price Data',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(2.5, 4),
-  },
-  {
-    id: '5',
-    title: 'First-class postage stamp',
-    year: 1975,
-    priceUsd: 0.1,
-    unit: 'per stamp',
-    citation: 'USPS',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(0.1, 5),
-  },
-  {
-    id: '6',
-    title: 'Dozen eggs (U.S. city average)',
-    year: 2000,
-    priceUsd: 0.98,
-    unit: 'per dozen',
-    citation: 'BLS CPI Average Price Data',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(0.98, 6),
-  },
-  {
-    id: '7',
-    title: "McDonald's Big Mac",
-    year: 1995,
-    priceUsd: 2.32,
-    unit: 'per item',
-    citation: 'Big Mac index (historical)',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(2.32, 7),
-  },
-  {
-    id: '8',
-    title: 'Average new car (U.S.)',
-    year: 1985,
-    priceUsd: 9200,
-    unit: 'MSRP',
-    citation: 'BEA / industry estimates',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(9200, 8),
-  },
-  {
-    id: '9',
-    title: 'Gallon of gasoline (U.S. city average)',
-    year: 2008,
-    priceUsd: 3.27,
-    unit: 'per gallon',
-    citation: 'BLS CPI Average Price Data',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(3.27, 9),
-  },
-  {
-    id: '10',
-    title: 'Movie ticket (U.S. average)',
-    year: 2000,
-    priceUsd: 5.39,
-    unit: 'per ticket',
-    citation: 'NATO',
-    imageUrl: undefined,
-    ...buildOptionsSeeded(5.39, 10),
-  },
-];
+export const MARKET_MATCH_DATASET: MarketMatchItem[] = MARKET_MATCH_SEED.map((s) => ({
+  id: s.id,
+  title: s.title,
+  question: s.question,
+  year: s.year,
+  priceUsd: s.priceUsd,
+  unit: s.unit,
+  citation: s.citation,
+  imageUrl: s.imageUrl,
+  answerMode: s.answerMode ?? 'multiple_choice',
+  ...buildOptionsSeeded(s.priceUsd, parseInt(s.id, 10) || 1),
+}));
 
 export function getMarketMatchItem(index: number): MarketMatchItem | null {
   if (index < 0 || index >= MARKET_MATCH_DATASET.length) return null;

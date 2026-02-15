@@ -1,5 +1,5 @@
 /**
- * Theme tokens — data-theme, data-scene, data-motion driven.
+ * Theme tokens — data-playroom-theme, data-scene, data-motion driven (host light/dark uses data-theme).
  * Base tokens + theme/scene/motion variants.
  */
 
@@ -24,7 +24,7 @@
   --pr-duration-slow: 400ms;
 }
 
-:root, [data-theme="classic"] {
+:root, [data-playroom-theme="classic"] {
   --pr-bg: #0b0f14;
   --pr-surface: #121826;
   --pr-surface2: #182033;
@@ -48,11 +48,11 @@
 }
 
 /* Theme overlay textures (Vite public path — no 404s) */
-[data-theme="prestige"] { --stage-overlay: url("/themes/overlays/overlay-prestige.webp"); }
-[data-theme="retro"] { --stage-overlay: url("/themes/overlays/overlay-retro.webp"); }
-[data-theme="retro-arcade"] { --stage-overlay: url("/themes/overlays/overlay-arcade.webp"); }
+[data-playroom-theme="prestige"] { --stage-overlay: url("/themes/overlays/overlay-prestige.webp"); }
+[data-playroom-theme="retro"] { --stage-overlay: url("/themes/overlays/overlay-retro.webp"); }
+[data-playroom-theme="retro-arcade"] { --stage-overlay: url("/themes/overlays/overlay-arcade.webp"); }
 
-[data-theme="prestige"] {
+[data-playroom-theme="prestige"] {
   --pr-bg: #0d0d0f;
   --pr-surface: #16161a;
   --pr-surface2: #1e1e24;
@@ -67,7 +67,7 @@
   --pr-glow-strength: 0.12;
 }
 
-[data-theme="retro"] {
+[data-playroom-theme="retro"] {
   --pr-bg: #0f1216;
   --pr-surface: #1a1f26;
   --pr-surface2: #242b33;
@@ -82,7 +82,7 @@
   --pr-glow-strength: 0.1;
 }
 
-[data-theme="retro-arcade"] {
+[data-playroom-theme="retro-arcade"] {
   --pr-bg: #0a0a0e;
   --pr-surface: #12121a;
   --pr-surface2: #1a1a26;
@@ -99,7 +99,7 @@
 }
 
 /* Game Show (Survey Showdown) — purple/gold. Add overlay-gameshow.webp to public/themes/overlays/ for full asset. */
-[data-theme="game-show"] {
+[data-playroom-theme="game-show"] {
   --pr-bg: #1a0a2e;
   --pr-surface: #2d1b4e;
   --pr-surface2: #3d2663;
@@ -512,10 +512,10 @@ html::before,
 }
 
 /* Theme/scene/motion variants for stage and scene layer (optional overrides) */
-[data-theme="retro-arcade"] .pr-stage {
+[data-playroom-theme="retro-arcade"] .pr-stage {
   box-shadow: 0 0 24px color-mix(in srgb, var(--pr-glow) 25%, transparent);
 }
-[data-theme="prestige"] .pr-stage {
+[data-playroom-theme="prestige"] .pr-stage {
   border-color: var(--pr-border);
 }
 [data-scene="arcadeCarpet"] .pr-scene-layer {

@@ -10,6 +10,8 @@
   max-width: 960px;
   margin: 0 auto;
   text-align: center;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .host-create__progress {
@@ -294,6 +296,7 @@
   margin: 0 auto;
   padding: 1.5rem 1.25rem 3rem;
   background: var(--bg);
+  color: var(--text);
 }
 
 .host-room__wrap {
@@ -1081,6 +1084,117 @@
 .host-controls__next-hint {
   font-size: 0.875rem;
   color: var(--text-muted);
+}
+
+/* Feud host panel — top bar: Back, title, transport, code */
+.feud-host-panel__top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.feud-host-panel__back-link {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.feud-host-panel__back-link:hover {
+  color: var(--accent);
+}
+
+.feud-host-panel__top-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-right: 0.5rem;
+}
+
+.feud-host-panel__transport-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.feud-host-panel__transport-wrap .transport-bar {
+  margin-bottom: 0;
+}
+
+.feud-host-panel__transport-wrap .transport-bar__row {
+  flex-wrap: wrap;
+}
+
+.feud-host-panel__top-code {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-family: ui-monospace, monospace;
+}
+
+/* Prompt: collapsible details + dropdown ideas */
+.feud-host-panel__prompt-details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.feud-host-panel__prompt-summary {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+}
+
+.feud-host-panel__prompt-summary::-webkit-details-marker {
+  display: none;
+}
+
+.feud-host-panel__prompt-summary::before {
+  content: '▸ ';
+  color: var(--text-muted);
+}
+
+.feud-host-panel__prompt-details[open] .feud-host-panel__prompt-summary::before {
+  content: '▾ ';
+}
+
+.feud-host-panel__prompt-body {
+  padding: 0 0.75rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.feud-host-panel__prompt-body .feud-host-panel__input {
+  margin-bottom: 0.5rem;
+}
+
+.feud-host-panel__prompt-ideas-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.feud-host-panel__prompt-ideas-row .feud-host-panel__label {
+  margin-bottom: 0;
+}
+
+.feud-host-panel__prompt-select {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  min-width: 200px;
 }
 
 /* Feud host panel */
