@@ -75,17 +75,17 @@ interface GameCreated {
 
 type HostTab = 'waiting' | 'call' | 'questions' | 'controls' | 'event' | 'print';
 
-export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building' | 'feud' | 'estimation' | 'market-match' | 'crowd-control-trivia' | 'jeopardy';
+export type CreateMode = 'music-bingo' | 'classic-bingo' | 'trivia' | 'icebreakers' | 'edutainment' | 'team-building' | 'feud' | 'market-match' | 'crowd-control-trivia';
 
 function createModeFromUrl(type: string | null): CreateMode {
   if (type === 'bingo' || type === 'music-bingo') return 'music-bingo';
   if (type === 'classic-bingo') return 'classic-bingo';
   if (type === 'feud') return 'feud';
-  if (type === 'estimation') return 'estimation';
   if (type === 'market-match') return 'market-match';
   if (type === 'crowd-control-trivia') return 'crowd-control-trivia';
-  if (type === 'jeopardy') return 'jeopardy';
   if (type === 'trivia' || type === 'icebreakers' || type === 'edutainment' || type === 'team-building') return type;
+  /* estimation / jeopardy removed — old links fall back to crowd-control-trivia */
+  if (type === 'estimation' || type === 'jeopardy') return 'crowd-control-trivia';
   return 'music-bingo';
 }
 
@@ -412,12 +412,6 @@ export default function Host() {
         },
         options: preset?.noScoreDefault ? { feudShowScores: false } : undefined,
       });
-    } else if (mode === 'estimation') {
-      socket.emit('host:create', {
-        baseUrl: window.location.origin,
-        gameType: 'estimation',
-        eventConfig: { ...initialEventConfig, gameTitle: 'Estimation Show' },
-      });
     } else if (mode === 'market-match') {
       socket.emit('host:create', {
         baseUrl: window.location.origin,
@@ -429,12 +423,6 @@ export default function Host() {
         baseUrl: window.location.origin,
         gameType: 'crowd-control-trivia',
         eventConfig: { ...initialEventConfig, gameTitle: 'Crowd Control Trivia' },
-      });
-    } else if (mode === 'jeopardy') {
-      socket.emit('host:create', {
-        baseUrl: window.location.origin,
-        gameType: 'jeopardy',
-        eventConfig: { ...initialEventConfig, gameTitle: 'Category Grid' },
       });
     } else {
       socket.emit('host:create', {
@@ -715,9 +703,7 @@ export default function Host() {
     const isFeud = createMode === 'feud';
     const isMarketMatch = createMode === 'market-match';
     const isCrowdControlTrivia = createMode === 'crowd-control-trivia';
-    const isEstimation = createMode === 'estimation';
-    const isJeopardy = createMode === 'jeopardy';
-    const isNoPackGame = isFeud || isMarketMatch || isCrowdControlTrivia || isEstimation || isJeopardy;
+    const isNoPackGame = isFeud || isMarketMatch || isCrowdControlTrivia;
     const isPackMode = !isBingo && !isNoPackGame;
     const selectedTriviaPack = defaultTriviaPacks.find((p) => p.id === selectedTriviaPackId) ?? defaultTriviaPacks[0];
     const selectedIcebreakerPack = icebreakerPacks.find((p) => p.id === selectedIcebreakerPackId) ?? defaultIcebreakerPack;
@@ -745,10 +731,8 @@ export default function Host() {
         createGame('music-bingo');
       } else if (createMode === 'classic-bingo') createGame('classic-bingo');
       else if (createMode === 'feud') createGame('feud');
-      else if (createMode === 'estimation') createGame('estimation');
       else if (createMode === 'market-match') createGame('market-match');
       else if (createMode === 'crowd-control-trivia') createGame('crowd-control-trivia');
-      else if (createMode === 'jeopardy') createGame('jeopardy');
       else createGame(createMode, packForMode as TriviaPack);
     };
 
@@ -765,13 +749,11 @@ export default function Host() {
                 ? 'Create Edutainment'
                 : createMode === 'feud'
                   ? 'Create Survey Showdown'
-                  : createMode === 'estimation'
-                    ? 'Create Estimation Show'
-                    : createMode === 'crowd-control-trivia'
-                      ? 'Create Crowd Control Trivia'
-                      : createMode === 'jeopardy'
-                        ? 'Create Category Grid'
-                        : 'Create Team Building';
+                  : createMode === 'crowd-control-trivia'
+                    ? 'Create Crowd Control Trivia'
+                    : createMode === 'market-match'
+                      ? 'Create Market Match'
+                      : 'Create Team Building';
 
     return (
       <div className="host-create">
@@ -807,79 +789,29 @@ export default function Host() {
           <span>Create</span>
         </p>
         <h1 className="host-create__title">Host a game</h1>
-        <p className="host-create__sub">Choose your game type, then pick content. Share the QR or link so players can join.</p>
-        <p className="host-create__sub host-create__sub--small">What do you want to run?</p>
-        <div className="host-create__game-type">
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'feud' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('feud')}
-          >
-            Survey Showdown
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'music-bingo' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('music-bingo')}
-          >
-            Music Bingo
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'classic-bingo' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('classic-bingo')}
-          >
-            Classic Bingo
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'trivia' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('trivia')}
-          >
-            Trivia
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'icebreakers' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('icebreakers')}
-          >
-            Icebreakers
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'edutainment' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('edutainment')}
-          >
-            Edutainment
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'team-building' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('team-building')}
-          >
-            Team Building
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'estimation' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('estimation')}
-          >
-            Estimation Show
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'crowd-control-trivia' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('crowd-control-trivia')}
-          >
-            Crowd Control Trivia
-          </button>
-          <button
-            type="button"
-            className={`host-create__game-type-btn ${createMode === 'jeopardy' ? 'host-create__game-type-btn--on' : ''}`}
-            onClick={() => setCreateMode('jeopardy')}
-          >
-            Category Grid
-          </button>
+        <p className="host-create__sub">Choose a game type. Share the QR or link so players can join; open Display on the TV.</p>
+        <div className="host-create__game-cards">
+          {([
+            { id: 'crowd-control-trivia' as CreateMode, label: 'Crowd Control Trivia', desc: 'Crowd votes the category; questions roll down the column.' },
+            { id: 'market-match' as CreateMode, label: 'Market Match', desc: 'Historical + current price guesses. Host reveals; players guess on phone.' },
+            { id: 'feud' as CreateMode, label: 'Survey Showdown', desc: 'Family Feud–style: one prompt, short answers, Top 8 board.' },
+            { id: 'music-bingo' as CreateMode, label: 'Music Bingo', desc: 'Run a music bingo game. Add songs, share QR, reveal as you play.' },
+            { id: 'classic-bingo' as CreateMode, label: 'Classic Bingo', desc: 'Classic number bingo. Call sheet and grid on the display.' },
+            { id: 'trivia' as CreateMode, label: 'Trivia', desc: 'Host a trivia room. Pick a pack, start the session, run questions.' },
+            { id: 'icebreakers' as CreateMode, label: 'Icebreakers', desc: 'Guided activities and prompts for groups.' },
+            { id: 'edutainment' as CreateMode, label: 'Edutainment', desc: 'Learning games and curriculum-aligned packs.' },
+            { id: 'team-building' as CreateMode, label: 'Team Building', desc: 'Team-building prompts and activities.' },
+          ]).map(({ id, label, desc }) => (
+            <button
+              key={id}
+              type="button"
+              className={`host-create__game-card ${createMode === id ? 'host-create__game-card--on' : ''}`}
+              onClick={() => setCreateMode(id)}
+            >
+              <span className="host-create__game-card-label">{label}</span>
+              <span className="host-create__game-card-desc">{desc}</span>
+            </button>
+          ))}
         </div>
 
         {createMode === 'feud' && (
@@ -1045,7 +977,7 @@ export default function Host() {
           <span className="host-room__connected">● Connected</span>
         </p>
 
-        <div className="host-room__wrap">
+        <div className={`host-room__wrap ${['feud', 'market-match', 'crowd-control-trivia'].includes(game.gameType) ? 'host-room__wrap--playroom' : ''}`}>
           <aside className="host-room__left">
             <p className="host-room__section-label">Share with players</p>
             <div className="host-room__qr-block">
@@ -1146,102 +1078,150 @@ p{word-break:break-all;font-size:14px;color:#333}
           </aside>
 
           <div className="host-room__right">
-            <div className="host-room__right-head" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-              <div>
-              <h1 className="host-room__right-title">Run the game</h1>
-              <p className="host-room__right-sub">Player view and Display view below match what players and the TV see.</p>
-            </div>
-            </div>
-            {game.gameType !== 'feud' && (
-            <TransportBar
-              onBack={() => {}}
-              onNext={game?.gameType === 'trivia' ? () => { if (triviaQuestions.length > 0 && triviaCurrentIndex < triviaQuestions.length - 1) setTriviaCurrentIndex((i) => i + 1); } : undefined}
-              onEndSession={() => { setGame(null); setGameStarted(false); }}
-              jumpCheckpoints={[
-                { id: 'waiting', label: 'Waiting room' },
-                { id: 'game', label: 'Game' },
-              ]}
-              onJump={(id) => { if (id === 'waiting') setActiveTab('waiting'); else if (id === 'game') setActiveTab(game?.gameType === 'trivia' ? 'questions' : 'call'); }}
-            />
+            {/* Run the game header + TransportBar + top previews only for non–playroom games (bingo, trivia, etc.) */}
+            {!['feud', 'market-match', 'crowd-control-trivia'].includes(game.gameType) && (
+              <>
+                <div className="host-room__right-head" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <div>
+                    <h1 className="host-room__right-title">Run the game</h1>
+                    <p className="host-room__right-sub">Player view and Display view below match what players and the TV see.</p>
+                  </div>
+                </div>
+                {game.gameType !== 'feud' && (
+                  <TransportBar
+                    onBack={() => {}}
+                    onNext={game?.gameType === 'trivia' ? () => { if (triviaQuestions.length > 0 && triviaCurrentIndex < triviaQuestions.length - 1) setTriviaCurrentIndex((i) => i + 1); } : undefined}
+                    onEndSession={() => { setGame(null); setGameStarted(false); }}
+                    jumpCheckpoints={[
+                      { id: 'waiting', label: 'Waiting room' },
+                      { id: 'game', label: 'Game' },
+                    ]}
+                    onJump={(id) => { if (id === 'waiting') setActiveTab('waiting'); else if (id === 'game') setActiveTab(game?.gameType === 'trivia' ? 'questions' : 'call'); }}
+                  />
+                )}
+                <div className="host-room__previews" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+                  <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
+                    <div className="host-room__preview-head" style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                      <span>Player view</span>
+                      <span className="host-room__preview-badge" style={{ color: 'var(--success, #68d391)', fontSize: 10, fontWeight: 600 }} aria-label="Live">● Live</span>
+                    </div>
+                    <iframe title="Player view" src={joinUrlForQR} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
+                  </div>
+                  <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
+                    <div className="host-room__preview-head" style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                      <span>Display (TV)</span>
+                      <span className="host-room__preview-badge" style={{ color: 'var(--success, #68d391)', fontSize: 10, fontWeight: 600 }} aria-label="Live">● Live</span>
+                    </div>
+                    <iframe title="TV display" src={displayUrl} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
+                  </div>
+                </div>
+              </>
             )}
-            <div className="host-room__previews" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-              <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
-                <div className="host-room__preview-head" style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                  <span>Player view</span>
-                  <span className="host-room__preview-badge" style={{ color: 'var(--success, #68d391)', fontSize: 10, fontWeight: 600 }} aria-label="Live">● Live</span>
-                </div>
-                <iframe title="Player view" src={joinUrlForQR} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
-              </div>
-              <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
-                <div className="host-room__preview-head" style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                  <span>Display (TV)</span>
-                  <span className="host-room__preview-badge" style={{ color: 'var(--success, #68d391)', fontSize: 10, fontWeight: 600 }} aria-label="Live">● Live</span>
-                </div>
-                <iframe title="TV display" src={displayUrl} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
-              </div>
-            </div>
+
         {game.gameType === 'estimation' || game.gameType === 'jeopardy' ? (
           <div className="host-room__placeholder-panel" style={{ padding: 24, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
             <h2 style={{ margin: '0 0 8px' }}>{game.gameType === 'estimation' ? 'Estimation Show' : 'Category Grid'}</h2>
             <p style={{ margin: 0, color: 'var(--text-muted)' }}>Host controls for this game type are coming soon. Share the join link and display link with your room; full gameplay will be added in a future update.</p>
           </div>
         ) : game.gameType === 'market-match' ? (
-          <GameShell
-            gameKey="market_match"
-            title="Market Match"
-            code={game.code}
-            variant="host"
-            footerVariant="minimal"
-          >
-            <MarketMatchHostPanel
-              gameCode={game.code}
-              hostToken={game.hostToken ?? null}
-              marketMatch={game.marketMatch ?? { currentIndex: 0, revealed: false }}
-              socket={socket}
-              joinUrl={joinUrlForQR}
-              displayUrl={displayUrl}
-              onEndSession={() => navigate('/activity')}
-              hostKeyboardRef={hostKeyboardRef}
-            />
-          </GameShell>
+          <>
+            <GameShell
+              gameKey="market_match"
+              title="Market Match"
+              code={game.code}
+              variant="host"
+              footerVariant="minimal"
+            >
+              <MarketMatchHostPanel
+                gameCode={game.code}
+                hostToken={game.hostToken ?? null}
+                marketMatch={game.marketMatch ?? { currentIndex: 0, revealed: false }}
+                socket={socket}
+                joinUrl={joinUrlForQR}
+                displayUrl={displayUrl}
+                onEndSession={() => navigate('/activity')}
+                hostKeyboardRef={hostKeyboardRef}
+              />
+            </GameShell>
+            <section className="host-room__previews host-room__previews--bottom" aria-label="Live previews">
+              <div className="host-room__previews-inner">
+                <div className="host-room__preview-card">
+                  <div className="host-room__preview-head"><span>Player view</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
+                  <iframe title="Player view" src={joinUrlForQR} className="host-room__preview-iframe" />
+                </div>
+                <div className="host-room__preview-card">
+                  <div className="host-room__preview-head"><span>Display (TV)</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
+                  <iframe title="TV display" src={displayUrl} className="host-room__preview-iframe" />
+                </div>
+              </div>
+            </section>
+          </>
         ) : game.gameType === 'crowd-control-trivia' ? (
-          <GameShell
-            gameKey="crowd_control_trivia"
-            title="Crowd Control Trivia"
-            code={game.code}
-            variant="host"
-            footerVariant="minimal"
-          >
-            <CrowdControlHostPanel
-              gameCode={game.code}
-              hostToken={game.hostToken ?? null}
-              crowdControl={game.crowdControl ?? { boardId: 0, usedSlots: [0,0,0,0,0,0], phase: 'board', voteCounts: [0,0,0,0,0,0], winningCategoryIndex: null, currentValueIndex: null, currentQuestionId: null, revealed: false }}
-              socket={socket}
-              joinUrl={joinUrlForQR}
-              displayUrl={displayUrl}
-              onEndSession={() => navigate('/activity')}
-              hostKeyboardRef={hostKeyboardRef}
-            />
-          </GameShell>
+          <>
+            <GameShell
+              gameKey="crowd_control_trivia"
+              title="Crowd Control Trivia"
+              code={game.code}
+              variant="host"
+              footerVariant="minimal"
+            >
+              <CrowdControlHostPanel
+                gameCode={game.code}
+                hostToken={game.hostToken ?? null}
+                crowdControl={game.crowdControl ?? { boardId: 0, usedSlots: [0,0,0,0,0,0], phase: 'board', voteCounts: [0,0,0,0,0,0], winningCategoryIndex: null, currentValueIndex: null, currentQuestionId: null, revealed: false }}
+                socket={socket}
+                joinUrl={joinUrlForQR}
+                displayUrl={displayUrl}
+                onEndSession={() => navigate('/activity')}
+                hostKeyboardRef={hostKeyboardRef}
+              />
+            </GameShell>
+            <section className="host-room__previews host-room__previews--bottom" aria-label="Live previews">
+              <div className="host-room__previews-inner">
+                <div className="host-room__preview-card">
+                  <div className="host-room__preview-head"><span>Player view</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
+                  <iframe title="Player view" src={joinUrlForQR} className="host-room__preview-iframe" />
+                </div>
+                <div className="host-room__preview-card">
+                  <div className="host-room__preview-head"><span>Display (TV)</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
+                  <iframe title="TV display" src={displayUrl} className="host-room__preview-iframe" />
+                </div>
+              </div>
+            </section>
+          </>
         ) : game.gameType === 'feud' ? (
-          <GameShell
-            gameKey="survey_showdown"
-            title="Survey Showdown"
-            code={game.code}
-            variant="host"
-            footerVariant="minimal"
-          >
-            <FeudHostPanel
-              gameCode={game.code}
-              feud={game.feud ?? DEFAULT_FEUD_STATE}
-              onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
-              socket={socket}
-              joinUrl={joinUrlForQR}
-              displayUrl={displayUrl}
-              onEndSession={() => navigate('/activity')}
-              hostKeyboardRef={hostKeyboardRef}
-            />
-          </GameShell>
+          <>
+            <GameShell
+              gameKey="survey_showdown"
+              title="Survey Showdown"
+              code={game.code}
+              variant="host"
+              footerVariant="minimal"
+            >
+              <FeudHostPanel
+                gameCode={game.code}
+                feud={game.feud ?? DEFAULT_FEUD_STATE}
+                onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
+                socket={socket}
+                joinUrl={joinUrlForQR}
+                displayUrl={displayUrl}
+                onEndSession={() => navigate('/activity')}
+                hostKeyboardRef={hostKeyboardRef}
+              />
+            </GameShell>
+            <section className="host-room__previews host-room__previews--bottom" aria-label="Live previews">
+              <div className="host-room__previews-inner">
+                <div className="host-room__preview-card">
+                  <div className="host-room__preview-head"><span>Player view</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
+                  <iframe title="Player view" src={joinUrlForQR} className="host-room__preview-iframe" />
+                </div>
+                <div className="host-room__preview-card">
+                  <div className="host-room__preview-head"><span>Display (TV)</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
+                  <iframe title="TV display" src={displayUrl} className="host-room__preview-iframe" />
+                </div>
+              </div>
+            </section>
+          </>
         ) : (
         <>
         <div className="host-room__tabs">

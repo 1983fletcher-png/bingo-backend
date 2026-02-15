@@ -26,7 +26,6 @@ import PollHostVenue from './pages/PollHostVenue';
 import PollPlayerVenue from './pages/PollPlayerVenue';
 import PollDisplayVenue from './pages/PollDisplayVenue';
 import ActivityRoom from './pages/ActivityRoom';
-import ActivityRoomBuildTonight from './pages/ActivityRoomBuildTonight';
 import ActivityRoomPlaceholder from './pages/ActivityRoomPlaceholder';
 import ActivityRoomPrintables from './pages/ActivityRoomPrintables';
 import ActivityRoomInsights from './pages/ActivityRoomInsights';
@@ -49,7 +48,7 @@ export default function App() {
       {/* Verified: /create → CreativeStudio; /create/templates → Create; /create/hospitality/menu → CreateMenuBuilder; /view/:slug → ViewPage; /theme-lab → ThemeLabPage. ActivityRoom nested routes render via <Outlet />. */}
       <Route path="/" element={<Home />} />
       <Route path="/activity" element={<ActivityRoom />}>
-        <Route index element={<ActivityRoomBuildTonight />} />
+        <Route index element={<Navigate to="/host" replace />} />
         <Route path="kits" element={<ActivityRoomPlaceholder title="Kits Library" />} />
         <Route path="game-shows" element={<ActivityRoomPlaceholder title="Game Shows" />} />
         <Route path="printables" element={<ActivityRoomPrintables />} />

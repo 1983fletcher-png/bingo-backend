@@ -107,7 +107,7 @@ export function CrowdControlHostPanel({
   const isQuestion = phase === 'question' || phase === 'reveal';
 
   return (
-    <div className="host-room__panel" style={{ padding: 24 }}>
+    <div className="host-room__panel cct-host-panel">
       {/* Board: categories across top, values 100–500 down the left (matches TV display) */}
       {board && (
         <div style={{ marginBottom: 24 }}>
@@ -243,20 +243,7 @@ export function CrowdControlHostPanel({
         </div>
       )}
 
-      <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
-        Share the join link with players; open Display on the TV.
-      </p>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <a href={joinUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
-          Player link
-        </a>
-        <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
-          Display (TV)
-        </a>
-        <button type="button" onClick={onEndSession} className="host-room__btn-secondary">
-          End session
-        </button>
-      </div>
+      <p className="cct-host-hint">Player link, Display (TV), and End game are in the left sidebar.</p>
     </div>
   );
 }

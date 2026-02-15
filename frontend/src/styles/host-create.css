@@ -6,8 +6,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 20px 48px;
-  max-width: 720px;
+  padding: 16px 20px 32px;
+  max-width: 960px;
   margin: 0 auto;
   text-align: center;
 }
@@ -16,8 +16,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 4px;
 }
 
 .host-create__progress-step {
@@ -51,8 +51,8 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin: 0 0 1.5rem;
-  font-size: 0.75rem;
+  margin: 0 0 1rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
 }
 
@@ -70,15 +70,68 @@
 
 .host-create__sub {
   color: var(--text-muted);
-  margin: 0 0 1.5rem;
-  font-size: 1rem;
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
   line-height: 1.5;
 }
 
 .host-create__sub--small {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
+/* Game type cards — no-scroll grid, bigger tap targets */
+.host-create__game-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.host-create__game-card {
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.host-create__game-card:hover {
+  border-color: var(--text-muted);
+  background: var(--surface-hover, var(--surface));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.host-create__game-card--on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(233, 69, 96, 0.25);
+}
+
+.host-create__game-card--on .host-create__game-card-desc {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.host-create__game-card-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+.host-create__game-card-desc {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+/* Legacy button style (if still used elsewhere) */
 .host-create__game-type {
   display: flex;
   flex-wrap: wrap;
@@ -295,6 +348,28 @@
   gap: 0;
 }
 
+/* Tighter left column for CCT, feud, market-match */
+.host-room__wrap--playroom .host-room__left {
+  padding: 1rem 1.25rem;
+  max-width: 280px;
+}
+
+.host-room__wrap--playroom .host-room__qr-block img {
+  width: 200px;
+  height: 200px;
+}
+
+.host-room__wrap--playroom .host-room__section-label,
+.host-room__wrap--playroom .host-room__left-divider,
+.host-room__wrap--playroom .host-room__link-label {
+  margin-bottom: 0.5rem;
+}
+
+.host-room__wrap--playroom .host-room__display-hint {
+  font-size: 0.6875rem;
+  margin-bottom: 0.5rem;
+}
+
 @media (min-width: 900px) {
   .host-room__left {
     width: 300px;
@@ -506,6 +581,59 @@
   color: var(--text-muted);
   margin: 0;
   line-height: 1.45;
+}
+
+/* Previews (Player / TV) — top for bingo/trivia; bottom for CCT, feud, market-match */
+.host-room__previews-inner {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.host-room__preview-card {
+  flex: 1 1 240px;
+  min-width: 200px;
+  max-width: 320px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.host-room__preview-head {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.host-room__preview-badge {
+  color: var(--success, #68d391);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.host-room__preview-iframe {
+  width: 100%;
+  height: 220px;
+  border: none;
+  display: block;
+}
+
+.host-room__previews--bottom {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.host-room__previews--bottom .host-room__previews-inner {
+  margin-bottom: 0;
 }
 
 /* Tabs */
