@@ -27,14 +27,14 @@ export function DisplayMarketMatch({ state }: DisplayMarketMatchProps) {
   const isClosestTo = item.answerMode === 'closest_to';
   const showOptions = !isClosestTo && options.length > 0;
 
-  const formatPrice = (): string => {
-    const p = item.priceUsd;
+  const formatPrice = (p: number): string => {
     const isSmall = p > 0 && p < 100 && Math.round(p * 100) !== p * 100;
     return '$' + p.toLocaleString(undefined, {
       minimumFractionDigits: isSmall || (p >= 0.01 && p < 10) ? 2 : 0,
       maximumFractionDigits: p >= 10 ? 0 : 2,
     });
   };
+  const hasThenNow = item.priceTodayUsd != null && item.priceTodayUsd > 0;
 
   return (
     <div className="mm-display mm-display--fullscreen">
@@ -68,8 +68,12 @@ export function DisplayMarketMatch({ state }: DisplayMarketMatchProps) {
 
           {revealed && (
             <div className="mm-display__reveal">
-              <p className="mm-display__reveal-price">{formatPrice()}</p>
+              <p className="mm-display__reveal-price">{formatPrice(item.priceUsd)}</p>
               <p className="mm-display__reveal-unit">{item.unit}</p>
+              {hasThenNow && (
+                <p className="mm-display__reveal-then-now">Now: ~{formatPrice(item.priceTodayUsd!)}</p>
+              )}
+              {item.funFact && <p className="mm-display__reveal-fun-fact">{item.funFact}</p>}
               {item.citation && <p className="mm-display__reveal-citation">{item.citation}</p>}
             </div>
           )}

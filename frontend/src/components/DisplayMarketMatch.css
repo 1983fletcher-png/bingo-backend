@@ -230,6 +230,20 @@
   color: #5c5244;
 }
 
+.mm-display__reveal-then-now {
+  margin: 8px 0 0;
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  font-weight: 700;
+  color: #2a231a;
+}
+
+.mm-display__reveal-fun-fact {
+  margin: 6px 0 0;
+  font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+  font-style: italic;
+  color: #6a6154;
+}
+
 .mm-display__reveal-citation {
   margin: 10px 0 0;
   font-size: clamp(0.75rem, 1.2vw, 0.9rem);
@@ -629,6 +643,20 @@
   color: #8b6914;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.12), 0 0 20px rgba(212, 175, 55, 0.25);
   font-variant-numeric: tabular-nums;
+}
+
+.mm-player__reveal-then-now {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #2a231a;
+}
+
+.mm-player__reveal-fun-fact {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #6a6154;
 }
 
 .mm-player__reveal-citation {

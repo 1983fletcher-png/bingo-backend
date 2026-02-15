@@ -422,6 +422,12 @@ function MarketMatchPlayerContent({
             <p className="mm-player__reveal-correct">
               {isClosestTo ? formatPrice(item.priceUsd) : correctLabel} {item.unit}
             </p>
+            {item.priceTodayUsd != null && item.priceTodayUsd > 0 && (
+              <p className="mm-player__reveal-then-now">Now: ~{formatPrice(item.priceTodayUsd)}</p>
+            )}
+            {item.funFact && (
+              <p className="mm-player__reveal-fun-fact">{item.funFact}</p>
+            )}
             {item.citation && (
               <p className="mm-player__reveal-citation">{item.citation}</p>
             )}

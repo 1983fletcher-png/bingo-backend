@@ -17,7 +17,7 @@ export interface MarketMatchItem {
   priceUsd: number;
   unit: string;
   citation?: string;
-  /** Optional image URL — PD/CC/Unsplash; must match the item (bread, car, eggs, etc.). */
+  /** Optional image URL — era-appropriate "then" image (PD/CC/Unsplash). */
   imageUrl?: string;
   /** How players answer: four options, or type a number (closest to wins). Default multiple_choice. */
   answerMode?: MarketMatchAnswerMode;
@@ -25,6 +25,12 @@ export interface MarketMatchItem {
   options: [string, string, string, string];
   /** Index of the correct answer in options (0–3). */
   correctIndex: 0 | 1 | 2 | 3;
+  /** Approximate price for same/similar item today (then-and-now comparison). */
+  priceTodayUsd?: number;
+  /** Optional "now" image for then-and-now comparison. */
+  imageUrlToday?: string;
+  /** Short comparison note (e.g. "Similar model today"). */
+  funFact?: string;
 }
 
 function fmt(price: number): string {
@@ -88,6 +94,9 @@ export const MARKET_MATCH_DATASET: MarketMatchItem[] = MARKET_MATCH_SEED.map((s)
   citation: s.citation,
   imageUrl: s.imageUrl,
   answerMode: s.answerMode ?? 'multiple_choice',
+  priceTodayUsd: s.priceTodayUsd,
+  imageUrlToday: s.imageUrlToday,
+  funFact: s.funFact,
   ...buildOptionsSeeded(s.priceUsd, parseInt(s.id, 10) || 1),
 }));
 
