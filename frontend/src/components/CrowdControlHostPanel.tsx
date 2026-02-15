@@ -27,9 +27,9 @@ export function CrowdControlHostPanel({
   hostToken: hostTokenProp,
   crowdControl,
   socket,
-  joinUrl,
-  displayUrl,
-  onEndSession,
+  joinUrl: _joinUrl,
+  displayUrl: _displayUrl,
+  onEndSession: _onEndSession,
   hostKeyboardRef
 }: CrowdControlHostPanelProps) {
   const [modalOpen, setModalOpen] = useState(false);
