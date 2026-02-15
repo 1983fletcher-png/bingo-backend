@@ -17,8 +17,8 @@ export interface SurveyShowdownStageProps {
   /** Overlay UI (e.g. "TOP 3" badge, controls) — positioned on the stage, not in flow */
   uiSlot?: React.ReactNode;
   children?: React.ReactNode;
-  /** Arcade game-show look: multi-color bulbs, retro carpet floor, prominent marquee */
-  stageTheme?: 'default' | 'arcade';
+  /** Arcade game-show look: 'arcade' = multi-color bulbs; 'arcade-pro' = warm gold only, proper stage/carpet */
+  stageTheme?: 'default' | 'arcade' | 'arcade-pro';
   /** Marquee subtitle (e.g. "Playroom") — small, corner/cursive, neon style */
   marqueeSubtitle?: string;
   /** Marquee main title (e.g. "Crowd Control Trivia") — center pop-out, bold */
@@ -39,12 +39,13 @@ export function SurveyShowdownStage({
   marqueeTitle,
   contentPosition = 'center',
 }: SurveyShowdownStageProps) {
-  const isArcade = stageTheme === 'arcade';
+  const isArcade = stageTheme === 'arcade' || stageTheme === 'arcade-pro';
+  const isArcadePro = stageTheme === 'arcade-pro';
   const hasArcadeMarquee = isArcade && (marqueeSubtitle != null || marqueeTitle != null);
 
   return (
     <div
-      className={`survey-showdown-stage survey-showdown-stage--${variant}${isArcade ? ' survey-showdown-stage--arcade' : ''}${contentPosition === 'top' ? ' survey-showdown-stage--content-top' : ''}`}
+      className={`survey-showdown-stage survey-showdown-stage--${variant}${isArcade ? ' survey-showdown-stage--arcade' : ''}${isArcadePro ? ' survey-showdown-stage--arcade-pro' : ''}${contentPosition === 'top' ? ' survey-showdown-stage--content-top' : ''}`}
       data-variant={variant}
       data-stage-theme={stageTheme}
       data-content-position={contentPosition}

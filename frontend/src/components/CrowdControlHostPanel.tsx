@@ -114,14 +114,12 @@ export function CrowdControlHostPanel({
           <h3 style={{ margin: '0 0 12px', fontSize: 18 }}>{board.name}</h3>
           <div className="cct-host-board">
             <div className="cct-host-board__head" aria-hidden="true">
-              <div className="cct-host-board__head-cell cct-host-board__head-cell--corner"> </div>
               {categories.map((cat, ci) => (
                 <div key={ci} className="cct-host-board__head-cell cct-host-board__head-cell--category">{cat}</div>
               ))}
             </div>
             {VALUE_LADDER.map((value, vi) => (
               <div key={vi} className="cct-host-board__row">
-                <div className="cct-host-board__value">{value}</div>
                 {categories.map((_, ci) => {
                   const used = (usedSlots[ci] ?? 0) > vi;
                   const isCurrent =
@@ -133,7 +131,7 @@ export function CrowdControlHostPanel({
                       key={ci}
                       className={`cct-host-board__tile ${used ? 'cct-host-board__tile--used' : ''} ${isCurrent ? 'cct-host-board__tile--current' : ''}`}
                     >
-                      {used ? (isCurrent ? '▶' : '✓') : '—'}
+                      {used ? (isCurrent ? '▶' : '✓') : value}
                     </div>
                   );
                 })}

@@ -3,10 +3,11 @@
  * Matches TV display layout.
  */
 
+/* 6 columns only; 5 value rows (value shown on each tile) */
 .cct-host-board {
   display: grid;
-  grid-template-columns: minmax(48px, 0.6fr) repeat(6, minmax(72px, 1fr));
-  grid-auto-rows: minmax(44px, auto);
+  grid-template-columns: repeat(6, minmax(72px, 1fr));
+  grid-template-rows: auto repeat(5, minmax(44px, auto));
   gap: 6px;
   width: 100%;
   max-width: 720px;
@@ -33,11 +34,6 @@
   letter-spacing: 0.02em;
 }
 
-.cct-host-board__head-cell--corner {
-  background: var(--surface2);
-  color: transparent;
-}
-
 .cct-host-board__head-cell--category {
   min-width: 0;
   line-height: 1.2;
@@ -45,20 +41,6 @@
 
 .cct-host-board__row {
   display: contents;
-}
-
-.cct-host-board__value {
-  padding: 8px;
-  font-size: 13px;
-  font-weight: 700;
-  text-align: center;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .cct-host-board__tile {

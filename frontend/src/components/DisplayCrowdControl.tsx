@@ -25,7 +25,7 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
     return (
       <SurveyShowdownStage
         variant="tv"
-        stageTheme="arcade"
+        stageTheme="arcade-pro"
         contentPosition="top"
         contentSlot={
         <div className="cct-question-block">
@@ -57,23 +57,19 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
     return (
       <SurveyShowdownStage
         variant="tv"
-        stageTheme="arcade"
+        stageTheme="arcade-pro"
         contentPosition="top"
         contentSlot={
           <div className="cct-stage-wrap">
-            {/* Categories across top (golden header), values 100–500 down the left */}
+            {/* 6 categories across top; 5 rows of tiles (value on each tile), no left value column */}
             <div className="cct-board">
-              {/* Header row: corner + 6 category names */}
               <div className="cct-board-head" aria-hidden="true">
-                <div className="cct-board-head-cell cct-board-head-cell--corner"> </div>
                 {categories.slice(0, 6).map((cat, ci) => (
                   <div key={ci} className="cct-board-head-cell cct-board-head-cell--category">{cat}</div>
                 ))}
               </div>
-              {/* One row per value: $100, $200, … down the left, then 6 tiles (one per category) */}
               {VALUE_LADDER.map((value, vi) => (
                 <div key={vi} className="cct-board-row">
-                  <div className="cct-board-value">{value}</div>
                   {categories.slice(0, 6).map((_, ci) => {
                     const used = (usedSlots[ci] ?? 0) > vi;
                     const current =
@@ -104,7 +100,7 @@ export function DisplayCrowdControl({ state }: DisplayCrowdControlProps) {
   return (
     <SurveyShowdownStage
       variant="tv"
-      stageTheme="arcade"
+      stageTheme="arcade-pro"
       contentPosition="top"
       contentSlot={
         <div style={{ padding: 48, textAlign: 'center', color: 'var(--pr-muted)' }}>

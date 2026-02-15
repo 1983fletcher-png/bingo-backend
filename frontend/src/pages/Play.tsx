@@ -417,14 +417,12 @@ function CCTPlayerStageView({
         {board && (
           <div className={`cct-board cct-player-board`}>
             <div className="cct-board-head" aria-hidden="true">
-              <div className="cct-board-head-cell cct-board-head-cell--corner"> </div>
               {(board.categories ?? []).slice(0, 6).map((cat, ci) => (
                 <div key={ci} className="cct-board-head-cell cct-board-head-cell--category">{cat}</div>
               ))}
             </div>
             {VALUE_LADDER.map((value, vi) => (
               <div key={vi} className="cct-board-row">
-                <div className="cct-board-value">{value}</div>
                 {(board.categories ?? []).slice(0, 6).map((_, ci) => {
                   const used = (usedSlots[ci] ?? 0) > vi;
                   const current = winningCategoryIndex === ci && currentValueIndex === vi;
@@ -448,14 +446,12 @@ function CCTPlayerStageView({
         {board && (
           <div className={`cct-board cct-player-board`}>
             <div className="cct-board-head" aria-hidden="true">
-              <div className="cct-board-head-cell cct-board-head-cell--corner"> </div>
               {(board.categories ?? []).slice(0, 6).map((cat, ci) => (
                 <div key={ci} className="cct-board-head-cell cct-board-head-cell--category">{cat}</div>
               ))}
             </div>
             {VALUE_LADDER.map((value, vi) => (
               <div key={vi} className="cct-board-row">
-                <div className="cct-board-value">{value}</div>
                 {(board.categories ?? []).slice(0, 6).map((_, ci) => {
                   const used = (usedSlots[ci] ?? 0) > vi;
                   return (
@@ -490,7 +486,7 @@ function CCTPlayerStageView({
   return (
     <SurveyShowdownStage
       variant="player"
-      stageTheme="arcade"
+      stageTheme="arcade-pro"
       contentPosition="top"
       contentSlot={content}
     />
@@ -1016,6 +1012,9 @@ export default function Play() {
         themeId={sessionThemeId}
       >
         <div className="cct-player-layout">
+          <div className="cct-player-marquee" aria-hidden="true">
+            Crowd Control Trivia
+          </div>
           <div className="cct-player-stage">
             <CCTPlayerStageView
               cct={cct}
