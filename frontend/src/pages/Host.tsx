@@ -1,15 +1,15 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, type ComponentProps } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import '../styles/host-create.css';
 import '../styles/transport-bar.css';
 import { getSocket, getSocketBackendLabel } from '../lib/socket';
-import { TransportBar } from '../components/TransportBar';
 import { FeudHostPanel } from '../components/FeudHostPanel';
 import { MarketMatchHostPanel } from '../components/MarketMatchHostPanel';
 import { CrowdControlHostPanel } from '../components/CrowdControlHostPanel';
-import { GameShell } from '../components/GameShell';
-import { DEFAULT_FEUD_STATE } from '../types/feud';
-import type { FeudState } from '../types/feud';
+import { HostConsoleLayout } from '../components/HostConsoleLayout';
+import { DEFAULT_FEUD_STATE, FEUD_CHECKPOINTS, feudCheckpointToPhase } from '../types/feud';
+import type { FeudState, FeudCheckpointId } from '../types/feud';
+import { MARKET_MATCH_DATASET } from '../data/marketMatchDataset';
 import HostSongGrid from '../components/HostSongGrid';
 import SongFactPopUp from '../components/SongFactPopUp';
 import { defaultTriviaPacks } from '../data/triviaPacks';
@@ -969,52 +969,10 @@ export default function Host() {
     }
   };
 
-  return (
-    <>
-      <div className="host-room">
-        <p className="host-room__breadcrumb">
-          <Link to="/" className="host-room__breadcrumb-link">← The Playroom</Link>
-          <span className="host-room__connected">● Connected</span>
-        </p>
-
-        <div className={`host-room__wrap ${['feud', 'market-match', 'crowd-control-trivia'].includes(game.gameType) ? 'host-room__wrap--playroom' : ''}`}>
-          <aside className="host-room__left">
-            <p className="host-room__section-label">Share with players</p>
-            <div className="host-room__qr-block">
-              <img src={qrImageUrl} alt="" width={240} height={240} aria-label="QR code to join game" />
-              <p className="host-room__qr-hint">Scan or open this link</p>
-              <p className="host-room__qr-sub">One link for everyone</p>
-            </div>
-            <span className="host-room__badge">Game code</span>
-            <span className="host-room__code">{game.code}</span>
-            <div className="host-room__join-row">
-              <a href={joinUrlForQR} target="_blank" rel="noopener noreferrer" className="host-room__join-url">
-                {joinUrlForQR}
-              </a>
-              <button
-                type="button"
-                className="host-room__copy-btn"
-                onClick={() => {
-                  navigator.clipboard?.writeText(joinUrlForQR).then(() => {
-                    setCopyFeedback(true);
-                    setTimeout(() => setCopyFeedback(false), 2000);
-                  });
-                }}
-              >
-                {copyFeedback ? 'Copied' : 'Copy'}
-              </button>
-            </div>
-
-            <hr className="host-room__left-divider" />
-            <p className="host-room__section-label" style={{ marginTop: 12 }}>Print this QR</p>
-            <button
-              type="button"
-              className="host-room__link-btn"
-              style={{ display: 'block', width: '100%', marginBottom: 8 }}
-              onClick={() => {
-                const w = window.open('', '_blank');
-                if (!w) return;
-                w.document.write(`
+  const handlePrintQR = () => {
+    const w = window.open('', '_blank');
+    if (!w) return;
+    w.document.write(`
 <!DOCTYPE html><html><head><meta charset="utf-8"><title>QR code – ${game.code}</title>
 <style>body{font-family:system-ui,sans-serif;text-align:center;padding:24px;max-width:320px;margin:0 auto}
 img{display:block;margin:0 auto 16px}
@@ -1024,191 +982,151 @@ p{word-break:break-all;font-size:14px;color:#333}
 <p>Scan to join</p>
 <p>${joinUrlForQR.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
 </body></html>`);
-                w.document.close();
-                w.focus();
-              }}
-            >
-              Open print view (QR + link)
-            </button>
+    w.document.close();
+    w.focus();
+  };
 
-            <hr className="host-room__left-divider" />
-            <span className="host-room__link-label">Quick actions</span>
-            <div className="host-room__link-group">
-              <a href={`/join/${game.code}`} target="_blank" rel="noopener noreferrer" className="host-room__link-btn" title="Same experience as scanning the QR code — for testing or sharing to your phone">
-                Player view
-              </a>
-              <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn" title="Open this on the TV or projector — shows QR and game content">
-                Display (TV)
-              </a>
-            </div>
-            <p className="host-room__display-hint">Players scan the QR or use the link above. Open <strong>Display (TV)</strong> on your projector so everyone sees the code and questions.</p>
-            {(game.gameType === 'feud' || game.gameType === 'market-match' || game.gameType === 'crowd-control-trivia') && (
-              <>
-                <hr className="host-room__left-divider" />
-                <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0 0 8px' }}>Keyboard: <kbd>Space</kbd> or <kbd>→</kbd> advance · <kbd>←</kbd> back</p>
-                <span className="host-room__link-label">Display theme</span>
-                <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '4px 0 8px' }}>TV and player screens use this look.</p>
-                <select
-                  value={eventConfig.playroomThemeId ?? 'classic'}
-                  onChange={(e) => {
-                    const v = e.target.value || 'classic';
-                    setTheme(registryIdToSiteTheme(v));
-                    setEventConfigState((c) => ({ ...c, playroomThemeId: v }));
-                    if (socket && game?.code) {
-                      const hostToken = game.code ? localStorage.getItem(HOST_TOKEN_KEY(game.code)) : null;
-                      socket.emit('host:set-event-config', { code: game.code, hostToken, eventConfig: { ...eventConfig, playroomThemeId: v } });
-                    }
-                  }}
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: 14 }}
-                >
-                  {THEME_IDS.map((id) => (
-                    <option key={id} value={id}>
-                      {id === 'classic' ? 'Classic' : id === 'prestige-retro' ? 'Prestige' : id === 'retro-studio' ? 'Retro' : id === 'retro-arcade' ? 'Retro Arcade' : id === 'game-show' ? 'Game Show' : id}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
-            <div className="host-room__actions">
-              <button type="button" onClick={() => { setGame(null); setGameStarted(false); }} className="host-room__btn-secondary">
-                End game
-              </button>
-              <Link to="/" className="host-room__back-link">← Back to Playroom</Link>
-            </div>
-          </aside>
+  if (game) {
+    const sidebar = {
+      gameCode: game.code,
+      joinUrl: joinUrlForQR,
+      displayUrl,
+      qrImageUrl,
+      onCopyJoin: () => { navigator.clipboard?.writeText(joinUrlForQR); setCopyFeedback(true); setTimeout(() => setCopyFeedback(false), 2000); },
+      onCopyCode: () => { navigator.clipboard?.writeText(game.code); setCopyFeedback(true); setTimeout(() => setCopyFeedback(false), 2000); },
+      onPrintQR: handlePrintQR,
+      onEndSession: () => { setGame(null); setGameStarted(false); navigate('/activity'); },
+    };
+    const previewDock = { joinUrl: joinUrlForQR, displayUrl };
 
-          <div className="host-room__right">
-            {/* Run the game header + TransportBar + top previews only for non–playroom games (bingo, trivia, etc.) */}
-            {!['feud', 'market-match', 'crowd-control-trivia'].includes(game.gameType) && (
-              <>
-                <div className="host-room__right-head" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                  <div>
-                    <h1 className="host-room__right-title">Run the game</h1>
-                    <p className="host-room__right-sub">Player view and Display view below match what players and the TV see.</p>
-                  </div>
-                </div>
-                {game.gameType !== 'feud' && (
-                  <TransportBar
-                    onBack={() => {}}
-                    onNext={game?.gameType === 'trivia' ? () => { if (triviaQuestions.length > 0 && triviaCurrentIndex < triviaQuestions.length - 1) setTriviaCurrentIndex((i) => i + 1); } : undefined}
-                    onEndSession={() => { setGame(null); setGameStarted(false); }}
-                    jumpCheckpoints={[
-                      { id: 'waiting', label: 'Waiting room' },
-                      { id: 'game', label: 'Game' },
-                    ]}
-                    onJump={(id) => { if (id === 'waiting') setActiveTab('waiting'); else if (id === 'game') setActiveTab(game?.gameType === 'trivia' ? 'questions' : 'call'); }}
-                  />
-                )}
-                <div className="host-room__previews" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
-                  <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
-                    <div className="host-room__preview-head" style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                      <span>Player view</span>
-                      <span className="host-room__preview-badge" style={{ color: 'var(--success, #68d391)', fontSize: 10, fontWeight: 600 }} aria-label="Live">● Live</span>
-                    </div>
-                    <iframe title="Player view" src={joinUrlForQR} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
-                  </div>
-                  <div style={{ flex: '1 1 240px', minWidth: 200, maxWidth: 320 }}>
-                    <div className="host-room__preview-head" style={{ padding: '6px 10px', borderBottom: '1px solid var(--border)', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                      <span>Display (TV)</span>
-                      <span className="host-room__preview-badge" style={{ color: 'var(--success, #68d391)', fontSize: 10, fontWeight: 600 }} aria-label="Live">● Live</span>
-                    </div>
-                    <iframe title="TV display" src={displayUrl} style={{ width: '100%', height: 220, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }} />
-                  </div>
-                </div>
-              </>
-            )}
+    const isConsolePanel = ['market-match', 'feud', 'crowd-control-trivia'].includes(game.gameType);
+    let topBar: ComponentProps<typeof HostConsoleLayout>['topBar'];
+    let mainChildren: React.ReactNode;
 
-        {game.gameType === 'estimation' || game.gameType === 'jeopardy' ? (
-          <div className="host-room__placeholder-panel" style={{ padding: 24, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
-            <h2 style={{ margin: '0 0 8px' }}>{game.gameType === 'estimation' ? 'Estimation Show' : 'Category Grid'}</h2>
-            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Host controls for this game type are coming soon. Share the join link and display link with your room; full gameplay will be added in a future update.</p>
-          </div>
-        ) : game.gameType === 'market-match' ? (
-          <>
-            <GameShell
-              gameKey="market_match"
-              title="Market Match"
-              code={game.code}
-              variant="host"
-              footerVariant="minimal"
-            >
-              <MarketMatchHostPanel
-                gameCode={game.code}
-                hostToken={game.hostToken ?? null}
-                marketMatch={game.marketMatch ?? { currentIndex: 0, revealed: false }}
-                socket={socket}
-                joinUrl={joinUrlForQR}
-                displayUrl={displayUrl}
-                onEndSession={() => navigate('/activity')}
-                hostKeyboardRef={hostKeyboardRef}
-              />
-            </GameShell>
-            <section className="host-room__previews host-room__previews--bottom" aria-label="Live previews">
-              <div className="host-room__previews-inner">
-                <div className="host-room__preview-card">
-                  <div className="host-room__preview-head"><span>Player view</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
-                  <iframe title="Player view" src={joinUrlForQR} className="host-room__preview-iframe" />
-                </div>
-                <div className="host-room__preview-card">
-                  <div className="host-room__preview-head"><span>Display (TV)</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
-                  <iframe title="TV display" src={displayUrl} className="host-room__preview-iframe" />
-                </div>
-              </div>
-            </section>
-          </>
-        ) : game.gameType === 'crowd-control-trivia' ? (
-          <>
-            <GameShell
-              gameKey="crowd_control_trivia"
-              title="Crowd Control Trivia"
-              code={game.code}
-              variant="host"
-              footerVariant="minimal"
-            >
-              <CrowdControlHostPanel
-                gameCode={game.code}
-                hostToken={game.hostToken ?? null}
-                crowdControl={game.crowdControl ?? { boardId: 0, usedSlots: [0,0,0,0,0,0], phase: 'board', voteCounts: [0,0,0,0,0,0], winningCategoryIndex: null, currentValueIndex: null, currentQuestionId: null, revealed: false }}
-                socket={socket}
-                joinUrl={joinUrlForQR}
-                displayUrl={displayUrl}
-                onEndSession={() => navigate('/activity')}
-                hostKeyboardRef={hostKeyboardRef}
-              />
-            </GameShell>
-            <section className="host-room__previews host-room__previews--bottom" aria-label="Live previews">
-              <div className="host-room__previews-inner">
-                <div className="host-room__preview-card">
-                  <div className="host-room__preview-head"><span>Player view</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
-                  <iframe title="Player view" src={joinUrlForQR} className="host-room__preview-iframe" />
-                </div>
-                <div className="host-room__preview-card">
-                  <div className="host-room__preview-head"><span>Display (TV)</span><span className="host-room__preview-badge" aria-label="Live">● Live</span></div>
-                  <iframe title="TV display" src={displayUrl} className="host-room__preview-iframe" />
-                </div>
-              </div>
-            </section>
-          </>
-        ) : game.gameType === 'feud' ? (
-          <div className="host-room__feud-main">
+    if (isConsolePanel) {
+      const marketMatch = game.marketMatch ?? { currentIndex: 0, revealed: false };
+      const feud = game.feud ?? DEFAULT_FEUD_STATE;
+      const crowdControl = game.crowdControl ?? { boardId: 0, usedSlots: [0, 0, 0, 0, 0, 0], phase: 'board', voteCounts: [0, 0, 0, 0, 0, 0], winningCategoryIndex: null, currentValueIndex: null, currentQuestionId: null, revealed: false };
+      const gameName = game.gameType === 'market-match' ? 'Market Match' : game.gameType === 'feud' ? 'Survey Showdown' : 'Crowd Control Trivia';
+      const phaseChip = game.gameType === 'market-match'
+        ? (marketMatch.revealed ? 'REVEAL' : 'LIVE')
+        : game.gameType === 'feud'
+          ? feudCheckpointToPhase(feud.checkpointId)
+          : (crowdControl.phase ?? 'board').toUpperCase();
+      const jumpCheckpoints = game.gameType === 'feud'
+        ? FEUD_CHECKPOINTS.map((id) => ({ id, label: id }))
+        : game.gameType === 'market-match'
+          ? [{ id: '0', label: 'Item 1' }, ...Array.from({ length: Math.min(5, MARKET_MATCH_DATASET.length - 1) }, (_, i) => ({ id: String(i + 1), label: `Item ${i + 2}` }))]
+          : [];
+      const setFeudCheckpoint = (checkpointId: FeudCheckpointId) => {
+        if (!socket) return;
+        const hostToken = game.code ? localStorage.getItem(HOST_TOKEN_KEY(game.code)) : null;
+        socket.emit('feud:set-checkpoint', { code: game.code, hostToken, checkpointId });
+        setGame((prev) => (prev ? { ...prev, feud: { ...prev.feud!, checkpointId } } : null));
+      };
+      topBar = {
+        gameName,
+        phaseChip,
+        roomCode: game.code.toUpperCase(),
+        onBackToPlayroom: () => { setGame(null); setGameStarted(false); navigate('/host'); },
+        onPrev: game.gameType === 'market-match'
+          ? (marketMatch.currentIndex ?? 0) > 0
+            ? () => socket?.emit('market-match:set-index', { code: game.code, hostToken: game.hostToken ?? localStorage.getItem(HOST_TOKEN_KEY(game.code)), index: (marketMatch.currentIndex ?? 1) - 1 })
+            : undefined
+          : game.gameType === 'feud'
+            ? () => { const i = FEUD_CHECKPOINTS.indexOf(feud.checkpointId); if (i > 0) setFeudCheckpoint(FEUD_CHECKPOINTS[i - 1]!); }
+            : undefined,
+        onNext: game.gameType === 'market-match'
+          ? () => {
+              if (marketMatch.revealed && (marketMatch.currentIndex ?? 0) < MARKET_MATCH_DATASET.length - 1) {
+                socket?.emit('market-match:next', { code: game.code, hostToken: game.hostToken ?? localStorage.getItem(HOST_TOKEN_KEY(game.code)) });
+              } else if (!marketMatch.revealed) {
+                socket?.emit('market-match:reveal', { code: game.code, hostToken: game.hostToken ?? localStorage.getItem(HOST_TOKEN_KEY(game.code)) });
+              }
+            }
+          : game.gameType === 'feud'
+            ? () => { const i = FEUD_CHECKPOINTS.indexOf(feud.checkpointId); if (i < FEUD_CHECKPOINTS.length - 1) setFeudCheckpoint(FEUD_CHECKPOINTS[i + 1]!); }
+            : undefined,
+        onJump: game.gameType === 'feud' ? (id) => setFeudCheckpoint(id as FeudCheckpointId) : game.gameType === 'market-match' ? (id) => { const idx = parseInt(id, 10); if (!Number.isNaN(idx)) socket?.emit('market-match:set-index', { code: game.code, hostToken: game.hostToken ?? localStorage.getItem(HOST_TOKEN_KEY(game.code)), index: idx }); } : undefined,
+        onResetRound: game.gameType === 'feud' ? () => setFeudCheckpoint('STANDBY') : undefined,
+        jumpCheckpoints: game.gameType === 'feud' ? jumpCheckpoints : game.gameType === 'market-match' ? jumpCheckpoints.slice(0, 10) : [],
+      };
+      mainChildren = (
+        <>
+          {game.gameType === 'market-match' && (
+            <MarketMatchHostPanel
+              gameCode={game.code}
+              hostToken={game.hostToken ?? null}
+              marketMatch={marketMatch}
+              socket={socket}
+              joinUrl={joinUrlForQR}
+              displayUrl={displayUrl}
+              onEndSession={() => { setGame(null); navigate('/activity'); }}
+              hostKeyboardRef={hostKeyboardRef}
+              embeddedInConsole
+            />
+          )}
+          {game.gameType === 'crowd-control-trivia' && (
+            <CrowdControlHostPanel
+              gameCode={game.code}
+              hostToken={game.hostToken ?? null}
+              crowdControl={crowdControl}
+              socket={socket}
+              joinUrl={joinUrlForQR}
+              displayUrl={displayUrl}
+              onEndSession={() => { setGame(null); navigate('/activity'); }}
+              hostKeyboardRef={hostKeyboardRef}
+              embeddedInConsole
+            />
+          )}
+          {game.gameType === 'feud' && (
             <FeudHostPanel
               gameCode={game.code}
-              feud={game.feud ?? DEFAULT_FEUD_STATE}
+              feud={feud}
               onFeudState={(state) => setGame((prev) => (prev ? { ...prev, feud: state } : null))}
               socket={socket}
               joinUrl={joinUrlForQR}
               displayUrl={displayUrl}
-              onEndSession={() => {
-                setGame(null);
-                setGameStarted(false);
-                navigate('/host');
-              }}
-              onBackToPlayroom={() => {
-                setGame(null);
-                setGameStarted(false);
-              }}
+              onEndSession={() => { setGame(null); setGameStarted(false); navigate('/host'); }}
+              onBackToPlayroom={() => { setGame(null); setGameStarted(false); }}
               hostKeyboardRef={hostKeyboardRef}
+              embeddedInConsole
             />
+          )}
+        </>
+      );
+    } else {
+      const gameName = game.gameType === 'music-bingo' ? 'Music Bingo' : game.gameType === 'classic-bingo' ? 'Classic Bingo' : game.gameType === 'trivia' ? 'Trivia' : game.gameType === 'icebreakers' ? 'Icebreakers' : game.gameType === 'edutainment' ? 'Edutainment' : game.gameType === 'team-building' ? 'Team Building' : game.gameType === 'estimation' ? 'Estimation' : 'Game';
+      const phaseChip = gameStarted ? 'LIVE' : 'Waiting';
+      const jumpCheckpoints = isBingo
+        ? [{ id: 'waiting', label: 'Waiting room' }, { id: 'call', label: 'Call sheet' }, { id: 'event', label: 'Event' }, { id: 'print', label: 'Print' }]
+        : isTriviaLike
+          ? [{ id: 'waiting', label: 'Waiting room' }, { id: 'questions', label: 'Questions' }, { id: 'controls', label: 'Run' }]
+          : [{ id: 'waiting', label: 'Waiting room' }];
+      topBar = {
+        gameName,
+        phaseChip,
+        roomCode: game.code.toUpperCase(),
+        onBackToPlayroom: () => { setGame(null); setGameStarted(false); navigate('/host'); },
+        onPrev: isBingo
+          ? undefined
+          : isTriviaLike && triviaCurrentIndex > 0
+              ? () => { setTriviaCurrentIndex((i) => i - 1); setTriviaRevealed(false); }
+              : undefined,
+        onNext: isBingo && songPool.length > 0
+          ? () => { const idx = revealed.length; if (idx < songPool.length) handleReveal(songPool[idx]!); }
+          : isTriviaLike
+            ? () => { socket?.emit('host:trivia-next', { code: game.code }); setTriviaRevealed(false); setTriviaCurrentIndex((i) => Math.min(triviaQuestions.length - 1, i + 1)); }
+            : undefined,
+        onJump: (id) => setActiveTab(id as HostTab),
+        jumpCheckpoints,
+      };
+      mainChildren = (
+        <>
+        {game.gameType === 'estimation' || game.gameType === 'jeopardy' ? (
+          <div className="host-room__placeholder-panel" style={{ padding: 24, background: 'var(--surface)', borderRadius: 8, border: '1px solid var(--border)' }}>
+            <h2 style={{ margin: '0 0 8px' }}>{game.gameType === 'estimation' ? 'Estimation Show' : 'Category Grid'}</h2>
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Host controls for this game type are coming soon. Share the join link and display link with your room; full gameplay will be added in a future update.</p>
           </div>
         ) : (
         <>
@@ -1494,7 +1412,7 @@ p{word-break:break-all;font-size:14px;color:#333}
               <div className="host-controls__prompt">
                 <h2 className="host-controls__title">Host controls</h2>
                 <p className="host-controls__hint">
-                  Click <strong>Start the game</strong> in the <strong>Waiting room</strong> tab to begin. Then return here to ask each question, reveal the answer, share a fun fact, and move to the next.
+                  Click <strong>Start the game</strong> in the <strong>Waiting room</strong> tab to begin. Then return here to run each {game.gameType === 'trivia' ? 'question' : 'prompt'}.
                 </p>
                 <button
                   type="button"
@@ -1504,30 +1422,35 @@ p{word-break:break-all;font-size:14px;color:#333}
                   Go to Waiting room
                 </button>
               </div>
-            ) : isTriviaLike ? (
+            ) : (() => {
+              const currentQ = triviaQuestions[triviaCurrentIndex];
+              const isOpenEnded = !currentQ?.correctAnswer || String(currentQ?.correctAnswer ?? '').trim() === '';
+              return isTriviaLike ? (
               <>
                 <h2 className="host-controls__title">Run the game</h2>
                 <p className="host-controls__hint">
-                  Show the question on the <strong>Display (TV)</strong>. When ready, reveal the answer, share a fun tip if you have one, and advance to the next question.
+                  {isOpenEnded
+                    ? 'Show the talking point on the Display (TV). Use it to start conversation, then advance to the next.'
+                    : 'Show the question on the Display (TV). When ready, reveal the answer, share a fun tip if you have one, and advance to the next question.'}
                 </p>
                 <div className="host-controls__card">
                   <div className="host-controls__meta">
                     <span className="host-controls__counter">
-                      Question {triviaCurrentIndex + 1} of {triviaQuestions.length || 1}
+                      {isOpenEnded ? 'Prompt' : 'Question'} {triviaCurrentIndex + 1} of {triviaQuestions.length || 1}
                     </span>
-                    {triviaQuestions[triviaCurrentIndex]?.category && (
-                      <span className="host-controls__category">{triviaQuestions[triviaCurrentIndex].category}</span>
+                    {currentQ?.category && (
+                      <span className="host-controls__category">{currentQ.category}</span>
                     )}
                   </div>
-                  {triviaSettings.mcTipsEnabled && triviaQuestions[triviaCurrentIndex]?.hostNotes && (
+                  {!isOpenEnded && triviaSettings.mcTipsEnabled && currentQ?.hostNotes && (
                     <div className="host-controls__host-notes">
-                      <strong>MC tip:</strong> {triviaQuestions[triviaCurrentIndex].hostNotes}
+                      <strong>MC tip:</strong> {currentQ.hostNotes}
                     </div>
                   )}
                   <p className="host-controls__question">
-                    {triviaQuestions[triviaCurrentIndex]?.question ?? '—'}
+                    {currentQ?.question ?? '—'}
                   </p>
-                  {game.gameType === 'trivia' && (() => {
+                  {!isOpenEnded && game.gameType === 'trivia' && (() => {
                     const token = game.code ? localStorage.getItem(HOST_TOKEN_KEY(game.code)) : null;
                     return (
                       <>
@@ -1592,21 +1515,56 @@ p{word-break:break-all;font-size:14px;color:#333}
                       </>
                     );
                   })()}
-                  {triviaRevealed && (
+                  {!isOpenEnded && triviaRevealed && (
                     <div className="host-controls__revealed">
                       <p className="host-controls__answer">
-                        Answer: {triviaQuestions[triviaCurrentIndex]?.correctAnswer ?? '—'}
+                        Answer: {currentQ?.correctAnswer ?? '—'}
                       </p>
-                      {triviaQuestions[triviaCurrentIndex]?.funFact && (
+                      {currentQ?.funFact && (
                         <p className="host-controls__fun-fact">
-                          Fun fact: {triviaQuestions[triviaCurrentIndex].funFact}
+                          Fun fact: {currentQ.funFact}
                         </p>
                       )}
                     </div>
                   )}
                 </div>
                 <div className="host-controls__actions">
-                  {!triviaRevealed ? (
+                  {isOpenEnded ? (
+                    <>
+                      <button
+                        type="button"
+                        className="host-controls__btn host-controls__btn--secondary"
+                        onClick={() => {
+                          if (triviaCurrentIndex > 0) {
+                            setTriviaCurrentIndex((i) => i - 1);
+                            setTriviaRevealed(false);
+                          }
+                        }}
+                        disabled={triviaCurrentIndex === 0}
+                      >
+                        Previous
+                      </button>
+                      <button
+                        type="button"
+                        className="host-controls__btn host-controls__btn--primary"
+                        onClick={() => {
+                          if (triviaCurrentIndex < triviaQuestions.length - 1) {
+                            setTriviaCurrentIndex((i) => i + 1);
+                            socket?.emit('host:trivia-next', { code: game.code });
+                          }
+                        }}
+                        disabled={!socket?.connected || !game?.code || triviaCurrentIndex >= triviaQuestions.length - 1}
+                        title={triviaCurrentIndex >= triviaQuestions.length - 1 ? 'Last prompt' : undefined}
+                      >
+                        Next prompt
+                      </button>
+                      {triviaCurrentIndex < triviaQuestions.length - 1 && (
+                        <span className="host-controls__next-hint">
+                          {triviaQuestions.length - triviaCurrentIndex - 1} left
+                        </span>
+                      )}
+                    </>
+                  ) : !triviaRevealed ? (
                     <button
                       type="button"
                       className="host-controls__btn host-controls__btn--primary"
@@ -1645,7 +1603,8 @@ p{word-break:break-all;font-size:14px;color:#333}
                   Run controls for this game type are coming soon. Use the Waiting room to start and manage the game.
                 </p>
               </div>
-            )}
+            );
+            })()}
           </section>
         )}
 
@@ -1653,7 +1612,38 @@ p{word-break:break-all;font-size:14px;color:#333}
           <>
             {songPool.length === 0 ? (
               <div style={{ padding: '16px 0' }}>
-                <h3 style={{ marginTop: 0 }}>Generate song list</h3>
+                <h3 style={{ marginTop: 0 }}>Song list</h3>
+                <p style={{ color: '#a0aec0', fontSize: 14, marginBottom: 16 }}>Use a pre-built game (75 songs) or generate a custom list.</p>
+                {game.gameType === 'music-bingo' && (
+                  <div style={{ marginBottom: 24, padding: 16, border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)' }}>
+                    <h4 style={{ margin: '0 0 8px 0', fontSize: 15 }}>Pre-built games</h4>
+                    <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 12px 0' }}>Select a curated 75-song game. One click to load.</p>
+                    <select
+                      aria-label="Choose a pre-built game"
+                      value=""
+                      onChange={(e) => {
+                        const id = e.target.value;
+                        if (!id) return;
+                        const prebuilt = musicBingoGames.find((g) => g.id === id);
+                        if (prebuilt?.songs?.length) {
+                          setSongPool(prebuilt.songs);
+                          const token = game.code ? localStorage.getItem(HOST_TOKEN_KEY(game.code)) : null;
+                          socket?.emit('host:set-songs', { code: game.code, hostToken: token ?? undefined, songs: prebuilt.songs });
+                        }
+                        e.target.value = '';
+                      }}
+                      style={{ width: '100%', maxWidth: 400, padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontSize: 14 }}
+                    >
+                      <option value="">— Choose a game —</option>
+                      {musicBingoGames.map((g) => (
+                        <option key={g.id} value={g.id}>
+                          {g.title} (75 songs)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <h4 style={{ margin: '0 0 8px 0', fontSize: 15 }}>Generate with AI</h4>
                 <p style={{ color: '#a0aec0', fontSize: 14 }}>Create 75 songs for this game. You need an OpenAI API key.</p>
                 <div style={{ marginTop: 12 }}>
                   <label style={{ display: 'block', marginBottom: 4 }}>Theme / prompt (optional)</label>
@@ -1817,14 +1807,29 @@ p{word-break:break-all;font-size:14px;color:#333}
         )}
         </>
         )}
-          </div>
-      </div>
-      </div>
-      <SongFactPopUp
-        song={factSong}
-        show={showFact}
-        onDismiss={() => setShowFact(false)}
-      />
-    </>
-  );
+        </>
+      );
+    }
+
+    return (
+      <>
+        <div className="host-room">
+          <p className="host-room__breadcrumb">
+            <Link to="/" className="host-room__breadcrumb-link">← The Playroom</Link>
+            <span className="host-room__connected">● Connected</span>
+          </p>
+          <HostConsoleLayout sidebar={sidebar} topBar={topBar!} previewDock={previewDock}>
+            {mainChildren}
+          </HostConsoleLayout>
+        </div>
+        <SongFactPopUp
+          song={factSong}
+          show={showFact}
+          onDismiss={() => setShowFact(false)}
+        />
+      </>
+    );
+  }
+
+  return null;
 }

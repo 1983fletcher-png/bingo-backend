@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Match — Layout mock-up (TV, player, interstitials)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #1a1612;
+      color: #f5f0e8;
+    }
+    .mock-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 10px 16px;
+      background: rgba(0,0,0,0.6);
+      font-size: 0.85rem;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .mock-nav a {
+      color: #d4af37;
+      text-decoration: none;
+    }
+    .mock-nav a:hover { text-decoration: underline; }
+    .mock-section {
+      min-height: 100vh;
+      padding: 60px 24px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .mock-section h2 {
+      position: absolute;
+      top: 52px;
+      left: 24px;
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(212, 175, 55, 0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    /* ---- TV display styles (match DisplayMarketMatch.css) ---- */
+    .mm-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: clamp(12px, 2vw, 24px);
+      text-align: center;
+      width: 100%;
+      max-width: 900px;
+    }
+    .mm-display__card {
+      position: relative;
+      width: 100%;
+      max-width: min(90vw, 720px);
+      padding: clamp(10px, 1.8vw, 16px);
+      background: linear-gradient(165deg, #e2d9c8 0%, #d4c4a8 25%, #c4b098 60%, #b8a080 100%);
+      border-radius: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.1), 0 0 0 1px rgba(139,115,85,0.5), 0 8px 32px rgba(0,0,0,0.4);
+      border: none;
+    }
+    .mm-display__card::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 20px;
+      padding: 3px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.5) 0%, rgba(184,134,11,0.3) 25%, rgba(218,165,32,0.6) 50%, rgba(139,115,85,0.4) 75%, rgba(212,175,55,0.5) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .mm-display__card::after {
+      content: 'MARKET MATCH';
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      color: rgba(139,115,85,0.7);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+      pointer-events: none;
+    }
+    .mm-display__card-inner {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(180deg, #f8f4ec 0%, #f0e8dc 30%, #e8e0d0 100%);
+      border: 1px solid rgba(139,115,85,0.35);
+      border-radius: 12px;
+      overflow: hidden;
+      padding: 0 0 clamp(12px, 2vw, 20px);
+    }
+    .mm-display__card-img {
+      width: 100%;
+      max-height: min(38vh, 280px);
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      border-bottom: 2px solid rgba(139,115,85,0.35);
+    }
+    .mm-display__card-title {
+      margin: clamp(8px, 1.5vw, 14px) clamp(12px, 2vw, 20px) 4px;
+      font-size: clamp(1rem, 2.2vw, 1.4rem);
+      font-weight: 800;
+      color: #1e1912;
+      line-height: 1.3;
+    }
+    .mm-display__card-meta {
+      margin: 0 clamp(12px, 2vw, 20px) 8px;
+      font-size: clamp(0.8rem, 1.5vw, 1rem);
+      font-weight: 600;
+      color: #5c5244;
+    }
+    .mm-display__card-question {
+      margin: 0 clamp(12px, 2vw, 20px) clamp(10px, 1.5vw, 16px);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 700;
+      color: #2a231a;
+      line-height: 1.35;
+    }
+    .mm-display__options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(8px, 1.2vw, 14px) clamp(12px, 2vw, 18px);
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 0 clamp(12px, 2vw, 20px);
+    }
+    .mm-display__option {
+      padding: clamp(10px, 1.5vw, 14px) clamp(12px, 2vw, 18px);
+      text-align: center;
+      font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+      font-weight: 700;
+      color: #2a2218;
+      background: rgba(255,255,255,0.6);
+      border: 2px solid rgba(139,119,81,0.4);
+      border-radius: 10px;
+    }
+    .mm-display__option--correct {
+      border-color: rgba(180,140,50,0.8);
+      background: linear-gradient(165deg, rgba(255,235,180,0.5) 0%, rgba(212,175,55,0.25) 100%);
+      color: #1a1508;
+    }
+    .mm-display__instruction {
+      margin: clamp(10px, 1.5vw, 18px) 0 0;
+      font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+      color: rgba(255,255,255,0.75);
+    }
+    .mm-display__reveal {
+      margin-top: clamp(8px, 1.2vw, 14px);
+      padding: clamp(12px, 2vw, 18px) clamp(20px, 3vw, 28px);
+      background: linear-gradient(165deg, rgba(255,248,230,0.5) 0%, rgba(212,175,55,0.2) 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(212,175,55,0.4);
+      width: 100%;
+      max-width: 420px;
+    }
+    .mm-display__reveal-price {
+      margin: 0;
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      font-weight: 900;
+      color: #8b6914;
+      font-variant-numeric: tabular-nums;
+    }
+    .mm-display__reveal-unit { margin: 4px 0 0; font-size: clamp(0.9rem, 1.5vw, 1.1rem); color: #5c5244; }
+    .mm-display__reveal-then-now { margin: 8px 0 0; font-size: clamp(0.9rem, 1.5vw, 1.1rem); font-weight: 700; color: #2a231a; }
+    .mm-display__reveal-fun-fact { margin: 6px 0 0; font-size: clamp(0.8rem, 1.3vw, 0.95rem); font-style: italic; color: #6a6154; }
+    .mm-display__reveal-citation { margin: 10px 0 0; font-size: clamp(0.75rem, 1.2vw, 0.9rem); color: #8a7f6e; }
+
+    /* ---- Player styles ---- */
+    .mm-player-wrap {
+      width: 100%;
+      max-width: min(96vw, 420px);
+      margin: 0 auto;
+    }
+    .mm-player__code {
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      background: linear-gradient(165deg, #3d2914 0%, #2d1f0f 100%);
+      border: 1px solid rgba(212,175,55,0.4);
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.95);
+    }
+    .mm-player__card {
+      position: relative;
+      padding: 10px;
+      background: linear-gradient(165deg, #e2d9c8 0%, #d4c4a8 30%, #c4b098 60%, #b8a080 100%);
+      border-radius: 14px;
+      box-shadow: 0 0 0 1px rgba(139,115,85,0.45), 0 4px 20px rgba(0,0,0,0.28);
+      border: none;
+    }
+    .mm-player__card::after {
+      content: 'MARKET MATCH';
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.55rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: rgba(139,115,85,0.65);
+    }
+    .mm-player__card-inner {
+      background: linear-gradient(180deg, #f8f4ec 0%, #f0e8dc 35%, #e8e0d0 100%);
+      border: 1px solid rgba(139,115,85,0.35);
+      border-radius: 8px;
+      overflow: hidden;
+      padding: 0 0 12px;
+    }
+    .mm-player__card-img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      border-bottom: 2px solid rgba(139,115,85,0.35);
+    }
+    .mm-player__card-title { margin: 10px 12px 4px; font-size: 1rem; font-weight: 800; color: #1e1912; line-height: 1.3; }
+    .mm-player__card-meta { margin: 0 12px 8px; font-size: 0.8rem; font-weight: 600; color: #5c5244; }
+    .mm-player__card-question { margin: 0 12px 0; font-size: 0.95rem; font-weight: 700; color: #2a231a; line-height: 1.4; }
+    .mm-player__choices { padding-top: 14px; }
+    .mm-player__options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px 12px;
+    }
+    .mm-player__option {
+      padding: 14px 12px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2c2416;
+      background: linear-gradient(180deg, #f8f4ec 0%, #ebe3d5 100%);
+      border: 2px solid #8b7355;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .mm-player__submitted, .mm-player__reveal {
+      text-align: center;
+      padding: 12px;
+      background: linear-gradient(165deg, rgba(45,35,20,0.15) 0%, rgba(60,50,35,0.12) 100%);
+      border: 1px solid rgba(139,115,85,0.35);
+      border-radius: 10px;
+    }
+    .mm-player__submitted-label { margin: 0 0 6px; font-size: 0.9rem; color: #5c5244; }
+    .mm-player__submitted-value { margin: 0; font-size: 1.5rem; font-weight: 800; color: #b8860b; }
+    .mm-player__waiting { margin: 0; font-size: 0.9rem; color: #6a6154; }
+    .mm-player__reveal-correct { margin: 0 0 4px; font-size: 1.35rem; font-weight: 900; color: #8b6914; }
+    .mm-player__reveal-then-now { margin: 6px 0 0; font-size: 0.9rem; font-weight: 700; color: #2a231a; }
+    .mm-player__reveal-fun-fact { margin: 4px 0 0; font-size: 0.8rem; font-style: italic; color: #6a6154; }
+    .mm-player__reveal-citation { margin: 8px 0 0; font-size: 0.8rem; color: #6a6154; }
+    .mm-player__your-guess {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(139,115,85,0.5);
+      background: rgba(212,175,55,0.08);
+    }
+    .mm-player__your-guess-value { font-weight: 700; font-size: 1rem; color: #2c2416; }
+
+    /* ---- Interstitial screens ---- */
+    .interstitial {
+      text-align: center;
+      padding: 2rem;
+      max-width: 560px;
+    }
+    .interstitial h3 {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.95);
+      margin: 0 0 0.5rem;
+      letter-spacing: 0.02em;
+    }
+    .interstitial p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: rgba(255,255,255,0.8);
+      margin: 0 0 1.5rem;
+      line-height: 1.5;
+    }
+    .interstitial .then-now-teaser {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .interstitial .then-now-teaser figure {
+      margin: 0;
+      max-width: 200px;
+    }
+    .interstitial .then-now-teaser img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid rgba(212,175,55,0.4);
+    }
+    .interstitial .then-now-teaser figcaption {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: rgba(212,175,55,0.95);
+      margin-top: 6px;
+    }
+    .round-badge {
+      display: inline-block;
+      padding: 12px 28px;
+      background: linear-gradient(165deg, rgba(212,175,55,0.25) 0%, rgba(139,115,85,0.2) 100%);
+      border: 2px solid rgba(212,175,55,0.5);
+      border-radius: 12px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.95);
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="mock-nav" aria-label="Mock-up sections">
+    <span style="color:#8a7f6e;">Jump to:</span>
+    <a href="#tv-question">TV — Question</a>
+    <a href="#tv-reveal">TV — Reveal</a>
+    <a href="#player-question">Player — Question</a>
+    <a href="#player-submitted">Player — Submitted</a>
+    <a href="#player-reveal">Player — Reveal</a>
+    <a href="#interstitial-next">Interstitial — Next up</a>
+    <a href="#interstitial-round">Interstitial — Round</a>
+    <a href="#interstitial-thennow">Interstitial — Then vs Now</a>
+  </nav>
+
+  <!-- ========== TV: Question state ========== -->
+  <section class="mock-section" id="tv-question" style="background: linear-gradient(180deg, #1e1912 0%, #2a231a 100%);">
+    <h2>TV view — Question</h2>
+    <div class="mm-display">
+      <div class="mm-display__card">
+        <div class="mm-display__card-inner">
+          <img
+            class="mm-display__card-img"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/1970_Ford_Mustang_Boss_302.jpg/640px-1970_Ford_Mustang_Boss_302.jpg"
+            alt="1970 Ford Mustang"
+          />
+          <h2 class="mm-display__card-title">1970 Ford Mustang (base model)</h2>
+          <p class="mm-display__card-meta">1970 · MSRP</p>
+          <p class="mm-display__card-question">In 1970, about how much did a new Ford Mustang cost (base MSRP)?</p>
+          <div class="mm-display__options">
+            <div class="mm-display__option">$1,995</div>
+            <div class="mm-display__option">$2,727</div>
+            <div class="mm-display__option">$2,872</div>
+            <div class="mm-display__option">$3,595</div>
+          </div>
+        </div>
+      </div>
+      <p class="mm-display__instruction">Pick one on your phone — host will reveal.</p>
+    </div>
+  </section>
+
+  <!-- ========== TV: Reveal state ========== -->
+  <section class="mock-section" id="tv-reveal" style="background: linear-gradient(180deg, #1e1912 0%, #2a231a 100%);">
+    <h2>TV view — Reveal</h2>
+    <div class="mm-display">
+      <div class="mm-display__card">
+        <div class="mm-display__card-inner">
+          <img
+            class="mm-display__card-img"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/1970_Ford_Mustang_Boss_302.jpg/640px-1970_Ford_Mustang_Boss_302.jpg"
+            alt="1970 Ford Mustang"
+          />
+          <h2 class="mm-display__card-title">1970 Ford Mustang (base model)</h2>
+          <p class="mm-display__card-meta">1970 · MSRP</p>
+          <p class="mm-display__card-question">In 1970, about how much did a new Ford Mustang cost (base MSRP)?</p>
+          <div class="mm-display__options">
+            <div class="mm-display__option">$1,995</div>
+            <div class="mm-display__option">$2,727</div>
+            <div class="mm-display__option mm-display__option--correct">$2,872</div>
+            <div class="mm-display__option">$3,595</div>
+          </div>
+          <div class="mm-display__reveal">
+            <p class="mm-display__reveal-price">$2,872</p>
+            <p class="mm-display__reveal-unit">MSRP</p>
+            <p class="mm-display__reveal-then-now">Now: ~$31,500</p>
+            <p class="mm-display__reveal-fun-fact">Base 1970 fastback; today’s equivalent is the current Mustang entry trim.</p>
+            <p class="mm-display__reveal-citation">Ford Media — 1970 Mustang Data</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Player: Question state ========== -->
+  <section class="mock-section" id="player-question" style="background: #1a1612;">
+    <h2>Player view — Question</h2>
+    <div class="mm-player-wrap">
+      <div class="mm-player__code">ABC123</div>
+      <div class="mm-player__card">
+        <div class="mm-player__card-inner">
+          <img
+            class="mm-player__card-img"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/1970_Ford_Mustang_Boss_302.jpg/640px-1970_Ford_Mustang_Boss_302.jpg"
+            alt="1970 Ford Mustang"
+          />
+          <h2 class="mm-player__card-title">1970 Ford Mustang (base model)</h2>
+          <p class="mm-player__card-meta">1970 · MSRP</p>
+          <p class="mm-player__card-question">In 1970, about how much did a new Ford Mustang cost (base MSRP)?</p>
+        </div>
+      </div>
+      <div class="mm-player__choices">
+        <div class="mm-player__options">
+          <button type="button" class="mm-player__option">$1,995</button>
+          <button type="button" class="mm-player__option">$2,727</button>
+          <button type="button" class="mm-player__option">$2,872</button>
+          <button type="button" class="mm-player__option">$3,595</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Player: Submitted (waiting for reveal) ========== -->
+  <section class="mock-section" id="player-submitted" style="background: #1a1612;">
+    <h2>Player view — Submitted</h2>
+    <div class="mm-player-wrap">
+      <div class="mm-player__code">ABC123</div>
+      <div class="mm-player__card">
+        <div class="mm-player__card-inner">
+          <img
+            class="mm-player__card-img"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/1970_Ford_Mustang_Boss_302.jpg/640px-1970_Ford_Mustang_Boss_302.jpg"
+            alt="1970 Ford Mustang"
+          />
+          <h2 class="mm-player__card-title">1970 Ford Mustang (base model)</h2>
+          <p class="mm-player__card-meta">1970 · MSRP</p>
+          <p class="mm-player__card-question">In 1970, about how much did a new Ford Mustang cost (base MSRP)?</p>
+        </div>
+      </div>
+      <div class="mm-player__choices">
+        <div class="mm-player__submitted">
+          <p class="mm-player__submitted-label">Answer submitted</p>
+          <p class="mm-player__submitted-value">$2,727</p>
+          <p class="mm-player__waiting">Host will reveal the answer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Player: Reveal state ========== -->
+  <section class="mock-section" id="player-reveal" style="background: #1a1612;">
+    <h2>Player view — Reveal</h2>
+    <div class="mm-player-wrap">
+      <div class="mm-player__code">ABC123</div>
+      <div class="mm-player__card">
+        <div class="mm-player__card-inner">
+          <img
+            class="mm-player__card-img"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/1970_Ford_Mustang_Boss_302.jpg/640px-1970_Ford_Mustang_Boss_302.jpg"
+            alt="1970 Ford Mustang"
+          />
+          <h2 class="mm-player__card-title">1970 Ford Mustang (base model)</h2>
+          <p class="mm-player__card-meta">1970 · MSRP</p>
+          <p class="mm-player__card-question">In 1970, about how much did a new Ford Mustang cost (base MSRP)?</p>
+        </div>
+      </div>
+      <div class="mm-player__choices">
+        <div class="mm-player__reveal">
+          <p class="mm-player__reveal-correct">$2,872 MSRP</p>
+          <p class="mm-player__reveal-then-now">Now: ~$31,500</p>
+          <p class="mm-player__reveal-fun-fact">Base 1970 fastback; today’s equivalent is the current Mustang entry trim.</p>
+          <p class="mm-player__reveal-citation">Ford Media — 1970 Mustang Data</p>
+          <div class="mm-player__your-guess">
+            <span class="mm-player__your-guess-value">Your answer: $2,727</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Interstitial: Next up ========== -->
+  <section class="mock-section" id="interstitial-next" style="background: linear-gradient(180deg, #241a0e 0%, #1e1912 100%);">
+    <h2>Interstitial — Next up</h2>
+    <div class="interstitial">
+      <p class="round-badge">Next</p>
+      <h3>1970 Ford Mustang</h3>
+      <p>How much did a new Ford Mustang cost (base MSRP) in 1970?</p>
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/1970_Ford_Mustang_Boss_302.jpg/320px-1970_Ford_Mustang_Boss_302.jpg"
+        alt=""
+        style="max-width: 240px; border-radius: 12px; border: 2px solid rgba(212,175,55,0.4); margin-top: 1rem;"
+      />
+    </div>
+  </section>
+
+  <!-- ========== Interstitial: Round ========== -->
+  <section class="mock-section" id="interstitial-round" style="background: linear-gradient(180deg, #241a0e 0%, #1e1912 100%);">
+    <h2>Interstitial — Round</h2>
+    <div class="interstitial">
+      <p class="round-badge">Round 3</p>
+      <h3>Market Match</h3>
+      <p>Get ready for the next price — check your phone when the host starts.</p>
+    </div>
+  </section>
+
+  <!-- ========== Interstitial: Then vs Now teaser ========== -->
+  <section class="mock-section" id="interstitial-thennow" style="background: linear-gradient(180deg, #241a0e 0%, #1e1912 100%);">
+    <h2>Interstitial — Then vs Now</h2>
+    <div class="interstitial">
+      <h3>Then vs Now</h3>
+      <p>1970 Ford Mustang — then and today’s equivalent.</p>
+      <div class="then-now-teaser">
+        <figure>
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/1970_Ford_Mustang_Boss_302.jpg/320px-1970_Ford_Mustang_Boss_302.jpg"
+            alt="1970 Mustang"
+          />
+          <figcaption>Then (1970)</figcaption>
+        </figure>
+        <figure>
+          <img
+            src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&q=80"
+            alt="Modern Mustang"
+          />
+          <figcaption>Now (equivalent)</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

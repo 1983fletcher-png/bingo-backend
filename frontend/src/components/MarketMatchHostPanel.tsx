@@ -17,6 +17,8 @@ export interface MarketMatchHostPanelProps {
   displayUrl: string;
   onEndSession: () => void;
   hostKeyboardRef?: HostKeyboardRef | null;
+  /** When true, sidebar/topbar are provided by HostConsoleLayout; hide duplicate links and End session. */
+  embeddedInConsole?: boolean;
 }
 
 export function MarketMatchHostPanel({
@@ -27,7 +29,8 @@ export function MarketMatchHostPanel({
   joinUrl,
   displayUrl,
   onEndSession,
-  hostKeyboardRef
+  hostKeyboardRef,
+  embeddedInConsole = false,
 }: MarketMatchHostPanelProps) {
   const currentIndex = marketMatch.currentIndex ?? 0;
   const revealed = marketMatch.revealed === true;
@@ -109,21 +112,30 @@ export function MarketMatchHostPanel({
         </button>
       </div>
 
-      <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
-        Item {currentIndex + 1} of {MARKET_MATCH_DATASET.length}. Share the join link with players; open Display on the TV.
-      </p>
+      {!embeddedInConsole && (
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
+          Item {currentIndex + 1} of {MARKET_MATCH_DATASET.length}. Share the join link with players; open Display on the TV.
+        </p>
+      )}
+      {embeddedInConsole && (
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 0 }}>
+          Item {currentIndex + 1} of {MARKET_MATCH_DATASET.length}.
+        </p>
+      )}
 
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <a href={joinUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
-          Player link
-        </a>
-        <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
-          Display (TV)
-        </a>
-        <button type="button" onClick={onEndSession} className="host-room__btn-secondary">
-          End session
-        </button>
-      </div>
+      {!embeddedInConsole && (
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <a href={joinUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
+            Player link
+          </a>
+          <a href={displayUrl} target="_blank" rel="noopener noreferrer" className="host-room__link-btn">
+            Display (TV)
+          </a>
+          <button type="button" onClick={onEndSession} className="host-room__btn-secondary">
+            End session
+          </button>
+        </div>
+      )}
     </div>
   );
 }

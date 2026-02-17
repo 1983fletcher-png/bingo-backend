@@ -1,0 +1,18 @@
+---
+description: When building or verifying Market Match items, follow the Item Builder spec (verified facts + images).
+globs: frontend/src/data/marketMatch*.ts, docs/MARKET-MATCH-ITEM-BUILDER-SPEC.md
+alwaysApply: false
+---
+
+# Market Match item builder (verified + images)
+
+When creating, editing, or verifying **Market Match** items (historical price/year content):
+
+1. **Read and follow** `docs/MARKET-MATCH-ITEM-BUILDER-SPEC.md`.
+2. **Reliability:** No unstated assumptions — if year/model is not explicitly confirmed by image caption/metadata, do not claim the image matches. Every image must have a `why_this_matches` that references caption/metadata or identifying visual cues.
+3. **Truth-first:** Every price/year/spec must be backed by a credible source; if not verifiable, mark unknown and explain.
+4. **Price type:** Use exactly one of `msrp` | `average_retail` | `ticket_price_average` | `local_ad_price` per item and label it.
+5. **Then/now:** "Then" image = correct year/era for the item; "Now" = comparable modern equivalent, clearly labeled (not "same SKU").
+6. **Licensing:** Prefer PD, Wikimedia Commons, museum/archives, manufacturer press; flag unclear licenses.
+
+When outputting builder-style JSON, use the full schema and checklist from the spec. When adding to the live seed (`marketMatchSeedData.ts`), map builder fields to the seed/dataset as described in the spec's "Mapping to current seed" section.

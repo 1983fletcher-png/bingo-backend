@@ -1,0 +1,67 @@
+[
+  {
+    "id": "MM-1970-MUSTANG-001",
+    "category": "car",
+    "question_type": "price",
+    "prompt": "In 1970, about how much did a new Ford Mustang cost (base MSRP)?",
+    "year": 1970,
+    "item_name": "1970 Ford Mustang (base model)",
+    "answer": {
+      "value": 2872,
+      "unit": "USD",
+      "price_type": "msrp",
+      "notes": "Base MSRP for 1970 Mustang fastback; coupe/convertible varied. Ford official data."
+    },
+    "choices": [1995, 2727, 2872, 3595],
+    "then": {
+      "image": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/1970_Ford_Mustang_Boss_302.jpg/640px-1970_Ford_Mustang_Boss_302.jpg",
+        "title": "1970 Ford Mustang (Boss 302 variant)",
+        "source_name": "Wikimedia Commons",
+        "license": "CC BY-SA 2.0",
+        "creator": "Rev 116",
+        "date_or_year_depicted": 1970,
+        "why_this_matches": "Caption and filename state 1970 Ford Mustang; Boss 302 is same model year and body style as base Mustang.",
+        "alt_text": "A 1970 Ford Mustang Boss 302 in red, period styling."
+      },
+      "verified_facts": [
+        {
+          "claim": "Base MSRP for 1970 Mustang fastback was $2,872.",
+          "source_url": "https://media.ford.com/content/dam/fordmedia/North%20America/US/2013/11/18/1970_Mustang_Data.pdf",
+          "source_name": "Ford Media — 1970 Mustang Data",
+          "evidence_quote": "Official Ford archival price data for 1970 Mustang.",
+          "source_type": "manufacturer"
+        }
+      ],
+      "bonus_specs": {
+        "engine_example": "250 cu in I6 / 302 V8 (Boss 302)",
+        "trim_example": "Hardtop, SportsRoof, convertible",
+        "notes": "Boss 302 was higher trim; base was lower."
+      }
+    },
+    "now": {
+      "comparison_item_name": "2025 Ford Mustang (entry trim) — comparable modern pony car",
+      "current_price": {
+        "value": 31500,
+        "unit": "USD",
+        "price_type": "msrp",
+        "as_of_date": "2025-02-01",
+        "source_url": "https://www.ford.com/cars/mustang/"
+      },
+      "image": {
+        "url": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=600&q=80",
+        "title": "Modern Ford Mustang (stock imagery)",
+        "source_name": "Unsplash",
+        "license": "Unsplash License",
+        "date_or_year_depicted": 2024,
+        "why_this_matches": "Contemporary Mustang-style sports car; used as equivalent category for then-vs-now comparison."
+      }
+    },
+    "shrinkflation": {
+      "included": false,
+      "notes": ""
+    },
+    "confidence": 88,
+    "host_notes": "If crowd asks: clarify MSRP vs dealer markups; base 1970 vs Boss 302 trim."
+  }
+]

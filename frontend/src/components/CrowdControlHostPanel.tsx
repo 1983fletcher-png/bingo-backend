@@ -18,6 +18,8 @@ export interface CrowdControlHostPanelProps {
   displayUrl: string;
   onEndSession: () => void;
   hostKeyboardRef?: HostKeyboardRef | null;
+  /** When true, sidebar/topbar are provided by HostConsoleLayout; hide duplicate hint. */
+  embeddedInConsole?: boolean;
 }
 
 const HOST_TOKEN_KEY = (code: string) => `playroom:hostToken:${code}`;
@@ -30,7 +32,8 @@ export function CrowdControlHostPanel({
   joinUrl: _joinUrl,
   displayUrl: _displayUrl,
   onEndSession: _onEndSession,
-  hostKeyboardRef
+  hostKeyboardRef,
+  embeddedInConsole = false,
 }: CrowdControlHostPanelProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const hostToken =
@@ -243,7 +246,9 @@ export function CrowdControlHostPanel({
         </div>
       )}
 
-      <p className="cct-host-hint">Player link, Display (TV), and End game are in the left sidebar.</p>
+      {!embeddedInConsole && (
+        <p className="cct-host-hint">Player link, Display (TV), and End game are in the left sidebar.</p>
+      )}
     </div>
   );
 }

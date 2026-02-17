@@ -35,11 +35,13 @@ type Props = {
   onBackToPlayroom?: () => void;
   /** Optional ref for host keyboard shortcuts (Space/←/→). */
   hostKeyboardRef?: HostKeyboardRef | null;
+  /** When true, TopCommandBar/Sidebar are provided by HostConsoleLayout; hide top bar (Back, title, TransportBar, code). */
+  embeddedInConsole?: boolean;
 };
 
 const IS_DEV = typeof import.meta !== 'undefined' && import.meta.env?.DEV;
 
-export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl: _joinUrl, displayUrl: _displayUrl, onEndSession, onBackToPlayroom, hostKeyboardRef }: Props) {
+export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl: _joinUrl, displayUrl: _displayUrl, onEndSession, onBackToPlayroom, hostKeyboardRef, embeddedInConsole = false }: Props) {
   const [promptDraft, setPromptDraft] = useState(feud.prompt);
   const [promptOpen, setPromptOpen] = useState(false);
   const [debugOpen, setDebugOpen] = useState(false);
@@ -127,30 +129,32 @@ export function FeudHostPanel({ gameCode, feud, onFeudState, socket, joinUrl: _j
 
   return (
     <div className="feud-host-panel">
-      <div className="feud-host-panel__top-bar">
-        {onBackToPlayroom != null && (
-          <Link to="/host" onClick={onBackToPlayroom} className="feud-host-panel__back-link">
-            ← Back to Playroom
-          </Link>
-        )}
-        <span className="feud-host-panel__top-title">Survey Showdown</span>
-        <div className="feud-host-panel__transport-wrap">
-          <TransportBar
-            onBack={() => setCheckpoint('STANDBY')}
-            onNext={() => {
-              const i = FEUD_CHECKPOINTS.indexOf(feud.checkpointId);
-              if (i < FEUD_CHECKPOINTS.length - 1) setCheckpoint(FEUD_CHECKPOINTS[i + 1]);
-            }}
-            onJump={handleJump}
-            jumpCheckpoints={checkpoints}
-            onResetRound={() => setCheckpoint('STANDBY')}
-            onEndSession={onEndSession}
-            endSessionConfirmMessage="Are you sure you want to end the game?"
-            endSessionButtonLabel="End game"
-          />
+      {!embeddedInConsole && (
+        <div className="feud-host-panel__top-bar">
+          {onBackToPlayroom != null && (
+            <Link to="/host" onClick={onBackToPlayroom} className="feud-host-panel__back-link">
+              ← Back to Playroom
+            </Link>
+          )}
+          <span className="feud-host-panel__top-title">Survey Showdown</span>
+          <div className="feud-host-panel__transport-wrap">
+            <TransportBar
+              onBack={() => setCheckpoint('STANDBY')}
+              onNext={() => {
+                const i = FEUD_CHECKPOINTS.indexOf(feud.checkpointId);
+                if (i < FEUD_CHECKPOINTS.length - 1) setCheckpoint(FEUD_CHECKPOINTS[i + 1]);
+              }}
+              onJump={handleJump}
+              jumpCheckpoints={checkpoints}
+              onResetRound={() => setCheckpoint('STANDBY')}
+              onEndSession={onEndSession}
+              endSessionConfirmMessage="Are you sure you want to end the game?"
+              endSessionButtonLabel="End game"
+            />
+          </div>
+          <span className="feud-host-panel__top-code" aria-label="Room code">{gameCode.toUpperCase()}</span>
         </div>
-        <span className="feud-host-panel__top-code" aria-label="Room code">{gameCode.toUpperCase()}</span>
-      </div>
+      )}
       <div className="feud-host-panel__phase" style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
         Phase: {phase} · Submissions: <strong data-feud-submissions-count>{submissionCount}</strong>
       </div>
