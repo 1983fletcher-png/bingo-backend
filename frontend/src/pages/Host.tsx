@@ -106,7 +106,6 @@ export default function Host() {
   const [connectionSlow, setConnectionSlow] = useState(false);
   const [game, setGame] = useState<GameCreated | null>(null);
   const [hostMessage, setHostMessage] = useState('Starting soon…');
-  const [copyFeedback, setCopyFeedback] = useState(false);
   const [songPool, setSongPool] = useState<Song[]>([]);
   const [revealed, setRevealed] = useState<Song[]>([]);
   const [activeTab, setActiveTab] = useState<HostTab>('waiting');
@@ -992,8 +991,8 @@ p{word-break:break-all;font-size:14px;color:#333}
       joinUrl: joinUrlForQR,
       displayUrl,
       qrImageUrl,
-      onCopyJoin: () => { navigator.clipboard?.writeText(joinUrlForQR); setCopyFeedback(true); setTimeout(() => setCopyFeedback(false), 2000); },
-      onCopyCode: () => { navigator.clipboard?.writeText(game.code); setCopyFeedback(true); setTimeout(() => setCopyFeedback(false), 2000); },
+onCopyJoin: () => { navigator.clipboard?.writeText(joinUrlForQR); },
+              onCopyCode: () => { navigator.clipboard?.writeText(game.code); },
       onPrintQR: handlePrintQR,
       onEndSession: () => { setGame(null); setGameStarted(false); navigate('/activity'); },
     };
